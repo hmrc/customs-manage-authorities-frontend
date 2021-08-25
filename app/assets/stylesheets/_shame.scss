@@ -1,0 +1,11 @@
+// hide when no js available
+.hmrc-js-only,
+.govuk-back-link {
+  display: none;
+}
+.js-enabled .govuk-back-link {
+  display: inline-block;
+}
+.js-enabled .hmrc-js-only {
+  display: block;
+}

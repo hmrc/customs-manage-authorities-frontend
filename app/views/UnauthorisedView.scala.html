@@ -1,0 +1,51 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@this(
+    main_template: templates.GovukLayoutWrapper,
+    h1: components.h1,
+    h2: components.h2
+
+)
+
+@()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
+
+@main_template(Some(titleNoForm("unauthorised.title", None, Seq())), timeout = false, help = false, backLink = false) {
+
+    @h1("unauthorised.heading")
+    @h2("unauthorised.how-to-get-access-info")
+
+    <p class="govuk-body">
+        @messages("unauthorised.eori-info")
+        <a class="govuk-link" target="_blank" href="@(appConfig.registerCdsUrl)">@messages("unauthorised.eori-link")</a>.
+    </p>
+
+    <p class="govuk-body">
+        @messages("unauthorised.get-access-info")
+        <a class="govuk-link" target="_blank" href="@(appConfig.subscribeCdsUrl)">@messages("unauthorised.get-access-link")</a>.
+    </p>
+
+    <p class="govuk-body">
+        @messages("unauthorised.process-application-info")
+    </p>
+
+    @h2("unauthorised.already-applied-info")
+
+    <p class="govuk-body">
+        @messages("unauthorised.status-info")
+        <a class="govuk-link" target="_blank" href="@(appConfig.applicationStatusCdsUrl)">@messages("unauthorised.status-check-info")</a>.
+    </p>
+}

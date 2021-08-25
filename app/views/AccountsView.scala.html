@@ -1,0 +1,77 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.Mode
+@import models.domain.CDSAccount
+@import forms.AccountsFormProvider
+@import models.domain.CDSAccount.formattedAccountType
+
+
+@import models.domain.EORI
+
+@this(
+        govukLayout: templates.GovukLayoutWrapper,
+        formHelper: FormWithCSRF,
+        errorSummary: components.errorSummary,
+        button: components.button,
+        checkboxes: components.inputCheckboxes
+)
+
+@(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+
+@govukLayout(pageTitle = Some(title(form, "accounts.title", None, Seq())), fullWidth = true, backLinkUrl = Some(call) ) {
+
+    @formHelper(action = AccountsController.onSubmit(mode)) {
+
+        @errorSummary(form.errors)
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 id="accounts.heading" class="govuk-fieldset__heading">@messages("accounts.heading")</h1>
+            </legend>
+
+            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+                <div class="govuk-inset-text">
+                    @accounts.alreadyAuthorisedAccounts.map { account =>
+                        <p>@{
+                            messages("accounts.authorised", accounts.enteredEori)
+                        } @{
+                            s"${formattedAccountType(account)}."
+                        }</p>
+                    }
+                    @accounts.closedAccounts.map { account =>
+                        <p>@{
+                            messages("accounts.closed", formattedAccountType(account))
+                        }</p>
+                    }
+                    @accounts.pendingAccounts.map { account =>
+                      <p>@{
+                          s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
+                      }</p>
+                    }
+                </div>
+            }
+
+            @checkboxes(
+                form = form,
+                legend = messages("accounts.heading"),
+                legendAsHeading = false,
+                items = AccountsFormProvider.options(form, accounts.availableAccounts)
+            )
+        </fieldset>
+        @button("site.saveAndContinue")
+    }
+
+}

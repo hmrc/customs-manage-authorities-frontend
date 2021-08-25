@@ -1,0 +1,345 @@
+# Site-wide Messages
+# ----------------------------------------------------------
+service.name = View your customs financial accounts
+
+language.cymraeg = Cymraeg
+language.english = English
+
+site.back = Back
+site.delete = Delete
+site.edit = Change
+site.hidden-delete = Delete {0}
+site.hidden-edit = Change {0}
+site.no = No
+site.yes = Yes
+site.continue = Continue
+site.confirm = Confirm
+site.saveAndContinue = Continue
+site.submitAndContinue = Submit and continue
+site.textarea.char_limit = (Limit is {0} characters)
+site.govuk = GOV.UK
+site.signOut = Sign out
+site.getHelpWithThisPage = Get help with this page
+site.notProvided = Not Provided
+site.incomplete = Incomplete
+site.tryAgain = Try again
+site.startAgain = Start again
+site.change = Change
+
+help.heading = Help and support
+help.p1 = If you are having issues, phone 0300 200 3701.
+help.p2 = Open 8am to 6pm, Monday to Friday (closed bank holidays).
+
+footer.accessibility   = Accessibility statement
+footer.cookies         = Cookies
+footer.privacy         = Privacy policy
+footer.termsConditions = Terms and conditions
+footer.govukHelp       = Help using GOV.UK
+
+language.cymraeg = Cymraeg
+language.change.cymraeg = Newid yr iaith i'r Gymraeg
+language.english = English
+language.change.english = Change the language to English
+language.switcher = Language switcher
+
+# Timeout Messages
+# ----------------------------------------------------------
+timeout.title = You’re about to be signed out
+timeout.message = For security reasons, you will be signed out of this service in
+timeout.keepAlive = Stay signed in
+timeout.signOut = Sign out
+
+# BETA Banner
+# ----------------------------------------------------------
+feedback.before = This is a new service - your
+feedback.link = feedback
+feedback.after = will help us to improve it.
+
+checkYourAnswers.title = Check your answers
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.guidance = Guidance for check your answers
+checkYourAnswers.accounts.hidden = accounts
+checkYourAnswers.eoriNumber.hidden = user EORI number
+checkYourAnswers.authorityStart.hidden = start date
+checkYourAnswers.authorityEnd.hidden = end date
+checkYourAnswers.authorityEnd.indefinite = Upon further notice
+checkYourAnswers.showBalance.hidden = see balance
+
+date.day = Day
+date.month = Month
+date.year = Year
+
+error.browser.title.prefix = Error:
+error.boolean = Please give an answer
+error.invalid_date = Give a correct date
+error.date.day_blank = Enter a day
+error.date.day_invalid = Give a correct day using numbers 1 to 31
+error.date.month_blank = Enter a month
+error.date.month_invalid = Give a correct month using numbers 1 to 12
+error.date.year_blank = Enter a year
+error.date.year_invalid = Give a correct year
+error.integer = Give an answer in whole numbers
+error.nonNumeric = Give a value using only numbers
+error.number = Please enter a valid number
+error.required = Please enter a value
+error.summary.title = There is a problem
+
+index.title = Financials scaffold
+index.heading = Financials scaffold
+
+session_expired.title = For your security, this service has been reset
+session_expired.heading = For your security, this service has been reset
+session_expired.guidance = The details you have given have been deleted because you did not continue the service for 15 minutes.
+session_expired.action = Start again
+
+unauthorised.title=Not registered with CDS
+unauthorised.heading=To continue with this you need to get access to Customs Declaration Services (CDS)
+unauthorised.eori-info=You''ll need an
+unauthorised.eori-link=Economic Operator and Registration Identification (EORI) number (opens in a new window or tab)
+unauthorised.get-access-info=If you already have an EORI number, you can
+unauthorised.get-access-link=get access to CDS (opens in a new window or tab)
+unauthorised.how-to-get-access-info=How to get access to CDS
+unauthorised.process-application-info=It can take up to one hour for HMRC to process your application.
+unauthorised.already-applied-info=If you''ve already applied to get access to CDS
+unauthorised.status-info=You can
+unauthorised.status-check-info=check the status of your application (opens in a new window or tab)
+unauthorised.how-to-get-access-info=How to get access to CDS
+
+service-unavailable.title = Sorry, we are unable to add an authority at the moment
+service-unavailable.heading = Sorry, the service is unavailable
+service-unavailable.p = Try again later.
+
+service-technical-difficulties.title = Sorry, we’re experiencing technical difficulties
+service.technical-difficulties.heading = Sorry, we’re experiencing technical difficulties
+service.technical-difficulties.p = Please try again in a few minutes.
+
+
+manageAuthorities.title = Manage your account authorities
+manageAuthorities.heading = Manage your account authorities
+manageAuthorities.notification.noAuthorities = You have not given anyone permission to use any of your accounts yet. You can add authority for someone to use your duty deferment, general guarantee or cash accounts.
+manageAuthorities.notification.cdsAuthorities = Authorities you add here will only be valid for use on the Customs Declaration Service (CDS).
+manageAuthorities.addAuthority = Add an authority
+manageAuthorities.error=Sorry, we can''t display these right now. Please try again later.
+
+manageAuthorities.table.heading.account.CdsCashAccount = Cash account: {0}
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment account: {0}
+manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount = General guarantee account: {0}
+
+manageAuthorities.table.heading.account.CdsCashAccount.closed = Cash account: {0} (closed)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment account: {0} (closed)
+manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = General guarantee account: {0} (closed)
+
+manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cash account: {0} (suspended)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment account: {0} (suspended)
+manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = General guarantee account: {0} (suspended)
+
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
+
+manageAuthorities.table.heading.user = User
+manageAuthorities.table.heading.startDate = Start date
+manageAuthorities.table.heading.endDate = End date
+manageAuthorities.table.heading.balance = View balance
+manageAuthorities.table.heading.actions = Actions
+manageAuthorities.table.endDate.empty = Not set
+manageAuthorities.table.endDate.unavailable = -
+manageAuthorities.table.viewBalance.yes = Yes
+manageAuthorities.table.viewBalance.no = No
+manageAuthorities.table.row.remove = Remove
+manageAuthorities.table.row.remove.CdsCashAccount = Remove user {0} from Cash account
+manageAuthorities.table.row.remove.CdsDutyDefermentAccount = Remove user {0} from Duty Deferment account {1}
+manageAuthorities.table.row.remove.CdsGeneralGuaranteeAccount = Remove user {0} from Guarantee account
+
+manageAuthorities.table.row.edit = Edit
+manageAuthorities.table.row.edit.CdsCashAccount = Edit user {0} from Cash account
+manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Edit user {0} from Duty Deferment account {1}
+manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Edit user {0} from Guarantee account
+
+accounts.title = Which accounts do you want to add an authority to?
+accounts.heading = Which accounts do you want to add an authority to?
+accounts.checkYourAnswersLabel.singular = Account
+accounts.checkYourAnswersLabel.plural = Accounts
+accounts.error.required = Select at least one account
+accounts.type.cash = Cash
+accounts.type.dutyDeferment = Duty deferment
+accounts.type.generalGuarantee = General guarantee
+accounts.authorised = {0} is already authorised to
+accounts.closed = {0} is closed.
+accounts.pending = (pending opening on CDS)
+
+accounts.noAvailableAccounts.heading = {0} already has access to all your accounts
+accounts.noAvailableAccounts.p = To review or edit this user's access, go back to
+accounts.noAvailableAccounts.link = manage your account authorities
+
+eoriNumber.title = What is their EORI number?
+eoriNumber.heading = What is their EORI number?
+eoriNumber.hint = Enter the EORI number of the user you want to give authority to. It starts with GB followed by 12 digits. For example, GB345834921000.
+eoriNumber.checkYourAnswersLabel = User EORI number
+eoriNumber.error.required = Enter their EORI number
+eoriNumber.error.format = This is not a recognised GB EORI number
+eoriNumber.error.invalid = The EORI you have entered is not valid
+eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI
+eoriNumber.error.gbnEori.format= You cannot use a GBN EORI with this service.
+eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
+
+authorityStart.title = When do you want the authority to start?
+authorityStart.heading = When do you want the authority to start?
+authorityStart.today = Today (usually active within an hour)
+authorityStart.setDate = On a set date
+authorityStart.checkYourAnswersLabel = Start
+authorityStart.checkYourAnswersLabel.today = Today,
+authorityStart.error.required = Select when you want the authority to start
+
+authorityStartDate.title = What date do you want the authority to start?
+authorityStartDate.heading = What date do you want the authority to start?
+authorityStartDate.checkYourAnswersLabel = AuthorityStartDate
+authorityStartDate.error.required.all = Enter the date you want the authority to start
+authorityStartDate.error.required.two = The date must include {0} and {1}
+authorityStartDate.error.required = The date must include {0}
+authorityStartDate.error.invalid = The start date must be a real date
+authorityStartDate.error.minimum = The start date must be in the future
+authorityStartDate.error.maximum = The start date must be before the end date ({0})
+
+authorityEnd.title = How long should the authority last?
+authorityEnd.heading = How long should the authority last?
+authorityEnd.indefinite = Until further notice
+authorityEnd.setDate = Until a set date
+authorityEnd.checkYourAnswersLabel = End
+authorityEnd.error.required = Select how long the authority should last
+
+authorityEndDate.title = What date do you want the authority to end?
+authorityEndDate.heading = What date do you want the authority to end?
+authorityEndDate.hint = For example, 31 3 2025
+authorityEndDate.p = Ends at 11:59pm on this date
+authorityEndDate.checkYourAnswersLabel = AuthorityEndDate
+authorityEndDate.error.required.all = Enter the date you want the authority to end
+authorityEndDate.error.required.two = The date must include {0} and {1}
+authorityEndDate.error.required = The date must include {0}
+authorityEndDate.error.invalid = The end date must be a real date
+authorityEndDate.error.minimum = End date must be on or after the start date ({0})
+
+
+showBalance.title = Allow this user to see the available balance?
+showBalance.heading = Allow this user to see the available balance?
+showBalance.yes = Yes
+showBalance.no.singular = No, just allow them to use the account
+showBalance.no.plural = No, just allow them to use the accounts
+showBalance.checkYourAnswers.yes = Yes
+showBalance.checkYourAnswers.no = No
+showBalance.checkYourAnswersLabel = See balance
+showBalance.error.required = Select if you want this user to see the available balance
+
+authorisedUser.title = Check your answers
+authorisedUser.heading = Check your answers
+authorisedUser.yourDetails = Your details
+authorisedUser.checkYourAnswersLabel = authorisedUser
+authorisedUser.fullName = Full name
+authorisedUser.error.fullName.required = Enter your full name
+authorisedUser.error.fullName.length = Your full name must be 255 characters or fewer
+authorisedUser.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
+authorisedUser.jobRole = Job role
+authorisedUser.error.jobRole.required = Enter your job role
+authorisedUser.error.jobRole.length = Your job role must be 255 characters or fewer
+authorisedUser.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
+authorisedUser.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
+authorisedUser.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
+authorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
+
+editAuthorisedUser.title = Edit the account authority
+editAuthorisedUser.heading = Edit the account authority
+editAuthorisedUser.yourDetails = Your details
+editAuthorisedUser.checkYourAnswersLabel = editAuthorisedUser
+editAuthorisedUser.fullName = Full name
+editAuthorisedUser.error.fullName.required = Enter your full name
+editAuthorisedUser.error.fullName.length = Your full name must be 255 characters or fewer
+editAuthorisedUser.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
+editAuthorisedUser.jobRole = Job role
+editAuthorisedUser.error.jobRole.required = Enter your job role
+editAuthorisedUser.error.jobRole.length = Your job role must be 255 characters or fewer
+editAuthorisedUser.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
+editAuthorisedUser.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
+editAuthorisedUser.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
+editAuthorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
+edit.changed = Changed
+edit.notChanged = Not Changed
+
+addConfirmation.title = User added successfully
+addConfirmation.heading = {0} successfully added
+addConfirmation.body.today.singular = They can now use your account
+addConfirmation.body.today.plural = They can now use your accounts
+addConfirmation.body.setDate = Starting on {0}
+addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear
+addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard
+addConfirmation.returnLink = Back to Manage your account authorities
+
+editConfirmation.title = User added successfully
+editConfirmation.heading = {0} successfully changed
+editConfirmation.body.today.singular = They can now use your account
+editConfirmation.body.today.plural = They can now use your accounts
+editConfirmation.body.setDate = Starting on {0}
+editConfirmation.p1.today = You should tell the user that you have arranged this. It may take up to one hour for access to be active.
+editConfirmation.p1.setDate = You should tell the user that you have arranged this.
+editConfirmation.returnLink = Back to Manage your account authorities
+
+remove.title = Are you sure you want to delete this account authority?
+remove.heading = Are you sure you want to remove access for user {0}?
+remove.heading.caption.CdsCashAccount = Cash account: {0}
+remove.heading.caption.CdsDutyDefermentAccount = Duty deferment: {0}
+remove.heading.caption.CdsGeneralGuaranteeAccount = General guarantee: {0}
+remove.p1 = This means they will no longer be able to use this account on a customs import declaration.
+remove.yourDetails = Your details
+remove.fullName = Full name
+remove.error.fullName.required = Enter your full name
+remove.error.fullName.length = Your full name must be 255 characters or fewer
+remove.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
+remove.jobRole = Job role
+remove.error.jobRole.required = Enter your job role
+remove.error.jobRole.length = Your job role must be 255 characters or fewer
+remove.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
+remove.declaration = I confirm I want to remove this user's access.
+remove.confirm = Remove access
+remove.cancel = Cancel
+remove.error.confirmation.required = Select to confirm you want to remove this user''s access
+
+removeConfirmation.title = User successfully removed
+removeConfirmation.heading = {0} successfully removed
+removeConfirmation.p1 = You may want to tell the user that their access has been removed.
+removeConfirmation.returnLink = Back to Manage your account authorities
+
+manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
+manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
+
+manageAuthorities.reportAProblem.link=Please contact HMRC for technical assistance (opens in new tab).
+
+
+# Date Format
+# ----------------------------------------------------------
+
+month.abbr.1 = Jan
+month.abbr.2 = Feb
+month.abbr.3 = Mar
+month.abbr.4 = Apr
+month.abbr.5 = May
+month.abbr.6 = Jun
+month.abbr.7 = Jul
+month.abbr.8 = Aug
+month.abbr.9 = Sep
+month.abbr.10 = Oct
+month.abbr.11 = Nov
+month.abbr.12 = Dec
+
+month.1 = January
+month.2 = February
+month.3 = March
+month.4 = April
+month.5 = May
+month.6 = June
+month.7 = July
+month.8 = August
+month.9 = September
+month.10 = October
+month.11 = November
+month.12 = December
+
+
+
+

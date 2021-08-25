@@ -1,0 +1,122 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.components.FooterLinks
+@import uk.gov.hmrc.hmrcfrontend.views.html.components._
+@import views.html.templates.GovukFullWidthLayout
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcReportTechnicalIssueHelper
+
+@this(
+        govukLayout: GovukLayout,
+        govukFullWidthLayout: GovukFullWidthLayout,
+        govukPhaseBanner: GovukPhaseBanner,
+        govukBackLink: GovukBackLink,
+        hmrcTimeoutDialog: HmrcTimeoutDialog,
+        siteHeader: components.siteHeader,
+        phaseBanner: components.phaseBanner,
+        languageSelection: components.languageSelection,
+        link: components.link,
+        appConfig: config.FrontendAppConfig,
+        footerLinks: FooterLinks,
+        hmrcReportTechnicalIssue: hmrcReportTechnicalIssue,
+        h2: components.h2,
+        p: components.p,
+        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+        hmrcReportTechnicalIssueHelper: hmrcReportTechnicalIssueHelper
+)
+
+
+@(pageTitle: Option[String] = None, timeout: Boolean = true, signedInUser: Boolean = true, js: Option[Html] = None, backLink: Boolean = true, backLinkUrl: Option[String] = None, fullWidth: Boolean = false, help: Boolean = true, reportAProblem: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+
+@head = {
+@hmrcTrackingConsentSnippet()
+    <!--[if lte IE 8]><link href='@controllers.routes.Assets.versioned("stylesheets/application-ie-8.css")' rel="stylesheet" type="text/css" /><![endif]-->
+    <!--[if gt IE 8]><!--><link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css" /><!--<![endif]-->
+
+@hmrcTimeoutDialog(TimeoutDialog(
+    title = Some(messages("timeout.title")),
+    timeout = Some(appConfig.timeout),
+    countdown = Some(appConfig.countdown),
+    keepAliveUrl = Some(request.uri),
+    signOutUrl = Some(routes.LogoutController.logout().url),
+    timeoutUrl = Some(routes.LogoutController.logoutNoSurvey().url)
+))
+
+}
+
+@scripts = {
+    <script src='@controllers.routes.Assets.versioned("lib/govuk-frontend/govuk/all.js")'></script>
+    <script src='@controllers.routes.Assets.versioned("lib/hmrc-frontend/hmrc/all.js")'></script>
+    <script src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+    <script>window.GOVUKFrontend.initAll();</script>
+    <script>window.HMRCFrontend.initAll();</script>
+
+
+
+    @js.map(x => x)
+}
+
+@beforeContentBlock = {
+
+    @phaseBanner("beta")
+
+    @if(backLink) {
+        @govukBackLink(BackLink(href = backLinkUrl.getOrElse("#"), content = Text(messages("site.back")), attributes = Map("id" -> "back-link")))
+    }
+
+    @if(appConfig.languageTranslationEnabled) {
+        @languageSelection()
+    }
+}
+
+@content = {
+    @contentBlock
+    @if(help){
+        <div class="govuk-!-margin-top-8">
+            @h2("help.heading")
+            <div id="help-message">
+                @p(Html(messages("help.p1")))
+                @p(Html(messages("help.p2")))
+            </div>
+        </div>
+    }
+    @if(appConfig.reportAProblem && reportAProblem) {
+       @hmrcReportTechnicalIssueHelper()
+    }
+}
+
+@if(fullWidth) {
+    @govukFullWidthLayout(
+        pageTitle = pageTitle,
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        scriptsBlock = Some(scripts),
+        headerBlock = Some(siteHeader(signedInUser)),
+        footerItems = footerLinks.items
+    )(content)
+} else {
+    @govukLayout(
+        pageTitle = pageTitle,
+        headBlock = Some(head),
+        beforeContentBlock = Some(beforeContentBlock),
+        bodyEndBlock = None,
+        scriptsBlock = Some(scripts),
+        headerBlock = Some(siteHeader(signedInUser)),
+        footerItems = footerLinks.items
+    )(content)
+}
