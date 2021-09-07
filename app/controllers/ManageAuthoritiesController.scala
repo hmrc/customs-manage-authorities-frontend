@@ -18,7 +18,6 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions._
-import org.slf4j.LoggerFactory
 import play.api.Logging
 import play.api.i18n._
 import play.api.mvc._

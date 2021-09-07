@@ -16,7 +16,6 @@
 
 package controllers.add
 
-import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
 import forms.EoriNumberFormProvider
@@ -47,7 +46,7 @@ class EoriNumberController @Inject()(
                                       view: EoriNumberView,
                                       gbnEoriView: GBNEoriErrorView,
                                       connector: CustomsFinancialsConnector
-                                    )(implicit ec: ExecutionContext,appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                    )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form: Form[String] = formProvider()
 

@@ -19,7 +19,6 @@ package models.requests
 
 import models.domain
 import models.domain.{AccountStatusOpen, CDSAccount, CDSAccountStatus, GeneralGuaranteeBalance}
-import models.requests.AccountsAndBalancesResponseContainer.dutyDefermentAccountReads
 import play.api.libs.json.{Json, OFormat, Reads}
 
 import java.time.Instant

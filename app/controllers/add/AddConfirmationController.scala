@@ -17,7 +17,6 @@
 package controllers.add
 
 import controllers.actions._
-import org.slf4j.LoggerFactory
 import pages.ConfirmationPage
 import pages.add.{AccountsPage, AuthorityStartDatePage, EoriNumberPage}
 import play.api.Logging
