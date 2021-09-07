@@ -8,7 +8,6 @@ object AppDependencies {
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc" %% "logback-json-logger" % "5.1.0",
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.4.0",
-    "uk.gov.hmrc" %% "play-frontend-govuk" % "0.77.0-play-28",
     "uk.gov.hmrc" %% "play-frontend-hmrc" % "0.76.0-play-28",
     "uk.gov.hmrc" %% "auth-client" % "5.6.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.50.0",
