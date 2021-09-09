@@ -18,7 +18,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.components._
 @import views.html.templates.GovukFullWidthLayout
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcTrackingConsentSnippet
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.hmrcReportTechnicalIssueHelper
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 
 @this(
         govukLayout: GovukLayout,
@@ -32,11 +32,11 @@
         link: components.link,
         appConfig: config.FrontendAppConfig,
         footerLinks: FooterLinks,
-        hmrcReportTechnicalIssue: hmrcReportTechnicalIssue,
+        hmrcReportTechnicalIssue: HmrcReportTechnicalIssue,
         h2: components.h2,
         p: components.p,
         hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-        hmrcReportTechnicalIssueHelper: hmrcReportTechnicalIssueHelper
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper
 )
 
 
