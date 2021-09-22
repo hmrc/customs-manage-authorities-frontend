@@ -34,6 +34,7 @@
         @messages("unauthorised.eori-info")
         @hmrcNewTabLink(
             NewTabLink(
+                language = Some(messages.lang.toString),
                 classList = Some("govuk-link"),
                 href=Some(appConfig.registerCdsUrl),
                 text=messages("unauthorised.eori-link")
@@ -46,6 +47,7 @@
         @messages("unauthorised.get-access-info")
         @hmrcNewTabLink(
             NewTabLink(
+                language = Some(messages.lang.toString),
                 classList = Some("govuk-link"),
                 href=Some(appConfig.subscribeCdsUrl),
                 text=messages("unauthorised.get-access-link")
@@ -64,6 +66,7 @@
         @messages("unauthorised.status-info")
         @hmrcNewTabLink(
             NewTabLink(
+                language = Some(messages.lang.toString),
                 classList = Some("govuk-link"),
                 href=Some(appConfig.applicationStatusCdsUrl),
                 text=messages("unauthorised.status-check-info")
