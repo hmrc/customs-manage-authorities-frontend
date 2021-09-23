@@ -13,12 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *@
+@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcNewTabLink
+@import uk.gov.hmrc.hmrcfrontend.views.Aliases.NewTabLink
 
 @this(
     main_template: templates.GovukLayoutWrapper,
     h1: components.h1,
-    h2: components.h2
-
+    h2: components.h2,
+    hmrcNewTabLink: HmrcNewTabLink
 )
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
@@ -30,12 +32,28 @@
 
     <p class="govuk-body">
         @messages("unauthorised.eori-info")
-        <a class="govuk-link" target="_blank" href="@(appConfig.registerCdsUrl)">@messages("unauthorised.eori-link")</a>.
+        @hmrcNewTabLink(
+            NewTabLink(
+                language = Some(messages.lang.toString),
+                classList = Some("govuk-link"),
+                href=Some(appConfig.registerCdsUrl),
+                text=messages("unauthorised.eori-link")
+            )
+        )
+        .
     </p>
 
     <p class="govuk-body">
         @messages("unauthorised.get-access-info")
-        <a class="govuk-link" target="_blank" href="@(appConfig.subscribeCdsUrl)">@messages("unauthorised.get-access-link")</a>.
+        @hmrcNewTabLink(
+            NewTabLink(
+                language = Some(messages.lang.toString),
+                classList = Some("govuk-link"),
+                href=Some(appConfig.subscribeCdsUrl),
+                text=messages("unauthorised.get-access-link")
+            )
+        )
+        .
     </p>
 
     <p class="govuk-body">
@@ -46,6 +64,14 @@
 
     <p class="govuk-body">
         @messages("unauthorised.status-info")
-        <a class="govuk-link" target="_blank" href="@(appConfig.applicationStatusCdsUrl)">@messages("unauthorised.status-check-info")</a>.
+        @hmrcNewTabLink(
+            NewTabLink(
+                language = Some(messages.lang.toString),
+                classList = Some("govuk-link"),
+                href=Some(appConfig.applicationStatusCdsUrl),
+                text=messages("unauthorised.status-check-info")
+            )
+        )
+        .
     </p>
 }
