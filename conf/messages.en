@@ -99,10 +99,7 @@ unauthorised.eori-link=Economic Operator and Registration Identification (EORI) 
 unauthorised.get-access-info=If you already have an EORI number, you can
 unauthorised.get-access-link=get access to CDS (opens in a new window or tab)
 unauthorised.how-to-get-access-info=How to get access to CDS
-unauthorised.process-application-info=It can take up to one hour for HMRC to process your application.
-unauthorised.already-applied-info=If you''ve already applied to get access to CDS
-unauthorised.status-info=You can
-unauthorised.status-check-info=check the status of your application (opens in a new window or tab)
+unauthorised.process-application-info=It can take up to two hours for HMRC to process your application.
 unauthorised.how-to-get-access-info=How to get access to CDS
 
 service-unavailable.title = Sorry, we are unable to add an authority at the moment

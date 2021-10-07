@@ -99,10 +99,7 @@ unauthorised.eori-link=Rhif Cofrestru ac Adnabod Gweithredwyr Economaidd (EORI) 
 unauthorised.get-access-info=Os oes gennych rif EORI eisoes, mae modd
 unauthorised.get-access-link=cael mynediad at CDS yma
 unauthorised.how-to-get-access-info=Sut i gael mynediad at CDS
-unauthorised.process-application-info=Gall gymryd hyd at awr i CThEM brosesu’ch cais.
-unauthorised.already-applied-info=Gall gymryd hyd at awr i CThEM brosesu’ch cais.
-unauthorised.status-info=Mae modd
-unauthorised.status-check-info=gwirio statws eich cais (yn agor ffenestr neu dab newydd)
+unauthorised.process-application-info=Gall gymryd hyd at ddwy awr i CThEM brosesu’ch cais.
 
 # Needs Welsh translation
 service-unavailable.title=Mae’n ddrwg gennym – ni allwn ychwanegu awdurdod ar hyn o bryd
