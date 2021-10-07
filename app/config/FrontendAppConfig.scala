@@ -52,7 +52,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
   lazy val accessibilityStatement: String = configuration.get[String]("urls.footer.accessibility")
   lazy val registerCdsUrl: String = configuration.get[String]("urls.cdsRegisterUrl")
   lazy val subscribeCdsUrl: String = configuration.get[String]("urls.cdsSubscribeUrl")
-  lazy val applicationStatusCdsUrl: String = configuration.get[String]("urls.applicationStatusUrl")
   lazy val appName: String         = configuration.get[String]("appName")
 
   val customsFinancialsFrontendHomepageUrl: String = configuration.get[String]("microservice.services.customs-financials-frontend.homepage")

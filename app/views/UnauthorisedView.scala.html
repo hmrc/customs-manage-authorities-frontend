@@ -59,19 +59,4 @@
     <p class="govuk-body">
         @messages("unauthorised.process-application-info")
     </p>
-
-    @h2("unauthorised.already-applied-info")
-
-    <p class="govuk-body">
-        @messages("unauthorised.status-info")
-        @hmrcNewTabLink(
-            NewTabLink(
-                language = Some(messages.lang.toString),
-                classList = Some("govuk-link"),
-                href=Some(appConfig.applicationStatusCdsUrl),
-                text=messages("unauthorised.status-check-info")
-            )
-        )
-        .
-    </p>
 }
