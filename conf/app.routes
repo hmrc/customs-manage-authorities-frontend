@@ -78,10 +78,13 @@ POST        /add-authority/check-answers                                     con
 GET         /add-authority/confirmation                                      controllers.add.AddConfirmationController.onPageLoad()
 
 GET         /edit-authority/:accountId/:authorityId                          controllers.edit.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
+GET         /view-authority/:accountId/:authorityId                          controllers.TestController.test(accountId, authorityId)
 POST        /edit-authority/:accountId/:authorityId                          controllers.edit.EditCheckYourAnswersController.onSubmit(accountId, authorityId)
 
-GET         /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveController.onPageLoad(accountId, authorityId)
-POST        /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveController.onSubmit(accountId, authorityId)
+GET         /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId)
+POST        /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveAuthorisedUserController.onSubmit(accountId, authorityId)
+
+GET         /remove-authority/check-answers/:accountId/:authorityId          controllers.remove.RemoveCheckYourAnswers.onPageLoad(accountId, authorityId)
 
 GET         /remove-authority/confirmation/:accountId/:authorityId           controllers.remove.RemoveConfirmationController.onPageLoad(accountId, authorityId)
 

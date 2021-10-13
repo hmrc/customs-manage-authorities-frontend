@@ -19,12 +19,15 @@ package controllers.remove
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
 import forms.RemoveFormProvider
-import models.{ErrorResponse, MissingAccountError, MissingAuthorityError, SubmissionError}
+import models.{AuthorityEnd, ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode, SubmissionError}
 import models.domain.AuthoritiesWithId
 import models.requests.RevokeAuthorityRequest
+import pages.edit.EditAuthorityEndPage
+import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n._
 import play.api.mvc._
+import repositories.SessionRepository
 import services.AuthoritiesCacheService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,19 +37,22 @@ import views.html.remove.RemoveView
 import javax.inject.Inject
 import scala.concurrent._
 
-class RemoveController @Inject()(
-                                  override val messagesApi: MessagesApi,
-                                  service: AuthoritiesCacheService,
-                                  connector: CustomsFinancialsConnector,
-                                  identify: IdentifierAction,
-                                  formProvider: RemoveFormProvider,
-                                  implicit val controllerComponents: MessagesControllerComponents,
-                                  view: RemoveView
-                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+class RemoveAuthorisedUserController @Inject()(
+                                                override val messagesApi: MessagesApi,
+                                                service: AuthoritiesCacheService,
+                                                getData: DataRetrievalAction,
+                                                requireData: DataRequiredAction,
+                                                connector: CustomsFinancialsConnector,
+                                                sessionRepository: SessionRepository,
+                                                identify: IdentifierAction,
+                                                formProvider: RemoveFormProvider,
+                                                implicit val controllerComponents: MessagesControllerComponents,
+                                                view: RemoveView
+                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
 
   private val form = formProvider()
 
-  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify).async {
+  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       service.retrieveAuthorities(request.internalId).map { accountsWithAuthorities: AuthoritiesWithId =>
         accountsWithAuthorities.authorities.get(accountId).map { account =>
@@ -60,7 +66,7 @@ class RemoveController @Inject()(
       }
   }
 
-  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (identify).async {
+  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       service.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
         accountsWithAuthorities.authorities.get(accountId).map { account =>
@@ -70,13 +76,10 @@ class RemoveController @Inject()(
                 Future.successful(BadRequest(view(formWithErrors, RemoveViewModel(accountId, authorityId, account, authority))))
               },
               authorisedUser => {
-                val revokeRequest = RevokeAuthorityRequest(
-                  account.accountNumber,
-                  account.accountType,
-                  authority.authorisedEori,
-                  authorisedUser
-                )
-                doSubmission(revokeRequest, accountId, authorityId)
+                for {
+                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAuthorisedUserPage(accountId, authorityId), authorisedUser))
+                  _ <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(routes.RemoveCheckYourAnswers.onPageLoad(accountId, authorityId))
               }
             )
           }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
@@ -84,12 +87,6 @@ class RemoveController @Inject()(
       }
   }
 
-  def doSubmission(revokeRequest: RevokeAuthorityRequest, accountId: String, authorityId: String)(implicit hc: HeaderCarrier): Future[Result] = {
-    connector.revokeAccountAuthorities(revokeRequest).map {
-      case true => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
-      case false => errorPage(SubmissionError)
-    }
-  }
 
   private def errorPage(error: ErrorResponse) = {
     logger.error(error.msg)

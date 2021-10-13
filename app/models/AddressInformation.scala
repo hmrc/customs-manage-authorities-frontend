@@ -14,11 +14,15 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
+import play.api.libs.json.{Json, OFormat}
 
-case class SummaryList(
-                        rows: Seq[SummaryListRow]       = Nil,
-                        classes: String                 = "govuk-!-margin-bottom-9 govuk-summary-list--wide",
-                        attributes: Map[String, String] = Map.empty
-                      )
+case class AddressInformation(streetAndNumber: String,
+                              city: String,
+                              postalCode: Option[String],
+                              countryCode: String)
+
+object AddressInformation {
+  implicit val format: OFormat[AddressInformation] = Json.format[AddressInformation]
+}

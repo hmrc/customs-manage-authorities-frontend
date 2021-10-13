@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package viewmodels
+package pages.remove
 
+import models.domain.AuthorisedUser
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class SummaryList(
-                        rows: Seq[SummaryListRow]       = Nil,
-                        classes: String                 = "govuk-!-margin-bottom-9 govuk-summary-list--wide",
-                        attributes: Map[String, String] = Map.empty
-                      )
+case class RemoveAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorisedUser] {
+  override def path: JsPath = JsPath \ "remove" \ accountId \ authorityId \ toString
+  override def toString: String = "removeAuthorisedUser"
+}

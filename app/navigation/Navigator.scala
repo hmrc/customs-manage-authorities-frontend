@@ -48,14 +48,14 @@ class Navigator @Inject()() {
 
   private def editAuthorityStartRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
     answers.get(EditAuthorityStartPage(accountId, authorityId)) match {
-      case Some(AuthorityStart.Today) => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
+      case Some(AuthorityStart.Today) => controllers.routes.TestController.test(accountId, authorityId)
       case Some(AuthorityStart.Setdate) => controllers.edit.routes.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
       case _ => controllers.edit.routes.EditAuthorityStartController.onPageLoad(accountId, authorityId)
     }
 
   private def editAuthorityEndRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
     answers.get(EditAuthorityEndPage(accountId, authorityId)) match {
-      case Some(AuthorityEnd.Indefinite) => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
+      case Some(AuthorityEnd.Indefinite) => controllers.routes.TestController.test(accountId, authorityId)
       case Some(AuthorityEnd.Setdate) => controllers.edit.routes.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
       case _ => controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId)
     }

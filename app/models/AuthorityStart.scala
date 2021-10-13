@@ -18,28 +18,38 @@ package models
 
 import play.api.data.Form
 import play.api.i18n.Messages
+import play.api.libs.json.{Json, OFormat}
+import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait AuthorityStart
 
+
+
+
 object AuthorityStart extends Enumerable.Implicits {
-
-  case object Today extends WithName("today") with AuthorityStart
-  case object Setdate extends WithName("setDate") with AuthorityStart
-
   val values: Seq[AuthorityStart] = Seq(
     Today,
     Setdate
   )
 
-  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
-    value =>
-      RadioItem(
-        value = Some(value.toString),
-        content = Text(messages(s"authorityStart.${value.toString}")),
-        checked = form("value").value.contains(value.toString)
+  case object Today extends WithName("today") with AuthorityStart
+  case object Setdate extends WithName("setDate") with AuthorityStart
+
+  def options(form: Form[_], conditionalHtml: Option[Html] = None)(implicit messages: Messages): Seq[RadioItem] = values.map {
+    case value@Today => RadioItem(
+      value = Some(value.toString),
+      content = Text(messages(s"authorityStart.${value.toString}")),
+      checked = form("value").value.contains(value.toString)
     )
+    case value@Setdate => RadioItem(
+      value = Some(value.toString),
+      content = Text(messages(s"authorityStart.${value.toString}")),
+      checked = form("value").value.contains(value.toString),
+      conditionalHtml = conditionalHtml
+    )
+
   }
 
   implicit val enumerable: Enumerable[AuthorityStart] =

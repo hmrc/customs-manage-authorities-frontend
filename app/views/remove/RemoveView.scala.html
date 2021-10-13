@@ -38,14 +38,13 @@
 @govukLayout(pageTitle = Some(title(form, "remove.title", None, Seq())),backLinkUrl = Some(controllers.routes.ManageAuthoritiesController.onPageLoad)) {
 
 
-    @formHelper(action = controllers.remove.routes.RemoveController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
+    @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
 
         @errorSummary(form.errors)
 
-        <span class="govuk-caption-l">@viewModel.headingCaptionKey</span>
-        <h1 class="govuk-heading-l">@messages("remove.heading", viewModel.standingAuthority.authorisedEori)</h1>
+        <h1 class="govuk-heading-l">@messages("Remove authority", viewModel.standingAuthority.authorisedEori)</h1>
 
-        <p class="govuk-body">@messages("remove.p1")</p>
+        <p class="govuk-body">@messages("We will only use these details if we have questions regarding the removal of this authority.")</p>
 
         @h2("remove.yourDetails")
 
@@ -67,23 +66,6 @@
             classes = Some("govuk-!-width-two-thirds")
         )
 
-        @govukCheckboxes(Checkboxes(
-            name = "value",
-            fieldset = None,
-            items = Seq(
-                CheckboxItem(
-                    name = Some("confirmation"),
-                    id = Some("confirmation"),
-                    value = "true",
-                    content = Text(messages("remove.declaration")),
-                    checked = false
-                )
-            ),
-            errorMessage = form.errors.find(_.message.startsWith("remove.error.confirmation")).map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)),classes="govuk-!-width-two-thirds"))
-        ))
-
-        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("remove.confirm")), classes = "govuk-button--warning govuk-!-margin-right-1"))
-
-        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("remove.cancel")), classes = "govuk-button--secondary", href = Some(controllers.routes.ManageAuthoritiesController.onPageLoad().url)))
+        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("Continue"))))
     }
 }

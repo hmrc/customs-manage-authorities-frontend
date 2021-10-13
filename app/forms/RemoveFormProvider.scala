@@ -33,8 +33,7 @@ class RemoveFormProvider @Inject() extends Mappings {
         .verifying(regexp(textFieldRegex, "remove.error.fullName.malicious")),
       "jobRole" -> text("remove.error.jobRole.required")
         .verifying(maxLength(255, "remove.error.jobRole.length"))
-        .verifying(regexp(textFieldRegex, "remove.error.jobRole.malicious")),
-        "confirmation" -> checked("remove.error.confirmation.required")
-      )((name, role, _) => AuthorisedUser.apply(name, role))(user => Some(user.userName, user.userRole, false))
+        .verifying(regexp(textFieldRegex, "remove.error.jobRole.malicious"))
+      )(AuthorisedUser.apply)(AuthorisedUser.unapply)
     )
 }

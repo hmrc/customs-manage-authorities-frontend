@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
-@import models.{Mode, AuthorityStart}
+@import models.AuthorityStart
 
 @this(
         govukLayout: templates.GovukLayoutWrapper,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
+        inputDate: components.conditionalInputDate,
         inputRadio: components.inputRadio,
         button: components.button
 )
@@ -36,7 +36,12 @@
         @inputRadio(
             form = form,
             legend = messages("authorityStart.heading"),
-            items = AuthorityStart.options(form)
+            items = AuthorityStart.options(form, Some(inputDate(
+            form = form,
+                id = "date",
+            legendContent = "authorityStartDate.heading",
+                hintText = Some("For example, 31 3 2020")
+        )))
         )
 
         @button("site.saveAndContinue")
