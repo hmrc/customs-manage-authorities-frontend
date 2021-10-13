@@ -16,6 +16,6 @@
 
 @this(govukButton: GovukButton)
 
-@(msg: String)(implicit messages: Messages)
+@(msg: String, href: Option[String] = None)(implicit messages: Messages)
 
-@govukButton(Button(content = Text(messages(msg))))
+@govukButton(Button(content = Text(messages(msg)), href = href))

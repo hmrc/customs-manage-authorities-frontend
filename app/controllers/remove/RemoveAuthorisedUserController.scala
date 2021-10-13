@@ -52,12 +52,13 @@ class RemoveAuthorisedUserController @Inject()(
 
   private val form = formProvider()
 
+  //TODO: clean up duplicate fields
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       service.retrieveAuthorities(request.internalId).map { accountsWithAuthorities: AuthoritiesWithId =>
         accountsWithAuthorities.authorities.get(accountId).map { account =>
           account.authorities.get(authorityId).map { authority =>
-            Right(Ok(view(form, RemoveViewModel(accountId, authorityId, account, authority))))
+            Right(Ok(view(form, RemoveViewModel(accountId, authorityId, account, authority), accountId, authorityId)))
           }.getOrElse(Left(MissingAuthorityError))
         }.getOrElse(Left(MissingAccountError))
       } map {
@@ -73,7 +74,7 @@ class RemoveAuthorisedUserController @Inject()(
           account.authorities.get(authorityId).map { authority =>
             form.bindFromRequest().fold(
               formWithErrors => {
-                Future.successful(BadRequest(view(formWithErrors, RemoveViewModel(accountId, authorityId, account, authority))))
+                Future.successful(BadRequest(view(formWithErrors, RemoveViewModel(accountId, authorityId, account, authority), accountId, authorityId)))
               },
               authorisedUser => {
                 for {

@@ -68,8 +68,6 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
 
   private def accountNumberRow: Option[SummaryListRow] = {
     val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-
-
     Some(summaryListRow(
       messages("Account"),
       value = HtmlFormat.escape(accountType).toString,

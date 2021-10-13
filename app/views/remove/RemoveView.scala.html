@@ -33,9 +33,9 @@
         h2: components.h2
 )
 
-@(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], viewModel: RemoveViewModel, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "remove.title", None, Seq())),backLinkUrl = Some(controllers.routes.ManageAuthoritiesController.onPageLoad)) {
+@govukLayout(pageTitle = Some(title(form, "remove.title", None, Seq())),backLinkUrl = Some(controllers.routes.TestController.test(accountId, authorityId))) {
 
 
     @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {

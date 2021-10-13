@@ -1,0 +1,56 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.CheckYourAnswersRemoveHelper
+
+@this(
+        govukLayout: templates.GovukLayoutWrapper,
+        formHelper: FormWithCSRF,
+        errorSummary: components.errorSummary,
+        govukButton: GovukButton,
+        inputText: components.inputText,
+        inputCheckboxes: components.inputCheckboxes,
+        govukCheckboxes: GovukCheckboxes,
+        summaryList: components.summaryList,
+        h1: components.h1,
+        h2: components.h2,
+        p: components.p,
+        button: components.button,
+        link: components.link
+)
+
+
+@(model: CheckYourAnswersRemoveHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+
+@govukLayout(pageTitle = Some(titleNoForm("Check your answers", None, Seq())),backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url)) {
+
+ @h1(msg = "Check your answers", classes="govuk-heading-xl govuk-!-margin-bottom-9")
+
+ @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)) {
+  @h2("Remove authority for user")
+  @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
+
+  @h2("Your details")
+  @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
+
+  @p(Html("I confirm that I wish to remove access for this user. I understand this means they will no longer be able to use this account on a customs import declaration."))
+  @button("Confirm and submit")
+  @p(link(link = controllers.routes.TestController.test(accountId, authorityId).url, messageKey = "Cancel"))
+ }
+
+
+
+}

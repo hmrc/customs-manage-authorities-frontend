@@ -27,7 +27,7 @@
 
 @(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(Some(titleNoForm("Account authority", None, Seq()))) {
+@main_template(Some(titleNoForm("Account authority", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
 
     @h1(msg = "Account authority", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 

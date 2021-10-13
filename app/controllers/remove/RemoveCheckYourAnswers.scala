@@ -18,31 +18,48 @@ package controllers.remove
 
 import cats.data.EitherT
 import cats.data.EitherT.{fromOption, fromOptionF, liftF}
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.domain.AuthoritiesWithId
 import models.requests.RevokeAuthorityRequest
 import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.AuthoritiesCacheService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import viewmodels.CheckYourAnswersRemoveHelper
+import views.html.remove.RemoveCheckYourAnswersView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
+                                       view: RemoveCheckYourAnswersView,
                                        authoritiesCacheService: AuthoritiesCacheService,
                                        customsFinancialsConnector: CustomsFinancialsConnector,
+                                       customsDataStoreConnector: CustomsDataStoreConnector,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        mcc: MessagesControllerComponents
-                                      )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with Logging {
+                                      )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with Logging with I18nSupport {
 
-  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    Future.successful(Ok("WOO"))
+  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    authoritiesCacheService.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
+      accountsWithAuthorities.authorities.get(accountId).map { account =>
+        account.authorities.get(authorityId).map { authority =>
+          request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
+            case Some(value) =>
+              customsDataStoreConnector.getCompanyInformation(authority.authorisedEori).map { companyInformation =>
+                Ok(view(new CheckYourAnswersRemoveHelper(request.userAnswers, accountId, authorityId, value, authority, companyInformation), accountId, authorityId))
+              }
+            case None => Future.successful(errorPage(MissingAuthorisedUser))
+          }
+        }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
+      }.getOrElse(Future.successful(errorPage(MissingAccountError)))
+    }
   }
 
 
