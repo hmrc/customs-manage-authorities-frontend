@@ -34,7 +34,7 @@
 
 @govukLayout(pageTitle = Some(title(form, "accounts.title", None, Seq())), fullWidth = true, backLinkUrl = Some(call) ) {
 
-    @formHelper(action = AccountsController.onSubmit(mode)) {
+    @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 
         @errorSummary(form.errors)
         <fieldset class="govuk-fieldset">

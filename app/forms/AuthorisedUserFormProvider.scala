@@ -28,13 +28,12 @@ class AuthorisedUserFormProvider @Inject() extends Mappings {
   def apply(): Form[AuthorisedUser] =
     Form(
       mapping(
-      "fullName" -> text("authorisedUser.error.fullName.required")
-        .verifying(maxLength(255, "authorisedUser.error.fullName.length"))
-        .verifying(regexp(textFieldRegex, "authorisedUser.error.fullName.malicious")),
-      "jobRole" -> text("authorisedUser.error.jobRole.required")
-        .verifying(maxLength(255, "authorisedUser.error.jobRole.length"))
-        .verifying(regexp(textFieldRegex, "authorisedUser.error.jobRole.malicious")),
-        "confirmation" -> checked("authorisedUser.error.confirmation.required")
-      )((name, role, _) => AuthorisedUser.apply(name, role))(user => Some(user.userName, user.userRole, false))
+      "fullName" -> text("remove.error.fullName.required")
+        .verifying(maxLength(255, "remove.error.fullName.length"))
+        .verifying(regexp(textFieldRegex, "remove.error.fullName.malicious")),
+      "jobRole" -> text("remove.error.jobRole.required")
+        .verifying(maxLength(255, "remove.error.jobRole.length"))
+        .verifying(regexp(textFieldRegex, "remove.error.jobRole.malicious"))
+      )(AuthorisedUser.apply)(AuthorisedUser.unapply)
     )
 }

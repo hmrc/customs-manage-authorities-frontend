@@ -37,7 +37,7 @@ object AuthorityStart extends Enumerable.Implicits {
   case object Today extends WithName("today") with AuthorityStart
   case object Setdate extends WithName("setDate") with AuthorityStart
 
-  def options(form: Form[_], conditionalHtml: Option[Html] = None)(implicit messages: Messages): Seq[RadioItem] = values.map {
+  def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
     case value@Today => RadioItem(
       value = Some(value.toString),
       content = Text(messages(s"authorityStart.${value.toString}")),
@@ -46,8 +46,7 @@ object AuthorityStart extends Enumerable.Implicits {
     case value@Setdate => RadioItem(
       value = Some(value.toString),
       content = Text(messages(s"authorityStart.${value.toString}")),
-      checked = form("value").value.contains(value.toString),
-      conditionalHtml = conditionalHtml
+      checked = form("value").value.contains(value.toString)
     )
 
   }

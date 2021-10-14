@@ -1,95 +1,24 @@
 # microservice specific routes
 
-GET         /                                                                controllers.IndexController.onPageLoad
+GET        /                                                      controllers.IndexController.onPageLoad
 
-->          /govuk-frontend                                                  govuk.Routes
+->         /govuk-frontend                                        govuk.Routes
+->         /hmrc-frontend                                         hmrcfrontend.Routes
+->         /add-authority                                         addAuthority.Routes
+->         /edit-authority                                        editAuthority.Routes
+->         /remove-authority                                      removeAuthority.Routes
 
-->          /hmrc-frontend                                                   hmrcfrontend.Routes
+GET        /assets/*file                                          controllers.Assets.versioned(path="/public", file: Asset)
+GET        /language/:lang                                        controllers.LanguageSwitchController.switchToLanguage(lang: Language)
+GET        /this-service-has-been-reset                           controllers.SessionExpiredController.onPageLoad
+GET        /technical-difficulties                                controllers.TechnicalDifficulties.onPageLoad
+GET        /not-subscribed-for-cds                                controllers.UnauthorisedController.onPageLoad
+GET        /manage-account-authorities                            controllers.ManageAuthoritiesController.onPageLoad
+GET        /manage-account-authorities-unavailable                controllers.ManageAuthoritiesController.unavailable
+GET        /manage-account-authorities/account-unavailable        controllers.ManageAuthoritiesController.validationFailure()
 
-GET         /assets/*file                                                    controllers.Assets.versioned(path="/public", file: Asset)
+GET        /view-authority/:accountId/:authorityId                controllers.ViewAuthorityController.onPageLoad(accountId, authorityId)
 
-GET         /language/:lang                                                  controllers.LanguageSwitchController.switchToLanguage(lang: Language)
+GET        /logout-survey                                         controllers.LogoutController.logout
+GET        /logout                                                controllers.LogoutController.logoutNoSurvey
 
-GET         /this-service-has-been-reset                                     controllers.SessionExpiredController.onPageLoad
-
-GET         /technical-difficulties                                          controllers.TechnicalDifficulties.onPageLoad
-
-GET         /not-subscribed-for-cds                                          controllers.UnauthorisedController.onPageLoad
-
-GET         /manage-account-authorities                                      controllers.ManageAuthoritiesController.onPageLoad
-GET         /manage-account-authorities-unavailable                          controllers.ManageAuthoritiesController.unavailable
-GET         /manage-account-authorities/account-unavailable                 controllers.ManageAuthoritiesController.validationFailure()
-
-GET         /add-authority/accounts                                          controllers.AccountsController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/accounts                                          controllers.AccountsController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-accounts                                   controllers.AccountsController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-accounts                                   controllers.AccountsController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/eori-number                                       controllers.add.EoriNumberController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/eori-number                                       controllers.add.EoriNumberController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-eori-number                                controllers.add.EoriNumberController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-eori-number                                controllers.add.EoriNumberController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/start                                             controllers.add.AuthorityStartController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/start                                             controllers.add.AuthorityStartController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-start                                      controllers.add.AuthorityStartController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-start                                      controllers.add.AuthorityStartController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/start-date                                        controllers.add.AuthorityStartDateController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/start-date                                        controllers.add.AuthorityStartDateController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-start-date                                 controllers.add.AuthorityStartDateController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-start-date                                 controllers.add.AuthorityStartDateController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/end                                               controllers.add.AuthorityEndController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/end                                               controllers.add.AuthorityEndController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-end                                        controllers.add.AuthorityEndController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-end                                        controllers.add.AuthorityEndController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/end-date                                          controllers.add.AuthorityEndDateController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/end-date                                          controllers.add.AuthorityEndDateController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-end-date                                   controllers.add.AuthorityEndDateController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-end-date                                   controllers.add.AuthorityEndDateController.onSubmit(mode: Mode = CheckMode)
-
-GET         /add-authority/available-balance                                 controllers.add.ShowBalanceController.onPageLoad(mode: Mode = NormalMode)
-POST        /add-authority/available-balance                                 controllers.add.ShowBalanceController.onSubmit(mode: Mode = NormalMode)
-GET         /add-authority/change-available-balance                          controllers.add.ShowBalanceController.onPageLoad(mode: Mode = CheckMode)
-POST        /add-authority/change-available-balance                          controllers.add.ShowBalanceController.onSubmit(mode: Mode = CheckMode)
-
-GET         /edit-authority/:accountId/:authorityId/change-start-date        controllers.edit.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId/change-start-date        controllers.edit.EditAuthorityStartDateController.onSubmit(accountId, authorityId)
-
-GET         /edit-authority/:accountId/:authorityId/change-start             controllers.edit.EditAuthorityStartController.onPageLoad(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId/change-start             controllers.edit.EditAuthorityStartController.onSubmit(accountId, authorityId)
-
-GET         /edit-authority/:accountId/:authorityId/change-end                 controllers.edit.EditAuthorityEndController.onPageLoad(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId/change-end                 controllers.edit.EditAuthorityEndController.onSubmit(accountId, authorityId)
-
-GET         /edit-authority/:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onSubmit(accountId, authorityId)
-
-GET         /edit-authority/:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onPageLoad(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onSubmit(accountId, authorityId)
-
-GET         /edit-authority/:accountId/:authorityId/confirmation            controllers.edit.EditConfirmationController.onPageLoad(accountId, authorityId)
-
-GET         /add-authority/check-answers                                     controllers.add.AuthorisedUserController.onPageLoad()
-POST        /add-authority/check-answers                                     controllers.add.AuthorisedUserController.onSubmit()
-
-GET         /add-authority/confirmation                                      controllers.add.AddConfirmationController.onPageLoad()
-
-GET         /edit-authority/:accountId/:authorityId                          controllers.edit.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
-GET         /view-authority/:accountId/:authorityId                          controllers.TestController.test(accountId, authorityId)
-POST        /edit-authority/:accountId/:authorityId                          controllers.edit.EditCheckYourAnswersController.onSubmit(accountId, authorityId)
-
-GET         /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId)
-POST        /remove-authority/:accountId/:authorityId                        controllers.remove.RemoveAuthorisedUserController.onSubmit(accountId, authorityId)
-
-GET         /remove-authority/check-answers/:accountId/:authorityId          controllers.remove.RemoveCheckYourAnswers.onPageLoad(accountId, authorityId)
-POST        /remove-authority/check-answers/:accountId/:authorityId          controllers.remove.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)
-
-GET         /remove-authority/confirmation/:accountId/:authorityId           controllers.remove.RemoveConfirmationController.onPageLoad(accountId, authorityId)
-
-GET         /logout-survey                                                   controllers.LogoutController.logout
-GET         /logout                                                          controllers.LogoutController.logoutNoSurvey
-
-GET         /add-authority/eori-number/cannot-use-gbn-eori                                                    controllers.GBNEoriController.showGBNEori()

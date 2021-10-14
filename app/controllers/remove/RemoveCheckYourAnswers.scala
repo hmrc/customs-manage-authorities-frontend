@@ -20,8 +20,8 @@ import cats.data.EitherT
 import cats.data.EitherT.{fromOption, fromOptionF, liftF}
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.domain.AuthoritiesWithId
-import models.requests.RevokeAuthorityRequest
+import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
+import models.requests.{DataRequest, RevokeAuthorityRequest}
 import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
@@ -40,11 +40,12 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
                                        view: RemoveCheckYourAnswersView,
                                        authoritiesCacheService: AuthoritiesCacheService,
                                        customsFinancialsConnector: CustomsFinancialsConnector,
-                                       customsDataStoreConnector: CustomsDataStoreConnector,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        mcc: MessagesControllerComponents
                                       )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with Logging with I18nSupport {
+
+  case class Details(account: AccountWithAuthoritiesWithId, authority: StandingAuthority)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     authoritiesCacheService.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
@@ -52,16 +53,13 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
         account.authorities.get(authorityId).map { authority =>
           request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
             case Some(value) =>
-              customsDataStoreConnector.getCompanyInformation(authority.authorisedEori).map { companyInformation =>
-                Ok(view(new CheckYourAnswersRemoveHelper(request.userAnswers, accountId, authorityId, value, authority, companyInformation), accountId, authorityId))
-              }
-            case None => Future.successful(errorPage(MissingAuthorisedUser))
+              Future.successful(Ok(view(new CheckYourAnswersRemoveHelper(request.userAnswers, accountId, authorityId, value, authority, account), accountId, authorityId)))
+            case None => Future.successful(Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)))
           }
         }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
       }.getOrElse(Future.successful(errorPage(MissingAccountError)))
     }
   }
-
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>

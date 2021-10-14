@@ -19,7 +19,7 @@ package controllers.edit
 import base.SpecBase
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
-import forms.AuthorisedUserFormProvider
+import forms.AuthorisedUserFormProviderWithConsent
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
@@ -243,7 +243,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   trait Setup {
     def onwardRoute = Call("GET", "/foo")
 
-    val formProvider = new AuthorisedUserFormProvider()
+    val formProvider = new AuthorisedUserFormProviderWithConsent()
     val form = formProvider()
 
     lazy val authorisedUserRoute = controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url

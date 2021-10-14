@@ -16,7 +16,7 @@
 
 package forms.remove
 
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import forms.behaviours.StringFieldBehaviours
 import models.domain.AuthorisedUser
 import play.api.data.FormError
@@ -36,7 +36,7 @@ class RemoveFormProviderSpec extends StringFieldBehaviours {
 
   val user = AuthorisedUser("name", "role")
 
-  val form = new RemoveFormProvider()()
+  val form = new AuthorisedUserFormProvider()()
 
   "RemoveFormProvider" must {
 

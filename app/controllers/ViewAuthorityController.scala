@@ -16,47 +16,36 @@
 
 package controllers
 
-import akka.http.scaladsl.model.HttpHeader.ParsingResult.Ok
-import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
-import forms.AuthorisedUserFormProvider
-import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority, UnknownAccount}
+import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority, UnknownAccount}
 import models.requests.OptionalDataRequest
-import models.{AuthorityEnd, AuthorityStart, NormalMode, UserAnswers}
-import navigation.Navigator
+import models.{AuthorityEnd, AuthorityStart, UserAnswers}
 import pages.edit._
-import play.api.Logging
-import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
-import repositories.SessionRepository
 import services._
-import services.edit.EditAuthorityValidationService
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.frontend.controller.{FrontendBaseController, FrontendController}
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.{EditOrRemoveView, ServiceUnavailableView}
-import views.html.edit.EditAuthorisedUserView
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent._
 
-class TestController @Inject()(view: EditOrRemoveView,
-                               serviceUnavailableView: ServiceUnavailableView,
-                               mcc: MessagesControllerComponents,
-                               authoritiesCacheService: AuthoritiesCacheService,
-                               editSessionService: EditSessionService,
-                               dateTimeService: DateTimeService,
-                               customsDataStoreConnector: CustomsDataStoreConnector,
-                               identify: IdentifierAction,
-                               getData: DataRetrievalAction,
-                               requireData: DataRequiredAction
+class ViewAuthorityController @Inject()(view: EditOrRemoveView,
+                                        serviceUnavailableView: ServiceUnavailableView,
+                                        mcc: MessagesControllerComponents,
+                                        authoritiesCacheService: AuthoritiesCacheService,
+                                        editSessionService: EditSessionService,
+                                        dateTimeService: DateTimeService,
+                                        identify: IdentifierAction,
+                                        getData: DataRetrievalAction,
+                                        requireData: DataRequiredAction
                               )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
 
   //TODO: Check to see if works with require data
 
-  def test(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async { implicit request =>
+  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async { implicit request =>
     lazy val noAccount = AccountWithAuthoritiesWithId(UnknownAccount, "", None, Map.empty)
     lazy val noAuthorities = StandingAuthority("", LocalDate.now(), None, viewBalance = false)
 
@@ -97,15 +86,19 @@ class TestController @Inject()(view: EditOrRemoveView,
     } yield result).getOrElse(Future.successful(InternalServerError(serviceUnavailableView())))
   }
 
-  private def getViewPage(authority: StandingAuthority, userAnswers: UserAnswers, accountId: String, authorityId: String, account: AccountWithAuthoritiesWithId, checkYourAnswersEditHelper: CheckYourAnswersEditHelper)(implicit request: Request[_]) = {
+  private def getViewPage(authority: StandingAuthority,
+                          userAnswers: UserAnswers,
+                          accountId: String,
+                          authorityId: String,
+                          account: AccountWithAuthoritiesWithId,
+                          checkYourAnswersEditHelper: CheckYourAnswersEditHelper)(implicit request: Request[_]): Future[Result] = {
     val edit = !authority.canEditStartDate(dateTimeService.localDate())
-    val startChanged = authority.startChanged(userAnswers, accountId, authorityId, dateTimeService.localDate())
-    (edit, startChanged) match {
-      case (_, Left(err)) => Future.successful(Redirect(controllers.routes.TechnicalDifficulties.onPageLoad()))
-      case (true, Right(true)) => editSessionService.resetStartAnswers(userAnswers, accountId, authorityId, authority).map(answers =>
+    if (edit) {
+      editSessionService.resetStartAnswers(userAnswers, accountId, authorityId, authority).map(answers =>
         Ok(view(new CheckYourAnswersEditHelper(answers, accountId, authorityId, dateTimeService, authority, account), accountId, authorityId))
       )
-      case (_, _) => Future.successful(Ok(view(checkYourAnswersEditHelper, accountId, authorityId)))
+    } else {
+      Future.successful(Ok(view(checkYourAnswersEditHelper, accountId, authorityId)))
     }
   }
 

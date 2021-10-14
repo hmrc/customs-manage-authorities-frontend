@@ -18,7 +18,7 @@ package views
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.jsoup.Jsoup
 import org.scalatest.Matchers._
@@ -52,7 +52,7 @@ class RemoveViewSpec extends SpecBase {
     implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    private val formProvider = new RemoveFormProvider()
+    private val formProvider = new AuthorisedUserFormProvider()
     private val form = formProvider()
 
     def view(viewModel: RemoveViewModel) = Jsoup.parse(app.injector.instanceOf[RemoveView].apply(form,viewModel).body)

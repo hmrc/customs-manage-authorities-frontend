@@ -18,7 +18,7 @@ package controllers.add
 
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
-import forms.AuthorisedUserFormProvider
+import forms.AuthorisedUserFormProviderWithConsent
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.add.AuthorisedUserPage
@@ -44,7 +44,7 @@ class AuthorisedUserController @Inject()(
                                           getData: DataRetrievalAction,
                                           requireData: DataRequiredAction,
                                           connector: CustomsFinancialsConnector,
-                                          formProvider: AuthorisedUserFormProvider,
+                                          formProvider: AuthorisedUserFormProviderWithConsent,
                                           cyaValidationService: CheckYourAnswersValidationService,
                                           addAuthorityValidationService: AddAuthorityValidationService,
                                           dateTimeService: DateTimeService,

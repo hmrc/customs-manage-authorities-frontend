@@ -36,12 +36,7 @@
         @inputRadio(
             form = form,
             legend = messages("authorityStart.heading"),
-            items = AuthorityStart.options(form, Some(inputDate(
-            form = form,
-                id = "date",
-            legendContent = "authorityStartDate.heading",
-                hintText = Some("For example, 31 3 2020")
-        )))
+            items = AuthorityStart.options(form)
         )
 
         @button("site.saveAndContinue")

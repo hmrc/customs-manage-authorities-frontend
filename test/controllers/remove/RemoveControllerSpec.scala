@@ -18,7 +18,7 @@ package controllers.remove
 
 import base.SpecBase
 import connectors.CustomsFinancialsConnector
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import models.requests.RevokeAuthorityRequest
 import org.mockito.Matchers.{any, eq => meq}
@@ -43,7 +43,7 @@ class RemoveControllerSpec extends SpecBase {
     ("a" -> accountsWithAuthoritiesWithId)
   ))
 
-  private val formProvider = new RemoveFormProvider()
+  private val formProvider = new AuthorisedUserFormProvider()
   private val form = formProvider()
 
   val mockRepository = mock[AuthoritiesRepository]

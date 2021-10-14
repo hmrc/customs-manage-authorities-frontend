@@ -35,22 +35,24 @@
 
 @(model: CheckYourAnswersRemoveHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(titleNoForm("Check your answers", None, Seq())),backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url)) {
+    @govukLayout(
+        pageTitle = Some(titleNoForm("remove-cya-heading", None, Seq())),
+        backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url)
+    ) {
+        @h1(msg = "remove-cya-heading", classes = "govuk-heading-xl")
 
- @h1(msg = "Check your answers", classes="govuk-heading-xl govuk-!-margin-bottom-9")
+        @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)) {
+            @h2("remove-cya-h2.1")
+            @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
 
- @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)) {
-  @h2("Remove authority for user")
-  @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
+            @h2("remove-cya-h2.2")
+            @summaryList(viewmodels.SummaryList(model.accountNumberRows))
 
-  @h2("Your details")
-  @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
+            @h2("remove-cya-h2.3")
+            @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
 
-  @p(Html("I confirm that I wish to remove access for this user. I understand this means they will no longer be able to use this account on a customs import declaration."))
-  @button("Confirm and submit")
-  @p(link(link = controllers.routes.TestController.test(accountId, authorityId).url, messageKey = "Cancel"))
- }
-
-
-
-}
+            @p(Html(messages("remove-cya-p")))
+            @button("remove-cya-button")
+            @p(link(link = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url, messageKey = "remove-cya-cancel"))
+        }
+    }

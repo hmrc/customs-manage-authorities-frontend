@@ -30,27 +30,6 @@ case class StandingAuthority(authorisedEori: EORI,
   def containsEori(eori: EORI): Boolean = authorisedEori == eori
 
   def canEditStartDate(now: LocalDate): Boolean = authorisedFromDate.isAfter(now)
-
-  def startChanged(userAnswers: UserAnswers, accountId: String, authorityId: String, now: LocalDate): Either[StartDateError.type, Boolean] = {
-    userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)) match {
-      case Some(userStartDate) if userStartDate == authorisedFromDate => Right(false)
-      case Some(_) => Right(true)
-      case None => userAnswers.get(EditAuthorityStartPage(accountId, authorityId)) match {
-        case Some(_) if authorisedFromDate == now => Right(false)
-        case Some(_) => Right(true)
-        case None => Left(StartDateError)
-      }
-    }
-  }
-
-  def endChanged(userAnswers: UserAnswers, accountId: String, authorityId: String, now: LocalDate): Boolean = {
-    (userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)), authorisedToDate) match {
-      case (Some(userEndDate), Some(existingEndDate)) if userEndDate == existingEndDate => false
-      case (Some(_), _) => true
-      case (None, Some(_)) => true
-      case _ => false
-    }
-  }
 }
 
 object StandingAuthority {

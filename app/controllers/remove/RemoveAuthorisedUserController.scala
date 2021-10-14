@@ -18,7 +18,7 @@ package controllers.remove
 
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import models.{AuthorityEnd, ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode, SubmissionError}
 import models.domain.AuthoritiesWithId
 import models.requests.RevokeAuthorityRequest
@@ -45,7 +45,7 @@ class RemoveAuthorisedUserController @Inject()(
                                                 connector: CustomsFinancialsConnector,
                                                 sessionRepository: SessionRepository,
                                                 identify: IdentifierAction,
-                                                formProvider: RemoveFormProvider,
+                                                formProvider: AuthorisedUserFormProvider,
                                                 implicit val controllerComponents: MessagesControllerComponents,
                                                 view: RemoveView
                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
@@ -63,7 +63,7 @@ class RemoveAuthorisedUserController @Inject()(
         }.getOrElse(Left(MissingAccountError))
       } map {
         case Right(result) => result
-        case Left(failure) => errorPage(failure); Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+        case Left(failure) => errorPage(failure)
       }
   }
 

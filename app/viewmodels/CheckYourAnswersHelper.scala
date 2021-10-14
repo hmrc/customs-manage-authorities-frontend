@@ -57,7 +57,7 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
       if (list.size == 1) messages("accounts.checkYourAnswersLabel.singular") else messages("accounts.checkYourAnswersLabel.plural"),
       value = list.mkString("<br>"),
       actions = Actions(items = Seq(ActionItem(
-        href = routes.AccountsController.onPageLoad(CheckMode).url,
+        href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
         content = span(messages("site.change")),
         visuallyHiddenText = Some(messages("checkYourAnswers.accounts.hidden"))
       ))),

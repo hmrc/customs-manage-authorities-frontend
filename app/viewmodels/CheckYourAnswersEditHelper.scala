@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
+import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
 import models.{AuthorityEnd, AuthorityStart, CompanyInformation, ShowBalance, ShowBalanceError, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
@@ -32,30 +32,17 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  authorityId: String,
                                  dateTimeService: DateTimeService,
                                  val standingAuthority: StandingAuthority,
-                                 account: AccountWithAuthoritiesWithId,
-                                 companyInformation: Option[CompanyInformation] = None)(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
-
-  def rows: Seq[SummaryListRow] = {
-    Seq(
-      accountNumberRow,
-      eoriNumberRow(Some(standingAuthority.authorisedEori)),
-      authorityStartRow,
-      authorityEndRow,
-      showBalanceRow(userAnswers.get(EditShowBalancePage(accountId, authorityId)))
-    ).flatten
-  }
+                                 account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
 
   def yourAccountRow: Seq[SummaryListRow] = {
     Seq(
-      accountNumberRow
+      accountNumberRow(account)
     ).flatten
   }
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
-      eoriNumberRow(Some(standingAuthority.authorisedEori)),
-      Some(companyNameRow(companyInformation)),
-      Some(companyAddressRow(companyInformation))
+      eoriNumberRow(Some(standingAuthority.authorisedEori))
     ).flatten
   }
 
@@ -66,14 +53,43 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     ).flatten
   }
 
-  private def accountNumberRow: Option[SummaryListRow] = {
-    val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-    Some(summaryListRow(
-      messages("Account"),
-      value = HtmlFormat.escape(accountType).toString,
-      actions = Actions(items = Seq.empty),
-      secondValue = None
-    ))
+  def authorisedUserRows: Seq[SummaryListRow] = {
+    Seq(
+      authorisedUserNameRow(userAnswers.get(EditAuthorisedUserPage(accountId, authorityId))),
+      authorisedUserRoleRow(userAnswers.get(EditAuthorisedUserPage(accountId, authorityId)))
+    ).flatten
+  }
+
+
+  //TODO ensure visually hidden text is appropriate
+  private def authorisedUserNameRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+    authorisedUser.map { user =>
+      summaryListRow(
+        messages("Your name"),
+        value = user.userName,
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-name"))
+        ))),
+        secondValue = None
+      )
+    }
+  }
+
+  private def authorisedUserRoleRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+    authorisedUser.map { user =>
+      summaryListRow(
+        messages("Your name"),
+        value = user.userRole,
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-role"))
+        ))),
+        secondValue = None
+      )
+    }
   }
 
   private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] = {
@@ -110,32 +126,6 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     }
   }
 
-  def changedDetails: Boolean = {
-    val changes = userAnswers.get(EditShowBalancePage(accountId, authorityId)) match {
-      case Some(value) =>
-        Right(List(
-          standingAuthority.endChanged(userAnswers, accountId, authorityId, dateTimeService.localDate()),
-          standingAuthority.startChanged(userAnswers, accountId, authorityId, dateTimeService.localDate()).contains(true),
-          balanceRowChanged(value)
-        ).contains(true))
-      case None => Left(ShowBalanceError)
-    }
-
-    changes match {
-      case Right(details) => details
-      case Left(_) => false
-    }
-  }
-
-
-  private def balanceRowChanged(showBalance: ShowBalance): Boolean = {
-    showBalance match {
-      case ShowBalance.Yes if standingAuthority.viewBalance => false
-      case ShowBalance.No if !standingAuthority.viewBalance => false
-      case _ => true
-    }
-  }
-
   private def authorityEndRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).flatMap {
       case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
@@ -167,43 +157,5 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
         )))
       )
     )
-  }
-
-  //TODO add message keys
-  private def companyNameRow(maybeCompanyInformation: Option[CompanyInformation]): SummaryListRow = {
-    maybeCompanyInformation match {
-      case Some(value) =>
-        summaryListRow(
-          messages("Name"),
-          value = value.name,
-          actions = Actions(items = Seq()),
-          secondValue = None
-        )
-      case None =>       summaryListRow(
-        messages("Name"),
-        value = "Not available",
-        actions = Actions(items = Seq()),
-        secondValue = None
-      )
-    }
-  }
-
-  //TODO add message keys & ensure correct formatting on address
-  private def companyAddressRow(maybeCompanyInformation: Option[CompanyInformation]): SummaryListRow = {
-    maybeCompanyInformation match {
-      case Some(value) =>
-        summaryListRow(
-          messages("Address"),
-          value = value.address,
-          actions = Actions(items = Seq()),
-          secondValue = None
-        )
-      case None =>       summaryListRow(
-        messages("Address"),
-        value = "Not available",
-        actions = Actions(items = Seq()),
-        secondValue = None
-      )
-    }
   }
 }

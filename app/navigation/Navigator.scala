@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case EoriNumberPage => _ => routes.AccountsController.onPageLoad(NormalMode)
+    case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     case AccountsPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
     case AuthorityStartPage => authorityStartRoutes
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
@@ -38,28 +38,44 @@ class Navigator @Inject()() {
     case ShowBalancePage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
     case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad()
     case EditAuthorityStartPage(accountId: String, authorityId: String) => editAuthorityStartRoutes(_, accountId, authorityId)
-    case EditAuthorityStartDatePage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
     case EditAuthorityEndPage(accountId: String, authorityId: String) => editAuthorityEndRoutes(_, accountId, authorityId)
-    case EditAuthorityEndDatePage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
-    case EditShowBalancePage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
-    case EditAuthorisedUserPage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
+    case EditAuthorityStartDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
+    case EditAuthorityEndDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
+    case EditShowBalancePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
+    case EditAuthorisedUserPage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
+    case EditCheckYourAnswersPage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
     case _ => _ => routes.IndexController.onPageLoad()
+  }
+
+  private def editCheckYourAnswers(answers: UserAnswers, accountId: String, authorityId: String): Call = {
+    answers.get(EditAuthorisedUserPage(accountId, authorityId)) match {
+      case Some(_) => controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
+      case None => controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId)
+    }
   }
 
   private def editAuthorityStartRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
     answers.get(EditAuthorityStartPage(accountId, authorityId)) match {
-      case Some(AuthorityStart.Today) => controllers.routes.TestController.test(accountId, authorityId)
+      case Some(AuthorityStart.Today) => editCheckYourAnswers(answers, accountId, authorityId)
       case Some(AuthorityStart.Setdate) => controllers.edit.routes.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
       case _ => controllers.edit.routes.EditAuthorityStartController.onPageLoad(accountId, authorityId)
     }
 
   private def editAuthorityEndRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
     answers.get(EditAuthorityEndPage(accountId, authorityId)) match {
-      case Some(AuthorityEnd.Indefinite) => controllers.routes.TestController.test(accountId, authorityId)
+      case Some(AuthorityEnd.Indefinite) => editCheckYourAnswers(answers, accountId, authorityId)
       case Some(AuthorityEnd.Setdate) => controllers.edit.routes.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
       case _ => controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId)
     }
 
+
+  private val checkRoutes: Page => UserAnswers => Call = {
+    case EoriNumberPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+    case AuthorityStartPage => authorityStartCheckRoutes
+    case AuthorityEndPage => authorityEndCheckRoutes
+    case AuthorityStartDatePage => authorityStartDatePageCheckRoutes
+    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
+  }
 
   private def authorityStartRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {
@@ -74,14 +90,6 @@ class Navigator @Inject()() {
       case Some(AuthorityEnd.Setdate) => controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode)
       case _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     }
-
-  private val checkRoutes: Page => UserAnswers => Call = {
-    case EoriNumberPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
-    case AuthorityStartPage => authorityStartCheckRoutes
-    case AuthorityEndPage => authorityEndCheckRoutes
-    case AuthorityStartDatePage => authorityStartDatePageCheckRoutes
-    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
-  }
 
   private def authorityStartCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {

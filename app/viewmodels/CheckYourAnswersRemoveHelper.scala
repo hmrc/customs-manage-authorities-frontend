@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.{AuthorisedUser, StandingAuthority}
+import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
 import models.{CompanyInformation, UserAnswers}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -28,14 +28,18 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    authorityId: String,
                                    authorisedUser: AuthorisedUser,
                                    val standingAuthority: StandingAuthority,
-                                   companyInformation: Option[CompanyInformation] = None)(implicit val messages: Messages) extends SummaryListRowHelper {
+                                   account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper {
 
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
-      eoriNumberRow(Some(standingAuthority.authorisedEori)),
-      Some(companyNameRow(companyInformation)),
-      Some(companyAddressRow(companyInformation))
+      eoriNumberRow(Some(standingAuthority.authorisedEori))
+    ).flatten
+  }
+
+  def accountNumberRows: Seq[SummaryListRow] = {
+    Seq(
+      accountNumberRow(account)
     ).flatten
   }
 
@@ -57,44 +61,6 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
     )
   }
 
-  //TODO add message keys
-  private def companyNameRow(maybeCompanyInformation: Option[CompanyInformation]): SummaryListRow = {
-    maybeCompanyInformation match {
-      case Some(value) =>
-        summaryListRow(
-          messages("Name"),
-          value = value.name,
-          actions = Actions(items = Seq()),
-          secondValue = None
-        )
-      case None => summaryListRow(
-        messages("Name"),
-        value = "Not available",
-        actions = Actions(items = Seq()),
-        secondValue = None
-      )
-    }
-  }
-
-  //TODO add message keys & ensure correct formatting on address
-  private def companyAddressRow(maybeCompanyInformation: Option[CompanyInformation]): SummaryListRow = {
-    maybeCompanyInformation match {
-      case Some(value) =>
-        summaryListRow(
-          messages("Address"),
-          value = value.formattedAddress,
-          actions = Actions(items = Seq()),
-          secondValue = None
-        )
-      case None => summaryListRow(
-        messages("Address"),
-        value = "Not available",
-        actions = Actions(items = Seq()),
-        secondValue = None
-      )
-    }
-  }
-
   //TODO ensure visually hidden text is appropriate
   private def authorisedUserNameRow(authorisedUser: AuthorisedUser): SummaryListRow = {
     summaryListRow(
@@ -103,7 +69,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
       actions = Actions(items = Seq(ActionItem(
         href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
         content = span(messages("site.change")),
-        visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+        visuallyHiddenText = Some(messages("remove-cya-visually-hidden-name"))
       ))),
       secondValue = None
     )
@@ -116,7 +82,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
       actions = Actions(items = Seq(ActionItem(
         href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
         content = span(messages("site.change")),
-        visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+        visuallyHiddenText = Some(messages("remove-cya-visually-hidden-role"))
       ))),
       secondValue = None
     )

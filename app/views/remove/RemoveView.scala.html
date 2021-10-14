@@ -35,14 +35,14 @@
 
 @(form: Form[_], viewModel: RemoveViewModel, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "remove.title", None, Seq())),backLinkUrl = Some(controllers.routes.TestController.test(accountId, authorityId))) {
+@govukLayout(pageTitle = Some(title(form, "Remove authority", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
 
     @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
 
         @errorSummary(form.errors)
 
-        <h1 class="govuk-heading-l">@messages("Remove authority", viewModel.standingAuthority.authorisedEori)</h1>
+        <h1 class="govuk-heading-xl">@messages("Remove authority", viewModel.standingAuthority.authorisedEori)</h1>
 
         <p class="govuk-body">@messages("We will only use these details if we have questions regarding the removal of this authority.")</p>
 
