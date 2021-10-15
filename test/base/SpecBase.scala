@@ -57,7 +57,9 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[Metrics].toInstance(new FakeMetrics)
-      )
+      ).configure(
+      "play.filters.csp.nonce.enabled" -> false
+    )
 
   val messagesApi = new DefaultMessagesApi(
     Map("en" ->
