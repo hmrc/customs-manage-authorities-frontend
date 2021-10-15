@@ -45,8 +45,6 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
                                        mcc: MessagesControllerComponents
                                       )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with Logging with I18nSupport {
 
-  case class Details(account: AccountWithAuthoritiesWithId, authority: StandingAuthority)
-
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAccount) => errorPage(MissingAccountError)
