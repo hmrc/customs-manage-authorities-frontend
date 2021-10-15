@@ -54,30 +54,26 @@ class EditCheckYourAnswersController @Inject()(
 
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
-    service.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
-      accountsWithAuthorities.authorities.get(accountId).map { account =>
-        account.authorities.get(authorityId).map { authority =>
-          val helper = new CheckYourAnswersEditHelper(request.userAnswers, accountId, authorityId, dateTimeService, authority, account)
-          Future.successful(Ok(view(helper, accountId, authorityId)))
-        }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
-      }.getOrElse(Future.successful(errorPage(MissingAccountError)))
+    service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
+      case Left(NoAuthority) => errorPage(MissingAuthorityError)
+      case Left(NoAccount) => errorPage(MissingAccountError)
+      case Right(AccountAndAuthority(account, authority)) =>
+        val helper = new CheckYourAnswersEditHelper(
+          request.userAnswers, accountId, authorityId, dateTimeService, authority, account)
+        Ok(view(helper, accountId, authorityId))
     }
-  }
-
-  private def errorPage(error: ErrorResponse) = {
-    logger.error(error.msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
   }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
-    service.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
-      accountsWithAuthorities.authorities.get(accountId).map { account =>
-        account.authorities.get(authorityId).map { authority =>
-          doSubmission(request.userAnswers, accountId, authorityId, authority.authorisedEori, account)
-        }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
-      }.getOrElse(Future.successful(errorPage(MissingAccountError)))
+    service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+      case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+      case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
+      case Right(AccountAndAuthority(account, authority)) => doSubmission(
+        request.userAnswers, accountId, authorityId, authority.authorisedEori, account
+      )
     }
   }
+
 
 
   private def doSubmission(userAnswers: UserAnswers,
@@ -86,20 +82,21 @@ class EditCheckYourAnswersController @Inject()(
                            authorisedEori: String,
                            account: AccountWithAuthoritiesWithId)(implicit hc: HeaderCarrier): Future[Result] = {
 
-    //TODO Ensure validation doesn't allow the submission of invalid data
-    editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account)
-    match {
+    editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
       case Right(payload) => connector.grantAccountAuthorities(payload).map {
         case true => Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
-        case false => {
+        case false =>
           logger.error("Edit authority request submission to backend failed")
           Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
-        }
       }
-      case _ => {
+      case _ =>
         logger.error("UserAnswers did not contain sufficient data to construct add authority request")
         Future.successful(Redirect(controllers.routes.TechnicalDifficulties.onPageLoad()))
-      }
     }
+  }
+
+  private def errorPage(error: ErrorResponse): Result = {
+    logger.error(error.msg)
+    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
   }
 }

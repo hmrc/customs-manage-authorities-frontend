@@ -82,7 +82,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
-        val result = await(service.populateUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId)(messages(app)))
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId)(messages(app)))
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate
@@ -107,7 +107,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
-        val result = await(service.populateUserAnswers("a", "b", populatedUserAnswers, standingAuthority, accountsWithAuthoritiesWithId)(messages(app)))
+        val result = await(service.resetUserAnswers("a", "b", populatedUserAnswers, standingAuthority, accountsWithAuthoritiesWithId)(messages(app)))
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate

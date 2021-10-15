@@ -60,12 +60,10 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     ).flatten
   }
 
-
-  //TODO ensure visually hidden text is appropriate
   private def authorisedUserNameRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
     authorisedUser.map { user =>
       summaryListRow(
-        messages("Your name"),
+        messages("edit-cya-name"),
         value = user.userName,
         actions = Actions(items = Seq(ActionItem(
           href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
@@ -80,7 +78,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   private def authorisedUserRoleRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
     authorisedUser.map { user =>
       summaryListRow(
-        messages("Your name"),
+        messages("edit-cya-role"),
         value = user.userRole,
         actions = Actions(items = Seq(ActionItem(
           href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,

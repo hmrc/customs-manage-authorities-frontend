@@ -28,5 +28,5 @@
 
     <p class="govuk-body">@messages("session_expired.guidance")</p>
 
-    <a href="@controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)" class="govuk-link" id="start-link">@button("session_expired.action")</a>
+    <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad()" class="govuk-link" id="start-link">@button("session_expired.action")</a>
 }

@@ -24,8 +24,8 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 
 class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
-                                   accountId: String,
-                                   authorityId: String,
+                                   val accountId: String,
+                                   val authorityId: String,
                                    authorisedUser: AuthorisedUser,
                                    val standingAuthority: StandingAuthority,
                                    account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper {
@@ -61,10 +61,9 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
     )
   }
 
-  //TODO ensure visually hidden text is appropriate
   private def authorisedUserNameRow(authorisedUser: AuthorisedUser): SummaryListRow = {
     summaryListRow(
-      messages("Your name"),
+      messages("remove-cya-name"),
       value = authorisedUser.userName,
       actions = Actions(items = Seq(ActionItem(
         href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
@@ -77,7 +76,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
 
   private def authorisedUserRoleRow(authorisedUser: AuthorisedUser): SummaryListRow = {
     summaryListRow(
-      messages("Your name"),
+      messages("remove-cya-role"),
       value = authorisedUser.userRole,
       actions = Actions(items = Seq(ActionItem(
         href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,

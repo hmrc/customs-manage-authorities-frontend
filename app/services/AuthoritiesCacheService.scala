@@ -18,7 +18,7 @@ package services
 
 import connectors.CustomsFinancialsConnector
 import models.InternalId
-import models.domain.AuthoritiesWithId
+import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
 import repositories.AuthoritiesRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -39,4 +39,22 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, conne
     }
   }
 
+  def getAccountAndAuthority(internalId: InternalId, authorityId: String, accountId: String)
+                            (implicit hc: HeaderCarrier): Future[Either[AuthoritiesCacheErrorResponse, AccountAndAuthority]] = {
+    retrieveAuthorities(internalId).map { accountsWithAuthorities =>
+      accountsWithAuthorities.authorities.get(accountId).map { account =>
+        account.authorities.get(authorityId).map { authority =>
+          Right(AccountAndAuthority(account, authority))
+        }.getOrElse(Left(NoAuthority))
+      }.getOrElse(Left(NoAccount))
+    }
+  }
 }
+
+case class AccountAndAuthority(account: AccountWithAuthoritiesWithId, authority: StandingAuthority)
+
+sealed trait AuthoritiesCacheErrorResponse
+
+case object NoAuthority extends AuthoritiesCacheErrorResponse
+
+case object NoAccount extends AuthoritiesCacheErrorResponse

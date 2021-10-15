@@ -35,14 +35,14 @@
 
 @(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "Your details", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
+@govukLayout(pageTitle = Some(title(form, "authorised-user.heading", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorisedUserController.onSubmit(accountId, authorityId)) {
 
         @errorSummary(form.errors)
 
-        <h1 class="govuk-heading-xl">@messages("Your Details")</h1>
-        <p class="govuk-body">@messages("We will only use these details if we have questions regarding this authority.")</p>
+        <h1 class="govuk-heading-xl">@messages("authorised-user.heading")</h1>
+        <p class="govuk-body">@messages("authorised-user.p")</p>
 
         @inputText(
             form,
@@ -62,6 +62,6 @@
             classes = Some("govuk-!-width-two-thirds")
         )
 
-        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("Continue"))))
+        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("site.continue"))))
     }
 }

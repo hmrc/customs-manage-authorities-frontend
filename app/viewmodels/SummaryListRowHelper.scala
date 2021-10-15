@@ -44,11 +44,10 @@ trait SummaryListRowHelper {
     Html(s"""$contents""")
   )
 
-  //TODO change hardcoded message
   def accountNumberRow(account: AccountWithAuthoritiesWithId)(implicit messages: Messages): Option[SummaryListRow] = {
     val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
     Some(summaryListRow(
-      messages("Your account"),
+      messages("edit-cya-account-number"),
       value = HtmlFormat.escape(accountType).toString,
       actions = Actions(items = Seq.empty),
       secondValue = None

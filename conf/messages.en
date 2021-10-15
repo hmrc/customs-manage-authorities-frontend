@@ -308,14 +308,22 @@ manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you'
 manageAuthorities.reportAProblem.link=Please contact HMRC for technical assistance (opens in new tab).
 
 
+#Authorised User
+authorised-user.heading = Your details
+authorised-user.p = We will only use these details if we have questions regarding this authority
+authorised-user-remove.heading = Remove authority
+authorised-user-remove.p = We will only use these details if we have questions regarding the removal of this authority
+
 #Remove Check Your Answers
 remove-cya-heading = Check your answers
-remove-cya-h2.1 = Remove authority for user
-remove-cya-h2.2 = Your account
+remove-cya-h2.1 = Account you have authorised
+remove-cya-h2.2 = Remove authority for user
 remove-cya-h2.3 = Your details
 remove-cya-p = I confirm that I wish to remove access for this user. I understand this means they will no longer be able to use this account on a customs import declaration.
 remove-cya-button = Confirm and submit
 remove-cya-cancel = Cancel
+remove-cya-name = Your name
+remove-cya-role = Your role
 remove-cya-visually-hidden-name = your name
 remove-cya-visually-hidden-role = your role
 
@@ -328,8 +336,21 @@ edit-cya-h2.4 = Your details
 edit-cya-p = I confirm that the information given is true and accurate and I give authorisation to use this account when clearing customs declarations on behalf of my company.
 edit-cya-button = Confirm and submit
 edit-cya-cancel = Cancel
+edit-cya-account-number = Your account
 edit-cya-visually-hidden-name = your name
 edit-cya-visually-hidden-role = your role
+edit-cya-name = Your name
+edit-cya-role = Your role
+
+#Edit or remove view
+view-authority-heading = Account authority
+view-authority-h2.1 = Account you have authorised
+view-authority-h2.2 = Authorised company details
+view-authority-h2.3 = Authority duration
+view-authority-h2.4 = Remove authority
+view-authority-p = You will be asked to confirm whether you wish to remove this authority
+view-authority-link = Remove authority
+
 
 
 # Date Format

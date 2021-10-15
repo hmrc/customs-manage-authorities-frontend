@@ -33,18 +33,20 @@
         h2: components.h2
 )
 
-@(form: Form[_], viewModel: RemoveViewModel, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "Remove authority", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
-
+@govukLayout(
+    pageTitle = Some(title(form, "authorised-user-remove.heading", None, Seq())),
+    backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(viewModel.accountId, viewModel.authorityId))
+) {
 
     @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
 
         @errorSummary(form.errors)
 
-        <h1 class="govuk-heading-xl">@messages("Remove authority", viewModel.standingAuthority.authorisedEori)</h1>
+        <h1 class="govuk-heading-xl">@messages("authorised-user-remove.heading", viewModel.standingAuthority.authorisedEori)</h1>
 
-        <p class="govuk-body">@messages("We will only use these details if we have questions regarding the removal of this authority.")</p>
+        <p class="govuk-body">@messages("authorised-user-remove.p")</p>
 
         @h2("remove.yourDetails")
 
@@ -66,6 +68,6 @@
             classes = Some("govuk-!-width-two-thirds")
         )
 
-        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("Continue"))))
+        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("site.continue"))))
     }
 }

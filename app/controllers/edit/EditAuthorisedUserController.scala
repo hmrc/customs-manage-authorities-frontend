@@ -16,24 +16,18 @@
 
 package controllers.edit
 
-import connectors.CustomsFinancialsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.remove.routes
 import forms.AuthorisedUserFormProvider
-import models.domain.AuthoritiesWithId
+import models.NormalMode
 import models.requests.DataRequest
-import models.{ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode}
 import navigation.Navigator
-import pages.edit.{EditAuthorisedUserPage, EditAuthorityStartPage}
-import pages.remove.RemoveAuthorisedUserPage
+import pages.edit.EditAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.edit.EditAuthorityValidationService
-import services.{AuthoritiesCacheService, DateTimeService, EditSessionService}
+import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.ServiceUnavailableView
 import views.html.edit.EditAuthorisedUserView
 
 import javax.inject.Inject
@@ -41,17 +35,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class EditAuthorisedUserController @Inject()(
                                               override val messagesApi: MessagesApi,
-                                              service: AuthoritiesCacheService,
-                                              connector: CustomsFinancialsConnector,
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
                                               formProvider: AuthorisedUserFormProvider,
                                               val dateTimeService: DateTimeService,
-                                              editAuthorityValidationService: EditAuthorityValidationService,
-                                              serviceUnavailable: ServiceUnavailableView,
                                               sessionRepository: SessionRepository,
-                                              editSessionService: EditSessionService,
                                               view: EditAuthorisedUserView,
                                               navigator: Navigator,
                                               implicit val controllerComponents: MessagesControllerComponents,
@@ -78,11 +67,4 @@ class EditAuthorisedUserController @Inject()(
           } yield Redirect(navigator.nextPage(EditAuthorisedUserPage(accountId: String, authorityId: String), NormalMode, updatedAnswers))
         })
     }
-
-  private def errorPage(error: ErrorResponse) = {
-    logger.error(error.msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
-  }
-
-
 }

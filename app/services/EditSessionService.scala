@@ -30,50 +30,19 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
                                    dateTimeService: DateTimeService
                                   )(implicit executionContext: ExecutionContext) {
 
-  def resetStartAnswers(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {
-    for {
-      populatedStart <- populateStartPage(userAnswers, accountId, authorityId, authority)
-      updatedUserAnswers <- populateStartDatePage(populatedStart, accountId, authorityId, authority)
-      _ <- sessionRepository.set(updatedUserAnswers)
-    } yield updatedUserAnswers
-  }
-
-  def resetEndAnswers(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {
-    for {
-      populatedEnd <- populateEndPage(userAnswers, accountId, authorityId, authority)
-      updatedUserAnswers <- populateEndDatePage(populatedEnd, accountId, authorityId, authority)
-      _ <- sessionRepository.set(updatedUserAnswers)
-    } yield updatedUserAnswers
-  }
-
-  def populateUserAnswers(accountId: String,
-                          authorityId: String,
-                          userAnswers: UserAnswers,
-                          authority: StandingAuthority,
-                          account: AccountWithAuthoritiesWithId
+  def resetUserAnswers(accountId: String,
+                       authorityId: String,
+                       userAnswers: UserAnswers,
+                       authority: StandingAuthority,
+                       account: AccountWithAuthoritiesWithId
                          )(implicit messages: Messages): Future[CheckYourAnswersEditHelper] = {
     val newUserAnswers = UserAnswers(userAnswers.id)
     for {
-      populatedStartDatePage <- userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).fold(
-        populateStartDatePage(newUserAnswers, accountId, authorityId, authority)
-      )(v => Future.fromTry(newUserAnswers.set(EditAuthorityStartDatePage(accountId, authorityId), v)))
-
-      populatedStartPage <- userAnswers.get(EditAuthorityStartPage(accountId, authorityId)).fold {
-        populateStartPage(populatedStartDatePage, accountId, authorityId, authority)
-      }(v => Future.fromTry(populatedStartDatePage.set(EditAuthorityStartPage(accountId, authorityId), v)(AuthorityStart.writes)))
-
-      populatedEndDatePage <- userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).fold(
-        populateEndDatePage(populatedStartPage, accountId, authorityId, authority)
-      )(v => Future.fromTry(populatedStartPage.set(EditAuthorityEndDatePage(accountId, authorityId), v)))
-
-      populatedEndPage <- userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).fold(
-        populateEndPage(populatedEndDatePage, accountId, authorityId, authority)
-      )(v => Future.fromTry(populatedEndDatePage.set(EditAuthorityEndPage(accountId, authorityId), v)(AuthorityEnd.writes)))
-
-      updatedAnswers <- userAnswers.get(EditShowBalancePage(accountId, authorityId)).fold(
-        populateShowBalance(populatedEndPage, accountId, authorityId, authority)
-      )(v => Future.fromTry(populatedEndPage.set(EditShowBalancePage(accountId, authorityId), v)(ShowBalance.writes)))
-
+      populatedStartDatePage <- populateStartDatePage(newUserAnswers, accountId, authorityId, authority)
+      populatedStartPage <- populateStartPage(populatedStartDatePage, accountId, authorityId, authority)
+      populatedEndDatePage <- populateEndDatePage(populatedStartPage, accountId, authorityId, authority)
+      populatedEndPage <- populateEndPage(populatedEndDatePage, accountId, authorityId, authority)
+      updatedAnswers <- populateShowBalance(populatedEndPage, accountId, authorityId, authority)
       _ <- sessionRepository.set(updatedAnswers)
     } yield new CheckYourAnswersEditHelper(updatedAnswers, accountId, authorityId, dateTimeService, authority, account)
   }

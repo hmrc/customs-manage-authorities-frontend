@@ -27,22 +27,22 @@
 
 @(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(Some(titleNoForm("Account authority", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
+@main_template(Some(titleNoForm("view-authority-heading", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
 
-    @h1(msg = "Account authority", classes="govuk-heading-xl govuk-!-margin-bottom-9")
+    @h1(msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 
-    @h2("Account you have authorised")
+    @h2("view-authority-h2.1")
     @summaryList(viewmodels.SummaryList(helper.yourAccountRow))
 
-    @h2("Authorised company details")
+    @h2("view-authority-h2.2")
     @summaryList(viewmodels.SummaryList(helper.authorisedCompanyDetailsRows))
 
-    @h2("Authority duration")
+    @h2("view-authority-h2.3")
     @summaryList(viewmodels.SummaryList(helper.authorityDurationRows))
 
-    @h2("Remove authority")
-    @p(Html("You will be asked to confirm whether you wish to remove this authority"))
-    @p(link(link = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, messageKey = "Remove authority"))
+    @h2("view-authority-h2.4")
+    @p(Html(messages("view-authority-p")))
+    @p(link(link = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, messageKey = "view-authority-link"))
 }
 
     

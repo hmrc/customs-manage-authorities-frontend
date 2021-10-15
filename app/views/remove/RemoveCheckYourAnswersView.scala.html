@@ -33,26 +33,26 @@
 )
 
 
-@(model: CheckYourAnswersRemoveHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+@(model: CheckYourAnswersRemoveHelper)(implicit request: Request[_], messages: Messages)
 
     @govukLayout(
         pageTitle = Some(titleNoForm("remove-cya-heading", None, Seq())),
-        backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url)
+        backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(model.accountId, model.authorityId).url)
     ) {
         @h1(msg = "remove-cya-heading", classes = "govuk-heading-xl")
 
-        @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)) {
+        @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(model.accountId, model.authorityId)) {
             @h2("remove-cya-h2.1")
-            @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
+            @summaryList(viewmodels.SummaryList(model.accountNumberRows))
 
             @h2("remove-cya-h2.2")
-            @summaryList(viewmodels.SummaryList(model.accountNumberRows))
+            @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
 
             @h2("remove-cya-h2.3")
             @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
 
             @p(Html(messages("remove-cya-p")))
             @button("remove-cya-button")
-            @p(link(link = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url, messageKey = "remove-cya-cancel"))
+            @p(link(link = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, messageKey = "remove-cya-cancel"))
         }
     }

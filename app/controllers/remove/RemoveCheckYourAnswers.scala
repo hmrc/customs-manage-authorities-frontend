@@ -18,7 +18,7 @@ package controllers.remove
 
 import cats.data.EitherT
 import cats.data.EitherT.{fromOption, fromOptionF, liftF}
-import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
+import connectors.CustomsFinancialsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
 import models.requests.{DataRequest, RevokeAuthorityRequest}
@@ -27,7 +27,7 @@ import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.AuthoritiesCacheService
+import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewmodels.CheckYourAnswersRemoveHelper
@@ -48,30 +48,37 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
   case class Details(account: AccountWithAuthoritiesWithId, authority: StandingAuthority)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    authoritiesCacheService.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
-      accountsWithAuthorities.authorities.get(accountId).map { account =>
-        account.authorities.get(authorityId).map { authority =>
-          request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
-            case Some(value) =>
-              Future.successful(Ok(view(new CheckYourAnswersRemoveHelper(request.userAnswers, accountId, authorityId, value, authority, account), accountId, authorityId)))
-            case None => Future.successful(Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)))
-          }
-        }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
-      }.getOrElse(Future.successful(errorPage(MissingAccountError)))
+    authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
+      case Left(NoAccount) => errorPage(MissingAccountError)
+      case Left(NoAuthority) => errorPage(MissingAuthorityError)
+      case Right(AccountAndAuthority(account, authority)) =>
+        request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
+          case Some(authorisedUser) =>
+            val helper =
+              new CheckYourAnswersRemoveHelper(
+                request.userAnswers,
+                accountId,
+                authorityId,
+                authorisedUser,
+                authority,
+                account
+              )
+            Ok(view(helper))
+          case None => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
+        }
     }
   }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      authoritiesCacheService.retrieveAuthorities(request.internalId).flatMap { accountsWithAuthorities: AuthoritiesWithId =>
-        accountsWithAuthorities.authorities.get(accountId).map { account =>
-          account.authorities.get(authorityId).map { authority =>
-            request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map { authorisedUser =>
-              val revokeRequest = RevokeAuthorityRequest(account.accountNumber, account.accountType, authority.authorisedEori, authorisedUser)
-              doSubmission(revokeRequest, accountId, authorityId)
-            }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
-          }.getOrElse(Future.successful(errorPage(MissingAuthorityError)))
-        }.getOrElse(Future.successful(errorPage(MissingAccountError)))
+      authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+        case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
+        case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+        case Right(AccountAndAuthority(account, authority)) =>
+          request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map { authorisedUser =>
+            val revokeRequest = RevokeAuthorityRequest(account.accountNumber, account.accountType, authority.authorisedEori, authorisedUser)
+            doSubmission(revokeRequest, accountId, authorityId)
+          }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
       }
   }
 
