@@ -40,7 +40,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
   private val formProvider = new AuthorityStartFormProvider()
   private val form = formProvider()
-  val backLinkRoute: Call = controllers.routes.AccountsController.onPageLoad(NormalMode)
+  val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
 
   "AuthorityStart Controller" must {
 

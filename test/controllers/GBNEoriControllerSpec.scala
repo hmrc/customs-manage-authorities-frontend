@@ -32,7 +32,7 @@ class GBNEoriControllerSpec extends SpecBase {
 
       running(application) {
 
-        val request = FakeRequest(GET, routes.GBNEoriController.showGBNEori().url)
+        val request = FakeRequest(GET, controllers.add.routes.GBNEoriController.showGBNEori().url)
 
         val result = route(application, request).value
 

@@ -19,6 +19,7 @@ package controllers.remove
 import controllers.actions._
 import forms.AuthorisedUserFormProvider
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError}
+import pages.edit.EditAuthorisedUserPage
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n._
@@ -52,7 +53,11 @@ class RemoveAuthorisedUserController @Inject()(
         case Left(NoAuthority) => errorPage(MissingAuthorityError)
         case Left(NoAccount) => errorPage(MissingAccountError)
         case Right(AccountAndAuthority(account, authority)) =>
-          Ok(view(form, RemoveViewModel(accountId, authorityId, account, authority)))
+          val populatedForm = request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
+            case Some(value) => form.fill(value)
+            case None => form
+          }
+          Ok(view(populatedForm, RemoveViewModel(accountId, authorityId, account, authority)))
       }
   }
 

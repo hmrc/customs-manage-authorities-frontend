@@ -65,7 +65,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "accounts.type.cash: 12345",
             None,
             Actions(items = Seq(ActionItem(
-              href = routes.AccountsController.onPageLoad(CheckMode).url,
+              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
               content = span("site.change"),
               visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
             )))
@@ -129,7 +129,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "accounts.type.cash: 12345",
             None,
             Actions(items = Seq(ActionItem(
-              href = routes.AccountsController.onPageLoad(CheckMode).url,
+              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
               content = span("site.change"),
               visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
             )))
@@ -186,7 +186,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "accounts.type.cash: 12345<br>accounts.type.dutyDeferment: 67890<br>accounts.type.generalGuarantee: 54321",
             None,
             Actions(items = Seq(ActionItem(
-              href = routes.AccountsController.onPageLoad(CheckMode).url,
+              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
               content = span("site.change"),
               visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
             )))
@@ -249,7 +249,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "accounts.type.cash: 12345<br>accounts.type.dutyDeferment: 67890<br>accounts.type.generalGuarantee: 54321",
             None,
             Actions(items = Seq(ActionItem(
-              href = routes.AccountsController.onPageLoad(CheckMode).url,
+              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
               content = span("site.change"),
               visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
             )))

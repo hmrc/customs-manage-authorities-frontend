@@ -50,10 +50,13 @@ class EditAuthorisedUserController @Inject()(
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
-  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] =
-    commonActions { implicit request =>
-      Ok(view(form, accountId, authorityId))
+  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions { implicit request =>
+    val populatedForm = request.userAnswers.get(EditAuthorisedUserPage(accountId, authorityId)) match {
+      case Some(value) => form.fill(value)
+      case None => form
     }
+    Ok(view(populatedForm, accountId, authorityId))
+  }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
     commonActions.async { implicit request =>

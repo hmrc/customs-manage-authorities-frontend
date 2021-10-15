@@ -53,7 +53,7 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
       "go from EoriNumber to AuthorityStart" in {
-        navigator.nextPage(EoriNumberPage, NormalMode, emptyUserAnswers) mustBe routes.AccountsController.onPageLoad(NormalMode)
+        navigator.nextPage(EoriNumberPage, NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AccountsController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStart to AuthorityStartDate when 'set date' is chosen" in {

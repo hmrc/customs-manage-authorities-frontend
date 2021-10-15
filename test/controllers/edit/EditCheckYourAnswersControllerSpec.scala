@@ -20,6 +20,9 @@ import base.SpecBase
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
+import models.AuthorityEnd.Indefinite
+import models.AuthorityStart.Today
+import models.ShowBalance.Yes
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
@@ -27,7 +30,7 @@ import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.edit.{EditAuthorityEndPage, EditAuthorityStartPage, EditShowBalancePage}
+import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -37,7 +40,7 @@ import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import services.edit.EditAuthorityValidationService
 import viewmodels.CheckYourAnswersEditHelper
-import views.html.edit.EditAuthorisedUserView
+import views.html.edit.{EditAuthorisedUserView, EditCheckYourAnswersView}
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
@@ -48,6 +51,11 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "return OK and the correct view for a GET" in new Setup {
 
       val userAnswers = emptyUserAnswers
+        .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
+        .set(EditAuthorityStartPage("a", "b"), Today).get
+        .set(EditAuthorityEndPage("a", "b"), Indefinite).get
+        .set(EditShowBalancePage("a", "b"), Yes).get
+        .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
       val application = applicationBuilder(Some(userAnswers))
         .overrides(
@@ -64,48 +72,12 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         val request = fakeRequest(GET, authorisedUserRoute)
         val result = route(application, request).value
-        val view = application.injector.instanceOf[EditAuthorisedUserView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(form, helper(userAnswers, application), "a", "b")(request, messages(application)).toString
-      }
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in new Setup {
-
-      val userAnswers = populatedUserAnswers(emptyUserAnswers)
-
-      val newStandingAuthority = standingAuthority.copy(authorisedFromDate = LocalDate.now().plusDays(20))
-
-      val newAccountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> newStandingAuthority))
-      val newAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-        ("a" -> newAccountsWithAuthoritiesWithId)
-      ))
-
-      val application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        ).configure(Map("features.edit-journey" -> true))
-        .build()
-
-      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(newAuthoritiesWithId)))
-
-      running(application) {
-
-        val request = fakeRequest(GET, authorisedUserRoute)
-
-        val view = application.injector.instanceOf[EditAuthorisedUserView]
-
-        val result = route(application, request).value
+        val view = application.injector.instanceOf[EditCheckYourAnswersView]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, helper(userAnswers, application, newStandingAuthority), "a", "b")(request, messages(application)).toString
+          view(helper(userAnswers, application, standingAuthority),"a", "b")(request, messages(application)).toString
       }
     }
 
@@ -183,41 +155,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
-      }
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in new Setup {
-
-      val userAnswers = emptyUserAnswers
-      val application = applicationBuilder(Some(populatedUserAnswers(userAnswers)))
-        .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        ).configure(Map("features.edit-journey" -> true))
-        .build()
-
-      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute
-          )
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[EditAuthorisedUserView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-
-        contentAsString(result) mustEqual
-          view(boundForm, helper(populatedUserAnswers(userAnswers), application), "a", "b")(request, messages(application)).toString
+        redirectLocation(result).value mustEqual controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url
       }
     }
 
@@ -242,9 +180,6 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   trait Setup {
     def onwardRoute = Call("GET", "/foo")
-
-    val formProvider = new AuthorisedUserFormProviderWithConsent()
-    val form = formProvider()
 
     lazy val authorisedUserRoute = controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
 

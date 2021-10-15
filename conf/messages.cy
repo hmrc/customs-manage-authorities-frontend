@@ -140,6 +140,7 @@ manageAuthorities.table.row.remove=Tynnu
 manageAuthorities.table.row.remove.CdsCashAccount=Tynnu defnyddiwr {0} o’r cyfrif arian parod
 manageAuthorities.table.row.remove.CdsDutyDefermentAccount=Tynnu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.remove.CdsGeneralGuaranteeAccount=Tynnu defnyddiwr {0} o’r cyfrif gwarant
+manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
 
 manageAuthorities.table.row.edit=Golygu
 manageAuthorities.table.row.edit.CdsCashAccount = Golygu defnyddiwr {0} o’r cyfrif arian parod
@@ -313,7 +314,7 @@ remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
 remove-cya-h2.3 = Your details
 remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion
-remove-cya-button = MISSING (Confirm and submit)
+remove-cya-button = Cadarnhau a chyflwyno
 remove-cya-cancel = Canslo
 remove-cya-name = Eich enw
 remove-cya-role = Eich swydd
@@ -327,16 +328,16 @@ edit-cya-h2.2 = Manylion y cwmni awdurdodedig
 edit-cya-h2.3 = Hyd yr awdurdod
 edit-cya-h2.4 = Eich manylion
 edit-cya-p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni
-edit-cya-button = MISSING (Confirm and submit)
+edit-cya-button = Cadarnhau a chyflwyno
 edit-cya-cancel = Canslo
-edit-cya-account-number = MISSING (Your account)
+edit-cya-account-number = Eich cyfrif
 edit-cya-visually-hidden-name = eich enw
 edit-cya-visually-hidden-role = eich swydd
 edit-cya-name = Eich enw
 edit-cya-role = Eich swydd
 
 #Edit or remove view
-view-authority-heading = MISSING (Account authority)
+view-authority-heading = Awdurdod y cyfrif
 view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 view-authority-h2.2 = Manylion y cwmni awdurdodedig
 view-authority-h2.3 = Hyd yr awdurdod
