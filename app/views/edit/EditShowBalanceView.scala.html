@@ -27,7 +27,7 @@
 
 @(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "showBalance.title", None, Seq())), backLinkUrl = Some(controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authorityId))) {
+@govukLayout(pageTitle = Some(title(form, "showBalance.title", None, Seq())), backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditShowBalanceController.onSubmit(accountId, authorityId), 'autoComplete -> "off") {
 
