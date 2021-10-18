@@ -1,0 +1,7 @@
+GET         /:accountId/:authorityId                               controllers.remove.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId                               controllers.remove.RemoveAuthorisedUserController.onSubmit(accountId, authorityId)
+
+GET         /check-answers/:accountId/:authorityId                 controllers.remove.RemoveCheckYourAnswers.onPageLoad(accountId, authorityId)
+POST        /check-answers/:accountId/:authorityId                 controllers.remove.RemoveCheckYourAnswers.onSubmit(accountId, authorityId)
+
+GET         /confirmation/:accountId/:authorityId                  controllers.remove.RemoveConfirmationController.onPageLoad(accountId, authorityId)

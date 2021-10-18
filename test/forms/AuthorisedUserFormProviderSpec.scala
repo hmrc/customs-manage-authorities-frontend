@@ -35,7 +35,7 @@ class AuthorisedUserFormProviderSpec extends StringFieldBehaviours {
 
   val user = AuthorisedUser("name", "role")
 
-  val form = new AuthorisedUserFormProvider()()
+  val form = new AuthorisedUserFormProviderWithConsent()()
 
   "AuthorisedUserForm" must {
 

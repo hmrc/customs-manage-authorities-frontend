@@ -16,8 +16,8 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
-import models.{AuthorityEnd, AuthorityStart, ShowBalance, ShowBalanceError, UserAnswers}
+import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
+import models.{AuthorityEnd, AuthorityStart, CompanyInformation, ShowBalance, ShowBalanceError, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -34,29 +34,60 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  val standingAuthority: StandingAuthority,
                                  account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
 
-  private lazy val changedMessage = messages("edit.changed")
-  private lazy val notChangedMessage = messages("edit.notChanged")
-
-  def rows: Seq[SummaryListRow] = {
+  def yourAccountRow: Seq[SummaryListRow] = {
     Seq(
-      accountNumberRow,
-      eoriNumberRow(Some(standingAuthority.authorisedEori)),
-      authorityStartRow,
+      accountNumberRow(account)
+    ).flatten
+  }
+
+  def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
+    Seq(
+      eoriNumberRow(Some(standingAuthority.authorisedEori))
+    ).flatten
+  }
+
+  def authorityDurationRows: Seq[SummaryListRow] = {
+    Seq(authorityStartRow,
       authorityEndRow,
       showBalanceRow(userAnswers.get(EditShowBalancePage(accountId, authorityId)))
     ).flatten
   }
 
-  private def accountNumberRow: Option[SummaryListRow] = {
-    val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+  def authorisedUserRows: Seq[SummaryListRow] = {
+    Seq(
+      authorisedUserNameRow(userAnswers.get(EditAuthorisedUserPage(accountId, authorityId))),
+      authorisedUserRoleRow(userAnswers.get(EditAuthorisedUserPage(accountId, authorityId)))
+    ).flatten
+  }
 
+  private def authorisedUserNameRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+    authorisedUser.map { user =>
+      summaryListRow(
+        messages("edit-cya-name"),
+        value = user.userName,
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-name"))
+        ))),
+        secondValue = None
+      )
+    }
+  }
 
-    Some(summaryListRow(
-      messages("Account"),
-      value = HtmlFormat.escape(accountType).toString,
-      actions = Actions(items = Seq.empty),
-      secondValue = None
-    ))
+  private def authorisedUserRoleRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+    authorisedUser.map { user =>
+      summaryListRow(
+        messages("edit-cya-role"),
+        value = user.userRole,
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-role"))
+        ))),
+        secondValue = None
+      )
+    }
   }
 
   private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] = {
@@ -78,7 +109,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
       summaryListRow(
         messages("authorityStart.checkYourAnswersLabel"),
         value = date,
-        secondValue = Some(if (standingAuthority.startChanged(userAnswers, accountId, authorityId, dateTimeService.localDate()) == Right(true)) changedMessage else notChangedMessage),
+        secondValue = None,
         actions = if (standingAuthority.canEditStartDate(dateTimeService.localDate())) {
           Actions(items =
             Seq(ActionItem(
@@ -93,32 +124,6 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     }
   }
 
-  def changedDetails: Boolean = {
-    val changes = userAnswers.get(EditShowBalancePage(accountId, authorityId)) match {
-      case Some(value) =>
-        Right(List(
-          standingAuthority.endChanged(userAnswers, accountId, authorityId, dateTimeService.localDate()),
-          standingAuthority.startChanged(userAnswers, accountId, authorityId, dateTimeService.localDate()).contains(true),
-          balanceRowChanged(value)
-        ).contains(true))
-      case None => Left(ShowBalanceError)
-    }
-
-    changes match {
-      case Right(details) => details
-      case Left(_) => false
-    }
-  }
-
-
-  private def balanceRowChanged(showBalance: ShowBalance): Boolean = {
-    showBalance match {
-      case ShowBalance.Yes if standingAuthority.viewBalance => false
-      case ShowBalance.No if !standingAuthority.viewBalance => false
-      case _ => true
-    }
-  }
-
   private def authorityEndRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).flatMap {
       case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
@@ -127,7 +132,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
       summaryListRow(
         messages("authorityEnd.checkYourAnswersLabel"),
         value = value,
-        secondValue = Some(if (standingAuthority.endChanged(userAnswers, accountId, authorityId, dateTimeService.localDate())) changedMessage else notChangedMessage),
+        secondValue = None,
         actions = Actions(items = Seq(ActionItem(
           href = controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId).url,
           content = span(messages("site.change")),
@@ -142,7 +147,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
       summaryListRow(
         messages("showBalance.checkYourAnswersLabel"),
         value = messages(s"showBalance.checkYourAnswers.$value"),
-        secondValue = Some(if (balanceRowChanged(value)) changedMessage else notChangedMessage),
+        secondValue = None,
         actions = Actions(items = Seq(ActionItem(
           href = controllers.edit.routes.EditShowBalanceController.onPageLoad(accountId, authorityId).url,
           content = span(messages("site.change")),
@@ -151,5 +156,4 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
       )
     )
   }
-
 }

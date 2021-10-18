@@ -14,13 +14,13 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
-@import models.{Mode, AuthorityStart}
+@import models.AuthorityStart
 
 @this(
         govukLayout: templates.GovukLayoutWrapper,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
+        inputDate: components.conditionalInputDate,
         inputRadio: components.inputRadio,
         button: components.button
 )

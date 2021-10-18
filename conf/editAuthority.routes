@@ -1,0 +1,23 @@
+GET         /:accountId/:authorityId/change-start-date               controllers.edit.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-start-date               controllers.edit.EditAuthorityStartDateController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/change-start                    controllers.edit.EditAuthorityStartController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-start                    controllers.edit.EditAuthorityStartController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/change-end                      controllers.edit.EditAuthorityEndController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-end                      controllers.edit.EditAuthorityEndController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/authorised-user                 controllers.edit.EditAuthorisedUserController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/authorised-user                 controllers.edit.EditAuthorisedUserController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/confirmation                    controllers.edit.EditConfirmationController.onPageLoad(accountId, authorityId)
+
+GET         /:accountId/:authorityId                                 controllers.edit.EditCheckYourAnswersController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId                                 controllers.edit.EditCheckYourAnswersController.onSubmit(accountId, authorityId)
+

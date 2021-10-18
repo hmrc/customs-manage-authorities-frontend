@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.add
 
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.AccountsFormProvider

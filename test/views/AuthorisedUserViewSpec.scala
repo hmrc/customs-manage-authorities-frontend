@@ -18,7 +18,7 @@ package views
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.AuthorisedUserFormProvider
+import forms.AuthorisedUserFormProviderWithConsent
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.mockito.Mockito.when
@@ -54,7 +54,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
     implicit val messages: Messages = Helpers.stubMessages()
 
     val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(emptyUserAnswers, mockDateTimeService)
-    private val formProvider = new AuthorisedUserFormProvider()
+    private val formProvider = new AuthorisedUserFormProviderWithConsent()
     private val form = formProvider()
     def view(): Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(form,helper).body)
   }

@@ -18,7 +18,7 @@ package views
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.jsoup.Jsoup
 import org.scalatest.Matchers._
@@ -26,7 +26,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
 import viewmodels.RemoveViewModel
-import views.html.remove.RemoveView
+import views.html.remove.RemoveAuthorisedUserView
 
 import java.time.LocalDate
 
@@ -36,7 +36,7 @@ class RemoveViewSpec extends SpecBase {
   "Remove view" should {
       "have back link" in new Setup {
         val viewModel = RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
-        view(viewModel).getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
+        view(viewModel).getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/view-authority/a/b"
       }
     }
 
@@ -52,9 +52,9 @@ class RemoveViewSpec extends SpecBase {
     implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    private val formProvider = new RemoveFormProvider()
+    private val formProvider = new AuthorisedUserFormProvider()
     private val form = formProvider()
 
-    def view(viewModel: RemoveViewModel) = Jsoup.parse(app.injector.instanceOf[RemoveView].apply(form,viewModel).body)
+    def view(viewModel: RemoveViewModel) = Jsoup.parse(app.injector.instanceOf[RemoveAuthorisedUserView].apply(form,viewModel).body)
   }
 }

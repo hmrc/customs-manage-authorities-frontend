@@ -31,10 +31,6 @@ class SessionExpiredViewSpec extends SpecBase {
     "when back link is clicked returns to start of the journey" in new Setup {
       view().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
       }
-
-    "when start again button is clicked returns to start of the journey" in new Setup {
-      view().getElementById("start-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/eori-number"
-    }
     }
 
 

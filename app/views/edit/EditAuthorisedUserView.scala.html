@@ -17,7 +17,7 @@
 @import viewmodels.CheckYourAnswersHelper
 @import viewmodels.SummaryList
 @import views.html.components.summaryList
-@import viewmodels.CheckYourAnswersEditHelper
+@import viewmodels.RemoveViewModel
 
 @this(
         govukLayout: templates.GovukLayoutWrapper,
@@ -25,6 +25,7 @@
         errorSummary: components.errorSummary,
         summaryList: summaryList,
         button: components.button,
+        govukButton: GovukButton,
         inputText: components.inputText,
         inputCheckboxes: components.inputCheckboxes,
         govukCheckboxes: GovukCheckboxes,
@@ -32,56 +33,35 @@
         h2: components.h2
 )
 
-@(form: Form[_], helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-    @govukLayout(pageTitle = Some(title(form, "editAuthorisedUser.title", None, Seq())), fullWidth = true, backLinkUrl = Some(controllers.routes.ManageAuthoritiesController.onPageLoad())) {
-        @formHelper(action = controllers.edit.routes.EditCheckYourAnswersController.onSubmit(accountId, authorityId)) {
-            <div class="govuk-!-width-two-thirds">
-                @errorSummary(form.errors)
-            </div>
+@govukLayout(pageTitle = Some(title(form, "authorised-user.heading", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
-            @h1("editAuthorisedUser.heading")
+    @formHelper(action = controllers.edit.routes.EditAuthorisedUserController.onSubmit(accountId, authorityId)) {
 
-            @summaryList(SummaryList(helper.rows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+        @errorSummary(form.errors)
 
-            @if(helper.changedDetails) {
+        <h1 class="govuk-heading-xl">@messages("authorised-user.heading")</h1>
+        <p class="govuk-body">@messages("authorised-user.p")</p>
 
-                    <div class="govuk-!-width-two-thirds">
-                        @h2("editAuthorisedUser.yourDetails")
-                        @inputText(
-                            form,
-                            id = "fullName",
-                            name = "fullName",
-                            label = "editAuthorisedUser.fullName",
-                            isPageHeading = false,
-                            classes = Some("govuk-!-width-two-thirds")
-                        )
-                        @inputText(
-                            form,
-                            id = "jobRole",
-                            name = "jobRole",
-                            label = "editAuthorisedUser.jobRole",
-                            isPageHeading = false,
-                            classes = Some("govuk-!-width-two-thirds")
-                        )
+        @inputText(
+            form,
+            id = "fullName",
+            name = "fullName",
+            label = "remove.fullName",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds")
+        )
 
-                        @govukCheckboxes(Checkboxes(
-                            name = "value",
-                            fieldset = None,
-                            items = Seq(
-                                CheckboxItem(
-                                    name = Some("confirmation"),
-                                    id = Some("confirmation"),
-                                    value = "true",
-                                    content = Text(messages("authorisedUser.declaration.singular")),
-                                    checked = false
-                                )
-                            ),
-                            errorMessage = form.errors.find(_.message.startsWith("authorisedUser.error.confirmation")).map(err => ErrorMessage(content = Text(messages(err.message, err.args: _*)),classes="govuk-!-width-two-thirds"))
-                        ))
-                        @button("site.confirm")
-                    </div>
+        @inputText(
+            form,
+            id = "jobRole",
+            name = "jobRole",
+            label = "remove.jobRole",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds")
+        )
 
-            }
-        }
+        @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("site.continue"))))
     }
+}
