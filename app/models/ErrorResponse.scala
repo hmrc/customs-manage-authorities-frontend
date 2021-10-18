@@ -20,6 +20,7 @@ sealed trait ErrorResponse{ val msg: String}
 
 case object EORIValidationError extends ErrorResponse{ val msg = "Failed to get validation for EORI"}
 case object MissingAuthorityError extends ErrorResponse{ val msg = "Missing authority"}
+case object MissingAuthorisedUser extends ErrorResponse { val msg = "Missing authorised user on revoke"}
 case object MissingAccountError extends ErrorResponse { val msg = "Missing account"}
 case object EmptyAccountsError extends ErrorResponse { val msg = "Empty accounts list of ShowBalance page load"}
 case object NoStartDateError extends ErrorResponse { val msg = "No data present for the user's start date"}

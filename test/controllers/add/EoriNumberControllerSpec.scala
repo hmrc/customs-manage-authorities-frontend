@@ -43,7 +43,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val eoriNumberRoute = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
   val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
-  private lazy val GBNValidationRoute = controllers.routes.GBNEoriController.showGBNEori().url
+  private lazy val GBNValidationRoute = controllers.add.routes.GBNEoriController.showGBNEori().url
 
   "EoriNumber Controller" must {
 

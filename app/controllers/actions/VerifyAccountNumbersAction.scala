@@ -37,11 +37,11 @@ class VerifyAccountNumbersActionImpl @Inject()(authorisedAccountsService: Author
 
     (request.userAnswers.get(EoriNumberPage), request.userAnswers.get(AccountsPage)) match {
       case (None, _) => Future.successful(Left(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))))
-      case (_, None) => Future.successful(Left(Redirect(routes.AccountsController.onPageLoad(NormalMode))))
+      case (_, None) => Future.successful(Left(Redirect(controllers.add.routes.AccountsController.onPageLoad(NormalMode))))
       case (Some(enteredEori), Some(accounts)) =>
         authorisedAccountsService.getAuthorisedAccounts(enteredEori)(request, hc).map { authorisedAccounts =>
           if (authorisedAccounts.alreadyAuthorisedAccounts.exists(accounts.contains)) {
-            Left(Redirect(routes.AccountsController.onPageLoad(NormalMode)))
+            Left(Redirect(controllers.add.routes.AccountsController.onPageLoad(NormalMode)))
           } else {
             Right(request)
           }

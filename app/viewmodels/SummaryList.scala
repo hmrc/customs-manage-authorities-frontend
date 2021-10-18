@@ -19,6 +19,6 @@ package viewmodels
 
 case class SummaryList(
                         rows: Seq[SummaryListRow]       = Nil,
-                        classes: String                 = "",
+                        classes: String                 = "govuk-!-margin-bottom-9 govuk-summary-list--wide",
                         attributes: Map[String, String] = Map.empty
                       )

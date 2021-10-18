@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(govukButton: GovukButton)
+package pages.remove
 
-@(msg: String, href: Option[String] = None)(implicit messages: Messages)
+import models.domain.AuthorisedUser
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-@govukButton(Button(content = Text(messages(msg)), href = href))
+case class RemoveAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorisedUser] {
+  override def path: JsPath = JsPath \ "remove" \ accountId \ authorityId \ toString
+  override def toString: String = "removeAuthorisedUser"
+}

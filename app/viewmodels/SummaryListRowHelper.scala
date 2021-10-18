@@ -16,8 +16,9 @@
 
 package viewmodels
 
+import models.domain.AccountWithAuthoritiesWithId
 import play.api.i18n.Messages
-import play.twirl.api.Html
+import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, Key, Value}
 
@@ -42,4 +43,14 @@ trait SummaryListRowHelper {
   def span(contents: String): HtmlContent = HtmlContent(
     Html(s"""$contents""")
   )
+
+  def accountNumberRow(account: AccountWithAuthoritiesWithId)(implicit messages: Messages): Option[SummaryListRow] = {
+    val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+    Some(summaryListRow(
+      messages("edit-cya-account-number"),
+      value = HtmlFormat.escape(accountType).toString,
+      actions = Actions(items = Seq.empty),
+      secondValue = None
+    ))
+  }
 }

@@ -18,9 +18,10 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration) {
+class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
   lazy val host: String = configuration.get[String]("host")
 
@@ -56,4 +57,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration) {
 
   val customsFinancialsFrontendHomepageUrl: String = configuration.get[String]("microservice.services.customs-financials-frontend.homepage")
   lazy val contactFrontendUrl: String = configuration.get[String]("urls.contactFrontendUrl")
+
+  lazy val customsDataStore: String = servicesConfig.baseUrl("customs-data-store") +
+    configuration.get[String]("microservice.services.customs-data-store.context")
 }

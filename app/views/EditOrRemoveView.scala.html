@@ -1,0 +1,48 @@
+@*
+ * Copyright 2021 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import viewmodels.CheckYourAnswersEditHelper
+
+@this(
+        main_template: templates.GovukLayoutWrapper,
+        h1: components.h1,
+        h2: components.h2,
+        p: components.p,
+        link: components.link,
+        summaryList: components.summaryList
+)
+
+@(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+
+@main_template(Some(titleNoForm("view-authority-heading", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
+
+    @h1(msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
+
+    @h2("view-authority-h2.1")
+    @summaryList(viewmodels.SummaryList(helper.yourAccountRow))
+
+    @h2("view-authority-h2.2")
+    @summaryList(viewmodels.SummaryList(helper.authorisedCompanyDetailsRows))
+
+    @h2("view-authority-h2.3")
+    @summaryList(viewmodels.SummaryList(helper.authorityDurationRows))
+
+    @h2("view-authority-h2.4")
+    @p(Html(messages("view-authority-p")))
+    @p(link(link = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, messageKey = "view-authority-link"))
+}
+
+    

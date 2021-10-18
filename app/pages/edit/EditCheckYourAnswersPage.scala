@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this(govukButton: GovukButton)
+package pages.edit
 
-@(msg: String, href: Option[String] = None)(implicit messages: Messages)
+import pages.Page
 
-@govukButton(Button(content = Text(messages(msg)), href = href))
+case class EditCheckYourAnswersPage(accountId: String, authorityId: String) extends Page

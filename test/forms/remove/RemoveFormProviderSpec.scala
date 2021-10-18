@@ -16,7 +16,7 @@
 
 package forms.remove
 
-import forms.RemoveFormProvider
+import forms.AuthorisedUserFormProvider
 import forms.behaviours.StringFieldBehaviours
 import models.domain.AuthorisedUser
 import play.api.data.FormError
@@ -36,7 +36,7 @@ class RemoveFormProviderSpec extends StringFieldBehaviours {
 
   val user = AuthorisedUser("name", "role")
 
-  val form = new RemoveFormProvider()()
+  val form = new AuthorisedUserFormProvider()()
 
   "RemoveFormProvider" must {
 
@@ -65,13 +65,6 @@ class RemoveFormProviderSpec extends StringFieldBehaviours {
       result.errors shouldEqual Seq(FormError("jobRole", roleRequiredKey))
     }
 
-    "not bind when confirmation is missing" in {
-      val result = form.bind(Map(
-        "fullName" -> user.userName,
-        "jobRole" -> user.userRole))
-
-      result.errors shouldEqual Seq(FormError("confirmation", confirmationRequiredKey))
-    }
 
     "not bind empty values" in {
       val result = form.bind(Map(
@@ -80,8 +73,7 @@ class RemoveFormProviderSpec extends StringFieldBehaviours {
 
       result.errors shouldEqual Seq(
         FormError("fullName", nameRequiredKey),
-        FormError("jobRole", roleRequiredKey),
-        FormError("confirmation", confirmationRequiredKey)
+        FormError("jobRole", roleRequiredKey)
       )
     }
 

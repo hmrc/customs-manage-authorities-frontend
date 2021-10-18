@@ -40,7 +40,16 @@
 )
 
 
-@(pageTitle: Option[String] = None, timeout: Boolean = true, signedInUser: Boolean = true, js: Option[Html] = None, backLink: Boolean = true, backLinkUrl: Option[String] = None, fullWidth: Boolean = false, help: Boolean = true, reportAProblem: Boolean = true)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
+@(pageTitle: Option[String] = None,
+        timeout: Boolean = true,
+        signedInUser: Boolean = true,
+        js: Option[Html] = None,
+        backLink: Boolean = true,
+        backLinkUrl: Option[String] = None,
+        fullWidth: Boolean = false,
+        help: Boolean = true,
+        reportAProblem: Boolean = true
+)(contentBlock: Html)(implicit request: Request[_], messages: Messages)
 
 @head = {
 @hmrcTrackingConsentSnippet()

@@ -19,7 +19,7 @@ package controllers.add
 import base.SpecBase
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
-import forms.AuthorisedUserFormProvider
+import forms.AuthorisedUserFormProviderWithConsent
 import models.UserAnswers
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AuthorisedUser, CdsCashAccount, StandingAuthority}
 import models.requests.Accounts
@@ -44,7 +44,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   private def onwardRoute = Call("GET", "/foo")
 
-  private val formProvider = new AuthorisedUserFormProvider()
+  private val formProvider = new AuthorisedUserFormProviderWithConsent()
   private val form = formProvider()
 
   private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad().url

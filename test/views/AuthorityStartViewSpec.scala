@@ -50,7 +50,7 @@ class AuthorityStartViewSpec extends SpecBase with MockitoSugar {
     private val formProvider = new AuthorityStartFormProvider()
     private val form = formProvider()
 
-    private lazy val normalModeBackLinkRoute: Call = controllers.routes.AccountsController.onPageLoad(NormalMode)
+    private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     def normalModeView() = Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form,NormalMode,normalModeBackLinkRoute).body)

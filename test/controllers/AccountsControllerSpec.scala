@@ -306,7 +306,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     def onwardRoute = Call("GET", "/foo")
 
-    lazy val accountsRoute = controllers.routes.AccountsController.onPageLoad(NormalMode).url
+    lazy val accountsRoute = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
 
     val formProvider = new AccountsFormProvider()
     val form = formProvider()

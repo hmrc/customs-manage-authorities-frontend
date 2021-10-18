@@ -140,6 +140,7 @@ manageAuthorities.table.row.remove=Tynnu
 manageAuthorities.table.row.remove.CdsCashAccount=Tynnu defnyddiwr {0} o’r cyfrif arian parod
 manageAuthorities.table.row.remove.CdsDutyDefermentAccount=Tynnu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.remove.CdsGeneralGuaranteeAccount=Tynnu defnyddiwr {0} o’r cyfrif gwarant
+manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
 
 manageAuthorities.table.row.edit=Golygu
 manageAuthorities.table.row.edit.CdsCashAccount = Golygu defnyddiwr {0} o’r cyfrif arian parod
@@ -300,6 +301,50 @@ manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod,
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
 
 manageAuthorities.reportAProblem.link=Cysylltwch â CThEM am gymorth technegol (yn agor mewn tab newydd).
+
+#Authorised User
+authorised-user.heading = Eich manylion
+authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
+authorised-user-remove.heading = Dileu’r awdurdod
+authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
+
+#Remove Check Your Answers
+remove-cya-heading = Gwiriwch eich atebion
+remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
+remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
+remove-cya-h2.3 = Your details
+remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion
+remove-cya-button = Cadarnhau a chyflwyno
+remove-cya-cancel = Canslo
+remove-cya-name = Eich enw
+remove-cya-role = Eich swydd
+remove-cya-visually-hidden-name = eich enw
+remove-cya-visually-hidden-role = eich swydd
+
+#Edit Check Your Answers
+edit-cya-heading = Gwiriwch eich atebion
+edit-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
+edit-cya-h2.2 = Manylion y cwmni awdurdodedig
+edit-cya-h2.3 = Hyd yr awdurdod
+edit-cya-h2.4 = Eich manylion
+edit-cya-p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni
+edit-cya-button = Cadarnhau a chyflwyno
+edit-cya-cancel = Canslo
+edit-cya-account-number = Eich cyfrif
+edit-cya-visually-hidden-name = eich enw
+edit-cya-visually-hidden-role = eich swydd
+edit-cya-name = Eich enw
+edit-cya-role = Eich swydd
+
+#Edit or remove view
+view-authority-heading = Awdurdod y cyfrif
+view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
+view-authority-h2.2 = Manylion y cwmni awdurdodedig
+view-authority-h2.3 = Hyd yr awdurdod
+view-authority-h2.4 = Dileu’r awdurdod
+view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn
+view-authority-link = Dileu’r awdurdod
+
 
 # Date Format
 # ----------------------------------------------------------

@@ -66,7 +66,7 @@ class EoriNumberController @Inject()(
         formWithErrors =>{
           val errorMessages = formWithErrors.errors.flatMap(_.messages)
           if(errorMessages.contains("eoriNumber.error.gbnEori.format")) {
-            Future.successful(Redirect(controllers.routes.GBNEoriController.showGBNEori()))
+            Future.successful(Redirect(controllers.add.routes.GBNEoriController.showGBNEori()))
           } else{
             Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           }
