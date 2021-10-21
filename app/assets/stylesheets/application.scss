@@ -2,6 +2,6 @@ $govuk-assets-path: "/customs/manage-authorities/assets/lib/govuk-frontend/govuk
 $hmrc-assets-path: "/customs/manage-authorities/assets/lib/hmrc-frontend/hmrc/";
 @import "lib/govuk-frontend/govuk/all";
 @import "lib/hmrc-frontend/hmrc/all";
-
+@import "manage-authorities";
 @import "language-selection";
 @import "shame";

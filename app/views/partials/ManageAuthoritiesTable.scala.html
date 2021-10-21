@@ -98,7 +98,7 @@
                 <td class="govuk-table__cell">
                 @messages(authority.viewBalanceAsString)
                 </td>
-                    <td class="govuk-table__cell">
+                    <td class="govuk-table__cell view-or-change">
                     @if(account.accountStatus.fold(true)(v => v != AccountStatusClosed)) {
                         <a class="govuk-link" href="@controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)" aria-label="@messages(s"manageAuthorities.table.row.edit.${account.accountType}", authority.authorisedEori, account.accountNumber)">@messages("manageAuthorities.table.view-or-change")</a>
                     }
