@@ -16,9 +16,10 @@
 
 @import controllers.routes._
 @import models.{Mode, AuthorityStart}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         inputRadio: components.inputRadio,
@@ -27,7 +28,7 @@
 
 @(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "authorityStart.title", None, Seq())),backLinkUrl = Some(call)) {
+@hmrcLayout(pageTitle = Some(title(form, "authorityStart.title", None, Seq())),backLinkUrl = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AuthorityStartController.onSubmit(mode), 'autoComplete -> "off") {
 

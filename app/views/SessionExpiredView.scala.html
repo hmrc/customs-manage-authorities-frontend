@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+
 @this(
-    main_template: templates.GovukLayoutWrapper,
+    hmrcLayout: HmrcLayout,
     h1: components.h1,
     button: components.button
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@main_template(Some(titleNoForm("session_expired.title", None, Seq())), timeout = false, backLinkUrl = Some(controllers.routes.ManageAuthoritiesController.onPageLoad())) {
+@hmrcLayout(Some(titleNoForm("session_expired.title", None, Seq())), backLinkUrl = Some(controllers.routes.ManageAuthoritiesController.onPageLoad())) {
 
     @h1(messages("session_expired.heading"))
 

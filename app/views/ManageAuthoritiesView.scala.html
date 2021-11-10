@@ -15,11 +15,12 @@
  *@
 
 @import viewmodels.ManageAuthoritiesViewModel
-@import viewmodels.ManageAuthoritiesViewModel._
 @import views.html.partials._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+
 
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
+    hmrcLayout: HmrcLayout,
     formHelper: FormWithCSRF,
     errorSummary: components.errorSummary,
     button: components.button,
@@ -30,7 +31,7 @@
 
 @(viewModel: ManageAuthoritiesViewModel)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), fullWidth = viewModel.hasAccounts, backLinkUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
+@hmrcLayout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLinkUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
 
     <h1 id="manageAuthorities.heading" class="govuk-heading-xl">@messages("manageAuthorities.title")</h1>
 

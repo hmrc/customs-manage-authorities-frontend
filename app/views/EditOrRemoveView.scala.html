@@ -15,9 +15,10 @@
  *@
 
 @import viewmodels.CheckYourAnswersEditHelper
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        main_template: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         h1: components.h1,
         h2: components.h2,
         p: components.p,
@@ -27,7 +28,7 @@
 
 @(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@main_template(Some(titleNoForm("view-authority-heading", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
+@hmrcLayout(Some(titleNoForm("view-authority-heading", None, Seq())), backLinkUrl = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
 
     @h1(msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 

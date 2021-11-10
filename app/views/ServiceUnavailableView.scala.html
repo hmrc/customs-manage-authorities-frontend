@@ -14,14 +14,15 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @this(
-        govuk_wrapper: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         h1: components.h1
 )
 
 @()(implicit request: Request[_], messages: Messages)
 
-@govuk_wrapper(Some(titleNoForm(messages("service-unavailable.title"), None, Seq())), backLink = false, help = false) {
+@hmrcLayout(Some(titleNoForm(messages("service-unavailable.title"), None, Seq())), backLinkUrl = None) {
 
     @h1(messages(messages("service-unavailable.heading")))
 

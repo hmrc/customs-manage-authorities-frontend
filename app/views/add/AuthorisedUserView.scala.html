@@ -17,9 +17,10 @@
 @import viewmodels.CheckYourAnswersHelper
 @import viewmodels.SummaryList
 @import views.html.components.summaryList
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         summaryList: summaryList,
@@ -33,7 +34,7 @@
 
 @(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLinkUrl = Some(controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode))) {
+@hmrcLayout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLinkUrl = Some(controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode))) {
 
 
     @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {

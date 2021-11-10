@@ -18,12 +18,12 @@
 @import models.domain.CDSAccount
 @import forms.AccountsFormProvider
 @import models.domain.CDSAccount.formattedAccountType
-
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @import models.domain.EORI
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         button: components.button,
@@ -32,7 +32,7 @@
 
 @(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "accounts.title", None, Seq())), fullWidth = true, backLinkUrl = Some(call) ) {
+@hmrcLayout(pageTitle = Some(title(form, "accounts.title", None, Seq())), backLinkUrl = Some(call) ) {
 
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 

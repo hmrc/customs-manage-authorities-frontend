@@ -15,19 +15,20 @@
  *@
 
 @import models.AuthorityStart
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
-        formHelper: FormWithCSRF,
-        errorSummary: components.errorSummary,
-        inputDate: components.conditionalInputDate,
-        inputRadio: components.inputRadio,
-        button: components.button
+    hmrcLayout: HmrcLayout,
+    formHelper: FormWithCSRF,
+    errorSummary: components.errorSummary,
+    inputDate: components.conditionalInputDate,
+    inputRadio: components.inputRadio,
+    button: components.button
 )
 
 @(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "authorityStart.title", None, Seq())), backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
+@hmrcLayout(pageTitle = Some(title(form, "authorityStart.title", None, Seq())), backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorityStartController.onSubmit(accountId, authorityId), 'autoComplete -> "off") {
 

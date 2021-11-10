@@ -15,12 +15,13 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import viewmodels.SummaryList
 @import viewmodels.SummaryListRow
 @import views.html.components.summaryList
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         summaryList: summaryList,
         h1: components.h1,
         subheading: components.subheading,
@@ -30,7 +31,7 @@
 
 @(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
+@hmrcLayout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
 
     @h1(messages("checkYourAnswers.heading"))
 

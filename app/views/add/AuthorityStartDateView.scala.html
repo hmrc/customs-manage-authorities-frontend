@@ -14,17 +14,19 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
-    errorSummary: components.errorSummary,
-    inputDate: components.inputDate,
-    formHelper: FormWithCSRF,
-    button: components.button
+hmrcLayout: HmrcLayout,
+errorSummary: components.errorSummary,
+inputDate: components.inputDate,
+formHelper: FormWithCSRF,
+button: components.button
 )
 
 @(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "authorityStartDate.title", None, Seq())),backLinkUrl = Some(call)) {
+@hmrcLayout(pageTitle = Some(title(form, "authorityStartDate.title", None, Seq())),backLinkUrl = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AuthorityStartDateController.onSubmit(mode), 'autoComplete -> "off") {
 

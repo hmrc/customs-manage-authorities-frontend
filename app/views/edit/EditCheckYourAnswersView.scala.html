@@ -15,9 +15,10 @@
  *@
 
 @import viewmodels.CheckYourAnswersEditHelper
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         formHelper: FormWithCSRF,
         summaryList: components.summaryList,
         h1: components.h1,
@@ -29,7 +30,7 @@
 
 @(model: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(
+@hmrcLayout(
     pageTitle = Some(titleNoForm("edit-cya-heading", None, Seq())),
     backLinkUrl = Some(controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url)
 ) {

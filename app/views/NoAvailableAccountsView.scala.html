@@ -15,14 +15,15 @@
  *@
 
 @import models.domain.EORI
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper
+        hmrcLayout: HmrcLayout,
 )
 
 @(enteredEori: EORI)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())), fullWidth = false, backLinkUrl = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
+@hmrcLayout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())), backLinkUrl = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
     <h1 id="accounts.heading" class="govuk-heading-l">@messages("accounts.noAvailableAccounts.heading", enteredEori)</h1>
     <p class="govuk-body">
         @messages("accounts.noAvailableAccounts.p") <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad()">@messages("accounts.noAvailableAccounts.link")</a>

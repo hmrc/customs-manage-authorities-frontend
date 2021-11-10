@@ -18,9 +18,10 @@
 @import viewmodels.SummaryList
 @import views.html.components.summaryList
 @import viewmodels.RemoveViewModel
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        hmrcLayout: HmrcLayout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         summaryList: summaryList,
@@ -35,7 +36,7 @@
 
 @(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
 
-@govukLayout(pageTitle = Some(title(form, "authorised-user.heading", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
+@hmrcLayout(pageTitle = Some(title(form, "authorised-user.heading", None, Seq())),backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorisedUserController.onSubmit(accountId, authorityId)) {
 
