@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.EditAuthorityStartDateFormProvider
 import models.NormalMode
@@ -40,7 +41,7 @@ class EditAuthorityStartDateController @Inject()(
                                                   formProvider: EditAuthorityStartDateFormProvider,
                                                   implicit val controllerComponents: MessagesControllerComponents,
                                                   view: EditAuthorityStartDateView
-                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData

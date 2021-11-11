@@ -18,9 +18,11 @@
 @import viewmodels.SummaryList
 @import views.html.components.summaryList
 @import viewmodels.RemoveViewModel
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         summaryList: summaryList,
@@ -33,11 +35,11 @@
         h2: components.h2
 )
 
-@(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(
+@layout(
     pageTitle = Some(title(form, "authorised-user-remove.heading", None, Seq())),
-    backLinkUrl = Some(controllers.routes.ViewAuthorityController.onPageLoad(viewModel.accountId, viewModel.authorityId))
+    backLink = Some(controllers.routes.ViewAuthorityController.onPageLoad(viewModel.accountId, viewModel.authorityId))
 ) {
 
     @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {

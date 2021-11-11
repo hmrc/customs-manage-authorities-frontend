@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
 import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId}
@@ -48,7 +49,7 @@ class EditCheckYourAnswersController @Inject()(
                                                 view: EditCheckYourAnswersView,
                                                 navigator: Navigator,
                                                 implicit val controllerComponents: MessagesControllerComponents,
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 

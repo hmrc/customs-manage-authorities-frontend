@@ -15,17 +15,19 @@
  *@
 
 @import java.time.LocalDate
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
 
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
+    layout: Layout,
     h1: components.h1,
     panel: components.panelIndent,
     p: components.p
 )
 
-@(eori: String)(implicit request: Request[_], messages: Messages)
+@(eori: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(titleNoForm("removeConfirmation.title", None, Seq())), backLink = false) {
+@layout(pageTitle = Some(titleNoForm("removeConfirmation.title", None, Seq())), backLink = None) {
 
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("removeConfirmation.heading", eori)</h1>

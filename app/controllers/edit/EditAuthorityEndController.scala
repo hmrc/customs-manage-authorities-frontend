@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorityEndFormProvider
 import models.{AuthorityEnd, NormalMode}
@@ -40,7 +41,7 @@ class EditAuthorityEndController @Inject()(
                                             formProvider: AuthorityEndFormProvider,
                                             implicit val controllerComponents: MessagesControllerComponents,
                                             view: EditAuthorityEndView
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 

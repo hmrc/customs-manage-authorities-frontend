@@ -18,6 +18,7 @@ package controllers.edit
 
 import cats.data.OptionT._
 import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions._
 import org.slf4j.LoggerFactory
 import pages.ConfirmationPage
@@ -45,7 +46,7 @@ class EditConfirmationController @Inject()(
                                             confirmationService: ConfirmationService,
                                             implicit val controllerComponents: MessagesControllerComponents,
                                             view: EditConfirmationView
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with DateUtils {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with DateUtils {
 
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 

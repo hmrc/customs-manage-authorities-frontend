@@ -18,6 +18,7 @@ package controllers.remove
 
 import cats.data.EitherT
 import cats.data.EitherT.{fromOption, fromOptionF, liftF}
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
@@ -43,7 +44,7 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        mcc: MessagesControllerComponents
-                                      )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with Logging with I18nSupport {
+                                      )(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendController(mcc) with Logging with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {

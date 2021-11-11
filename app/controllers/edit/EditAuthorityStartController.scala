@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.EditAuthorityStartFormProvider
 import models.{AuthorityStart, NormalMode}
@@ -42,7 +43,7 @@ class EditAuthorityStartController @Inject()(
                                               formProvider: EditAuthorityStartFormProvider,
                                               implicit val controllerComponents: MessagesControllerComponents,
                                               view: EditAuthorityStartView
-                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
 
 

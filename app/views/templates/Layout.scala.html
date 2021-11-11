@@ -33,7 +33,7 @@
 )
 
 @(pageTitle: Option[String] = None,
-        backLink: Option[String] = None,
+        backLink: Option[String] = Some(appConfig.customsFinancialsFrontendHomepageUrl),
         helpAndSupport: Boolean = true,
         deskpro: Boolean = true,
         welshToggle: Boolean = true,

@@ -15,18 +15,19 @@
  *@
 
 @import java.time.LocalDate
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
 
 @this(
-    hmrcLayout: HmrcLayout,
+    layout: Layout,
     h1: components.h1,
     panel: components.panelIndent,
     p: components.p
 )
 
-@(eori: String, startDate: Option[String])(implicit request: Request[_], messages: Messages)
+@(eori: String, startDate: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@hmrcLayout(pageTitle = Some(titleNoForm("editConfirmation.title", None, Seq())), backLinkUrl = None) {
+@layout(pageTitle = Some(titleNoForm("editConfirmation.title", None, Seq())), backLink = None) {
 
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("editConfirmation.heading", eori)</h1>
