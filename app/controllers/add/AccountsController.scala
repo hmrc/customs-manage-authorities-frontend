@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.AccountsFormProvider
 import models.domain.CDSAccount
@@ -47,7 +48,7 @@ class AccountsController @Inject()(
                                     noAvailableAccounts: NoAvailableAccountsView,
                                     val controllerComponents: MessagesControllerComponents,
                                     view: AccountsView
-                                  )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                  )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 
