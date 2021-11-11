@@ -17,6 +17,7 @@
 package controllers.remove
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
 import org.mockito.Matchers.any
@@ -91,6 +92,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
+      val appConfig = app.injector.instanceOf[FrontendAppConfig]
       val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId)(messages(app))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
@@ -99,7 +101,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        contentAsString(result) mustBe view(helper)(getRequest, messages(app)).toString()
+        contentAsString(result) mustBe view(helper)(getRequest, messages(app), appConfig).toString()
       }
     }
   }

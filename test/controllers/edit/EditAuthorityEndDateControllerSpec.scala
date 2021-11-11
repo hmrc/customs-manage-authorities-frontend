@@ -17,6 +17,7 @@
 package controllers.edit
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityEndDateFormProvider
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
@@ -75,11 +76,12 @@ class EditAuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, getRequest).value
 
         val view = application.injector.instanceOf[EditAuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(getRequest, messages(application)).toString
+          view(form, "someId", "someId")(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -92,13 +94,14 @@ class EditAuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val view = application.injector.instanceOf[EditAuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, getRequest).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages(application)).toString
+          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -139,13 +142,14 @@ class EditAuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[EditAuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application)).toString
+          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
       }
     }
 

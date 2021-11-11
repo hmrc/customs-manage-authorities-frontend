@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.ShowBalanceFormProvider
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
@@ -44,6 +45,9 @@ class ShowBalanceViewSpec extends SpecBase {
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+
     implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new ShowBalanceFormProvider()

@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityEndFormProvider
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
@@ -43,6 +44,7 @@ class AuthorityEndViewSpec extends SpecBase with MockitoSugar {
   trait Setup  {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
 

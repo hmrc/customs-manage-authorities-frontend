@@ -17,6 +17,7 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
@@ -81,13 +82,14 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AuthorisedUserView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, helper)(request, messages(application)).toString
+          view(form, helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -110,6 +112,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, authorisedUserRoute)
 
         val view = application.injector.instanceOf[AuthorisedUserView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
@@ -118,7 +121,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(answer), helper)(request, messages(application)).toString
+          view(form.fill(answer), helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -174,6 +177,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AuthorisedUserView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
@@ -182,7 +186,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, helper)(request, messages(application)).toString
+          view(boundForm, helper)(request, messages(application), appConfig).toString
       }
     }
 

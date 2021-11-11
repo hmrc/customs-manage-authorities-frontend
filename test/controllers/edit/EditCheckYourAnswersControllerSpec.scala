@@ -17,6 +17,7 @@
 package controllers.edit
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
@@ -73,11 +74,12 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, authorisedUserRoute)
         val result = route(application, request).value
         val view = application.injector.instanceOf[EditCheckYourAnswersView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(helper(userAnswers, application, standingAuthority),"a", "b")(request, messages(application)).toString
+          view(helper(userAnswers, application, standingAuthority),"a", "b")(request, messages(application), appConfig).toString
       }
     }
 

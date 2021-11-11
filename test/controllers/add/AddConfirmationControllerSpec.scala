@@ -17,6 +17,7 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -51,11 +52,12 @@ class AddConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[AddConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, true)(request, messages(application)).toString
+            view("eori", None, true)(request, messages(application), appConfig).toString
         }
       }
 
@@ -87,6 +89,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[AddConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
@@ -95,7 +98,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None, multipleAccounts = false)(request, messages(application)).toString
+            view("GB123456789012", None, multipleAccounts = false)(request, messages(application), appConfig).toString
         }
       }
 
@@ -118,11 +121,12 @@ class AddConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[AddConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB123456789012", Some(startDate.format(dateFormat)), multipleAccounts = true)(request, messages(application)).toString
+            view("GB123456789012", Some(startDate.format(dateFormat)), multipleAccounts = true)(request, messages(application), appConfig).toString
         }
       }
 
