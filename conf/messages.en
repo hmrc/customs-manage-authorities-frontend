@@ -26,9 +26,12 @@ site.tryAgain = Try again
 site.startAgain = Start again
 site.change = Change
 
-help.heading = Help and support
-help.p1 = If you are having issues, phone 0300 200 3701.
-help.p2 = Open 8am to 6pm, Monday to Friday (closed bank holidays).
+# Help and Support
+cf.help-and-support.title=Help and support
+cf.account.help-support.message=If you are having issues, phone
+cf.account.help-support.numbers=0300 200 3701
+cf.account.help-support.office-hours=Open 8am to 6pm, Monday to Friday (closed bank holidays).
+
 
 footer.accessibility   = Accessibility statement
 footer.cookies         = Cookies

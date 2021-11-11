@@ -14,15 +14,17 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
+
 @this(
-        hmrcLayout: HmrcLayout,
-        h1: components.h1
+ layout: Layout,
+ h1: components.h1
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@hmrcLayout(Some(titleNoForm(messages("service-unavailable.title"), None, Seq())), backLinkUrl = None) {
+@layout(Some(titleNoForm(messages("service-unavailable.title"), None, Seq())), backLink = None) {
 
     @h1(messages(messages("service-unavailable.heading")))
 

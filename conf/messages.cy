@@ -26,9 +26,11 @@ site.tryAgain=Rhowch gynnig arall arni
 site.startAgain=Dechrau eto
 site.change=Newid
 
-help.heading=Help a chymorth
-help.p1=Os ydych yn cael anawsterau, ffoniwch 0300 200 3705.
-help.p2=Ar agor 08:30 i 17:00 o ddydd Llun i ddydd Gwener (ar gau ar wyliau banc).
+# Help and Support
+cf.help-and-support.title=Help a chymorth
+cf.account.help-support.message=Os ydych yn profi anawsterau, ffoniwch
+cf.account.help-support.numbers=0300 200 3705
+cf.account.help-support.office-hours=Ar agor 08:30 i 17:00, o ddydd Llun i ddydd Gwener (ar gau ar wyliau banc).
 
 footer.accessibility=Datganiad hygyrchedd
 footer.cookies=Cwcis

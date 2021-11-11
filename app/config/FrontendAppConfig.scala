@@ -28,7 +28,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val feedbackUrl: String = configuration.getOptional[String]("feedback.url").getOrElse("/feedback") +
     configuration.getOptional[String]("feedback.source").getOrElse("/CDS-FIN")
 
-  lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("external-urls.helpMakeGovUkBetterUrl")
+  lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
   lazy val reportAProblem: Boolean = configuration.getOptional[Boolean]("features.report-a-problem").getOrElse(false)
 

@@ -16,10 +16,10 @@
 
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcNewTabLink
 @import uk.gov.hmrc.hmrcfrontend.views.Aliases.NewTabLink
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+@import views.html.templates.Layout
 
 @this(
-    hmrcLayout: HmrcLayout,
+    layout: Layout,
     h1: components.h1,
     h2: components.h2,
     hmrcNewTabLink: HmrcNewTabLink
@@ -27,7 +27,7 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
 
-@hmrcLayout(Some(titleNoForm("unauthorised.title", None, Seq())), backLinkUrl = None) {
+@layout(Some(titleNoForm("unauthorised.title", None, Seq())), backLink = None) {
 
     @h1("unauthorised.heading")
     @h2("unauthorised.how-to-get-access-info")

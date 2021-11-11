@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorityStartFormProvider
 import models.{AuthorityStart, Mode}
@@ -40,7 +41,7 @@ class AuthorityStartController @Inject()(
                                        formProvider: AuthorityStartFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: AuthorityStartView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 

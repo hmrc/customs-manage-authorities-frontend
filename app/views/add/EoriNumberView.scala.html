@@ -15,11 +15,12 @@
  *@
 
 @import controllers.routes._
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import models.Mode
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-    hmrcLayout: HmrcLayout,
+    layout: Layout,
     formHelper: FormWithCSRF,
     errorSummary: components.errorSummary,
     button: components.button,
@@ -27,9 +28,9 @@
     h1: components.h1
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@hmrcLayout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLinkUrl = Some(call)) {
+@layout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.EoriNumberController.onSubmit(mode)) {
 

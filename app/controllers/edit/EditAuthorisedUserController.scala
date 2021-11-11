@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.AuthorisedUserFormProvider
 import models.NormalMode
@@ -44,7 +45,7 @@ class EditAuthorisedUserController @Inject()(
                                               view: EditAuthorisedUserView,
                                               navigator: Navigator,
                                               implicit val controllerComponents: MessagesControllerComponents,
-                                            )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
   private val form = formProvider()
 

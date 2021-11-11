@@ -15,13 +15,14 @@
  *@
 
 @import uk.gov.hmrc.govukfrontend.views.html.components._
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
 @import viewmodels.SummaryList
 @import viewmodels.SummaryListRow
 @import views.html.components.summaryList
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        hmrcLayout: HmrcLayout,
+        layout: Layout,
         summaryList: summaryList,
         h1: components.h1,
         subheading: components.subheading,
@@ -29,9 +30,9 @@
         formHelper: FormWithCSRF
 )
 
-@(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages)
+@(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@hmrcLayout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
+@layout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
 
     @h1(messages("checkYourAnswers.heading"))
 

@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorityEndDateFormProvider
 import models.Mode
@@ -42,7 +43,7 @@ class AuthorityEndDateController @Inject()(
                                         dateTimeService: DateTimeService,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AuthorityEndDateView
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                      )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>

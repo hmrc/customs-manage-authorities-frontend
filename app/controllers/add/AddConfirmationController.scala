@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import controllers.actions._
 import pages.ConfirmationPage
 import pages.add.{AccountsPage, AuthorityStartDatePage, EoriNumberPage}
@@ -42,7 +43,7 @@ class AddConfirmationController @Inject()(
                                            val controllerComponents: MessagesControllerComponents,
                                            confirmationService: ConfirmationService,
                                            view: AddConfirmationView
-                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
