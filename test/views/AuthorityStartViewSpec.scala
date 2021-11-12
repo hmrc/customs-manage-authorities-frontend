@@ -33,11 +33,11 @@ class AuthorityStartViewSpec extends SpecBase with MockitoSugar {
 
   "AuthorityStartView" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-        normalModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"
+        normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"
       }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
     }
 

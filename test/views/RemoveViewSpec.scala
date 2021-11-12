@@ -36,7 +36,7 @@ class RemoveViewSpec extends SpecBase {
   "Remove view" should {
       "have back link" in new Setup {
         val viewModel = RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
-        view(viewModel).getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/view-authority/a/b"
+        view(viewModel).getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/view-authority/a/b"
       }
     }
 

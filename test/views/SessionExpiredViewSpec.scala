@@ -30,7 +30,7 @@ class SessionExpiredViewSpec extends SpecBase {
 
   "SessionExpired view" should {
     "when back link is clicked returns to start of the journey" in new Setup {
-      view().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
+      view().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
       }
     }
 
