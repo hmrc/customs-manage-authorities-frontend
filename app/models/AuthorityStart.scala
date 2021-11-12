@@ -18,15 +18,10 @@ package models
 
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.api.libs.json.{Json, OFormat}
-import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
 sealed trait AuthorityStart
-
-
-
 
 object AuthorityStart extends Enumerable.Implicits {
   val values: Seq[AuthorityStart] = Seq(

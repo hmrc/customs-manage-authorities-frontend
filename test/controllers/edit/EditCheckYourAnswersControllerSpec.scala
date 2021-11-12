@@ -20,7 +20,6 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
-import forms.AuthorisedUserFormProviderWithConsent
 import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.Today
 import models.ShowBalance.Yes
@@ -41,7 +40,7 @@ import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import services.edit.EditAuthorityValidationService
 import viewmodels.CheckYourAnswersEditHelper
-import views.html.edit.{EditAuthorisedUserView, EditCheckYourAnswersView}
+import views.html.edit.EditCheckYourAnswersView
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future

@@ -19,7 +19,7 @@ package controllers.edit
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
-import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId}
+import models.domain.AccountWithAuthoritiesWithId
 import models.requests.DataRequest
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode, UserAnswers}
 import navigation.Navigator

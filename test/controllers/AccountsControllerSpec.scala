@@ -90,8 +90,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, accountsRoute)
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER

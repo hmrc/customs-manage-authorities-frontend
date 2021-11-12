@@ -16,8 +16,6 @@
 
 package models.domain
 
-import models.{StartDateError, UserAnswers}
-import pages.edit.{EditAuthorityEndDatePage, EditAuthorityStartDatePage, EditAuthorityStartPage}
 import play.api.libs.json.{Format, Json, Reads, Writes}
 
 import java.time.LocalDate

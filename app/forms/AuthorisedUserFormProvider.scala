@@ -19,7 +19,7 @@ package forms
 import forms.mappings.Mappings
 import models.domain.AuthorisedUser
 import play.api.data.Form
-import play.api.data.Forms.{checked, mapping}
+import play.api.data.Forms.mapping
 
 import javax.inject.Inject
 

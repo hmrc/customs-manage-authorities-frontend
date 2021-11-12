@@ -16,13 +16,10 @@
 
 package controllers.remove
 
-import cats.data.EitherT
-import cats.data.EitherT.{fromOption, fromOptionF, liftF}
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
-import models.requests.{DataRequest, RevokeAuthorityRequest}
+import models.requests.RevokeAuthorityRequest
 import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging

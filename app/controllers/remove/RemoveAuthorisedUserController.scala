@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorisedUserFormProvider
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError}
-import pages.edit.EditAuthorisedUserPage
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n._

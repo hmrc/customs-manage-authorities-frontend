@@ -37,7 +37,8 @@
         helpAndSupport: Boolean = true,
         deskpro: Boolean = true,
         welshToggle: Boolean = true,
-        userResearchBanner: Boolean = true
+        userResearchBanner: Boolean = true,
+        isFullSize: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css"/>
@@ -54,10 +55,6 @@
         case _ => Some(s"${messages("service.name")} - GOV.UK")
     }
 }
-
-    @beforeContent = {
-        @hmrcLanguageSelectHelper()
-    }
 
 @additionalHead = {
     @hmrcTimeoutDialog(TimeoutDialog(
@@ -88,9 +85,26 @@
     signOutUrl = Some(controllers.routes.LogoutController.logout().url),
     nonce = CSPNonce.get,
     backLinkUrl = backLink,
-    beforeContentBlock = Some(beforeContent),
+    beforeContentBlock = None,
     additionalHeadBlock = Some(additionalHead),
     phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
     isWelshTranslationAvailable = welshToggle,
-    accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
+    accessibilityStatementUrl = Some("/accessibility-statement/customs-financials"),
+    mainContentLayout = if (isFullSize) Some(fullSizeContent) else Some(defaultSizeContent)
 )(mainContent)
+
+    @fullSizeContent(contentBlock: Html) = {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-thirds">
+            @contentBlock
+            </div>
+        </div>
+    }
+
+    @defaultSizeContent(contentBlock: Html) = {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+            @contentBlock
+            </div>
+        </div>
+    }
