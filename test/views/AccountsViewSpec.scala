@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSCashBalance, CashAccount}
 import models.{AuthorisedAccounts, CheckMode, NormalMode}
@@ -33,11 +34,11 @@ class AccountsViewSpec extends SpecBase with MockitoSugar {
 
   "AccountsView" should {
      "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-       normalModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/eori-number"
+       normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/eori-number"
      }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
     }
 
@@ -45,6 +46,7 @@ class AccountsViewSpec extends SpecBase with MockitoSugar {
   trait Setup  {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()

@@ -18,21 +18,22 @@
 @import models.domain.CDSAccount
 @import forms.AccountsFormProvider
 @import models.domain.CDSAccount.formattedAccountType
-
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @import models.domain.EORI
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         button: components.button,
         checkboxes: components.inputCheckboxes
 )
 
-@(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(title(form, "accounts.title", None, Seq())), fullWidth = true, backLinkUrl = Some(call) ) {
+@layout(pageTitle = Some(title(form, "accounts.title", None, Seq())), backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 

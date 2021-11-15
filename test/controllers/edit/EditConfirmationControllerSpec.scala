@@ -17,6 +17,7 @@
 package controllers.edit
 
 import base.SpecBase
+import config.FrontendAppConfig
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSCashBalance, CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -55,11 +56,12 @@ class EditConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[EditConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None)(request, messages(application)).toString
+            view("eori", None)(request, messages(application), appConfig).toString
         }
       }
 
@@ -93,6 +95,8 @@ class EditConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[EditConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
 
           status(result) mustEqual OK
 
@@ -101,7 +105,7 @@ class EditConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None)(request, messages(application)).toString
+            view("GB123456789012", None)(request, messages(application), appConfig).toString
         }
       }
     }

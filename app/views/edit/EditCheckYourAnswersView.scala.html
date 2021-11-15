@@ -15,9 +15,11 @@
  *@
 
 @import viewmodels.CheckYourAnswersEditHelper
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         formHelper: FormWithCSRF,
         summaryList: components.summaryList,
         h1: components.h1,
@@ -27,11 +29,11 @@
         link: components.link
 )
 
-@(model: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages)
+@(model: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(
+@layout(
     pageTitle = Some(titleNoForm("edit-cya-heading", None, Seq())),
-    backLinkUrl = Some(controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url)
+    backLink = Some(controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url)
 ) {
     @h1(msg = "edit-cya-heading", classes = "govuk-heading-xl")
 

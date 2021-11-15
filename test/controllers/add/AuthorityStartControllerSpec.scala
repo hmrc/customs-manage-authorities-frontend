@@ -17,6 +17,7 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityStartFormProvider
 import models.{AuthorityStart, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -55,11 +56,12 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AuthorityStartView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(form, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -74,13 +76,14 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, authorityStartRoute)
 
         val view = application.injector.instanceOf[AuthorityStartView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(AuthorityStart.values.head), NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(form.fill(AuthorityStart.values.head), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -125,13 +128,14 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AuthorityStartView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 

@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorityStartDateFormProvider
 import models.Mode
@@ -40,7 +41,7 @@ class AuthorityStartDateController @Inject()(
                                         formProvider: AuthorityStartDateFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: AuthorityStartDateView
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                      )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private def form = formProvider()
 

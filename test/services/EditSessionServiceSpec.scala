@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
-import models.{AuthorityEnd, AuthorityStart, ShowBalance}
+import models.{AuthorityEnd, AuthorityStart}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

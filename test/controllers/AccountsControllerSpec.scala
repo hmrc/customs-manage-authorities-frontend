@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import models.{AuthorisedAccounts, InternalId, NormalMode, UserAnswers}
@@ -55,13 +56,14 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[AccountsView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
             view(form, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
               CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-            ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application)).toString
+            ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
         }
       }
 
@@ -88,7 +90,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, accountsRoute)
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -114,11 +115,12 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ServiceUnavailableView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual INTERNAL_SERVER_ERROR
 
           contentAsString(result) mustEqual
-            view()(request, messages(application)).toString
+            view()(request, messages(application), appConfig).toString
         }
       }
     }
@@ -143,11 +145,12 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[NoAvailableAccountsView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB9876543210000")(request, messages(application)).toString
+            view("GB9876543210000")(request, messages(application), appConfig).toString
         }
       }
     }
@@ -168,6 +171,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, accountsRoute)
 
         val view = application.injector.instanceOf[AccountsView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
@@ -176,7 +180,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(answer), AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
             CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application)).toString
+          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -290,6 +294,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AccountsView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
@@ -298,7 +303,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(boundForm, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
             CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application)).toString
+          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
   }

@@ -15,9 +15,11 @@
  *@
 
 @import viewmodels.CheckYourAnswersRemoveHelper
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         govukButton: GovukButton,
@@ -32,12 +34,11 @@
         link: components.link
 )
 
+@(model: CheckYourAnswersRemoveHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@(model: CheckYourAnswersRemoveHelper)(implicit request: Request[_], messages: Messages)
-
-    @govukLayout(
+    @layout(
         pageTitle = Some(titleNoForm("remove-cya-heading", None, Seq())),
-        backLinkUrl = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(model.accountId, model.authorityId).url)
+        backLink = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(model.accountId, model.authorityId).url)
     ) {
         @h1(msg = "remove-cya-heading", classes = "govuk-heading-xl")
 

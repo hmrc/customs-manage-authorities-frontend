@@ -109,11 +109,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ManageAuthoritiesView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId))(request, messages(application)).toString
+            view(ManageAuthoritiesViewModel(authoritiesWithId))(request, messages(application), appConfig).toString
         }
       }
     }
@@ -158,11 +159,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view()(request, messages(application)).toString
+            view()(request, messages(application), appConfig).toString
         }
       }
     }

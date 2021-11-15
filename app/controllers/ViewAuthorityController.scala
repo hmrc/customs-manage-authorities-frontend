@@ -16,6 +16,7 @@
 
 package controllers
 
+import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
 import play.api.i18n._
@@ -33,7 +34,7 @@ class ViewAuthorityController @Inject()(view: EditOrRemoveView,
                                         editSessionService: EditSessionService,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction
-                                       )(implicit executionContext: ExecutionContext) extends FrontendController(mcc) with I18nSupport {
+                                       )(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport {
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async { implicit request =>
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
       case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad()))

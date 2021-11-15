@@ -28,14 +28,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val feedbackUrl: String = configuration.getOptional[String]("feedback.url").getOrElse("/feedback") +
     configuration.getOptional[String]("feedback.source").getOrElse("/CDS-FIN")
 
-  lazy val reportAProblem: Boolean = configuration.getOptional[Boolean]("features.report-a-problem").getOrElse(false)
-  lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
+  lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
+  lazy val reportAProblem: Boolean = configuration.getOptional[Boolean]("features.report-a-problem").getOrElse(false)
+
+  lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
   lazy val timeout: Int = configuration.get[Int]("timeout.timeout")
+
   lazy val countdown: Int = configuration.get[Int]("timeout.countdown")
 
   lazy val signOutUrl: String = configuration.get[String]("urls.signOut")
-
   lazy val govukHome: String = configuration.get[String]("urls.govUkHome")
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")

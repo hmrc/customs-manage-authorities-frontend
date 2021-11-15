@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
-import models.{CompanyInformation, UserAnswers}
+import models.UserAnswers
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem

@@ -16,6 +16,7 @@
 
 package controllers.add
 
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
 import forms.AuthorisedUserFormProviderWithConsent
@@ -51,7 +52,7 @@ class AuthorisedUserController @Inject()(
                                           verifyAccountNumbers: VerifyAccountNumbersAction,
                                           val controllerComponents: MessagesControllerComponents,
                                           view: AuthorisedUserView
-                                        )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
   private val form = formProvider()
 

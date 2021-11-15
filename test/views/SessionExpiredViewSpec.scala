@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.scalatest.Matchers._
 import play.api.i18n.Messages
@@ -29,7 +30,7 @@ class SessionExpiredViewSpec extends SpecBase {
 
   "SessionExpired view" should {
     "when back link is clicked returns to start of the journey" in new Setup {
-      view().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
+      view().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
       }
     }
 
@@ -37,7 +38,10 @@ class SessionExpiredViewSpec extends SpecBase {
   trait Setup  {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder().build()
+
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
+
     def view() = Jsoup.parse(app.injector.instanceOf[SessionExpiredView].apply().body)
   }
 }

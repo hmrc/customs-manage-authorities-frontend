@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.ShowBalanceFormProvider
 import models.{NormalMode, ShowBalance}
@@ -40,7 +41,7 @@ class EditShowBalanceController @Inject()(
                                        formProvider: ShowBalanceFormProvider,
                                        implicit val controllerComponents: MessagesControllerComponents,
                                        view: EditShowBalanceView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
 

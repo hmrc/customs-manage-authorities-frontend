@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
-import models.{AuthorityEnd, AuthorityStart, CompanyInformation, ShowBalance, ShowBalanceError, UserAnswers}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat

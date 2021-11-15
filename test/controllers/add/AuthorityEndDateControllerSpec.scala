@@ -17,6 +17,7 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityEndDateFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -76,11 +77,12 @@ class AuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, getRequest).value
 
         val view = application.injector.instanceOf[AuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute)(getRequest, messages(application)).toString
+          view(form, NormalMode,backLinkRoute)(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -93,13 +95,14 @@ class AuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val view = application.injector.instanceOf[AuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, getRequest).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(validAnswer), NormalMode,backLinkRoute)(getRequest, messages(application)).toString
+          view(form.fill(validAnswer), NormalMode,backLinkRoute)(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -140,13 +143,14 @@ class AuthorityEndDateControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[AuthorityEndDateView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 

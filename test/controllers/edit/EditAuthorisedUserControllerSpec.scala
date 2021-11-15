@@ -17,6 +17,7 @@
 package controllers.edit
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorisedUserFormProvider
 import models.domain.AuthorisedUser
 import org.mockito.Matchers.any
@@ -37,25 +38,29 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   "onPageLoad" should {
     "return OK with pre-populated form if answers present" in new Setup {
       val app: Application = applicationBuilder(emptyUserAnswers.set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test2")).toOption).build()
+      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+
       val form: AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
       val view: EditAuthorisedUserView = app.injector.instanceOf[EditAuthorisedUserView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        contentAsString(result) mustBe view(form().fill(AuthorisedUser("test", "test2")), "a", "b")(getRequest, messages(app)).toString()
+        contentAsString(result) mustBe view(form().fill(AuthorisedUser("test", "test2")), "a", "b")(getRequest, messages(app), appConfig).toString()
       }
     }
 
     "return OK without pre-populated form if answers not present" in new Setup {
       val app: Application = applicationBuilder(Some(emptyUserAnswers)).build()
+      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+
       val form: AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
       val view: EditAuthorisedUserView = app.injector.instanceOf[EditAuthorisedUserView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        contentAsString(result) mustBe view(form(), "a", "b")(getRequest, messages(app)).toString()
+        contentAsString(result) mustBe view(form(), "a", "b")(getRequest, messages(app), appConfig).toString()
       }
     }
   }

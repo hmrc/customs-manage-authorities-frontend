@@ -15,21 +15,22 @@
  *@
 
 @import controllers.routes._
-
 @import models.Mode
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
+
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
-        formHelper: FormWithCSRF,
-        errorSummary: components.errorSummary,
-        button: components.button,
-        inputText: components.inputText,
-        h1: components.h1
+    layout: Layout,
+    formHelper: FormWithCSRF,
+    errorSummary: components.errorSummary,
+    button: components.button,
+    inputText: components.inputText,
+    h1: components.h1
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLinkUrl = Some(call)) {
-
+@layout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.EoriNumberController.onSubmit(mode)) {
 

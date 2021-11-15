@@ -18,6 +18,7 @@ package controllers.remove
 
 import cats.data.OptionT
 import cats.implicits._
+import config.FrontendAppConfig
 import controllers.actions._
 import org.slf4j.LoggerFactory
 import pages.ConfirmationPage
@@ -40,7 +41,7 @@ class RemoveConfirmationController @Inject()(
                                            confirmationService: ConfirmationService,
                                            implicit val controllerComponents: MessagesControllerComponents,
                                            view: RemoveConfirmationView
-                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async {

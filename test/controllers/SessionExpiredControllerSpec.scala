@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import config.FrontendAppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SessionExpiredView
@@ -36,11 +37,12 @@ class SessionExpiredControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SessionExpiredView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view()(request, messages(application)).toString
+          view()(request, messages(application), appConfig).toString
       }
     }
   }

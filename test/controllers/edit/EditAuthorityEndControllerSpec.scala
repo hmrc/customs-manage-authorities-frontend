@@ -17,6 +17,7 @@
 package controllers.edit
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityEndFormProvider
 import models.{AuthorityEnd, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -54,11 +55,12 @@ class EditAuthorityEndControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[EditAuthorityEndView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(request, messages(application)).toString
+          view(form, "someId", "someId")(request, messages(application), appConfig).toString
       }
     }
 
@@ -73,13 +75,14 @@ class EditAuthorityEndControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, authorityEndRoute)
 
         val view = application.injector.instanceOf[EditAuthorityEndView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(AuthorityEnd.values.head), "someId", "someId")(request, messages(application)).toString
+          view(form.fill(AuthorityEnd.values.head), "someId", "someId")(request, messages(application), appConfig).toString
       }
     }
 
@@ -124,13 +127,14 @@ class EditAuthorityEndControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[EditAuthorityEndView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application)).toString
+          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
       }
     }
 

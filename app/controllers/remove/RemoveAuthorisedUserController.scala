@@ -16,10 +16,10 @@
 
 package controllers.remove
 
+import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorisedUserFormProvider
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError}
-import pages.edit.EditAuthorisedUserPage
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n._
@@ -43,7 +43,7 @@ class RemoveAuthorisedUserController @Inject()(
                                                 formProvider: AuthorisedUserFormProvider,
                                                 implicit val controllerComponents: MessagesControllerComponents,
                                                 view: RemoveAuthorisedUserView
-                                              )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with Logging {
+                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
   private val form = formProvider()
 

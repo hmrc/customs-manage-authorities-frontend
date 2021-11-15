@@ -16,18 +16,20 @@
 
 @import controllers.routes._
 @import models.{Mode, AuthorityEnd}
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
-        formHelper: FormWithCSRF,
-        errorSummary: components.errorSummary,
-        inputRadio: components.inputRadio,
-        button: components.button
+layout: Layout,
+formHelper: FormWithCSRF,
+errorSummary: components.errorSummary,
+inputRadio: components.inputRadio,
+button: components.button
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(title(form, "authorityEnd.title", None, Seq())),backLinkUrl = Some(call)) {
+@layout(pageTitle = Some(title(form, "authorityEnd.title", None, Seq())),backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AuthorityEndController.onSubmit(mode), 'autoComplete -> "off") {
 

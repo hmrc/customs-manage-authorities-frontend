@@ -18,9 +18,11 @@
 @import viewmodels.SummaryList
 @import viewmodels.SummaryListRow
 @import views.html.components.summaryList
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         summaryList: summaryList,
         h1: components.h1,
         subheading: components.subheading,
@@ -28,9 +30,9 @@
         formHelper: FormWithCSRF
 )
 
-@(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages)
+@(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
+@layout(pageTitle = Some(titleNoForm("checkYourAnswers.title", None, Seq()))) {
 
     @h1(messages("checkYourAnswers.heading"))
 

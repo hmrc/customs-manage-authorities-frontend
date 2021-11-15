@@ -17,9 +17,11 @@
 @import viewmodels.CheckYourAnswersHelper
 @import viewmodels.SummaryList
 @import views.html.components.summaryList
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-        govukLayout: templates.GovukLayoutWrapper,
+        layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         summaryList: summaryList,
@@ -31,9 +33,9 @@
         h2: components.h2
 )
 
-@(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLinkUrl = Some(controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode))) {
+@layout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLink = Some(controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode))) {
 
 
     @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {

@@ -15,20 +15,22 @@
  *@
 
 @import views.html.partials._
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
+
 
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
+    layout: Layout,
     formHelper: FormWithCSRF,
     errorSummary: components.errorSummary,
     button: components.button,
     inputText: components.inputText,
-    h1: components.h1,
-    appConfig: config.FrontendAppConfig
+    h1: components.h1
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), fullWidth = false, backLinkUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
+@layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
 
     <h1 id="manageAuthorities.heading" class="govuk-heading-xl">@messages("manageAuthorities.title")</h1>
 

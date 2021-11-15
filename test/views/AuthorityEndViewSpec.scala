@@ -17,6 +17,7 @@
 package views
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.AuthorityEndFormProvider
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
@@ -32,10 +33,10 @@ class AuthorityEndViewSpec extends SpecBase with MockitoSugar {
 
   "AuthorityEndView" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-        normalModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/start"
+        normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/start"
       }
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
     }
 
@@ -43,6 +44,7 @@ class AuthorityEndViewSpec extends SpecBase with MockitoSugar {
   trait Setup  {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
 

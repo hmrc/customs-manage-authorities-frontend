@@ -14,18 +14,19 @@
  * limitations under the License.
  *@
 
-@import java.time.LocalDate
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
 
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
-    h1: components.h1,
-    panel: components.panelIndent,
-    p: components.p
+layout: Layout,
+h1: components.h1,
+panel: components.panelIndent,
+p: components.p
 )
 
-@(eori: String, startDate: Option[String], multipleAccounts: Boolean)(implicit request: Request[_], messages: Messages)
+@(eori: String, startDate: Option[String], multipleAccounts: Boolean)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(titleNoForm("addConfirmation.title", None, Seq())), backLink = false) {
+@layout(pageTitle = Some(titleNoForm("addConfirmation.title", None, Seq())), backLink = None) {
 
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">@messages("addConfirmation.heading", eori)</h1>

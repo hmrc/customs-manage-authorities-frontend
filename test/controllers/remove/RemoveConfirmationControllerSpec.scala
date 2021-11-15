@@ -17,6 +17,7 @@
 package controllers.remove
 
 import base.SpecBase
+import config.FrontendAppConfig
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
@@ -55,11 +56,12 @@ class RemoveConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[RemoveConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori")(request, messages(application)).toString
+            view("eori")(request, messages(application), appConfig).toString
         }
       }
 
@@ -81,10 +83,11 @@ class RemoveConfirmationControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[RemoveConfirmationView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
-          contentAsString(result) mustEqual view("EORI")(request, messages(application)).toString()
+          contentAsString(result) mustEqual view("EORI")(request, messages(application), appConfig).toString()
 
           verify(mockRepository, times(1)).clear("id")
         }

@@ -39,7 +39,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
   "AuthorisedUserView" should {
       "have back link" in new Setup {
-        view().getElementById("back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/available-balance"
+        view().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/available-balance"
       }
     }
 

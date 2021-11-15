@@ -14,18 +14,21 @@
  * limitations under the License.
  *@
 
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
+
 @this(
-    govukLayout: templates.GovukLayoutWrapper,
-    errorSummary: components.errorSummary,
-    inputDate: components.inputDate,
-    p: components.p,
-    formHelper: FormWithCSRF,
-    button: components.button
+layout: Layout,
+errorSummary: components.errorSummary,
+inputDate: components.inputDate,
+p: components.p,
+formHelper: FormWithCSRF,
+button: components.button
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@govukLayout(pageTitle = Some(title(form, "authorityEndDate.title", None, Seq())),backLinkUrl = Some(call)) {
+@layout(pageTitle = Some(title(form, "authorityEndDate.title", None, Seq())),backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AuthorityEndDateController.onSubmit(mode), 'autoComplete -> "off") {
 

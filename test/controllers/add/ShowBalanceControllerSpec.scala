@@ -17,6 +17,7 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.ShowBalanceFormProvider
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
 import models.{NormalMode, ShowBalance, UserAnswers}
@@ -63,11 +64,13 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ShowBalanceView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(form, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -85,13 +88,14 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val request = fakeRequest(GET, showBalanceRoute)
 
         val view = application.injector.instanceOf[ShowBalanceView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(ShowBalance.values.head), accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(form.fill(ShowBalance.values.head), accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -139,13 +143,14 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[ShowBalanceView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application)).toString
+          view(boundForm, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
