@@ -9,7 +9,6 @@ GET        /                                                      controllers.In
 ->         /remove-authority                                      removeAuthority.Routes
 
 GET        /assets/*file                                          controllers.Assets.versioned(path="/public", file: Asset)
-GET        /language/:lang                                        controllers.LanguageSwitchController.switchToLanguage(lang: Language)
 GET        /this-service-has-been-reset                           controllers.SessionExpiredController.onPageLoad
 GET        /technical-difficulties                                controllers.TechnicalDifficulties.onPageLoad
 GET        /not-subscribed-for-cds                                controllers.UnauthorisedController.onPageLoad

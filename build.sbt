@@ -29,8 +29,7 @@ lazy val root = (project in file("."))
     ),
     PlayKeys.playDefaultPort := 9000,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
-      ".*javascript.*;.*Routes.*;.*GuiceInjector;" +
-      ".*ControllerConfiguration;.*LanguageSwitchController",
+      ".*javascript.*;.*Routes.*;.*GuiceInjector;",
     ScoverageKeys.coverageMinimum := 75,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
@@ -46,8 +45,7 @@ lazy val root = (project in file("."))
         group(Seq(
           "lib/govuk-frontend/govuk/all.js",
           "javascripts/jquery.min.js",
-          "javascripts/app.js",
-          "javascripts/timeoutDialog.js"
+          "javascripts/app.js"
         ))
     ),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
