@@ -33,7 +33,7 @@
 
 @(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(title(form, "accounts.title", None, Seq())), backLink = Some(call) ) {
+@layout(pageTitle = Some(title(form, "accounts.title", None, Seq())), backLink = Some(call), isFullWidth = true) {
 
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 
