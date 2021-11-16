@@ -302,8 +302,6 @@ removeConfirmation.returnLink=Yn ôl i ‘Rheoli awdurdodau eich cyfrif’
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
 
-manageAuthorities.reportAProblem.link=Cysylltwch â CThEM am gymorth technegol (yn agor mewn tab newydd).
-
 #Authorised User
 authorised-user.heading = Eich manylion
 authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
