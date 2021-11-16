@@ -52,7 +52,7 @@
 
 @fullPageTitle = @{
     pageTitle match {
-        case Some(text) => Some(s"$text - ${messages("service.name")} - GOV.UK")
+        case Some(text) => Some(text)
         case _ => Some(s"${messages("service.name")} - GOV.UK")
     }
 }
