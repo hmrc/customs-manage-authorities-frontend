@@ -310,9 +310,6 @@ removeConfirmation.returnLink = Back to Manage your account authorities
 manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
 
-manageAuthorities.reportAProblem.link=Please contact HMRC for technical assistance (opens in new tab).
-
-
 #Authorised User
 authorised-user.heading = Your details
 authorised-user.p = We will only use these details if we have questions regarding this authority
