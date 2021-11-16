@@ -28,7 +28,7 @@
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(titleNoForm("eoriNumber.error.gbnEori.title", None, Seq())), backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))) {
+@layout(pageTitle = Some(titleNoForm("eoriNumber.error.gbnEori.title", None, Seq())), backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)), helpAndSupport = false) {
 
     @h1(id = Some("eoriNumber.error.gbnEori.format"),
         msg = "eoriNumber.error.gbnEori.format",
