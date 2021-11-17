@@ -54,7 +54,8 @@
             name = "fullName",
             label = "authorisedUser.fullName",
             isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds")
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("name")
         )
 
         @inputText(
@@ -63,7 +64,8 @@
             name = "jobRole",
             label = "authorisedUser.jobRole",
             isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds")
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("on")
         )
 
         @govukCheckboxes(Checkboxes(
