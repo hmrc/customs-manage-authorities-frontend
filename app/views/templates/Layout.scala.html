@@ -63,8 +63,8 @@
         timeout = Some(appConfig.timeout),
         countdown = Some(appConfig.countdown),
         keepAliveUrl = Some(request.uri),
-        signOutUrl = Some(controllers.routes.LogoutController.logout().url),
-        timeoutUrl = Some(controllers.routes.LogoutController.logoutNoSurvey().url)
+        signOutUrl = Some(controllers.routes.LogoutController.logout.url),
+        timeoutUrl = Some(controllers.routes.LogoutController.logoutNoSurvey.url)
     ))
 }
 
@@ -82,8 +82,8 @@
 @hmrcLayout(
     userResearchBannerUrl = if (userResearchBanner) Some(appConfig.helpMakeGovUkBetterUrl) else None,
     pageTitle = fullPageTitle,
-    serviceUrl = Some(controllers.routes.IndexController.onPageLoad().url),
-    signOutUrl = Some(controllers.routes.LogoutController.logout().url),
+    serviceUrl = Some(controllers.routes.IndexController.onPageLoad.url),
+    signOutUrl = Some(controllers.routes.LogoutController.logout.url),
     nonce = CSPNonce.get,
     backLinkUrl = backLink,
     beforeContentBlock = None,

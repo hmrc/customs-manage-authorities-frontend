@@ -47,15 +47,15 @@ class AuthenticatedIdentifierAction @Inject()(
       case Some(credentials) ~ name ~ email ~ Some(affinityGroup) ~ Some(internalId) ~ allEnrolments =>
         allEnrolments.getEnrolment("HMRC-CUS-ORG").flatMap(_.getIdentifier("EORINumber")) match {
           case Some(eori) => block(IdentifierRequest(request, InternalId(internalId), credentials, affinityGroup, name, email, eori.value))
-          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad()))
+          case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
           }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue_url" -> Seq(config.loginContinueUrl)))
       case _: InsufficientEnrolments =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
+        Redirect(routes.UnauthorisedController.onPageLoad)
       case _: AuthorisationException =>
-        Redirect(routes.UnauthorisedController.onPageLoad())
+        Redirect(routes.UnauthorisedController.onPageLoad)
     }
   }
 }

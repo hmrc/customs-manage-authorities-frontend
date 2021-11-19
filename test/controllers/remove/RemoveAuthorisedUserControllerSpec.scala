@@ -49,7 +49,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
       }
     }
 
@@ -63,7 +63,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
       }
     }
 
@@ -112,7 +112,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, postRequest).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
       }
     }
 
@@ -126,7 +126,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, postRequest).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad().url
+        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
       }
     }
 

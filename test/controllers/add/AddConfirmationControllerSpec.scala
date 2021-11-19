@@ -47,7 +47,7 @@ class AddConfirmationControllerSpec extends SpecBase {
         val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, true)).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         running(application){
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad.url)
 
           val result = route(application, request).value
 
@@ -84,7 +84,7 @@ class AddConfirmationControllerSpec extends SpecBase {
         ).build()
 
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad.url)
 
           val result = route(application, request).value
 
@@ -116,7 +116,7 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad.url)
 
           val result = route(application, request).value
 
@@ -137,13 +137,13 @@ class AddConfirmationControllerSpec extends SpecBase {
 
       running(application) {
 
-        val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+        val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
 

@@ -84,7 +84,7 @@ class EoriNumberController @Inject()(
             } yield result).recover {
               case _: ValidationException =>
                 BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
-              case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+              case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
             }
           }
         }

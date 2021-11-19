@@ -35,8 +35,8 @@ class Navigator @Inject()() {
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     case AuthorityEndPage => authorityEndRoutes
     case AuthorityEndDatePage => _ => controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
-    case ShowBalancePage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
-    case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad()
+    case ShowBalancePage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
+    case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad
     case EditAuthorityStartPage(accountId: String, authorityId: String) => editAuthorityStartRoutes(_, accountId, authorityId)
     case EditAuthorityEndPage(accountId: String, authorityId: String) => editAuthorityEndRoutes(_, accountId, authorityId)
     case EditAuthorityStartDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
@@ -44,7 +44,7 @@ class Navigator @Inject()() {
     case EditShowBalancePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
     case EditAuthorisedUserPage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
     case EditCheckYourAnswersPage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
-    case _ => _ => routes.IndexController.onPageLoad()
+    case _ => _ => routes.IndexController.onPageLoad
   }
 
   private def editCheckYourAnswers(answers: UserAnswers, accountId: String, authorityId: String): Call = {
@@ -74,7 +74,7 @@ class Navigator @Inject()() {
     case AuthorityStartPage => authorityStartCheckRoutes
     case AuthorityEndPage => authorityEndCheckRoutes
     case AuthorityStartDatePage => authorityStartDatePageCheckRoutes
-    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
+    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
   }
 
   private def authorityStartRoutes(answers: UserAnswers): Call =
@@ -93,14 +93,14 @@ class Navigator @Inject()() {
 
   private def authorityStartCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {
-      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorisedUserController.onPageLoad()
+      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorisedUserController.onPageLoad
       case Some(AuthorityStart.Setdate) => controllers.add.routes.AuthorityStartDateController.onPageLoad(CheckMode)
       case _ => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
     }
 
   private def authorityEndCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityEndPage) match {
-      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad()
+      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad
       case Some(AuthorityEnd.Setdate) => controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
       case _ => controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode)
     }
@@ -108,7 +108,7 @@ class Navigator @Inject()() {
   private def authorityStartDatePageCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityEndPage) match {
       case Some(AuthorityEnd.Setdate) => controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
-      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad()
+      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad
       case _ => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
     }
 
@@ -121,7 +121,7 @@ class Navigator @Inject()() {
 
   def backLinkRoute(mode: Mode, call: Call): Call = mode match {
     case NormalMode => call
-    case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad()
+    case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad
   }
 
   def backLinkRouteForAuthorityEndPage(mode: Mode, answers: UserAnswers): Call = {
@@ -129,7 +129,7 @@ class Navigator @Inject()() {
       case (NormalMode, Some(AuthorityStart.Today)) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
       case (NormalMode, Some(AuthorityStart.Setdate)) => controllers.add.routes.AuthorityStartDateController.onPageLoad(mode)
       case (NormalMode, None) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
-      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
+      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad
     }
   }
 
@@ -138,14 +138,14 @@ class Navigator @Inject()() {
       case (NormalMode, Some(AuthorityEnd.Indefinite)) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
       case (NormalMode, Some(AuthorityEnd.Setdate)) => controllers.add.routes.AuthorityEndDateController.onPageLoad(mode)
       case (NormalMode, None) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
-      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
+      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad
     }
   }
 
   def backLinkRouteForEORINUmberPage(mode: Mode): Call = {
     mode match {
-      case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad()
-      case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad()
+      case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad
     }
   }
 }

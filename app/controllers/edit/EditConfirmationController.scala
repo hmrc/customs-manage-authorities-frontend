@@ -69,14 +69,14 @@ class EditConfirmationController @Inject()(
 
       maybeResult.value.flatMap {
         case Some(result) => Future.successful(result)
-        case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+        case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
       } recover {
         case _ => {
           request.userAnswers.get(ConfirmationPage) match {
            case Some(value) => Ok(view(value.eori, value.startDate))
             case None => {
               logger.warn("Something went wrong when displaying confirmation page on the edit journey")
-              Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+              Redirect(controllers.routes.SessionExpiredController.onPageLoad)
             }
           }
         }

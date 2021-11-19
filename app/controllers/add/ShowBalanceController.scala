@@ -58,7 +58,7 @@ class ShowBalanceController @Inject()(
       }
       accountsLength match {
         case Right(noOfAccounts) => Ok(view(preparedForm, noOfAccounts, mode,navigator.backLinkRouteForShowBalancePage(mode,request.userAnswers)))
-        case Left(emptyError) => errorPage(emptyError.msg)//logger.error(emptyError.msg); Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+        case Left(emptyError) => errorPage(emptyError.msg)//logger.error(emptyError.msg); Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
       }
   }
 
@@ -90,7 +90,7 @@ class ShowBalanceController @Inject()(
 
   private def errorPage(msg:String) = {
     logger.error(msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
 
 }

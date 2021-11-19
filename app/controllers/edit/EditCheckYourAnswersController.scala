@@ -88,16 +88,16 @@ class EditCheckYourAnswersController @Inject()(
         case true => Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
         case false =>
           logger.error("Edit authority request submission to backend failed")
-          Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+          Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
       }
       case _ =>
         logger.error("UserAnswers did not contain sufficient data to construct add authority request")
-        Future.successful(Redirect(controllers.routes.TechnicalDifficulties.onPageLoad()))
+        Future.successful(Redirect(controllers.routes.TechnicalDifficulties.onPageLoad))
     }
   }
 
   private def errorPage(error: ErrorResponse): Result = {
     logger.error(error.msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
 }

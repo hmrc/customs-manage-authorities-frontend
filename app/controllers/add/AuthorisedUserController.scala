@@ -56,7 +56,7 @@ class AuthorisedUserController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers) {
     implicit request =>
       cyaValidationService.validate(request.userAnswers)
         .fold(
@@ -86,7 +86,7 @@ class AuthorisedUserController @Inject()(
             _ <- sessionRepository.set(updatedAnswers)
             result <- doSubmission(updatedAnswers)
           } yield result).recover {
-            case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+            case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
           }
       )
   }
@@ -105,7 +105,7 @@ class AuthorisedUserController @Inject()(
 
   private def errorPage(msg:String) = {
     logger.error(msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
 
 }

@@ -83,6 +83,6 @@ class RemoveAuthorisedUserController @Inject()(
 
   private def errorPage(error: ErrorResponse): Result = {
     logger.error(error.msg)
-    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad())
+    Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
 }

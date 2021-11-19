@@ -30,13 +30,13 @@ class IndexControllerSpec extends SpecBase {
 
       running(application) {
 
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.ManageAuthoritiesController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.ManageAuthoritiesController.onPageLoad.url
       }
     }
   }

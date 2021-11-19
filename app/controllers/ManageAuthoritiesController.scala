@@ -43,7 +43,7 @@ class ManageAuthoritiesController @Inject()(
                                              invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad(): Action[AnyContent] = identify.async {
+  def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       val response = for {
         accounts <- accountsCacheService.retrieveAccounts(request.internalId, request.eoriNumber)
@@ -65,7 +65,7 @@ class ManageAuthoritiesController @Inject()(
           Redirect(routes.ManageAuthoritiesController.validationFailure())
         case NonFatal(e) =>
           logger.warn(s"[FetchAccountAuthorities API] Failed with error: ${e.getMessage}")
-          Redirect(routes.ManageAuthoritiesController.unavailable())
+          Redirect(routes.ManageAuthoritiesController.unavailable)
       }
   }
 

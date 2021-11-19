@@ -29,7 +29,7 @@
 
 @(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(Some(titleNoForm("view-authority-heading", None, Seq())), backLink = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
+@layout(Some(titleNoForm("view-authority-heading", None, Seq())), backLink = Some(routes.ManageAuthoritiesController.onPageLoad.url)) {
 
     @h1(msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 

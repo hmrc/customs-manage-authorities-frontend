@@ -47,7 +47,7 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
 
       "go to Index from a page that doesn't exist in the route map" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController.onPageLoad()
+        navigator.nextPage(UnknownPage, NormalMode, emptyUserAnswers) mustBe routes.IndexController.onPageLoad
       }
 
       "go from Accounts to EoriNumber" in {
@@ -264,23 +264,23 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
       "backLink should navigate to manage authorities when in normal mode" in {
-        navigator.backLinkRouteForEORINUmberPage(NormalMode) mustBe controllers.routes.ManageAuthoritiesController.onPageLoad()
+        navigator.backLinkRouteForEORINUmberPage(NormalMode) mustBe controllers.routes.ManageAuthoritiesController.onPageLoad
       }
 
       "backLink on showbalance should navigate to AuthorisedUser" in {
         val userAnswers = emptyUserAnswers
           .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
       }
 
       "backLink on EndPage should navigate to AuthorisedUser" in {
         val userAnswers = emptyUserAnswers
           .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
       }
 
       "backLink on Accounts should navigate to AuthorisedUser" in {
-        navigator.backLinkRoute(CheckMode, controllers.add.routes.AuthorisedUserController.onPageLoad()) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.backLinkRoute(CheckMode, controllers.add.routes.AuthorisedUserController.onPageLoad) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
       }
 
     }
