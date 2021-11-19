@@ -26,9 +26,9 @@
 @hmrcHeader(Header(
     homepageUrl = appConfig.govukHome,
     serviceName = Some(messages("service.name")),
-    serviceUrl = controllers.routes.IndexController.onPageLoad().url,
+    serviceUrl = controllers.routes.IndexController.onPageLoad.url,
     containerClasses = "govuk-width-container",
-    signOutHref = Some(routes.LogoutController.logout().url),
+    signOutHref = Some(routes.LogoutController.logout.url),
     language = messages.lang.language match {
         case "cy" => Cy
         case _    => En

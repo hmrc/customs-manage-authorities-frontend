@@ -27,6 +27,6 @@
 @layout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())), backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
     <h1 id="accounts.heading" class="govuk-heading-l">@messages("accounts.noAvailableAccounts.heading", enteredEori)</h1>
     <p class="govuk-body">
-        @messages("accounts.noAvailableAccounts.p") <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad()">@messages("accounts.noAvailableAccounts.link")</a>
+        @messages("accounts.noAvailableAccounts.p") <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad">@messages("accounts.noAvailableAccounts.link")</a>
     </p>
 }

@@ -62,7 +62,7 @@ class AddConfirmationController @Inject()(
             case Some(value) => Future.successful(Ok(view(value.eori, value.startDate, value.multipleAccounts)))
             case None =>
               logger.warn("No EORI number could be found for add confirmation page")
-              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad()))
+              Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
           }
 
       }

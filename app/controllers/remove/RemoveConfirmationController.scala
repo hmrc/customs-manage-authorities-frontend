@@ -71,7 +71,7 @@ class RemoveConfirmationController @Inject()(
 
   private def reportSessionExpired: Result = {
     logger.warn("Something went wrong when displaying confirmation page on the remove journey")
-    Redirect(controllers.routes.SessionExpiredController.onPageLoad())
+    Redirect(controllers.routes.SessionExpiredController.onPageLoad)
   }
 
 }

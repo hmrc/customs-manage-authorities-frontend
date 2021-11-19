@@ -48,7 +48,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   private val formProvider = new AuthorisedUserFormProviderWithConsent()
   private val form = formProvider()
 
-  private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad().url
+  private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad.url
 
   val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
   when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
@@ -202,7 +202,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
 
@@ -220,7 +220,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
 

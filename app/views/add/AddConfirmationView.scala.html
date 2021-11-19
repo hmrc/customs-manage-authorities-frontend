@@ -38,6 +38,6 @@ p: components.p
     @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
 
     <p class="govuk-body">
-        <a class="govuk-link" href="@controllers.routes.ManageAuthoritiesController.onPageLoad()">@messages("addConfirmation.returnLink")</a>
+        <a class="govuk-link" href="@controllers.routes.ManageAuthoritiesController.onPageLoad">@messages("addConfirmation.returnLink")</a>
     </p>
 }

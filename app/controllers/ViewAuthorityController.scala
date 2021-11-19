@@ -37,7 +37,7 @@ class ViewAuthorityController @Inject()(view: EditOrRemoveView,
                                        )(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendController(mcc) with I18nSupport {
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async { implicit request =>
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
-      case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad()))
+      case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad))
       case Right(AccountAndAuthority(account, authority)) =>
         val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.internalId.value))
         editSessionService.resetUserAnswers(accountId, authorityId, userAnswers, authority, account).map { checkYourAnswersEditHelper =>

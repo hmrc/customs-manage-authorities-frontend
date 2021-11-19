@@ -2,7 +2,6 @@
 
 GET        /                                                      controllers.IndexController.onPageLoad
 
-->         /govuk-frontend                                        govuk.Routes
 ->         /hmrc-frontend                                         hmrcfrontend.Routes
 ->         /add-authority                                         addAuthority.Routes
 ->         /edit-authority                                        editAuthority.Routes
