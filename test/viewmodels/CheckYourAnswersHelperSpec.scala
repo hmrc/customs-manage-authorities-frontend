@@ -17,7 +17,6 @@
 package viewmodels
 
 import base.SpecBase
-import controllers.routes
 import models._
 import models.domain._
 import org.mockito.Mockito.when

@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import controllers.routes
 import models.NormalMode
 import models.requests.DataRequest
 import pages.add.{AccountsPage, EoriNumberPage}
