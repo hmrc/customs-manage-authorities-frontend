@@ -263,7 +263,7 @@ addConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 addConfirmation.body.setDate=Yn dechrau ar {0}
 addConfirmation.p1.today=Gofynnwch i’r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos
 addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i''r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau
-addConfirmation.returnLink=Yn ôl i ‘Rheoli awdurdodau eich cyfrif’
+addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 editConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
 editConfirmation.heading={0} wedi’i ychwanegu yn llwyddiannus
@@ -272,7 +272,7 @@ editConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 editConfirmation.body.setDate=Yn dechrau ar {0}
 editConfirmation.p1.today=Dylech roi gwybod i’r defnyddiwr eich bod wedi trefnu hyn. Gall gymryd hyd at awr i’r mynediad ddod i rym.
 editConfirmation.p1.setDate=Dylech roi gwybod i’r defnyddiwr eich bod wedi trefnu hyn.
-editConfirmation.returnLink=Yn ôl i ‘Rheoli awdurdodau eich cyfrif’
+editConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 remove.title=A ydych yn si?r eich bod am ddileu awdurdod y cyfrif hwn?
 remove.heading=A ydych yn si?r eich bod am dynnu mynediad ar gyfer defnyddiwr {0}?
@@ -297,7 +297,7 @@ remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynedi
 removeConfirmation.title=Defnyddiwr wedi’i dynnu yn llwyddiannus
 removeConfirmation.heading={0} wedi’i dynnu yn llwyddiannus
 removeConfirmation.p1=fallai y byddwch am roi gwybod i’r defnyddiwr fod ei fynediad wedi’i dynnu.
-removeConfirmation.returnLink=Yn ôl i ‘Rheoli awdurdodau eich cyfrif’
+removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.

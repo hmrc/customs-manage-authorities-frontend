@@ -271,7 +271,7 @@ addConfirmation.body.today.plural = They can now use your accounts
 addConfirmation.body.setDate = Starting on {0}
 addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear
 addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard
-addConfirmation.returnLink = Back to Manage your account authorities
+addConfirmation.returnLink = Back to manage your account authorities
 
 editConfirmation.title = User added successfully
 editConfirmation.heading = {0} successfully changed
@@ -280,7 +280,7 @@ editConfirmation.body.today.plural = They can now use your accounts
 editConfirmation.body.setDate = Starting on {0}
 editConfirmation.p1.today = You should tell the user that you have arranged this. It may take up to one hour for access to be active.
 editConfirmation.p1.setDate = You should tell the user that you have arranged this.
-editConfirmation.returnLink = Back to Manage your account authorities
+editConfirmation.returnLink = Back to manage your account authorities
 
 remove.title = Are you sure you want to delete this account authority?
 remove.heading = Are you sure you want to remove access for user {0}?
@@ -305,7 +305,7 @@ remove.error.confirmation.required = Select to confirm you want to remove this u
 removeConfirmation.title = User successfully removed
 removeConfirmation.heading = {0} successfully removed
 removeConfirmation.p1 = You may want to tell the user that their access has been removed.
-removeConfirmation.returnLink = Back to Manage your account authorities
+removeConfirmation.returnLink = Back to manage your account authorities
 
 manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
