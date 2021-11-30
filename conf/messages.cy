@@ -203,7 +203,7 @@ authorityEnd.error.required=Dewiswch am ba hyd y dylai’r awdurdod bara
 
 authorityEndDate.title=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
 authorityEndDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
-authorityEndDate.hint=Er enghraifft, 31 3 2025
+authorityEndDate.hint=Er enghraifft, 31 3 2025.
 authorityEndDate.p=Yn dod i ben am 23:59 ar y dyddiad hwn
 authorityEndDate.checkYourAnswersLabel=AuthorityEndDate
 authorityEndDate.error.required.all=Nodwch y dyddiad yr hoffech i’r awdurdod ddod i ben
