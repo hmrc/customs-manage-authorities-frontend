@@ -50,7 +50,7 @@ class EditAuthorityStartController @Inject()(
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ) { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)), dateTimeService.localDate())
+      val form = formProvider(dateTimeService.localDate())
       val preparedForm = request.userAnswers.get(EditAuthorityStartPage(accountId, authorityId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -62,7 +62,7 @@ class EditAuthorityStartController @Inject()(
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ).async { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)), dateTimeService.localDate())
+      val form = formProvider(dateTimeService.localDate())
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),

@@ -44,7 +44,7 @@ class RemoveViewSpec extends SpecBase {
   trait Setup  {
     val startDate = LocalDate.parse("2020-03-01")
     val endDate = LocalDate.parse("2020-04-01")
-    val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+    val standingAuthority = StandingAuthority("EORI", startDate, viewBalance = false)
     val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")

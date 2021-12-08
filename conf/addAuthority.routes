@@ -20,16 +20,6 @@ POST        /start-date                                               controller
 GET         /change-start-date                                        controllers.add.AuthorityStartDateController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-start-date                                        controllers.add.AuthorityStartDateController.onSubmit(mode: Mode = CheckMode)
 
-GET         /end                                                      controllers.add.AuthorityEndController.onPageLoad(mode: Mode = NormalMode)
-POST        /end                                                      controllers.add.AuthorityEndController.onSubmit(mode: Mode = NormalMode)
-GET         /change-end                                               controllers.add.AuthorityEndController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-end                                               controllers.add.AuthorityEndController.onSubmit(mode: Mode = CheckMode)
-
-GET         /end-date                                                 controllers.add.AuthorityEndDateController.onPageLoad(mode: Mode = NormalMode)
-POST        /end-date                                                 controllers.add.AuthorityEndDateController.onSubmit(mode: Mode = NormalMode)
-GET         /change-end-date                                          controllers.add.AuthorityEndDateController.onPageLoad(mode: Mode = CheckMode)
-POST        /change-end-date                                          controllers.add.AuthorityEndDateController.onSubmit(mode: Mode = CheckMode)
-
 GET         /available-balance                                        controllers.add.ShowBalanceController.onPageLoad(mode: Mode = NormalMode)
 POST        /available-balance                                        controllers.add.ShowBalanceController.onSubmit(mode: Mode = NormalMode)
 GET         /change-available-balance                                 controllers.add.ShowBalanceController.onPageLoad(mode: Mode = CheckMode)

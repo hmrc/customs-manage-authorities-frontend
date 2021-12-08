@@ -38,13 +38,11 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
   val standingAuthorityWithView = StandingAuthority(
     "EORI1",
     LocalDate.parse("2020-03-01"),
-    Some(LocalDate.parse("2020-04-01")),
     viewBalance = true
   )
   val standingAuthorityWithoutView = StandingAuthority(
     "EORI2",
     LocalDate.parse("2020-02-01"),
-    None,
     viewBalance = false
   )
 
@@ -135,19 +133,5 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
 
       standingAuthorityWithView.formattedFromDate mustBe "1 Mar 2020"
     }
-
-    "format authority end dates" when {
-      import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
-
-      "when present" in {
-        standingAuthorityWithView.formattedToDate mustBe Some("1 Apr 2020")
-      }
-
-      "when missing" in {
-        standingAuthorityWithoutView.formattedToDate mustBe None
-      }
-    }
-
   }
-
 }

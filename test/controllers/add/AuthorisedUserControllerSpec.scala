@@ -54,7 +54,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
 
   val accounts: Accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
-  val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+  val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
   val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
   when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority)))
 

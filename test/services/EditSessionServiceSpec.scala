@@ -17,8 +17,8 @@
 package services
 
 import base.SpecBase
+import models.AuthorityStart
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
-import models.{AuthorityEnd, AuthorityStart}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,7 +34,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
   "populateUserAnswers" should {
     "update the session with the user's answers from the api if no answers present in the session" in new Setup {
       val startDate = LocalDate.of(1, 1, 20)
-      val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+      val standingAuthority = StandingAuthority("someEori", startDate, viewBalance = false)
 
       val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
@@ -46,8 +46,6 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate
         userAnswers.get(EditAuthorityStartPage("a", "b")).get mustBe AuthorityStart.Setdate
-        userAnswers.get(EditAuthorityEndDatePage("a", "b")) mustBe None
-        userAnswers.get(EditAuthorityEndPage("a", "b")).get mustBe AuthorityEnd.Indefinite
       }
     }
   }

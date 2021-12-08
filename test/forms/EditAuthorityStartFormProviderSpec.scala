@@ -27,7 +27,7 @@ import java.time.LocalDate
 class EditAuthorityStartFormProviderSpec extends OptionFieldBehaviours {
 
   implicit val messages: Messages = Helpers.stubMessages()
-  val form = new EditAuthorityStartFormProvider()(None, LocalDate.now())
+  val form = new EditAuthorityStartFormProvider()(LocalDate.now())
 
   ".value" must {
 

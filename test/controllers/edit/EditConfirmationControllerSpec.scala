@@ -37,7 +37,7 @@ class EditConfirmationControllerSpec extends SpecBase {
 
   val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+  val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
 
   val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(

@@ -45,14 +45,13 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
     .set(AccountsPage, selectedAccounts).success.value
     .set(EoriNumberPage, "GB123456789012").success.value
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
 
   "CheckYourAnswersValidationService" must {
 
     "validate complete submission from today to indefinite" in {
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
       service.validate(completeUserAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -61,7 +60,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(AccountsPage, List(generalGuarantee)).success.value
 
       val accounts = Accounts(None, Seq(), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
       service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -70,7 +69,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(AccountsPage, List(dutyDeferment)).success.value
 
       val accounts = Accounts(None, Seq(dutyDeferment.number), None)
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
       service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -80,12 +79,10 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val endDate = LocalDate.now().plusYears(1)
 
       val userAnswers = completeUserAnswers
-        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        .set(AuthorityEndDatePage, endDate).success.value
         .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Some(endDate), viewBalance = false)
+      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = false)
       service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -98,11 +95,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val userAnswers = completeUserAnswers
         .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
         .set(AuthorityStartDatePage, startDate).success.value
-        .set(AuthorityEndPage, AuthorityEnd.Setdate).success.value
-        .set(AuthorityEndDatePage, endDate).success.value
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", startDate, Some(endDate), viewBalance = true)
+      val standingAuthority = StandingAuthority("GB123456789012", startDate, viewBalance = true)
       service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -116,7 +111,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(AuthorityStartDatePage, startDate).success.value
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", startDate, None, viewBalance = true)
+      val standingAuthority = StandingAuthority("GB123456789012", startDate, viewBalance = true)
       service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }
 
@@ -142,19 +137,6 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val userAnswers = completeUserAnswers
         .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
         .remove(AuthorityStartDatePage).success.value
-      service.validate(userAnswers) mustBe None
-    }
-
-    "reject submission missing Authority end" in {
-      val userAnswers = completeUserAnswers
-        .remove(AuthorityEndPage).success.value
-      service.validate(userAnswers) mustBe None
-    }
-
-    "reject submission missing Authority end date when set date is chosen" in {
-      val userAnswers = completeUserAnswers
-        .set(AuthorityEndPage, AuthorityEnd.Setdate).success.value
-        .remove(AuthorityEndDatePage).success.value
       service.validate(userAnswers) mustBe None
     }
 
