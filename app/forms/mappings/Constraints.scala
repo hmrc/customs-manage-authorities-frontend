@@ -18,7 +18,6 @@ package forms.mappings
 
 import models.AuthorityStart
 import play.api.data.validation.{Constraint, Invalid, Valid}
-
 import java.time.LocalDate
 
 trait Constraints {
@@ -142,12 +141,14 @@ trait Constraints {
 
   protected def checkEORI(gbnErrorKey: String, invalidFormatErrorKey: String): Constraint[String] =
     Constraint {
-      case str if str.matches(gbnEoriRegex) =>
+      case str if stripWhitespace(str).matches(gbnEoriRegex) =>
         Invalid(gbnErrorKey,gbnEoriRegex)
-      case str if str.matches(eoriRegex) =>
+      case str if stripWhitespace(str).matches(eoriRegex) =>
         Valid
       case _ =>
         Invalid(invalidFormatErrorKey,eoriRegex)
     }
 
+  protected def stripWhitespace(str: String): String =
+    str.replaceAll("\\s", "")
 }
