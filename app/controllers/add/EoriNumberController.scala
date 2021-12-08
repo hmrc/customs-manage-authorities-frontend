@@ -74,27 +74,30 @@ class EoriNumberController @Inject()(
         },
 
         eoriNumber => {
-          if (request.eoriNumber.equalsIgnoreCase(eoriNumber)) {
+          val eori = stripWhitespace(eoriNumber)
+          if (request.eoriNumber.equalsIgnoreCase(eori)) {
             Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           } else {
             (for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, eoriNumber))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, eori))
               _ <- sessionRepository.set(updatedAnswers)
-              result <- doSubmission(updatedAnswers, eoriNumber, mode)
+              result <- doSubmission(updatedAnswers, eori, mode)
             } yield result).recover {
               case _: ValidationException =>
-                BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+                BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
               case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
             }
           }
         }
       )
   }
-
   private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
     }
   }
+
+  protected def stripWhitespace(str: String): String =
+    str.replaceAll("\\s", "")
 }
