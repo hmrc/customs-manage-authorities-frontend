@@ -61,8 +61,8 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
-
-    httpClient.GET[HttpResponse](baseUrl + context + s"/eori/$eori/validate")
+    val eoriStrippedWhitespace = eori.replaceAll("\\s", "")
+    httpClient.GET[HttpResponse](baseUrl + context + s"/eori/$eoriStrippedWhitespace/validate")
       .map(response => {
         response.status match {
           case Status.OK => Right(true)
