@@ -45,7 +45,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AccountsPage, selectedAccounts).success.value
     .set(EoriNumberPage, "GB123456789012").success.value
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
@@ -90,16 +89,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             )))
           ),
           summaryListRow(
-            "authorityEnd.checkYourAnswersLabel",
-            "checkYourAnswers.authorityEnd.indefinite",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
-            )))
-          ),
-          summaryListRow(
             "showBalance.checkYourAnswersLabel",
             "showBalance.checkYourAnswers.yes",
             None,
@@ -119,8 +108,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           .set(AccountsPage, List(cashAccount)).success.value
           .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
           .set(AuthorityStartDatePage, LocalDate.now().plusDays(1)).success.value
-          .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-          .set(AuthorityEndDatePage, LocalDate.now().plusDays(2)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
         helper.rows mustBe Seq(
           summaryListRow(
@@ -151,16 +138,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
               href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
               content = span(messages("site.change")),
               visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "authorityEnd.checkYourAnswersLabel",
-            dateAsDayMonthAndYear(LocalDate.now().plusDays(2)),
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
             )))
           ),
           summaryListRow(
@@ -211,16 +188,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             )))
           ),
           summaryListRow(
-            "authorityEnd.checkYourAnswersLabel",
-            "checkYourAnswers.authorityEnd.indefinite",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
-            )))
-          ),
-          summaryListRow(
             "showBalance.checkYourAnswersLabel",
             "showBalance.checkYourAnswers.no",
             None,
@@ -239,8 +206,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         val userAnswers = userAnswersTodayToIndefinite
           .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
           .set(AuthorityStartDatePage, LocalDate.now().plusDays(1)).success.value
-          .set(AuthorityEndPage, AuthorityEnd.Setdate).success.value
-          .set(AuthorityEndDatePage, LocalDate.now().plusDays(2)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
         helper.rows mustBe Seq(
           summaryListRow(
@@ -271,16 +236,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
               href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
               content = span(messages("site.change")),
               visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "authorityEnd.checkYourAnswersLabel",
-            dateAsDayMonthAndYear(LocalDate.now().plusDays(2)),
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
             )))
           ),
           summaryListRow(

@@ -22,12 +22,14 @@ import forms.EditAuthorityStartDateFormProvider
 import models.NormalMode
 import navigation.Navigator
 import pages.edit._
+import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.edit.EditAuthorityStartDateView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent._
 
@@ -46,7 +48,7 @@ class EditAuthorityStartDateController @Inject()(
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ) { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
+      val form: Form[LocalDate] = formProvider()
       val preparedForm = request.userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -58,7 +60,7 @@ class EditAuthorityStartDateController @Inject()(
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ).async { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
+      val form: Form[LocalDate] = formProvider()
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),

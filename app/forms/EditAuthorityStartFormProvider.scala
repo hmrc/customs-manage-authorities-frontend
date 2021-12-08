@@ -27,9 +27,8 @@ import javax.inject.Inject
 
 class EditAuthorityStartFormProvider @Inject() extends Mappings with DateUtils {
 
-  def apply(maybeEndDate: Option[LocalDate], now: LocalDate)(implicit messages: Messages): Form[AuthorityStart] =
+  def apply(now: LocalDate)(implicit messages: Messages): Form[AuthorityStart] =
     Form(
       "value" -> enumerable[AuthorityStart]("authorityStart.error.required")
-        .verifying(maybeMinDate(maybeEndDate, "authorityStartDate.error.maximum", dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))))
     )
 }

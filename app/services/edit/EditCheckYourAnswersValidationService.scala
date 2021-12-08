@@ -18,7 +18,7 @@ package services.edit
 
 import com.google.inject.Inject
 import models.domain.StandingAuthority
-import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import services.DateTimeService
 
@@ -32,24 +32,18 @@ class EditCheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeS
                authorisedEori: String): Option[StandingAuthority] = Try {
     for {
       authorityStart <- userAnswers.get(EditAuthorityStartPage(accountId, authorityId))
-      authorityEnd <- userAnswers.get(EditAuthorityEndPage(accountId, authorityId))
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
         userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId))
       } else {
         Some(dateTimeService.localTime().toLocalDate)
       }
-      authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)) else None
       viewBalance <- userAnswers.get(EditShowBalancePage(accountId, authorityId))
-      standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
-        None
-      } else {
+      standingAuthority <-
         Some(StandingAuthority(
           authorisedEori,
           authorisedFromDate,
-          authorityEndDate,
           viewBalance == ShowBalance.Yes
         ))
-      }
     } yield standingAuthority
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 }

@@ -31,9 +31,6 @@ class FakeNavigator(desiredRoute: Call, mode: Mode = NormalMode) extends Navigat
   override def backLinkRouteForShowBalancePage(mode: Mode, userAnswers: UserAnswers): Call =
     desiredRoute
 
-  override def backLinkRouteForAuthorityEndPage(mode: Mode, userAnswers: UserAnswers): Call =
-    desiredRoute
-
   override def backLinkRouteForEORINUmberPage(mode: Mode): Call =
     desiredRoute
 }

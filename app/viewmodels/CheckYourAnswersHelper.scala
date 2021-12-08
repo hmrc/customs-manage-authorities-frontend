@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.domain.CDSAccount
-import models.{AuthorityEnd, AuthorityStart, CheckMode, ShowBalance, UserAnswers}
+import models.{AuthorityStart, CheckMode, ShowBalance, UserAnswers}
 import pages.add._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -41,7 +41,6 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
       Some(accountsRow(selectedAccounts)),
       eoriNumberRow(userAnswers.get(EoriNumberPage)),
       authorityStartRow(userAnswers),
-      authorityEndRow(userAnswers),
       showBalanceRow(userAnswers.get(ShowBalancePage))
     ).flatten
   }
@@ -90,24 +89,6 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
           href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
           content = span(messages("site.change")),
           visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-        ))),
-        secondValue = None
-      )
-    )
-  }
-
-  private def authorityEndRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
-    userAnswers.get(AuthorityEndPage).flatMap {
-      case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
-      case AuthorityEnd.Setdate => userAnswers.get(AuthorityEndDatePage).map(dateAsDayMonthAndYear)
-    }.map(value =>
-      summaryListRow(
-        messages("authorityEnd.checkYourAnswersLabel"),
-        value = value,
-        actions = Actions(items = Seq(ActionItem(
-          href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-          content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
         ))),
         secondValue = None
       )

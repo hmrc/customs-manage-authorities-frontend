@@ -19,7 +19,7 @@ package services.add
 import com.google.inject.Inject
 import models.domain.{CDSAccount, StandingAuthority}
 import models.requests.Accounts
-import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityStart, ShowBalance, UserAnswers}
 import pages.add._
 import services.DateTimeService
 
@@ -33,24 +33,18 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
       accounts = extractAccounts(selectedAccounts)
       authorisedEori <- userAnswers.get(EoriNumberPage)
       authorityStart <- userAnswers.get(AuthorityStartPage)
-      authorityEnd <- userAnswers.get(AuthorityEndPage)
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
         userAnswers.get(AuthorityStartDatePage)
       } else {
         Some(dateTimeService.localTime().toLocalDate)
       }
-      authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(AuthorityEndDatePage) else None
       viewBalance <- userAnswers.get(ShowBalancePage)
-      standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
-        None
-      } else {
+      standingAuthority <-
         Some(StandingAuthority(
           authorisedEori,
           authorisedFromDate,
-          authorityEndDate,
           viewBalance == ShowBalance.Yes
         ))
-      }
     } yield (accounts, standingAuthority)
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 
