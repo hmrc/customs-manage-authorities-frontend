@@ -30,7 +30,8 @@ class Navigator @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(NormalMode)
-    case AccountsPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+    case AccountsPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    case EoriDetailsCorrectPage => eoriDetailsCorrectRoutes
     case AuthorityStartPage => authorityStartRoutes
     case AuthorityStartDatePage => _ => controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
     case ShowBalancePage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
@@ -63,6 +64,13 @@ class Navigator @Inject()() {
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
     case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
   }
+
+  private def eoriDetailsCorrectRoutes(answers: UserAnswers): Call =
+    answers.get(EoriDetailsCorrectPage) match {
+      case Some(EoriDetailsCorrect.Yes) => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+      case Some(EoriDetailsCorrect.No) => controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      case _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    }
 
   private def authorityStartRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {

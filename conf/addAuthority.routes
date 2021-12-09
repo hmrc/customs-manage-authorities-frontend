@@ -10,6 +10,11 @@ POST        /eori-number                                              controller
 GET         /change-eori-number                                       controllers.add.EoriNumberController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-eori-number                                       controllers.add.EoriNumberController.onSubmit(mode: Mode = CheckMode)
 
+GET         /eori-details-correct                                     controllers.add.EoriDetailsCorrectController.onPageLoad(mode: Mode = NormalMode)
+POST        /eori-details-correct                                     controllers.add.EoriDetailsCorrectController.onSubmit(mode: Mode = NormalMode)
+GET         /change-eori-details-correct                              controllers.add.EoriDetailsCorrectController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-eori-details-correct                              controllers.add.EoriDetailsCorrectController.onSubmit(mode: Mode = CheckMode)
+
 GET         /start                                                    controllers.add.AuthorityStartController.onPageLoad(mode: Mode = NormalMode)
 POST        /start                                                    controllers.add.AuthorityStartController.onSubmit(mode: Mode = NormalMode)
 GET         /change-start                                             controllers.add.AuthorityStartController.onPageLoad(mode: Mode = CheckMode)

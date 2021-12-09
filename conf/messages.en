@@ -183,6 +183,29 @@ eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI
 eoriNumber.error.gbnEori.format= You cannot use a GBN EORI with this service.
 eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
 
+#Are these details correct view
+
+eoriDetails.title = Are these details correct?
+eoriDetails.heading = Are these details correct?
+eoriDetail.eoriNumber = EORI number
+eoriDetails.noConsent = The business name this number is registered to has not consented to their name being shared
+eoriDetails.noConsent.2 = If you need more information, contact the business directly
+eoriDetails.radioYes = Yes
+eoriDetails.radioNo = No, change EORI
+eoriDetails.error.required = Select when you want the authority to start
+
+
+
+#Are these details correct view
+
+eori-details-title = A yw’r manylion hyn yn gywir?
+eori-details-eori-number = Rhif EORI
+eori-details-business-noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu
+eori-details-business-noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes
+eori-details-radio-yes = Iawn
+eori-details-radio-no = Na, newid y rhif EORI
+
+
 authorityStart.title = When do you want the authority to start?
 authorityStart.heading = When do you want the authority to start?
 authorityStart.today = Today (usually active within an hour)

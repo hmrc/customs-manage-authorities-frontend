@@ -18,29 +18,28 @@ package controllers.add
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.AuthorityStartFormProvider
-import models.{AuthorityStart, Mode}
+import forms.EoriDetailsCorrectFormProvider
+import javax.inject.Inject
+import models.{EoriDetailsCorrect, Mode}
 import navigation.Navigator
-import pages.add.AuthorityStartPage
+import pages.add.EoriDetailsCorrectPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.add.AuthorityStartView
+import views.html.add.EoriDetailsCorrectView
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorityStartController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AuthorityStartFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AuthorityStartView
+class EoriDetailsCorrectController @Inject()( override val messagesApi: MessagesApi,
+                                              sessionRepository: SessionRepository,
+                                              navigator: Navigator,
+                                              identify: IdentifierAction,
+                                              getData: DataRetrievalAction,
+                                              requireData: DataRequiredAction,
+                                              formProvider: EoriDetailsCorrectFormProvider,
+                                              val controllerComponents: MessagesControllerComponents,
+                                              view: EoriDetailsCorrectView
                                      )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
@@ -48,12 +47,12 @@ class AuthorityStartController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(AuthorityStartPage) match {
+      val preparedForm = request.userAnswers.get(EoriDetailsCorrectPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))
+      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,13 +60,13 @@ class AuthorityStartController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))),
+          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityStartPage, value)(AuthorityStart.writes))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriDetailsCorrectPage, value)(EoriDetailsCorrect.writes))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorityStartPage, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(EoriDetailsCorrectPage, mode, updatedAnswers))
       )
   }
 }
