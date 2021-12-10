@@ -194,7 +194,11 @@ eoriDetails.radioYes = Yes
 eoriDetails.radioNo = No, change EORI
 eoriDetails.error.required = Select when you want the authority to start
 
-
+authorityDetails.title = Your details
+authorityDetails.h1 = Your details
+authorityDetails.p = We will only use these details if we have questions regarding this authority
+authorityDetails.fullName = Full name
+authorityDetails.role = Role
 
 #Are these details correct view
 

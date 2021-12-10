@@ -30,6 +30,11 @@ POST        /available-balance                                        controller
 GET         /change-available-balance                                 controllers.add.ShowBalanceController.onPageLoad(mode: Mode = CheckMode)
 POST        /change-available-balance                                 controllers.add.ShowBalanceController.onSubmit(mode: Mode = CheckMode)
 
+GET         /your-details                                             controllers.add.AuthorityDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /your-details                                             controllers.add.AuthorityDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /change-your-details                                      controllers.add.AuthorityDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /change-your-details                                      controllers.add.AuthorityDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET         /check-answers                                            controllers.add.AuthorisedUserController.onPageLoad()
 POST        /check-answers                                            controllers.add.AuthorisedUserController.onSubmit()
 

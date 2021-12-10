@@ -30,21 +30,41 @@
         inputCheckboxes: components.inputCheckboxes,
         govukCheckboxes: GovukCheckboxes,
         h1: components.h1,
-        h2: components.h2
+        h2: components.h2,
+        p: components.p
 )
 
-@(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(form: Form[_], helper: CheckYourAnswersHelper, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))) {
+@layout(pageTitle = Some(title(form, "authorityDetails.title", None, Seq())), backLink = Some(call)) {
 
-
-    @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {
+    @formHelper(action = controllers.add.routes.AuthorityDetailsController.onSubmit(mode)) {
 
         @errorSummary(form.errors)
 
-        @h1("authorisedUser.heading")
+        @h1("authorityDetails.h1")
 
-        @summaryList(SummaryList(helper.rows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+        @p(Html(messages("authorityDetails.p")))
+
+        @inputText(
+            form,
+            id = "fullName",
+            name = "fullName",
+            label = "authorityDetails.fullName",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("name")
+        )
+
+        @inputText(
+            form,
+            id = "jobRole",
+            name = "jobRole",
+            label = "authorityDetails.role",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("on")
+        )
 
         @button("site.confirm")
     }
