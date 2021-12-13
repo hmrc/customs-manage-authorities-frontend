@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.CDSAccount
+import models.domain.{AuthorityDetails, CDSAccount}
 import models.{AuthorityStart, CheckMode, ShowBalance, UserAnswers}
 import pages.add._
 import play.api.i18n.Messages
@@ -36,13 +36,27 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
     case _ => messages("authorisedUser.declaration.plural")
   }
 
-  def rows: Seq[SummaryListRow] = {
+  def accountsRows: Seq[SummaryListRow] = {
     Seq(
       Some(accountsRow(selectedAccounts)),
-      eoriNumberRow(userAnswers.get(EoriNumberPage)),
+    ).flatten
+  }
+
+  def companyDetailsRows: Seq[SummaryListRow] = {
+    Seq(
+      eoriNumberRow(userAnswers.get(EoriNumberPage))
+    ).flatten
+  }
+
+  def authorityDurationRows: Seq[SummaryListRow] = {
+    Seq(
       authorityStartRow(userAnswers),
       showBalanceRow(userAnswers.get(ShowBalancePage))
     ).flatten
+  }
+
+  def authorityDetailsRows: Seq[SummaryListRow] = {
+    yourDetailsRows(userAnswers.get(AuthorityDetailsPage))
   }
 
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
@@ -77,6 +91,31 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
     )
   }
 
+
+  private def yourDetailsRows(authorityDetails: Option[AuthorityDetails]): Seq[SummaryListRow] = {
+      Seq(summaryListRow(
+        messages("checkYourAnswers.fullName"),
+        value = HtmlFormat.escape(authorityDetails.get.userName).toString(),
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+        ))),
+        secondValue = None
+      ),
+        summaryListRow(
+        messages("checkYourAnswers.role"),
+        value = HtmlFormat.escape(authorityDetails.get.userRole).toString(),
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+        ))),
+        secondValue = None
+      )
+      )
+  }
+
   private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
     userAnswers.get(AuthorityStartPage).flatMap {
       case AuthorityStart.Today => Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
@@ -109,5 +148,4 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
       )
     )
   }
-
 }

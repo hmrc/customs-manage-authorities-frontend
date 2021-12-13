@@ -20,9 +20,9 @@ import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions._
 import forms.EoriNumberFormProvider
-import models.{Mode, UserAnswers}
+import models.{AuthorityStart, Mode, UserAnswers}
 import navigation.Navigator
-import pages.add.EoriNumberPage
+import pages.add.{AuthorityStartPage, EoriNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
@@ -31,8 +31,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.GBNEoriErrorView
 import views.html.add.EoriNumberView
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.dtd.ValidationException
 
@@ -93,7 +93,8 @@ class EoriNumberController @Inject()(
 
   private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
-      case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
+      case Right(true) =>
+        Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
     }
   }

@@ -53,7 +53,6 @@ class AuthorityDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers) {
     implicit request =>
       val helper = CheckYourAnswersHelper(request.userAnswers, dateTimeService)
-
       val preparedForm = request.userAnswers.get(AuthorityDetailsPage) match {
               case None => form
               case Some(value) => form.fill(value)

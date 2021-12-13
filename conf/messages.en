@@ -200,6 +200,11 @@ authorityDetails.p = We will only use these details if we have questions regardi
 authorityDetails.fullName = Full name
 authorityDetails.role = Role
 
+checkYourAnswers.YourDetails = Your Details
+checkYourAnswers.fullName = Your name
+checkYourAnswers.role = Your role
+
+
 #Are these details correct view
 
 eori-details-title = A yw’r manylion hyn yn gywir?

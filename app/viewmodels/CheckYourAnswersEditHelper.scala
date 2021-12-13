@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
+import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, AuthorityDetails, StandingAuthority}
 import models.{AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
@@ -59,7 +59,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     ).flatten
   }
 
-  private def authorisedUserNameRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+  private def authorisedUserNameRow(authorisedUser: Option[AuthorityDetails]): Option[SummaryListRow] = {
     authorisedUser.map { user =>
       summaryListRow(
         messages("edit-cya-name"),
@@ -74,7 +74,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     }
   }
 
-  private def authorisedUserRoleRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
+  private def authorisedUserRoleRow(authorisedUser: Option[AuthorityDetails]): Option[SummaryListRow] = {
     authorisedUser.map { user =>
       summaryListRow(
         messages("edit-cya-role"),

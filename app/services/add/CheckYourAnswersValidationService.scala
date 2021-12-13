@@ -17,7 +17,7 @@
 package services.add
 
 import com.google.inject.Inject
-import models.domain.{CDSAccount, StandingAuthority}
+import models.domain.{AuthorityDetails, CDSAccount, StandingAuthority}
 import models.requests.Accounts
 import models.{AuthorityStart, ShowBalance, UserAnswers}
 import pages.add._
@@ -27,7 +27,7 @@ import scala.util.Try
 
 class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeService) {
 
-  def validate(userAnswers: UserAnswers): Option[(Accounts, StandingAuthority)] = Try {
+  def validate(userAnswers: UserAnswers): Option[(Accounts, StandingAuthority, AuthorityDetails)] = Try {
     for {
       selectedAccounts <- userAnswers.get(AccountsPage)
       accounts = extractAccounts(selectedAccounts)
@@ -39,13 +39,15 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
         Some(dateTimeService.localTime().toLocalDate)
       }
       viewBalance <- userAnswers.get(ShowBalancePage)
+      authorityDetails <- userAnswers.get(AuthorityDetailsPage)
+
       standingAuthority <-
         Some(StandingAuthority(
           authorisedEori,
           authorisedFromDate,
           viewBalance == ShowBalance.Yes
         ))
-    } yield (accounts, standingAuthority)
+    } yield (accounts, standingAuthority, authorityDetails)
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 
   private def extractAccounts(selected: List[CDSAccount]): Accounts = {
@@ -55,5 +57,4 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
       selected.find(_.accountType == "generalGuarantee").map(_.number)
     )
   }
-
 }

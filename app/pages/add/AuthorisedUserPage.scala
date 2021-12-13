@@ -16,13 +16,9 @@
 
 package pages.add
 
-import models.domain.AuthorisedUser
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.Page
 
-case object AuthorisedUserPage extends QuestionPage[AuthorisedUser] {
-
-  override def path: JsPath = JsPath \ toString
-
+case object AuthorisedUserPage extends Page {
+  
   override def toString: String = "authorisedUser"
 }

@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
-package pages.edit
+package models
 
-import models.domain.AuthorityDetails
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+case class CompanyDetails(eori: String, name: Option[String])
 
-case class EditAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorityDetails] {
 
-  override def path: JsPath = JsPath \ "edit" \ accountId \ authorityId \ toString
 
-  override def toString: String = "editAuthorisedUser"
-}

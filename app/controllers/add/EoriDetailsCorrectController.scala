@@ -28,7 +28,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.add.EoriDetailsCorrectView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class EoriDetailsCorrectController @Inject()( override val messagesApi: MessagesApi,

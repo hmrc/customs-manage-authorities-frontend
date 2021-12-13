@@ -16,7 +16,7 @@
 
 package models.requests
 
-import models.domain.{AccountType, AuthorisedUser, StandingAuthority}
+import models.domain.{AccountType, AuthorisedUser, AuthorityDetails, StandingAuthority}
 import play.api.libs.json.{Format, Json, OFormat}
 
 case class Accounts(cash: Option[String], dutyDeferments: Seq[String], guarantee: Option[String])
@@ -30,7 +30,7 @@ object Accounts {
 case class AddAuthorityRequest(
                                 accounts: Accounts,
                                 authority: StandingAuthority,
-                                authorisedUser: AuthorisedUser,
+                                authorisedUser: AuthorityDetails,
                                 editRequest: Boolean = false
                               )
 

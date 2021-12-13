@@ -40,11 +40,24 @@
 
     @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {
 
-        @errorSummary(form.errors)
 
         @h1("authorisedUser.heading")
 
-        @summaryList(SummaryList(helper.rows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+        @h2("Account you wish to authorise")
+
+        @summaryList(SummaryList(helper.accountsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+
+        @h2("Account you wish to authorise")
+
+        @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+
+        @h2("Authority Duration")
+
+        @summaryList(SummaryList(helper.authorityDurationRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+
+        @h2("Your Details")
+
+        @summaryList(SummaryList(helper.authorityDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
         @button("site.confirm")
     }
