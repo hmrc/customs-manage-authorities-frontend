@@ -261,8 +261,8 @@ addConfirmation.heading={0} wedi’i ychwanegu yn llwyddiannus
 addConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
 addConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 addConfirmation.body.setDate=Yn dechrau ar {0}
-addConfirmation.p1.today=Gofynnwch i’r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos
-addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i''r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau
+addConfirmation.p1.today=Gofynnwch i’r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos.
+addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i''r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau.
 addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 editConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
@@ -292,7 +292,7 @@ remove.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwy
 remove.declaration=Rwyf yn cadarnhau fy mod am dynnu mynediad y defnyddiwr hwn.
 remove.confirm=Tynnu mynediad
 remove.cancel=Canslo
-remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynediad y defnyddiwr hwn
+remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynediad y defnyddiwr hwn.
 
 removeConfirmation.title=Defnyddiwr wedi’i dynnu yn llwyddiannus
 removeConfirmation.heading={0} wedi’i dynnu yn llwyddiannus
@@ -304,16 +304,16 @@ manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rh
 
 #Authorised User
 authorised-user.heading = Eich manylion
-authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
+authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 authorised-user-remove.heading = Dileu’r awdurdod
-authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
+authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 
 #Remove Check Your Answers
 remove-cya-heading = Gwiriwch eich atebion
 remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
 remove-cya-h2.3 = Your details
-remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion
+remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion.
 remove-cya-button = Cadarnhau a chyflwyno
 remove-cya-cancel = Canslo
 remove-cya-name = Eich enw
@@ -342,7 +342,7 @@ view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 view-authority-h2.2 = Manylion y cwmni awdurdodedig
 view-authority-h2.3 = Hyd yr awdurdod
 view-authority-h2.4 = Dileu’r awdurdod
-view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn
+view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn.
 view-authority-link = Dileu’r awdurdod
 
 
