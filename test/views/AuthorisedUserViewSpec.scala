@@ -31,20 +31,38 @@ import play.api.test.{FakeRequest, Helpers}
 import services.DateTimeService
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
-
 import java.time.LocalDateTime
+import models.domain.{AccountStatusOpen, AuthorisedUser, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
+import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
+import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
 
 class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
-
   "AuthorisedUserView" should {
       "have back link" in new Setup {
-        view().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/available-balance"
+        view()
+          .getElementsByClass("govuk-back-link")
+          .attr("href") mustBe s"/customs/manage-authorities/add-authority/your-details"
       }
     }
 
 
   trait Setup  {
+
+    val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+
+    val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+
+    val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+      .set(AccountsPage, selectedAccounts).success.value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+      .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
@@ -53,7 +71,10 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(emptyUserAnswers, mockDateTimeService)
+
+    val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+    val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
     private val formProvider = new AuthorisedUserFormProviderWithConsent()
     private val form = formProvider()
     def view(): Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(form,helper).body)

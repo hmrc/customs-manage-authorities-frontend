@@ -16,11 +16,11 @@
 
 package pages.edit
 
-import models.domain.AuthorityDetails
+import models.domain.AuthorisedUser
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case class EditAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorityDetails] {
+case class EditAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorisedUser] {
 
   override def path: JsPath = JsPath \ "edit" \ accountId \ authorityId \ toString
 

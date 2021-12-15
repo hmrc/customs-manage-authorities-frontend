@@ -17,22 +17,21 @@
 package controllers.add
 
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
 import forms.EoriNumberFormProvider
-import models.{AuthorityStart, Mode, UserAnswers}
+import javax.inject.Inject
+import models.{CompanyDetails, Mode, UserAnswers}
 import navigation.Navigator
-import pages.add.{AuthorityStartPage, EoriNumberPage}
+import pages.add.EoriNumberPage
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request, Result}
+import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.GBNEoriErrorView
 import views.html.add.EoriNumberView
-import javax.inject.Inject
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.dtd.ValidationException
 
@@ -46,7 +45,8 @@ class EoriNumberController @Inject()(
                                       val controllerComponents: MessagesControllerComponents,
                                       view: EoriNumberView,
                                       gbnEoriView: GBNEoriErrorView,
-                                      connector: CustomsFinancialsConnector
+                                      connector: CustomsFinancialsConnector,
+                                      dataStore: CustomsDataStoreConnector
                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   val form: Form[String] = formProvider()
@@ -55,7 +55,7 @@ class EoriNumberController @Inject()(
     implicit request =>
       val preparedForm = request.userAnswers.flatMap(_.get(EoriNumberPage)) match {
         case None => form
-        case Some(value) => form.fill(value)
+        case Some(value) => form.fill(value.eori)
       }
 
       Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode)))
@@ -78,7 +78,9 @@ class EoriNumberController @Inject()(
             Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           } else {
             (for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, eoriNumber))
+              companyName <- dataStore.getCompanyName(eoriNumber)
+              companyDetails = CompanyDetails(eoriNumber, companyName)
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
               _ <- sessionRepository.set(updatedAnswers)
               result <- doSubmission(updatedAnswers, eoriNumber, mode)
             } yield result).recover {
@@ -98,5 +100,4 @@ class EoriNumberController @Inject()(
       case _ => BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
     }
   }
-
 }

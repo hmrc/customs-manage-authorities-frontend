@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import forms.EoriNumberFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{CompanyDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -71,7 +71,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(EoriNumberPage, "answer").success.value
+      val userAnswers = UserAnswers(userAnswersId).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

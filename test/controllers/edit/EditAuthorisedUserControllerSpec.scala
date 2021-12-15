@@ -100,7 +100,5 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(POST, controllers.edit.routes.EditAuthorisedUserController.onSubmit("a", "b").url)
-
-
   }
 }

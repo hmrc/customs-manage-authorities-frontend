@@ -16,6 +16,7 @@
 
 package controllers.edit
 
+import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
@@ -40,8 +41,6 @@ import services.add.CheckYourAnswersValidationService
 import services.edit.EditAuthorityValidationService
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
-
-import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {

@@ -38,13 +38,16 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
   val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
   val generalGuarantee = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+  val authorisedUser = AuthorisedUser("user", "role")
 
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
   val completeUserAnswers: UserAnswers = UserAnswers("id")
     .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, "GB123456789012").success.value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser("username", "role")).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
 
   "CheckYourAnswersValidationService" must {
@@ -52,7 +55,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
     "validate complete submission from today to indefinite" in {
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
-      service.validate(completeUserAnswers).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+
+      service.validate(completeUserAnswers).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "validate complete submission with only one account selected" in {
@@ -61,7 +66,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
       val accounts = Accounts(None, Seq(), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
-      service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+
+      service.validate(userAnswer).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "validate complete submission with only one account" in {
@@ -70,7 +77,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
       val accounts = Accounts(None, Seq(dutyDeferment.number), None)
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
-      service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+
+      service.validate(userAnswer).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "validate complete submission from today to set date and show balance no" in {
@@ -83,7 +92,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = false)
-      service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+
+      service.validate(userAnswers).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "validate complete submission from set date to set date" in {
@@ -98,7 +109,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", startDate, viewBalance = true)
-      service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+
+      service.validate(userAnswers).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "validate complete submission from set date to indefinite" in {
@@ -112,7 +125,8 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", startDate, viewBalance = true)
-      service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
+      val authorisedUser = AuthorisedUser("username", "role")
+      service.validate(userAnswers).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
     }
 
     "reject submission missing Accounts" in {
@@ -146,5 +160,4 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       service.validate(userAnswers) mustBe None
     }
   }
-
 }

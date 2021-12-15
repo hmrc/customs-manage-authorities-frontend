@@ -29,9 +29,11 @@ import play.api.test.Helpers._
 import repositories.{AccountsRepository, AuthoritiesRepository, SessionRepository}
 import services.ConfirmationService
 import views.html.add.AddConfirmationView
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+import models.CompanyDetails
+
 import scala.concurrent.Future
 
 class AddConfirmationControllerSpec extends SpecBase {
@@ -73,7 +75,7 @@ class AddConfirmationControllerSpec extends SpecBase {
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockConfirmationService.populateConfirmation(any(), any(), any(), any())).thenReturn(Future.successful(true))
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, "GB123456789012").success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("1"))).success.value
           .set(AccountsPage, List(cashAccount)).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
@@ -108,7 +110,7 @@ class AddConfirmationControllerSpec extends SpecBase {
         val dateFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, "GB123456789012").success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("1"))).success.value
           .set(AuthorityStartDatePage, startDate).success.value
           .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
 
@@ -129,7 +131,6 @@ class AddConfirmationControllerSpec extends SpecBase {
             view("GB123456789012", Some(startDate.format(dateFormat)), multipleAccounts = true)(request, messages(application), appConfig).toString
         }
       }
-
     }
 
     "redirect to session expired if EORI number is missing" in {
@@ -146,6 +147,5 @@ class AddConfirmationControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
-
   }
 }

@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.domain
+@this(govukRadios: GovukRadios)
 
-import play.api.libs.json.{Format, Json}
+@(      form: Form[_],
+        legend: String,
+        items: Seq[RadioItem],
+        legendAsHeading: Boolean = true,
+        hint: Option[Hint] = None,
+        classes: String = "govuk-fieldset__legend--xl",
+        inline: Boolean = false
+)(implicit messages: Messages)
 
-case class AuthorityDetails(userName: String, userRole: String)
-
-object AuthorityDetails {
-  implicit val accountWithAuthoritiesFormats: Format[AuthorityDetails] = Json.format[AuthorityDetails]
-}
-
+@govukRadios(Radios(
+    classes = s"${if(inline){"govuk-radios--inline"}}",
+    name = "value",
+    fieldset = None,
+    hint = hint,
+    items = items,
+    errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+))

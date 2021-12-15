@@ -18,22 +18,38 @@
 @import models.{Mode, AuthorityStart}
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
+@import viewmodels.EoriDetailsCorrectHelper
+@import viewmodels.SummaryList
+@import views.html.components.summaryList
 
 @this(
         layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
-        inputRadio: components.inputRadio,
-        button: components.button
+        inputRadio: components.inputRadioNoFieldset,
+        summaryList: summaryList,
+        h1: components.h1,
+        button: components.button,
+        p: components.p
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(form: Form[_], mode: Mode, call: Call, helper: EoriDetailsCorrectHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(title(form, "eoriDetails.title", None, Seq())), backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.EoriDetailsCorrectController.onSubmit(mode), 'autoComplete -> "off") {
 
         @errorSummary(form.errors)
+
+        @h1("eoriDetails.heading")
+
+        @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-5 govuk-summary-list--wide "))
+
+        @if(helper.companyName.isEmpty){
+                @p(Html(messages("eoriDetails.noConsent")))
+                @p(Html(messages("eoriDetails.noConsent.2")))
+        } else {
+        }
 
         @inputRadio(
             form = form,

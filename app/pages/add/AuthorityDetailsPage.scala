@@ -16,13 +16,13 @@
 
 package pages.add
 
-import models.domain.AuthorityDetails
+import models.domain.AuthorisedUser
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object AuthorityDetailsPage extends QuestionPage[AuthorityDetails] {
+case object AuthorityDetailsPage extends QuestionPage[AuthorisedUser] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "authorityDetails"
+  override def toString: String = "authorisedUser"
 }

@@ -50,24 +50,22 @@ class AuthorityDetailsController @Inject()(
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val helper = CheckYourAnswersHelper(request.userAnswers, dateTimeService)
       val preparedForm = request.userAnswers.get(AuthorityDetailsPage) match {
               case None => form
               case Some(value) => form.fill(value)
             }
 
-     Ok(view(preparedForm, helper, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode))))
+     Ok(view(preparedForm, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode))))
   }
 
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          val helper = CheckYourAnswersHelper(request.userAnswers, dateTimeService)
-          Future.successful(BadRequest(view(formWithErrors, helper, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode)))))
+          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode)))))
         },
         value =>
           (for {

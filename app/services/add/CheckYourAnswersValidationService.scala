@@ -17,17 +17,16 @@
 package services.add
 
 import com.google.inject.Inject
-import models.domain.{AuthorityDetails, CDSAccount, StandingAuthority}
+import models.domain.{AuthorisedUser, CDSAccount, StandingAuthority}
 import models.requests.Accounts
 import models.{AuthorityStart, ShowBalance, UserAnswers}
 import pages.add._
 import services.DateTimeService
-
 import scala.util.Try
 
 class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeService) {
 
-  def validate(userAnswers: UserAnswers): Option[(Accounts, StandingAuthority, AuthorityDetails)] = Try {
+  def validate(userAnswers: UserAnswers): Option[(Accounts, StandingAuthority, AuthorisedUser)] = Try {
     for {
       selectedAccounts <- userAnswers.get(AccountsPage)
       accounts = extractAccounts(selectedAccounts)
@@ -39,15 +38,15 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
         Some(dateTimeService.localTime().toLocalDate)
       }
       viewBalance <- userAnswers.get(ShowBalancePage)
-      authorityDetails <- userAnswers.get(AuthorityDetailsPage)
+      authorisedUser <- userAnswers.get(AuthorityDetailsPage)
 
       standingAuthority <-
         Some(StandingAuthority(
-          authorisedEori,
+          authorisedEori.eori,
           authorisedFromDate,
           viewBalance == ShowBalance.Yes
         ))
-    } yield (accounts, standingAuthority, authorityDetails)
+    } yield (accounts, standingAuthority, authorisedUser)
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 
   private def extractAccounts(selected: List[CDSAccount]): Accounts = {

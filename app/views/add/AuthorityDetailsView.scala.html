@@ -34,7 +34,7 @@
         p: components.p
 )
 
-@(form: Form[_], helper: CheckYourAnswersHelper, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(title(form, "authorityDetails.title", None, Seq())), backLink = Some(call)) {
 

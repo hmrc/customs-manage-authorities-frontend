@@ -57,7 +57,7 @@ class AccountsController @Inject()(
       request.userAnswers.get(EoriNumberPage) match {
         case None => Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
         case Some(enteredEori) =>
-          authorisedAccountsService.getAuthorisedAccounts(enteredEori).map { authorisedAccounts =>
+          authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).map { authorisedAccounts =>
             if (authorisedAccounts.availableAccounts.nonEmpty) {
               Ok(view(
                 populateForm(authorisedAccounts.availableAccounts),
@@ -78,7 +78,7 @@ class AccountsController @Inject()(
       request.userAnswers.get(EoriNumberPage) match {
         case None => Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
         case Some(enteredEori) =>
-          authorisedAccountsService.getAuthorisedAccounts(enteredEori).flatMap { authorisedAccounts =>
+          authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).flatMap { authorisedAccounts =>
             form.bindFromRequest().fold(
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, authorisedAccounts, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),

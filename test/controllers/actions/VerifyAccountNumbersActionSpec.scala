@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount}
 import models.requests.DataRequest
-import models.{AuthorisedAccounts, InternalId, UserAnswers}
+import models.{AuthorisedAccounts, CompanyDetails, InternalId, UserAnswers}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -72,7 +72,7 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar with Sca
     "redirect the user to the Accounts entry page if the accounts aren't present in the request" in {
       val action = new Harness()
       val userAnswersAccounts = emptyUserAnswers
-        .set(EoriNumberPage, "someEori").success.value
+        .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
 
 
       val futureResult = action.callRefine(dataRequest(userAnswersAccounts))
@@ -86,7 +86,7 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar with Sca
       val accounts = List(CashAccount("1234", "4321", AccountStatusOpen, CDSCashBalance(Some(100))))
 
       val userAnswersWithEoriAndAccounts = emptyUserAnswers
-        .set(EoriNumberPage, "someEori").success.value
+        .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
         .set(AccountsPage, accounts).success.value
 
       when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
@@ -102,7 +102,7 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar with Sca
     "return the request if the account numbers are valid" in {
       val action = new Harness()
       val userAnswersWithEoriAndAccounts = emptyUserAnswers
-        .set(EoriNumberPage, "someEori").success.value
+        .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
         .set(AccountsPage, List.empty).success.value
 
       val futureResult = action.callRefine(dataRequest(userAnswersWithEoriAndAccounts))
@@ -110,7 +110,6 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar with Sca
         case Left(_) => fail()
         case Right(v) => v.userAnswers mustBe userAnswersWithEoriAndAccounts
       }
-
     }
   }
 }

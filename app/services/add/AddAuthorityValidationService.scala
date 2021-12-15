@@ -25,11 +25,11 @@ class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAns
 
   def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
     for {
-      (accounts, standingAuthority, authorityDetails) <- cyaValidationService.validate(userAnswers)
+      (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
     } yield AddAuthorityRequest(
       accounts,
       standingAuthority,
-      authorityDetails
+      authorisedUser
     )
   }
 

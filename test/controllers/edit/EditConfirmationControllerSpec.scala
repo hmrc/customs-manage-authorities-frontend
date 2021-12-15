@@ -29,8 +29,10 @@ import play.api.test.Helpers._
 import repositories.{AccountsRepository, AuthoritiesRepository, SessionRepository}
 import services.ConfirmationService
 import views.html.edit.EditConfirmationView
-
 import java.time.LocalDate
+
+import models.CompanyDetails
+
 import scala.concurrent.Future
 
 class EditConfirmationControllerSpec extends SpecBase {
@@ -79,7 +81,7 @@ class EditConfirmationControllerSpec extends SpecBase {
         when(mockConfirmationService.populateConfirmation(any(), any(), any(), any())).thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, "GB123456789012").success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
           .set(AccountsPage, List(cashAccount)).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(

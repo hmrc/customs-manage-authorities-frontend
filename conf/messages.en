@@ -187,7 +187,8 @@ eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
 
 eoriDetails.title = Are these details correct?
 eoriDetails.heading = Are these details correct?
-eoriDetail.eoriNumber = EORI number
+eoriDetail.eoriNumber.label = EORI
+eoriDetail.companyName.label = Company name
 eoriDetails.noConsent = The business name this number is registered to has not consented to their name being shared
 eoriDetails.noConsent.2 = If you need more information, contact the business directly
 eoriDetails.radioYes = Yes
@@ -200,9 +201,15 @@ authorityDetails.p = We will only use these details if we have questions regardi
 authorityDetails.fullName = Full name
 authorityDetails.role = Role
 
-checkYourAnswers.YourDetails = Your Details
-checkYourAnswers.fullName = Your name
-checkYourAnswers.role = Your role
+checkYourAnswers.YourDetails.label = Your Details
+checkYourAnswers.fullName.label = Your name
+checkYourAnswers.role.label = Your role
+checkYourAnswers.eoriNumber.label = EORI number
+checkYourAnswers.companyName.label = Company name
+checkYourAnswers.accounts.h2 = Account you wish to authorise
+checkYourAnswers.authorityDuration.h2 = Authority duration
+checkYourAnswers.companyDetails.h2 = Authorised company details
+checkYourAnswers.userDetails.h2 = Your Details
 
 
 #Are these details correct view

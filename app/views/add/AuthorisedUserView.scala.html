@@ -35,27 +35,27 @@
 
 @(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())),backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))) {
-
+@layout(pageTitle = Some(title(form, "authorisedUser.title", None, Seq())), backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))) {
 
     @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {
 
+        @errorSummary(form.errors)
 
         @h1("authorisedUser.heading")
 
-        @h2("Account you wish to authorise")
+        @h2("checkYourAnswers.accounts.h2")
 
         @summaryList(SummaryList(helper.accountsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2("Account you wish to authorise")
+        @h2("checkYourAnswers.companyDetails.h2")
 
         @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2("Authority Duration")
+        @h2("checkYourAnswers.authorityDuration.h2")
 
         @summaryList(SummaryList(helper.authorityDurationRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2("Your Details")
+        @h2("checkYourAnswers.userDetails.h2")
 
         @summaryList(SummaryList(helper.authorityDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 

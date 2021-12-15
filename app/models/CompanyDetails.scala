@@ -16,7 +16,12 @@
 
 package models
 
+import play.api.libs.json.{Format, Json, Reads}
+
 case class CompanyDetails(eori: String, name: Option[String])
 
-
+object CompanyDetails extends Enumerable.Implicits {
+  implicit val companyDetailsFormat: Format[CompanyDetails] = Json.format[CompanyDetails]
+  implicit val companyDetailsReads: Reads[CompanyDetails] = Json.reads[CompanyDetails]
+}
 

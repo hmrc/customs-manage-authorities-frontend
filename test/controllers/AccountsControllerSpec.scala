@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
-import models.{AuthorisedAccounts, InternalId, NormalMode, UserAnswers}
+import models.{AuthorisedAccounts, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
@@ -34,8 +34,8 @@ import repositories.SessionRepository
 import services.{AccountsCacheService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.InternalServerException
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
-
 import java.time.LocalDate
+
 import scala.concurrent.Future
 
 class AccountsControllerSpec extends SpecBase with MockitoSugar {
@@ -44,7 +44,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     "return OK and the correct view for a GET" when {
 
       "user answers exists" in new Setup {
-        val application = applicationBuilder(userAnswers = Some(userAnswersWithEori))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
           .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
           .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
           .build()
@@ -104,7 +105,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         when(failingMockService.retrieveAccounts(any[InternalId](), any())(any()))
           .thenReturn(Future.failed(new InternalServerException("broken")))
 
-        val application = applicationBuilder(Some(userAnswersWithEori))
+        val application = applicationBuilder(Some(userAnswersCompanyDetails))
           .overrides(bind[AccountsCacheService].toInstance(failingMockService))
           .build()
 
@@ -127,7 +128,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     "return OK and the no accounts available view for a GET" when {
       "there are no available accounts to select" in new Setup {
-        val application = applicationBuilder(userAnswers = Some(userAnswersWithEori))
+        val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
           .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
           .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
           .build()
@@ -159,7 +160,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId)
         .set(AccountsPage, answerAccounts).success.value
-        .set(EoriNumberPage, "GB9876543210000").success.value
+        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
@@ -180,7 +181,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(answer), AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
             CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          ), Seq.empty, "GB9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -193,7 +194,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application =
-          applicationBuilder(userAnswers = Some(userAnswersWithEori))
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
             .overrides(
               bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[SessionRepository].toInstance(mockSessionRepository),
@@ -279,7 +280,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and errors when invalid data is submitted" in new Setup {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithEori))
+      val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
         .overrides(
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
@@ -316,6 +317,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val formProvider = new AccountsFormProvider()
     val form = formProvider()
     val userAnswersWithEori = emptyUserAnswers.copy(data = Json.obj("eoriNumber" -> "GB9876543210000"))
+    val userAnswersCompanyDetails = emptyUserAnswers.set(EoriNumberPage , CompanyDetails("GB9876543210000", Some("name"))).success.value
 
     val standingAuthority = StandingAuthority(
       "EORI",

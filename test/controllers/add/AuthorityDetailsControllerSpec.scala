@@ -18,32 +18,31 @@ package controllers.add
 
 import base.SpecBase
 import config.FrontendAppConfig
-import forms.AuthorityStartFormProvider
-import models.{AuthorityStart, NormalMode, UserAnswers}
+import forms.AuthorityDetailsFormProvider
+import models.domain.AuthorisedUser
+import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.add.AuthorityStartPage
+import pages.add.AuthorityDetailsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.add.AuthorityStartView
-
+import views.html.add.AuthorityDetailsView
 import scala.concurrent.Future
 
-class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
+class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
   private def onwardRoute = Call("GET", "/foo")
 
-  private lazy val authorityStartRoute = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
-
-  private val formProvider = new AuthorityStartFormProvider()
+  private lazy val authorityDetailsRoute = controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode).url
+  private val formProvider = new AuthorityDetailsFormProvider()
   private val form = formProvider()
-  val backLinkRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+  val backLinkRoute: Call = controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
 
-  "AuthorityStart Controller" must {
+  "AuthorityDetailsCorrect Controller" must {
 
     "return OK and the correct view for a GET" in {
 
@@ -51,31 +50,34 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, authorityStartRoute)
+        val request = fakeRequest(GET, authorityDetailsRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
-
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AuthorityStartPage, AuthorityStart.values.head)(AuthorityStart.writes).success.value
+      val answer = AuthorisedUser("name", "role")
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val userAnswers = UserAnswers(userAnswersId).set(AuthorityDetailsPage, answer).success.value
+
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides()
+        .build()
 
       running(application) {
 
-        val request = fakeRequest(GET, authorityStartRoute)
+        val request = fakeRequest(GET, authorityDetailsRoute)
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -83,7 +85,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(AuthorityStart.values.head), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form.fill(answer), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -97,37 +99,41 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
           )
           .build()
 
       running(application) {
 
         val request =
-          fakeRequest(POST, authorityStartRoute)
-            .withFormUrlEncodedBody(("value", AuthorityStart.values.head.toString))
+          fakeRequest(POST, authorityDetailsRoute)
+            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "role"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val userAnswers = emptyUserAnswers
+
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides()
+        .build()
 
       running(application) {
 
         val request =
-          fakeRequest(POST, authorityStartRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          fakeRequest(POST, authorityDetailsRoute
+          )
+            .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
+        val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -135,7 +141,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
@@ -145,11 +151,12 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, authorityStartRoute)
+        val request = fakeRequest(GET, authorityDetailsRoute)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
@@ -161,14 +168,60 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request =
-          fakeRequest(POST, authorityStartRoute)
-            .withFormUrlEncodedBody(("value", AuthorityStart.values.head.toString))
+          fakeRequest(POST, authorityDetailsRoute)
+            .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+      }
+    }
+
+    "return a Bad Request when name contains malicious code" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides()
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, authorityDetailsRoute)
+            .withFormUrlEncodedBody(("fullName", "<script>"), ("jobRole", "role"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+      }
+    }
+
+    "return a Bad Request when job role contains malicious code" in {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides()
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, authorityDetailsRoute)
+            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "alert(1)"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
       }
     }
   }

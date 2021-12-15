@@ -18,13 +18,13 @@ package forms
 
 import forms.mappings.Mappings
 import javax.inject.Inject
-import models.domain.AuthorityDetails
+import models.domain.AuthorisedUser
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
 class AuthorityDetailsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[AuthorityDetails] =
+  def apply(): Form[AuthorisedUser] =
     Form(
       mapping(
       "fullName" -> text("remove.error.fullName.required")
@@ -33,6 +33,6 @@ class AuthorityDetailsFormProvider @Inject() extends Mappings {
       "jobRole" -> text("remove.error.jobRole.required")
         .verifying(maxLength(255, "remove.error.jobRole.length"))
         .verifying(regexp(textFieldRegex, "remove.error.jobRole.malicious"))
-      )(AuthorityDetails.apply)(AuthorityDetails.unapply)
+      )(AuthorisedUser.apply)(AuthorisedUser.unapply)
     )
 }

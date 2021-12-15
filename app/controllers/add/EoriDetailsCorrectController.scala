@@ -26,7 +26,9 @@ import pages.add.EoriDetailsCorrectPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.EoriDetailsCorrectHelper
 import views.html.add.EoriDetailsCorrectView
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +40,8 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
                                               requireData: DataRequiredAction,
                                               formProvider: EoriDetailsCorrectFormProvider,
                                               val controllerComponents: MessagesControllerComponents,
-                                              view: EoriDetailsCorrectView
+                                              view: EoriDetailsCorrectView,
+                                              dateTimeService: DateTimeService
                                      )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
@@ -51,7 +54,8 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))
+      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
+        EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -59,8 +63,8 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))),
-
+          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
+            EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriDetailsCorrectPage, value)(EoriDetailsCorrect.writes))
