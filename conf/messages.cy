@@ -66,6 +66,16 @@ checkYourAnswers.authorityStart.hidden=Dyddiad dechrau
 checkYourAnswers.authorityEnd.hidden=Dyddiad dod i ben
 checkYourAnswers.authorityEnd.indefinite=Ar ôl golwg pellach
 checkYourAnswers.showBalance.hidden=Bwrw golwg dros y balans
+checkYourAnswers.companyDetails.h2 = Manylion y cwmni awdurdodedig
+checkYourAnswers.authorityDuration.h2 = Hyd yr awdurdod
+checkYourAnswers.accounts.h2 = Y cyfrif rydych yn dymuno ei awdurdodi
+checkYourAnswers.userDetails.h2 = Gwiriwch eich atebion
+checkYourAnswers.eoriNumber.label = Rhif EORI
+checkYourAnswers.companyName.label = Enw’r cwmni
+checkYourAnswers.fullName.label = Eich enw
+checkYourAnswers.role.label = Eich swydd
+checkYourAnswers.p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni
+
 
 date.day=Diwrnod
 date.month=Mis
@@ -165,6 +175,16 @@ accounts.noAvailableAccounts.heading = Mae gan {0} fynediad i’ch holl gyfrifon
 accounts.noAvailableAccounts.p = I adolygu neu olygu mynediad y defnyddiwr hwn, ewch yn ôl i
 accounts.noAvailableAccounts.link = ‘Rheoli awdurdodau eich cyfrif’
 
+eoriDetails.title = A yw’r manylion hyn yn gywir?
+eoriDetails.heading = A yw’r manylion hyn yn gywir?
+eoriDetail.eoriNumber.label = EORI
+eoriDetail.companyName.label = Enw’r cwmni
+eoriDetails.noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu
+eoriDetails.noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes
+eoriDetails.radioYes = Iawn
+eoriDetails.radioNo = Na, newid y rhif EORI
+eoriDetails.error.required = Select when you want the authority to start
+
 eoriNumber.title=Beth yw ei rif EORI?
 eoriNumber.heading=Beth yw ei rif EORI?
 eoriNumber.hint=Nodwch rif EORI y defnyddiwr rydych am roi awdurdod iddo. Mae’n dechrau gyda GB wedi’i ddilyn gan 12 digid.  Er enghraifft, GB345834921000.
@@ -222,21 +242,28 @@ showBalance.checkYourAnswers.no=Na
 showBalance.checkYourAnswersLabel=Bwrw golwg dros y balans
 showBalance.error.required=Dewiswch os ydych am i’r defnyddiwr hwn weld y balans sydd ar gael
 
-authorisedUser.title=Gwiriwch eich atebion
-authorisedUser.heading=Gwiriwch eich atebion
-authorisedUser.yourDetails=Eich manylion
-authorisedUser.checkYourAnswersLabel=authorisedUser
-authorisedUser.fullName=Enw llawn
-authorisedUser.error.fullName.required=Nodwch eich enw llawn
-authorisedUser.error.fullName.length=Mae’n rhaid i’ch enw llawn fod yn 255 o gymeriadau neu lai
-authorisedUser.error.fullName.malicious = Mae’n rhaid i’r enw llawn beidio â chynnwys cromfachau, arwyddion doler na slaesau
-authorisedUser.jobRole=Swydd
-authorisedUser.error.jobRole.required=Nodwch eich swydd
-authorisedUser.error.jobRole.length=Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
-authorisedUser.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
-authorisedUser.declaration.singular=Rwyf yn awdurdodi’r defnyddiwr hwn i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy musnes.
-authorisedUser.declaration.plural=Rwyf yn awdurdodi’r defnyddiwr hwn i ddefnyddio’r cyfrifon hyn wrth glirio datganiadau tollau ar ran fy musnes.
-authorisedUser.error.confirmation.required=Dewiswch i gadarnhau eich bod yn awdurdodi’r defnyddiwr hwn i ddefnyddio’ch cyfrif
+authorityDetails.title=Gwiriwch eich atebion
+authorityDetails.heading=Gwiriwch eich atebion
+authorityDetails.h1=Eich manylion
+authorityDetails.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn
+authorityDetails.checkYourAnswersLabel=authorisedUser
+authorityDetails.fullName=Enw llawn
+authorityDetails.error.fullName.required=Nodwch eich enw llawn
+authorityDetails.error.fullName.length=Mae’n rhaid i’ch enw llawn fod yn 255 o gymeriadau neu lai
+authorityDetails.error.fullName.malicious = Mae’n rhaid i’r enw llawn beidio â chynnwys cromfachau, arwyddion doler na slaesau
+authorityDetails.role=Swydd
+authorityDetails.error.jobRole.required=Nodwch eich swydd
+authorityDetails.error.jobRole.length=Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
+authorityDetails.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
+
+#Are these details correct view
+
+eori-details-title = A yw’r manylion hyn yn gywir?
+eori-details-eori-number = Rhif EORI
+eori-details-business-noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu
+eori-details-business-noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes
+eori-details-radio-yes = Iawn
+eori-details-radio-no = Na, newid y rhif EORI
 
 editAuthorisedUser.title = Golygu awdurdod y cyfrif
 editAuthorisedUser.heading = Golygu awdurdod y cyfrif
@@ -258,8 +285,8 @@ edit.notChanged = Heb newid
 
 addConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
 addConfirmation.heading={0} wedi’i ychwanegu yn llwyddiannus
-addConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
-addConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
+addConfirmation.body.today.singular=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrif
+addConfirmation.body.today.plural=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrifon
 addConfirmation.body.setDate=Yn dechrau ar {0}
 addConfirmation.p1.today=Gofynnwch i’r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos
 addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i''r defnyddiwr wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau

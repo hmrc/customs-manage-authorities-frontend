@@ -58,16 +58,6 @@ feedback.before = This is a new service - your
 feedback.link = feedback
 feedback.after = will help us to improve it.
 
-checkYourAnswers.title = Check your answers
-checkYourAnswers.heading = Check your answers
-checkYourAnswers.guidance = Guidance for check your answers
-checkYourAnswers.accounts.hidden = accounts
-checkYourAnswers.eoriNumber.hidden = user EORI number
-checkYourAnswers.authorityStart.hidden = start date
-checkYourAnswers.authorityEnd.hidden = end date
-checkYourAnswers.authorityEnd.indefinite = Upon further notice
-checkYourAnswers.showBalance.hidden = see balance
-
 date.day = Day
 date.month = Month
 date.year = Year
@@ -193,7 +183,7 @@ eoriDetails.noConsent = The business name this number is registered to has not c
 eoriDetails.noConsent.2 = If you need more information, contact the business directly
 eoriDetails.radioYes = Yes
 eoriDetails.radioNo = No, change EORI
-eoriDetails.error.required = Select when you want the authority to start
+eoriDetails.error.required = Select whether company information is correct
 
 authorityDetails.title = Your details
 authorityDetails.h1 = Your details
@@ -201,6 +191,28 @@ authorityDetails.p = We will only use these details if we have questions regardi
 authorityDetails.fullName = Full name
 authorityDetails.role = Role
 
+authorityDetails.title = Your details
+authorityDetails.fullName = Full name
+authorityDetails.h1 = Your details
+authorityDetails.p = We will only use these details if we have questions regarding this authority
+authorityDetails.fullName = Full name
+authorityDetails.role = Role
+authorityDetails.error.jobRole.required = Enter your job role
+authorityDetails.error.jobRole.length = Your job role must be 255 characters or fewer
+authorityDetails.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
+authorityDetails.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
+authorityDetails.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
+authorityDetails.error.confirmation.required = Select to confirm you authorise this user to use your account
+
+checkYourAnswers.title = Check your answers
+checkYourAnswers.heading = Check your answers
+checkYourAnswers.guidance = Guidance for check your answers
+checkYourAnswers.accounts.hidden = accounts
+checkYourAnswers.eoriNumber.hidden = user EORI number
+checkYourAnswers.authorityStart.hidden = start date
+checkYourAnswers.authorityEnd.hidden = end date
+checkYourAnswers.authorityEnd.indefinite = Upon further notice
+checkYourAnswers.showBalance.hidden = see balance
 checkYourAnswers.YourDetails.label = Your Details
 checkYourAnswers.fullName.label = Your name
 checkYourAnswers.role.label = Your role
@@ -210,16 +222,8 @@ checkYourAnswers.accounts.h2 = Account you wish to authorise
 checkYourAnswers.authorityDuration.h2 = Authority duration
 checkYourAnswers.companyDetails.h2 = Authorised company details
 checkYourAnswers.userDetails.h2 = Your Details
-
-
-#Are these details correct view
-
-eori-details-title = A yw’r manylion hyn yn gywir?
-eori-details-eori-number = Rhif EORI
-eori-details-business-noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu
-eori-details-business-noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes
-eori-details-radio-yes = Iawn
-eori-details-radio-no = Na, newid y rhif EORI
+checkYourAnswers.p = I confirm that the information given is true and accurate and I give authorisation to use this account when clearing customs declarations on behalf of my company.
+checkYourAnswers.confirm = I confirm that the information given is true and accurate and I give authorisation to use this account when clearing customs declarations on behalf of my company.
 
 
 authorityStart.title = When do you want the authority to start?
@@ -305,8 +309,8 @@ edit.notChanged = Not Changed
 
 addConfirmation.title = User added successfully
 addConfirmation.heading = {0} successfully added
-addConfirmation.body.today.singular = They can now use your account
-addConfirmation.body.today.plural = They can now use your accounts
+addConfirmation.body.today.singular = This company now has authority to use your account
+addConfirmation.body.today.plural = This company now has authority to use your accounts
 addConfirmation.body.setDate = Starting on {0}
 addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear
 addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard
