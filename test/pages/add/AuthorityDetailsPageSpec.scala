@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package pages.add
 
-import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
+import models.domain.AuthorisedUser
+import pages.behaviours.PageBehaviours
 
-case class CompanyDetails(eori: String, name: Option[String])
+class AuthorityDetailsPageSpec extends PageBehaviours {
 
-object CompanyDetails {
-  implicit val companyDetailsFormat: Format[CompanyDetails] = Json.format[CompanyDetails]
-  implicit val companyDetailsOFormat: OFormat[CompanyDetails] = Json.format[CompanyDetails]
-  implicit val companyDetailsReads: Reads[CompanyDetails] = Json.reads[CompanyDetails]
-  implicit val companyDetailsWrites: Writes[CompanyDetails] = Json.writes[CompanyDetails]
+  "AuthorityDetailsPage" must {
+    beRetrievable[AuthorisedUser](AuthorityDetailsPage)
+
+    beSettable[AuthorisedUser](AuthorityDetailsPage)
+
+    beRemovable[AuthorisedUser](AuthorityDetailsPage)
+  }
 }
-

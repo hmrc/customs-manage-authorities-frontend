@@ -19,7 +19,7 @@ package pages.add
 import models.AuthorityStart
 import pages.behaviours.PageBehaviours
 
-class AuthorityStartSpec extends PageBehaviours {
+class AuthorityStartPageSpec extends PageBehaviours {
 
   "AuthorityStartPage" must {
 

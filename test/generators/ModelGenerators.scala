@@ -42,6 +42,13 @@ trait ModelGenerators {
       } yield AuthorisedUser(name, role)
     }
 
+  implicit lazy val arbitraryEoriNumber: Arbitrary[CompanyDetails] =
+    Arbitrary {
+      for {
+        name <- stringsWithMaxLength(50)
+      } yield CompanyDetails(name, None)
+    }
+
   val genCashAccount: Gen[CashAccount] = for {
     number <- Gen.choose(1, 10000)
     owner <- Gen.choose(100000000000L, 999999999999L)
