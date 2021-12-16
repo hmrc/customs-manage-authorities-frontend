@@ -350,16 +350,13 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
       "a single account is selected" in {
         val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.authorisationDeclaration mustBe "authorisedUser.declaration.singular"
+        helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.singular"
       }
 
       "multiple accounts are selected" in {
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswersTodayToIndefinite, mockDateTimeService)
-        helper.authorisationDeclaration mustBe "authorisedUser.declaration.plural"
+        helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.plural"
       }
-
     }
-
   }
-
 }

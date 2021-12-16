@@ -31,10 +31,9 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
 
   private val selectedAccounts: List[CDSAccount] = userAnswers.get(AccountsPage).getOrElse(Nil)
 
-  // check if this was being used.
-  val authorisationDeclaration: String = selectedAccounts.size match {
-    case 1 => messages("authorisedUser.declaration.singular")
-    case _ => messages("authorisedUser.declaration.plural")
+  val accountsTitle: String = selectedAccounts.size match {
+    case 1 => messages("checkYourAnswers.accounts.h2.singular")
+    case _ => messages("checkYourAnswers.accounts.h2.plural")
   }
 
   val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
