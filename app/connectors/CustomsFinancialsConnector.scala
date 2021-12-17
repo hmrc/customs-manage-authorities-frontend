@@ -61,7 +61,6 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
-
     httpClient.GET[HttpResponse](baseUrl + context + s"/eori/$eori/validate")
       .map(response => {
         response.status match {

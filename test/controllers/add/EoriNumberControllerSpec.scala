@@ -120,6 +120,35 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "redirect to the next page when valid eori with whitespace is submitted" in {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberRoute)
+            .withFormUrlEncodedBody(("value", "GB 12 34 56 78 90 11"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
     "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()

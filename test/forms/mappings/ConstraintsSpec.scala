@@ -186,9 +186,6 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
           result mustEqual Invalid("error.past", "foo")
       }
     }
-
-
-
   }
 
 

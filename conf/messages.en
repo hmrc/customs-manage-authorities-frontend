@@ -306,8 +306,8 @@ addConfirmation.heading = {0} successfully added
 addConfirmation.body.today.singular = This company now has authority to use your account
 addConfirmation.body.today.plural = This company now has authority to use your accounts
 addConfirmation.body.setDate = Starting on {0}
-addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear
-addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard
+addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear.
+addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard.
 addConfirmation.returnLink = Back to manage your account authorities
 
 editConfirmation.title = User added successfully
@@ -337,7 +337,7 @@ remove.error.jobRole.malicious = Job role must not contain brackets, dollar sign
 remove.declaration = I confirm I want to remove this user's access.
 remove.confirm = Remove access
 remove.cancel = Cancel
-remove.error.confirmation.required = Select to confirm you want to remove this user''s access
+remove.error.confirmation.required = Select to confirm you want to remove this user''s access.
 
 removeConfirmation.title = User successfully removed
 removeConfirmation.heading = {0} successfully removed
@@ -349,9 +349,9 @@ manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you'
 
 #Authorised User
 authorised-user.heading = Your details
-authorised-user.p = We will only use these details if we have questions regarding this authority
+authorised-user.p = We will only use these details if we have questions regarding this authority.
 authorised-user-remove.heading = Remove authority
-authorised-user-remove.p = We will only use these details if we have questions regarding the removal of this authority
+authorised-user-remove.p = We will only use these details if we have questions regarding the removal of this authority.
 
 #Remove Check Your Answers
 remove-cya-heading = Check your answers
@@ -387,7 +387,7 @@ view-authority-h2.1 = Account you have authorised
 view-authority-h2.2 = Authorised company details
 view-authority-h2.3 = Authority duration
 view-authority-h2.4 = Remove authority
-view-authority-p = You will be asked to confirm whether you wish to remove this authority
+view-authority-p = You will be asked to confirm whether you wish to remove this authority.
 view-authority-link = Remove authority
 
 
