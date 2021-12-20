@@ -22,7 +22,7 @@ import forms.EoriDetailsCorrectFormProvider
 import javax.inject.Inject
 import models.{EoriDetailsCorrect, Mode}
 import navigation.Navigator
-import pages.add.EoriDetailsCorrectPage
+import pages.add.{EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -30,6 +30,7 @@ import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.EoriDetailsCorrectHelper
 import views.html.add.EoriDetailsCorrectView
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class EoriDetailsCorrectController @Inject()( override val messagesApi: MessagesApi,
@@ -49,9 +50,10 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(EoriDetailsCorrectPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      val preparedForm = (request.userAnswers.get(EoriDetailsCorrectPage), request.userAnswers.get(EoriNumberPage)) match {
+        case (None, _) => form
+        case (Some(EoriDetailsCorrect.No), Some(value)) => form
+        case (Some(EoriDetailsCorrect.Yes),Some(value)) => form.fill(EoriDetailsCorrect.Yes)
       }
 
       Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),

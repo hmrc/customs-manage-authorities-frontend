@@ -95,8 +95,7 @@ class EoriNumberController @Inject()(
   }
   private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
-      case Right(true) =>
-        Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
+      case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
     }
   }
