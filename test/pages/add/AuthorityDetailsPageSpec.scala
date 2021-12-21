@@ -19,15 +19,13 @@ package pages.add
 import models.domain.AuthorisedUser
 import pages.behaviours.PageBehaviours
 
+class AuthorityDetailsPageSpec extends PageBehaviours {
 
-class AuthorisedUserPageSpec extends PageBehaviours {
+  "AuthorityDetailsPage" must {
+    beRetrievable[AuthorisedUser](AuthorityDetailsPage)
 
-  "AuthorisedUserPage" must {
+    beSettable[AuthorisedUser](AuthorityDetailsPage)
 
-    beRetrievable[AuthorisedUser](AuthorisedUserPage)
-
-    beSettable[AuthorisedUser](AuthorisedUserPage)
-
-    beRemovable[AuthorisedUser](AuthorisedUserPage)
+    beRemovable[AuthorisedUser](AuthorityDetailsPage)
   }
 }

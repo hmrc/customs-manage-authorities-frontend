@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package services.add
+package models
 
-import com.google.inject.Inject
-import models.UserAnswers
-import models.requests.AddAuthorityRequest
-import pages.add.AuthorisedUserPage
+import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
 
-class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
+case class CompanyDetails(eori: String, name: Option[String])
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
-    for {
-      (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
-    } yield AddAuthorityRequest(
-      accounts,
-      standingAuthority,
-      authorisedUser
-    )
-  }
-
+object CompanyDetails {
+  implicit val companyDetailsFormat: Format[CompanyDetails] = Json.format[CompanyDetails]
+  implicit val companyDetailsOFormat: OFormat[CompanyDetails] = Json.format[CompanyDetails]
+  implicit val companyDetailsReads: Reads[CompanyDetails] = Json.reads[CompanyDetails]
+  implicit val companyDetailsWrites: Writes[CompanyDetails] = Json.writes[CompanyDetails]
 }
+

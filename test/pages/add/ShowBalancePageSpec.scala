@@ -19,7 +19,7 @@ package pages.add
 import models.ShowBalance
 import pages.behaviours.PageBehaviours
 
-class ShowBalanceSpec extends PageBehaviours {
+class ShowBalancePageSpec extends PageBehaviours {
 
   "ShowBalancePage" must {
 

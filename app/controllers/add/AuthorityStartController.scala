@@ -53,7 +53,7 @@ class AuthorityStartController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))
+      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,7 +61,7 @@ class AuthorityStartController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode))))),
+          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))),
 
         value =>
           for {

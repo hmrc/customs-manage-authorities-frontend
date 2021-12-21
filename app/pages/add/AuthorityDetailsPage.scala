@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package services.add
+package pages.add
 
-import com.google.inject.Inject
-import models.UserAnswers
-import models.requests.AddAuthorityRequest
-import pages.add.AuthorisedUserPage
+import models.domain.AuthorisedUser
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
+case object AuthorityDetailsPage extends QuestionPage[AuthorisedUser] {
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
-    for {
-      (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
-    } yield AddAuthorityRequest(
-      accounts,
-      standingAuthority,
-      authorisedUser
-    )
-  }
+  override def path: JsPath = JsPath \ toString
 
+  override def toString: String = "authorisedUser"
 }

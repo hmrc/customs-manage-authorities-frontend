@@ -17,15 +17,15 @@
 package connectors
 
 import config.Service
-import models.{EORIValidationError, ErrorResponse}
+import models.{CompanyName, EORIValidationError, ErrorResponse}
 import models.domain.{AccountWithAuthorities, CDSAccounts}
 import models.requests._
 import play.api.Configuration
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse, NotFoundException}
-
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsFinancialsConnector @Inject()(
@@ -73,5 +73,9 @@ class CustomsFinancialsConnector @Inject()(
         case _: NotFoundException => Right(false)
         case _ => Left(EORIValidationError)
       }
+  }
+
+  def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
+    httpClient.GET[CompanyName](baseUrl + context + "/subscriptions/company-name")
   }
 }

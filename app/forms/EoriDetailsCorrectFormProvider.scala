@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package services.add
+package forms
 
-import com.google.inject.Inject
-import models.UserAnswers
-import models.requests.AddAuthorityRequest
-import pages.add.AuthorisedUserPage
+import forms.mappings.Mappings
+import javax.inject.Inject
+import models.EoriDetailsCorrect
+import play.api.data.Form
 
-class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
+class EoriDetailsCorrectFormProvider @Inject() extends Mappings {
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
-    for {
-      (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
-    } yield AddAuthorityRequest(
-      accounts,
-      standingAuthority,
-      authorisedUser
+  def apply(): Form[EoriDetailsCorrect] =
+    Form(
+      "value" -> enumerable[EoriDetailsCorrect]("eoriDetails.error.required")
     )
-  }
-
 }

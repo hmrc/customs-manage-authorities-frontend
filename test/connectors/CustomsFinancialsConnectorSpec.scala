@@ -30,7 +30,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
-
 import java.time.LocalDate
 
 class CustomsFinancialsConnectorSpec extends SpecBase
@@ -290,5 +289,4 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
   }
-
 }

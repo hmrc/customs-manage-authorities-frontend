@@ -16,8 +16,8 @@
 
 package viewmodels
 
-import models.domain.CDSAccount
-import models.{AuthorityStart, CheckMode, ShowBalance, UserAnswers}
+import models.domain.{AuthorisedUser, CDSAccount}
+import models.{AuthorityStart, CheckMode, CompanyDetails, ShowBalance, UserAnswers}
 import pages.add._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -26,23 +26,48 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
-case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: DateTimeService)
+case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)
                             (implicit val messages: Messages) extends SummaryListRowHelper {
 
   private val selectedAccounts: List[CDSAccount] = userAnswers.get(AccountsPage).getOrElse(Nil)
 
-  val authorisationDeclaration: String = selectedAccounts.size match {
-    case 1 => messages("authorisedUser.declaration.singular")
-    case _ => messages("authorisedUser.declaration.plural")
+  val accountsTitle: String = selectedAccounts.size match {
+    case 1 => messages("checkYourAnswers.accounts.h2.singular")
+    case _ => messages("checkYourAnswers.accounts.h2.plural")
   }
 
-  def rows: Seq[SummaryListRow] = {
+  val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
+
+  def companyDetailsRows: Seq[SummaryListRow] = {
+    if (companyName.isEmpty) {
+      Seq(
+        eoriNumberRow(userAnswers.get(EoriNumberPage))
+      ).flatten
+    }
+    else {
+      Seq(
+        eoriNumberRow(userAnswers.get(EoriNumberPage)),
+        companyNameRow(userAnswers.get(EoriNumberPage))
+
+      ).flatten
+    }
+  }
+
+  def accountsRows: Seq[SummaryListRow] = {
     Seq(
       Some(accountsRow(selectedAccounts)),
-      eoriNumberRow(userAnswers.get(EoriNumberPage)),
+    ).flatten
+  }
+
+  def authorityDurationRows: Seq[SummaryListRow] = {
+    Seq(
       authorityStartRow(userAnswers),
       showBalanceRow(userAnswers.get(ShowBalancePage))
     ).flatten
+  }
+
+  def authorityDetailsRows: Seq[SummaryListRow] = {
+    yourDetailsRows(userAnswers.get(AuthorityDetailsPage))
   }
 
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
@@ -62,11 +87,11 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
       secondValue = None)
   }
 
-  private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] = {
+  private def eoriNumberRow(number: Option[CompanyDetails]): Option[SummaryListRow] = {
     number.map(x =>
       summaryListRow(
-        messages("eoriNumber.checkYourAnswersLabel"),
-        value = HtmlFormat.escape(x).toString(),
+        messages("checkYourAnswers.eoriNumber.label"),
+        value = HtmlFormat.escape(x.eori).toString(),
         actions = Actions(items = Seq(ActionItem(
           href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
           content = span(messages("site.change")),
@@ -75,6 +100,42 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
         secondValue = None
       )
     )
+  }
+
+  private def companyNameRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] = {
+    companyDetails.map(x =>
+      summaryListRow(
+        messages("checkYourAnswers.companyName.label"),
+        value = HtmlFormat.escape(x.name.get).toString(),
+        actions = Actions(items = Seq()),
+        secondValue = None
+      )
+    )
+  }
+
+
+  private def yourDetailsRows(authorityDetails: Option[AuthorisedUser]): Seq[SummaryListRow] = {
+      Seq(summaryListRow(
+        messages("checkYourAnswers.fullName.label"),
+        value = HtmlFormat.escape(authorityDetails.get.userName).toString(),
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+        ))),
+        secondValue = None
+      ),
+        summaryListRow(
+        messages("checkYourAnswers.role.label"),
+        value = HtmlFormat.escape(authorityDetails.get.userRole).toString(),
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+        ))),
+        secondValue = None
+      )
+      )
   }
 
   private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
@@ -109,5 +170,4 @@ case class CheckYourAnswersHelper (userAnswers: UserAnswers, dateTimeService: Da
       )
     )
   }
-
 }

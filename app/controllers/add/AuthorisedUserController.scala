@@ -62,33 +62,16 @@ class AuthorisedUserController @Inject()(
         .fold(
           errorPage("UserAnswers did not contain sufficient data for Check your answers")
         ) {
-          _ =>
-            val helper = CheckYourAnswersHelper(request.userAnswers, dateTimeService)
-            val preparedForm = request.userAnswers.get(AuthorisedUserPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
-
-            Ok(view(preparedForm, helper))
+          _ =>  Ok(view(form, CheckYourAnswersHelper(request.userAnswers, dateTimeService)))
         }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors => {
-          val helper = CheckYourAnswersHelper(request.userAnswers, dateTimeService)
-          Future.successful(BadRequest(view(formWithErrors, helper)))
-        },
-        value =>
-          (for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorisedUserPage, value))
-            _ <- sessionRepository.set(updatedAnswers)
-            result <- doSubmission(updatedAnswers)
-          } yield result).recover {
-            case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
-          }
-      )
+          for {
+            result <- doSubmission(request.userAnswers)
+          } yield result
+
   }
 
   def doSubmission(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {

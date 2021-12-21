@@ -55,8 +55,8 @@ class AddConfirmationController @Inject()(
             _ <- sessionRepository.clear(request.userAnswers.id)
             _ <- accountsRepository.clear(request.internalId.value)
             _ <- authoritiesRepository.clear(request.internalId.value)
-            _ <- confirmationService.populateConfirmation(request.internalId.value, id, startDate, multipleAccounts)
-          } yield Ok(view(id, startDate, multipleAccounts))
+            _ <- confirmationService.populateConfirmation(request.internalId.value, id.eori, startDate, multipleAccounts)
+          } yield Ok(view(id.eori, startDate, multipleAccounts))
         case None =>
           request.userAnswers.get(ConfirmationPage) match {
             case Some(value) => Future.successful(Ok(view(value.eori, value.startDate, value.multipleAccounts)))

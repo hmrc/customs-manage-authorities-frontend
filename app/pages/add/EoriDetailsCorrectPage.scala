@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package services.add
+package pages.add
 
-import com.google.inject.Inject
-import models.UserAnswers
-import models.requests.AddAuthorityRequest
-import pages.add.AuthorisedUserPage
+import models.{EoriDetailsCorrect, UserAnswers}
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
+import scala.util.{Success, Try}
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
-    for {
-      (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
-    } yield AddAuthorityRequest(
-      accounts,
-      standingAuthority,
-      authorisedUser
-    )
+case object EoriDetailsCorrectPage extends QuestionPage[EoriDetailsCorrect] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "eoriDetails"
+
+  override def cleanup(value: Option[EoriDetailsCorrect], userAnswers: UserAnswers): Try[UserAnswers] = {
+    value match {
+      case Some(EoriDetailsCorrect.No) => userAnswers.remove(EoriNumberPage)
+      case _ => Success(userAnswers)
+    }
   }
-
 }

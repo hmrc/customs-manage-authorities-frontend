@@ -34,34 +34,38 @@
         p: components.p
 )
 
-@(form: Form[_], helper: CheckYourAnswersHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(title(form, "checkYourAnswers.title", None, Seq())), backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))) {
+@layout(pageTitle = Some(title(form, "authorityDetails.title", None, Seq())), backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {
+    @formHelper(action = controllers.add.routes.AuthorityDetailsController.onSubmit(mode)) {
 
         @errorSummary(form.errors)
 
-        @h1("checkYourAnswers.heading")
+        @h1("authorityDetails.h1")
 
-        @h2(Html(helper.accountsTitle))
+        @p(Html(messages("authorityDetails.p")))
 
-        @summaryList(SummaryList(helper.accountsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
+        @inputText(
+            form,
+            id = "fullName",
+            name = "fullName",
+            label = "authorityDetails.fullName",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("name")
+        )
 
-        @h2("checkYourAnswers.companyDetails.h2")
+        @inputText(
+            form,
+            id = "jobRole",
+            name = "jobRole",
+            label = "authorityDetails.role",
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds"),
+            autocomplete = Some("on")
+        )
 
-        @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
-
-        @h2("checkYourAnswers.authorityDuration.h2")
-
-        @summaryList(SummaryList(helper.authorityDurationRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
-
-        @h2("checkYourAnswers.userDetails.h2")
-
-        @summaryList(SummaryList(helper.authorityDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
-
-        @p(Html(messages("checkYourAnswers.p")))
-
-        @button("checkYourAnswers.confirm.button")
+        @button("site.confirm")
     }
 }

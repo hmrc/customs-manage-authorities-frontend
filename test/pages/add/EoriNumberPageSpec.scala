@@ -16,17 +16,16 @@
 
 package pages.add
 
+import models.CompanyDetails
 import pages.behaviours.PageBehaviours
-
 
 class EoriNumberPageSpec extends PageBehaviours {
 
   "EoriNumberPage" must {
+    beRetrievable[CompanyDetails](EoriNumberPage)
 
-    beRetrievable[String](EoriNumberPage)
+    beSettable[CompanyDetails](EoriNumberPage)
 
-    beSettable[String](EoriNumberPage)
-
-    beRemovable[String](EoriNumberPage)
+    beRemovable[CompanyDetails](EoriNumberPage)
   }
 }

@@ -21,14 +21,14 @@ import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
-import models.UserAnswers
-import models.domain.{AccountStatusOpen, AccountWithAuthorities, AuthorisedUser, CdsCashAccount, StandingAuthority}
+import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
+import models.domain.{AccountStatusOpen, AccountWithAuthorities, AuthorisedUser, CDSAccount, CDSCashBalance, CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance, StandingAuthority}
 import models.requests.Accounts
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.add.AuthorisedUserPage
+import pages.add.{AccountsPage, AuthorisedUserPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -37,13 +37,17 @@ import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
-
 import java.time.{LocalDate, LocalDateTime}
+
+import play.api.i18n.Messages
+
 import scala.concurrent.Future
 
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   private def onwardRoute = Call("GET", "/foo")
+
+  implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   private val formProvider = new AuthorisedUserFormProviderWithConsent()
   private val form = formProvider()
@@ -55,22 +59,37 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   val accounts: Accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
   val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
+  val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
   val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
-  when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority)))
+  when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+  val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+  val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+
+  val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+
+  val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+    .set(AccountsPage, selectedAccounts).success.value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
 
   "AuthorisedUser Controller" must {
 
     "return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswers
+      val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
 
       val application = applicationBuilder(Some(userAnswers))
         .overrides(
           bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
           bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
         )
         .build()
@@ -83,110 +102,12 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         val view = application.injector.instanceOf[AuthorisedUserView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
           view(form, helper)(request, messages(application), appConfig).toString
-      }
-    }
-
-    "populate the view correctly on a GET when the question has previously been answered" in {
-
-      val answer = AuthorisedUser("name", "role")
-
-      val userAnswers = UserAnswers(userAnswersId).set(AuthorisedUserPage, answer).success.value
-
-      val application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        )
-        .build()
-
-      running(application) {
-
-        val request = fakeRequest(GET, authorisedUserRoute)
-
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
-
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
-
-        status(result) mustEqual OK
-
-        contentAsString(result) mustEqual
-          view(form.fill(answer), helper)(request, messages(application), appConfig).toString
-      }
-    }
-
-    "redirect to the next page when valid data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(emptyUserAnswers))
-          )
-          .build()
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "role"), ("confirmation", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "return a Bad Request and errors when invalid data is submitted" in {
-
-      val userAnswers = emptyUserAnswers
-
-      val application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        )
-        .build()
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute
-        )
-        .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
-
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
-
-        status(result) mustEqual BAD_REQUEST
-
-        contentAsString(result) mustEqual
-          view(boundForm, helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -221,60 +142,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
-      }
-    }
-
-    "return a Bad Request when name contains malicious code" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(emptyUserAnswers))
-          )
-          .build()
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("fullName", "<script>"), ("jobRole", "role"), ("confirmation", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-      }
-    }
-
-    "return a Bad Request when job role contains malicious code" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(emptyUserAnswers))
-          )
-          .build()
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "alert(1)"), ("confirmation", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
       }
     }
   }

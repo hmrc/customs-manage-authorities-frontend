@@ -21,9 +21,9 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.AccountsFormProvider
 import models.domain.CDSAccount
 import models.requests.DataRequest
-import models.{Mode, NormalMode}
+import models.{EoriDetailsCorrect, Mode, NormalMode}
 import navigation.Navigator
-import pages.add.{AccountsPage, EoriNumberPage}
+import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,7 +31,6 @@ import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,7 +56,7 @@ class AccountsController @Inject()(
       request.userAnswers.get(EoriNumberPage) match {
         case None => Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
         case Some(enteredEori) =>
-          authorisedAccountsService.getAuthorisedAccounts(enteredEori).map { authorisedAccounts =>
+          authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).map { authorisedAccounts =>
             if (authorisedAccounts.availableAccounts.nonEmpty) {
               Ok(view(
                 populateForm(authorisedAccounts.availableAccounts),
@@ -78,7 +77,7 @@ class AccountsController @Inject()(
       request.userAnswers.get(EoriNumberPage) match {
         case None => Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
         case Some(enteredEori) =>
-          authorisedAccountsService.getAuthorisedAccounts(enteredEori).flatMap { authorisedAccounts =>
+          authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).flatMap { authorisedAccounts =>
             form.bindFromRequest().fold(
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, authorisedAccounts, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),
@@ -95,9 +94,11 @@ class AccountsController @Inject()(
   }
 
   private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] = {
-    request.userAnswers.get(AccountsPage) match {
-      case None => form
-      case Some(value) =>
+    (request.userAnswers.get(AccountsPage), request.userAnswers.get(EoriDetailsCorrectPage)) match {
+      case (None, _) => form
+      case (Some(value), Some(EoriDetailsCorrect.No)) =>
+        form
+      case (Some(value), _) =>
         val formValues = availableAccounts
           .toList
           .zipWithIndex
@@ -106,6 +107,4 @@ class AccountsController @Inject()(
         form.fill(formValues)
     }
   }
-
-
 }
