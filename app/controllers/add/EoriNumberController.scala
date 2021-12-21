@@ -79,8 +79,8 @@ class EoriNumberController @Inject()(
             Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           } else {
             (for {
-              companyName <- dataStore.getCompanyName(eoriNumber)
-              companyDetails = CompanyDetails(eoriNumber, companyName)
+              companyName <- dataStore.getCompanyName(eori)
+              companyDetails = CompanyDetails(eori, companyName)
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
               _ <- sessionRepository.set(updatedAnswers)
               result <- doSubmission(updatedAnswers, eori, mode)
