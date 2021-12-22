@@ -29,9 +29,6 @@ case object EoriDetailsCorrectPage extends QuestionPage[EoriDetailsCorrect] {
   override def toString: String = "eoriDetails"
 
   override def cleanup(value: Option[EoriDetailsCorrect], userAnswers: UserAnswers): Try[UserAnswers] = {
-    value match {
-      case Some(EoriDetailsCorrect.No) => userAnswers.remove(EoriNumberPage)
-      case _ => Success(userAnswers)
-    }
+    Success(userAnswers)
   }
 }

@@ -185,7 +185,7 @@ eoriDetails.noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru 
 eoriDetails.noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes.
 eoriDetails.radioYes = Iawn
 eoriDetails.radioNo = Na, newid y rhif EORI
-eoriDetails.error.required = Select whether company information is correct
+eoriDetails.error.required = Dewiswch a yw’r wybodaeth am y cwmni yn gywir
 
 eoriNumber.title=Beth yw ei rif EORI?
 eoriNumber.heading=Beth yw ei rif EORI?
