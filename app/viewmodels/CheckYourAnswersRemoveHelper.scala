@@ -53,7 +53,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
   private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] = {
     number.map(x =>
       summaryListRow(
-        messages("eoriNumber.checkYourAnswersLabel"),
+        messages("checkYourAnswers.eoriNumber.label"),
         value = HtmlFormat.escape(x).toString(),
         actions = Actions(items = Seq()),
         secondValue = None
