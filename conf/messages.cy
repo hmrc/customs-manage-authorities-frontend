@@ -189,11 +189,11 @@ eoriDetails.error.required = Dewiswch a yw’r wybodaeth am y cwmni yn gywir
 
 eoriNumber.title=Beth yw ei rif EORI?
 eoriNumber.heading=Beth yw ei rif EORI?
-eoriNumber.hint=Nodwch rif EORI y defnyddiwr rydych am roi awdurdod iddo. Mae’n dechrau gyda GB wedi’i ddilyn gan 12 digid.  Er enghraifft, GB345834921000.
+eoriNumber.hint=Nodwch rif EORI y defnyddiwr rydych am roi awdurdod iddo. Mae rhif EORI yn dechrau gyda GB, wedi’i ddilyn gan 12 digid. Er enghraifft, GB345834921000.
 eoriNumber.checkYourAnswersLabel=Rhif EORI y defnyddiwr
-eoriNumber.error.required=Nodwch ei rif EORI
-eoriNumber.error.format=Nid yw hwn yn rhif EORI GB cydnabyddedig
-eoriNumber.error.invalid = Nid yw’r EORI a nodwyd gennych yn ddilys
+eoriNumber.error.required=Nodwch rif EORI
+eoriNumber.error.format=Nodwch rif EORI go iawn
+eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi’ch EORI eich hun
 eoriNumber.error.gbnEori.format= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn.
 eoriNumber.error.gbnEori.title= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn

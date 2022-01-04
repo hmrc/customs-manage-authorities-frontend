@@ -164,11 +164,11 @@ accounts.noAvailableAccounts.link = manage your account authorities
 
 eoriNumber.title = What is their EORI number?
 eoriNumber.heading = What is their EORI number?
-eoriNumber.hint = Enter the EORI number of the user you want to give authority to. It starts with GB followed by 12 digits. For example, GB345834921000.
+eoriNumber.hint = Enter the EORI number of the user you want to give authority to. An EORI number starts with GB, followed by 12 digits. For example, GB345834921000.
 eoriNumber.checkYourAnswersLabel = User EORI number
-eoriNumber.error.required = Enter their EORI number
-eoriNumber.error.format = This is not a recognised GB EORI number
-eoriNumber.error.invalid = The EORI you have entered is not valid
+eoriNumber.error.required = Enter an EORI number
+eoriNumber.error.format = Enter a real EORI number
+eoriNumber.error.invalid = Enter an EORI that has been registered with HMRC
 eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI
 eoriNumber.error.gbnEori.format= You cannot use a GBN EORI with this service.
 eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
