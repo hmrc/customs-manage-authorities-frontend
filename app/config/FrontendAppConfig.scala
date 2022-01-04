@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
-  lazy val reportAProblem: Boolean = configuration.getOptional[Boolean]("features.report-a-problem").getOrElse(false)
-
   lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
   lazy val timeout: Int = configuration.get[Int]("timeout.timeout")
 
@@ -43,8 +41,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
 
   lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
-
-  lazy val languageTranslationEnabled: Boolean = configuration.get[Boolean]("features.welsh-translation")
 
   lazy val origin: String = configuration.get[String]("origin")
 
