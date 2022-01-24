@@ -162,12 +162,12 @@ accounts.noAvailableAccounts.heading = {0} already has access to all your accoun
 accounts.noAvailableAccounts.p = To review or edit this user's access, go back to
 accounts.noAvailableAccounts.link = manage your account authorities
 
-eoriNumber.title = What is their EORI number?
-eoriNumber.heading = What is their EORI number?
-eoriNumber.hint = Enter the EORI number of the user you want to give authority to. An EORI number starts with GB, followed by 12 digits. For example, GB345834921000.
+eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
+eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
+eoriNumber.hint =  It starts with GB followed by 12 digits. For example, GB345834921000.
 eoriNumber.checkYourAnswersLabel = User EORI number
 eoriNumber.error.required = Enter an EORI number
-eoriNumber.error.format = Enter a real EORI number
+eoriNumber.error.format = Enter an EORI number in the correct format
 eoriNumber.error.invalid = Enter an EORI that has been registered with HMRC
 eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI
 eoriNumber.error.gbnEori.format= You cannot use a GBN EORI with this service.
