@@ -288,6 +288,7 @@ edit.notChanged = Heb newid
 addConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
 addConfirmation.heading=Awdurdodiad wedi’i ychwanegu
 addConfirmation.body.eori.number=Rhif EORI:
+addConfirmation.body.company.name = Enw’r cwmni
 addConfirmation.body.today.singular=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrif
 addConfirmation.body.today.plural=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrifon
 addConfirmation.body.setDate=Yn dechrau ar {0}

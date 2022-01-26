@@ -304,6 +304,7 @@ edit.notChanged = Not Changed
 addConfirmation.title = User added successfully
 addConfirmation.heading = Authority added
 addConfirmation.body.eori.number = EORI number:
+addConfirmation.body.company.name = Company name:
 addConfirmation.body.today.singular = This company now has authority to use your account
 addConfirmation.body.today.plural = This company now has authority to use your accounts
 addConfirmation.body.setDate = Starting on {0}
