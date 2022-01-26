@@ -29,9 +29,13 @@ p: components.p
 @layout(pageTitle = Some(titleNoForm("addConfirmation.title", None, Seq())), backLink = None) {
 
     <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@messages("addConfirmation.heading", eori)</h1>
+        <h1 class="govuk-panel__title">@messages("addConfirmation.heading")</h1>
         <div class="govuk-panel__body-s">
-            @{startDate.fold(if (multipleAccounts) messages("addConfirmation.body.today.plural") else messages("addConfirmation.body.today.singular"))(messages("addConfirmation.body.setDate", _))}
+            <p class="govuk-!-font-size-27">@messages("addConfirmation.body.eori.number") <br>
+                <strong>@eori</strong>
+                <br>
+            </p>
+            <p> @{startDate.fold(if (multipleAccounts) messages("addConfirmation.body.today.plural") else messages("addConfirmation.body.today.singular"))(messages("addConfirmation.body.setDate", _))} </p>
         </div>
     </div>
 

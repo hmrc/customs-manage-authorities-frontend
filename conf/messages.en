@@ -302,11 +302,12 @@ edit.changed = Changed
 edit.notChanged = Not Changed
 
 addConfirmation.title = User added successfully
-addConfirmation.heading = {0} successfully added
+addConfirmation.heading = Authority added
+addConfirmation.body.eori.number = EORI number:
 addConfirmation.body.today.singular = This company now has authority to use your account
 addConfirmation.body.today.plural = This company now has authority to use your accounts
 addConfirmation.body.setDate = Starting on {0}
-addConfirmation.p1.today = Ask the user to check that they can view your account in their customs financials dashboard. It may take up to one hour for it to appear.
+addConfirmation.p1.today = Ask the company or person to check that they can see your account in their customs financials dashboard. It may take up to one hour to appear.
 addConfirmation.p1.setDate = When the authority has started ask the user to check that they can view your account in their customs financials dashboard.
 addConfirmation.returnLink = Back to manage your account authorities
 
