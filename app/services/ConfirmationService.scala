@@ -28,9 +28,10 @@ class ConfirmationService @Inject()(sessionRepository: SessionRepository) (impli
   def populateConfirmation(internalId: String,
                            eori: String,
                            startDate : Option[String] = None,
+                           companyName: Option[String] = None,
                            multipleAccount: Boolean = false): Future[Boolean] ={
     Future.fromTry(UserAnswers(internalId)
-      .set(ConfirmationPage, ConfirmationDetails(eori, startDate, multipleAccount))).flatMap{
+      .set(ConfirmationPage, ConfirmationDetails(eori, startDate, companyName, multipleAccount))).flatMap{
       newUserAnswers => sessionRepository.set(newUserAnswers)
     }
   }
