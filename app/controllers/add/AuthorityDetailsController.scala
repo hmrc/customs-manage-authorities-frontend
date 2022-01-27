@@ -29,9 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorityDetailsView
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorityDetailsController @Inject()(

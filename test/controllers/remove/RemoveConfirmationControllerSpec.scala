@@ -46,7 +46,7 @@ class RemoveConfirmationControllerSpec extends SpecBase {
     "return OK and clear repository entry" when {
 
       "The user is returning to the page " in {
-        val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, true)).success.value
+        val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, Some("Company Name"), true)).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application){

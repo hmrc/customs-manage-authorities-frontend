@@ -16,8 +16,7 @@
 
 package viewmodels
 
-import java.time.{LocalDate, LocalDateTime}
-
+import java.time.LocalDateTime
 import base.SpecBase
 import models._
 import models.domain._
@@ -25,9 +24,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
 import play.api.i18n.Messages
-import play.api.libs.json.{JsString, Writes}
 import services.DateTimeService
-import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 
 class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {

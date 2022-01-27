@@ -18,7 +18,8 @@ package controllers.edit
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.{AuthorisedUserFormProvider, AuthorityDetailsFormProvider}
+import forms.AuthorityDetailsFormProvider
+import javax.inject.Inject
 import models.NormalMode
 import models.requests.DataRequest
 import navigation.Navigator
@@ -30,7 +31,6 @@ import repositories.SessionRepository
 import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.edit.EditAuthorisedUserView
-import javax.inject.Inject
 
 import scala.concurrent.{ExecutionContext, Future}
 
