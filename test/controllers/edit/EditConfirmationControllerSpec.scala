@@ -50,7 +50,7 @@ class EditConfirmationControllerSpec extends SpecBase {
     "return OK and the correct view for a GET" when {
 
       "The user is returning to the page " in {
-        val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, false)).success.value
+        val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, Some("Company Name"), false)).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
         running(application){
           val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
@@ -78,7 +78,7 @@ class EditConfirmationControllerSpec extends SpecBase {
         when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
           .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value

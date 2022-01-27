@@ -19,7 +19,6 @@ package services.add
 import com.google.inject.Inject
 import models.UserAnswers
 import models.requests.AddAuthorityRequest
-import pages.add.AuthorisedUserPage
 
 class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
 
