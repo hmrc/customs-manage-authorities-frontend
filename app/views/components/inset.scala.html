@@ -16,6 +16,8 @@
 
 @this()
 
-@(content: Html, id: Option[String]= None, classes: String = "govuk-body")(implicit messages: Messages)
+@(msg: String, id: Option[String] = None, classes: String = "govuk-inset-text")(implicit messages: Messages)
 
-<p @{id.fold("")(id => s"id=$id")} class="@classes">@content</p>
+<div @{id.fold("")(id => s"id=$id")} class="@classes">
+<p class="govuk-body">@msg</p>
+</div>

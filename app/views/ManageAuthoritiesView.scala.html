@@ -26,7 +26,9 @@
     errorSummary: components.errorSummary,
     button: components.button,
     inputText: components.inputText,
-    h1: components.h1
+    h1: components.h1,
+    inset: components.inset,
+    p: components.p
 )
 
 @(viewModel: ManageAuthoritiesViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -36,13 +38,11 @@
     @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
     @if(viewModel.hasNoAccounts) {
-        <p id="no-authorities" class="govuk-body govuk-!-margin-bottom-6">
-            @messages("manageAuthorities.notification.noAuthorities")
-        </p>
+        @p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
+        classes = "govuk-body govuk-!-margin-bottom-6")
 
-        <div id="cds-authorities" class="govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9">
-            @messages("manageAuthorities.notification.cdsAuthorities")
-        </div>
+        @inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
+        classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
     }
 
     <div class="govuk-form-group">
