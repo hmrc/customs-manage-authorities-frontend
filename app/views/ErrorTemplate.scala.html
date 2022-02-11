@@ -19,7 +19,8 @@
 
 @this(
         layout: Layout,
-        h1: components.h1
+        h1: components.h1,
+        p:  components.p
 )
 
 @(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -28,6 +29,6 @@
 
     @h1(messages(heading))
 
-    <p class="govuk-body">@messages(message)</p>
+    @p(Html(messages(message)))
 
 }

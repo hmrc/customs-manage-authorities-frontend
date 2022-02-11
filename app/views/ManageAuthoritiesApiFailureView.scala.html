@@ -31,7 +31,7 @@
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
 
-    <h1 id="manageAuthorities.heading" class="govuk-heading-xl">@messages("manageAuthorities.title")</h1>
+    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
     <div id="problem-with-service-text" class="govuk-inset-text govuk-!-margin-top-9 govuk-!-margin-bottom-9">
         @messages("manageAuthorities.error")

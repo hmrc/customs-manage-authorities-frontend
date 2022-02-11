@@ -20,6 +20,7 @@
 @this(
     layout: Layout,
     h1: components.h1,
+    p: components.p,
     button: components.button
 )
 
@@ -29,7 +30,7 @@
 
     @h1(messages("session_expired.heading"))
 
-    <p class="govuk-body">@messages("session_expired.guidance")</p>
+    @p(Html(messages("session_expired.guidance")))
 
     <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad" class="govuk-link" id="start-link">@button("session_expired.action")</a>
 }

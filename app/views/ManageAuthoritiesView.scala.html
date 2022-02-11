@@ -33,7 +33,7 @@
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), isFullWidth = viewModel.hasAccounts) {
 
-    <h1 id="manageAuthorities.heading" class="govuk-heading-xl">@messages("manageAuthorities.title")</h1>
+    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
     @if(viewModel.hasNoAccounts) {
         <p id="no-authorities" class="govuk-body govuk-!-margin-bottom-6">
