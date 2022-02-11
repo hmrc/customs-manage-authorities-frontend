@@ -30,7 +30,7 @@
 @layout(pageTitle = Some(titleNoForm("editConfirmation.title", None, Seq())), backLink = None) {
 
     <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@messages("editConfirmation.heading", eori)</h1>
+        @h1(msg = messages("editConfirmation.heading", eori), classes="govuk-panel__title")
         <div class="govuk-panel__body-s">
             @{startDate.fold(messages("editConfirmation.body.today.singular"))(messages("editConfirmation.body.setDate", _))}
         </div>
