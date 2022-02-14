@@ -32,5 +32,5 @@
 
     @p(Html(messages("session_expired.guidance")))
 
-    <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad" class="govuk-link" id="start-link">@button("session_expired.action")</a>
+    @button(msg = "session_expired.action", href = Some(controllers.routes.ManageAuthoritiesController.onPageLoad.url), id = Some("start-link"))
 }

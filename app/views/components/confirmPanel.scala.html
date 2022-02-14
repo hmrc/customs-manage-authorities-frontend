@@ -16,7 +16,9 @@
 
 @this()
 
-@(content: Html)
+@(content: Html, additionalContent: Option[Html] = None)
 
-<div class="govuk-panel govuk-panel--confirmation">@content</div>
+<div class="govuk-panel govuk-panel--confirmation">@content
+ @additionalContent
+</div>
 

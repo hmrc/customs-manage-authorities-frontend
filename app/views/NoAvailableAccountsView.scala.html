@@ -20,7 +20,9 @@
 
 @this(
         layout: Layout,
-        h1: components.h1
+        h1: components.h1,
+        p: components.p,
+        link: components.link
 )
 
 @(enteredEori: EORI)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
