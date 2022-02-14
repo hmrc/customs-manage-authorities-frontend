@@ -22,7 +22,9 @@
     layout: Layout,
     h1: components.h1,
     panel: components.panelIndent,
-    p: components.p
+    p: components.p,
+    confirmPanel: components.confirmPanel,
+    link: components.link
 )
 
 @(eori: String, startDate: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -38,7 +40,5 @@
 
     @p(Html(startDate.fold(messages("editConfirmation.p1.today"))(_ => messages("editConfirmation.p1.setDate"))))
 
-    <p class="govuk-body">
-        <a class="govuk-link" href="@controllers.routes.ManageAuthoritiesController.onPageLoad">@messages("editConfirmation.returnLink")</a>
-    </p>
+    @p(link(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "editConfirmation.returnLink"))
 }
