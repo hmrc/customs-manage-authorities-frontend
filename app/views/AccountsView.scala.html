@@ -53,8 +53,6 @@
                         } @{
                             s"${formattedAccountType(account)}."
                         }</p>
-                        @p(Html(messages("accounts.authorised", accounts.enteredEori) + s"${formattedAccountType(account)}."))
-
                     }
                     @accounts.closedAccounts.map { account =>
                         <p>@{
