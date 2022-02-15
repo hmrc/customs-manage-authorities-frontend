@@ -25,16 +25,16 @@
     button: components.button,
     inputText: components.inputText,
     h1: components.h1,
+    inset: components.inset
 )
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {
 
-    <h1 id="manageAuthorities.heading" class="govuk-heading-xl">@messages("manageAuthorities.title")</h1>
+    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
-    <div id="problem-with-service-text" class="govuk-inset-text govuk-!-margin-top-9 govuk-!-margin-bottom-9">
-        @messages("manageAuthorities.error")
-    </div>
+    @inset(msg = messages("manageAuthorities.error"), id=Some("problem-with-service-text"),
+    classes = "govuk-inset-text govuk-!-margin-top-9 govuk-!-margin-bottom-9")
 
 }

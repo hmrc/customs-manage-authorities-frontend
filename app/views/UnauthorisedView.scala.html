@@ -22,6 +22,7 @@
     layout: Layout,
     h1: components.h1,
     h2: components.h2,
+    p: components.p,
     hmrcNewTabLink: HmrcNewTabLink
 )
 
@@ -58,7 +59,5 @@
         .
     </p>
 
-    <p class="govuk-body">
-        @messages("unauthorised.process-application-info")
-    </p>
+    @p(Html(messages("unauthorised.process-application-info")))
 }

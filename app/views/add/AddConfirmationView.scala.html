@@ -19,37 +19,19 @@
 
 @this(
 layout: Layout,
-h1: components.h1,
-panel: components.panelIndent,
-p: components.p
+p: components.p,
+link: components.link,
+confirmPanel: components.addConfirmationPanel
 )
 
 @(eori: String, startDate: Option[String], companyName: Option[String], multipleAccounts: Boolean)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(titleNoForm("addConfirmation.title", None, Seq())), backLink = None) {
 
-    <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">@messages("addConfirmation.heading")</h1>
-        <div class="govuk-panel__body-s">
-           @if(companyName.nonEmpty) {
-            <p class="govuk-!-font-size-27">@messages("addConfirmation.body.company.name") <br>
-                <strong>@companyName</strong>
-                <br>
-            </p>
-            }
-
-
-            <p class="govuk-!-font-size-27">@messages("addConfirmation.body.eori.number") <br>
-                <strong>@eori</strong>
-                <br>
-            </p>
-            <p> @{if (startDate.nonEmpty) {messages("addConfirmation.body.setDate", startDate.get)}} </p>
-        </div>
-    </div>
+    @confirmPanel(message = Some(messages("addConfirmation.heading")), companyName = companyName, eori = Some(eori), startDate = startDate)
 
     @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
 
-    <p class="govuk-body">
-        <a class="govuk-link" href="@controllers.routes.ManageAuthoritiesController.onPageLoad">@messages("addConfirmation.returnLink")</a>
-    </p>
+    @p(link(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "addConfirmation.returnLink"))
+
 }

@@ -14,21 +14,9 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
-@import config.FrontendAppConfig
+@this()
+@(link: String, messageKey: String, id: Option[String] = None, pMessageKey: String)(implicit messages: Messages)
 
-@this(
-        layout: Layout,
-        h1: components.h1,
-        p:  components.p
-)
-
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
-
-@layout(Some(titleNoForm(pageTitle, None, Seq())), backLink = None) {
-
-    @h1(messages(heading))
-
-    @p(Html(messages(message)))
-
-}
+<p class = "govuk-body">@messages(pMessageKey)
+ <a href="@link" class="govuk-link" @id.map(x => s"id=$x")>@messages(messageKey)</a>
+</p>

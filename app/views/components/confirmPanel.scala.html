@@ -14,21 +14,11 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
-@import config.FrontendAppConfig
+@this()
 
-@this(
-        layout: Layout,
-        h1: components.h1,
-        p:  components.p
-)
+@(content: Html, additionalContent: Option[Html] = None)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+<div class="govuk-panel govuk-panel--confirmation">@content
+ @additionalContent
+</div>
 
-@layout(Some(titleNoForm(pageTitle, None, Seq())), backLink = None) {
-
-    @h1(messages(heading))
-
-    @p(Html(messages(message)))
-
-}

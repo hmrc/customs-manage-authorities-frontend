@@ -14,21 +14,10 @@
  * limitations under the License.
  *@
 
-@import views.html.templates.Layout
-@import config.FrontendAppConfig
+@this()
 
-@this(
-        layout: Layout,
-        h1: components.h1,
-        p:  components.p
-)
+@(msg: String, id: Option[String] = None, classes: String = "govuk-inset-text")(implicit messages: Messages)
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
-
-@layout(Some(titleNoForm(pageTitle, None, Seq())), backLink = None) {
-
-    @h1(messages(heading))
-
-    @p(Html(messages(message)))
-
-}
+<div @{id.fold("")(id => s"id=$id")} class="@classes">
+<p class="govuk-body">@msg</p>
+</div>

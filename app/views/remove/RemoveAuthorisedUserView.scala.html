@@ -32,7 +32,8 @@
         inputCheckboxes: components.inputCheckboxes,
         govukCheckboxes: GovukCheckboxes,
         h1: components.h1,
-        h2: components.h2
+        h2: components.h2,
+        p:  components.p
 )
 
 @(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -46,9 +47,9 @@
 
         @errorSummary(form.errors)
 
-        <h1 class="govuk-heading-xl">@messages("authorised-user-remove.heading", viewModel.standingAuthority.authorisedEori)</h1>
+        @h1(msg = messages("authorised-user-remove.heading", viewModel.standingAuthority.authorisedEori), classes="govuk-heading-xl")
 
-        <p class="govuk-body">@messages("authorised-user-remove.p")</p>
+        @p(Html(messages("authorised-user-remove.p")))
 
         @h2("remove.yourDetails")
 
