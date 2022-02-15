@@ -22,6 +22,7 @@
         layout: Layout,
         h1: components.h1,
         p: components.p,
+        linkP: components.link_p,
         link: components.link
 )
 
@@ -31,7 +32,5 @@
 
  @h1(id=Some("accounts.heading"), msg = messages("accounts.noAvailableAccounts.heading", enteredEori))
 
- <p class="govuk-body">
-    @messages("accounts.noAvailableAccounts.p") <a href="@controllers.routes.ManageAuthoritiesController.onPageLoad">@messages("accounts.noAvailableAccounts.link")</a>
- </p>
+ @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "accounts.noAvailableAccounts.link", pMessageKey = "accounts.noAvailableAccounts.p")
 }

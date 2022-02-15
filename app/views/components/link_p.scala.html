@@ -15,6 +15,8 @@
  *@
 
 @this()
-@(link: String, messageKey: String, id: Option[String] = None)(implicit messages: Messages)
+@(link: String, messageKey: String, id: Option[String] = None, pMessageKey: String)(implicit messages: Messages)
 
-<a href="@link" class="govuk-link" @id.map(x => s"id=$x")>@messages(messageKey)</a>
+<p class = "govuk-body">@messages(pMessageKey)
+ <a href="@link" class="govuk-link" @id.map(x => s"id=$x")>@messages(messageKey)</a>
+</p>

@@ -46,9 +46,7 @@
     }
 
     <div class="govuk-form-group">
-        <a href="@controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)" role="button" class="govuk-button">
-            @messages("manageAuthorities.addAuthority")
-        </a>
+        @button(msg = "manageAuthorities.addAuthority", href = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
     </div>
 
     @if(viewModel.hasAccounts) {
