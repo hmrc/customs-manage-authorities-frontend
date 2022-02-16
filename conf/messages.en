@@ -5,25 +5,12 @@ service.name = View your customs financial accounts
 language.cymraeg = Cymraeg
 language.english = English
 
-site.back = Back
-site.delete = Delete
-site.edit = Change
-site.hidden-delete = Delete {0}
-site.hidden-edit = Change {0}
 site.no = No
 site.yes = Yes
 site.continue = Continue
 site.confirm = Confirm
 site.saveAndContinue = Continue
-site.submitAndContinue = Submit and continue
-site.textarea.char_limit = (Limit is {0} characters)
 site.govuk = GOV.UK
-site.signOut = Sign out
-site.getHelpWithThisPage = Get help with this page
-site.notProvided = Not Provided
-site.incomplete = Incomplete
-site.tryAgain = Try again
-site.startAgain = Start again
 site.change = Change
 
 # Help and Support
@@ -32,25 +19,16 @@ cf.account.help-support.message=If you are having issues, phone
 cf.account.help-support.numbers=0300 200 3701
 cf.account.help-support.office-hours=Open 8am to 6pm, Monday to Friday (closed bank holidays).
 
-
 footer.accessibility   = Accessibility statement
 footer.cookies         = Cookies
 footer.privacy         = Privacy policy
 footer.termsConditions = Terms and conditions
 footer.govukHelp       = Help using GOV.UK
 
-language.cymraeg = Cymraeg
-language.change.cymraeg = Newid yr iaith i'r Gymraeg
-language.english = English
-language.change.english = Change the language to English
-language.switcher = Language switcher
 
 # Timeout Messages
 # ----------------------------------------------------------
 timeout.title = You’re about to be signed out
-timeout.message = For security reasons, you will be signed out of this service in
-timeout.keepAlive = Stay signed in
-timeout.signOut = Sign out
 
 # BETA Banner
 # ----------------------------------------------------------
@@ -71,14 +49,9 @@ error.date.month_blank = Enter a month
 error.date.month_invalid = Give a correct month using numbers 1 to 12
 error.date.year_blank = Enter a year
 error.date.year_invalid = Give a correct year
-error.integer = Give an answer in whole numbers
 error.nonNumeric = Give a value using only numbers
-error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
-
-index.title = Financials scaffold
-index.heading = Financials scaffold
 
 session_expired.title = For your security, this service has been reset
 session_expired.heading = For your security, this service has been reset
@@ -103,7 +76,6 @@ service-technical-difficulties.title = Sorry, we’re experiencing technical dif
 service.technical-difficulties.heading = Sorry, we’re experiencing technical difficulties
 service.technical-difficulties.p = Please try again in a few minutes.
 
-
 manageAuthorities.title = Manage your account authorities
 manageAuthorities.heading = Manage your account authorities
 manageAuthorities.notification.noAuthorities = You have not given anyone permission to use any of your accounts yet. You can add authority for someone to use your duty deferment, general guarantee or cash accounts.
@@ -126,7 +98,6 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = G
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
 
 manageAuthorities.table.view-or-change = View or change
-
 manageAuthorities.table.heading.user = User
 manageAuthorities.table.heading.startDate = Start date
 manageAuthorities.table.heading.endDate = End date
@@ -146,21 +117,12 @@ manageAuthorities.table.row.edit.CdsCashAccount = Edit user {0} from Cash accoun
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Edit user {0} from Duty Deferment account {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Edit user {0} from Guarantee account
 
-accounts.title = Which accounts do you want to add an authority to?
-accounts.heading = Which accounts do you want to add an authority to?
-accounts.checkYourAnswersLabel.singular = Account
-accounts.checkYourAnswersLabel.plural = Accounts
-accounts.error.required = Select which accounts you want to add an authority to
-accounts.type.cash = Cash
-accounts.type.dutyDeferment = Duty deferment
-accounts.type.generalGuarantee = General guarantee
-accounts.authorised = {0} is already authorised to
-accounts.closed = {0} is closed.
-accounts.pending = (pending opening on CDS)
-
 accounts.noAvailableAccounts.heading = {0} already has access to all your accounts
 accounts.noAvailableAccounts.p = To review or edit this user's access, go back to
 accounts.noAvailableAccounts.link = manage your account authorities
+
+
+# What is the EORI number view
 
 eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
@@ -173,7 +135,23 @@ eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI
 eoriNumber.error.gbnEori.format= You cannot use a GBN EORI with this service.
 eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
 
-#Are these details correct view
+
+# Which accounts to add an authority to view
+
+accounts.title = Which accounts do you want to add an authority to?
+accounts.heading = Which accounts do you want to add an authority to?
+accounts.checkYourAnswersLabel.singular = Account
+accounts.checkYourAnswersLabel.plural = Accounts
+accounts.error.required = Select which accounts you want to add an authority to
+accounts.type.cash = Cash
+accounts.type.dutyDeferment = Duty deferment
+accounts.type.generalGuarantee = General guarantee
+accounts.authorised = {0} is already authorised to
+accounts.closed = {0} is closed.
+accounts.pending = (pending opening on CDS)
+
+
+# Are these details correct view
 
 eoriDetails.title = Are these details correct?
 eoriDetails.heading = Are these details correct?
@@ -185,29 +163,60 @@ eoriDetails.radioYes = Yes
 eoriDetails.radioNo = No, change EORI
 eoriDetails.error.required = Select whether company information is correct
 
+
+# When do you want the authority to start view
+
+authorityStart.title = When do you want the authority to start?
+authorityStart.heading = When do you want the authority to start?
+authorityStart.today = Today (usually active within an hour)
+authorityStart.setDate = On a set date
+authorityStart.checkYourAnswersLabel = Start
+authorityStart.checkYourAnswersLabel.today = Today,
+authorityStart.error.required = Select when you want the authority to start
+
+
+# What date do you want the authority to start view (on a set date)
+
+authorityStartDate.title = What date do you want the authority to start?
+authorityStartDate.heading = What date do you want the authority to start?
+authorityStartDate.checkYourAnswersLabel = AuthorityStartDate
+authorityStartDate.error.required.all = Enter the date you want the authority to start
+authorityStartDate.error.required.two = The date must include {0} and {1}
+authorityStartDate.error.required = The date must include {0}
+authorityStartDate.error.invalid = The start date must be a real date
+authorityStartDate.error.minimum = The start date must be in the future
+
+
+# Allow this user to see the available balance view
+
+showBalance.title = Allow this user to see the available balance?
+showBalance.heading = Allow this user to see the available balance?
+showBalance.yes = Yes
+showBalance.no.singular = No, just allow them to use the account
+showBalance.no.plural = No, just allow them to use the accounts
+showBalance.checkYourAnswers.yes = Yes
+showBalance.checkYourAnswers.no = No
+showBalance.checkYourAnswersLabel = See balance
+showBalance.error.required = Select if you want this user to see the available balance
+
+
+# Your details view
+
 authorityDetails.title = Your details
 authorityDetails.fullName = Full name
 authorityDetails.h1 = Your details
 authorityDetails.p = We will only use these details if we have questions regarding this authority.
-authorityDetails.fullName = Full name
 authorityDetails.role = Role
-authorityDetails.error.jobRole.required = Enter your job role
-authorityDetails.error.jobRole.length = Your job role must be 255 characters or fewer
-authorityDetails.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
-authorityDetails.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
-authorityDetails.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
-authorityDetails.error.confirmation.required = Select to confirm you authorise this user to use your account
+
+# Check your answers view
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
-checkYourAnswers.guidance = Guidance for check your answers
 checkYourAnswers.accounts.hidden = accounts
 checkYourAnswers.eoriNumber.hidden = user EORI number
 checkYourAnswers.authorityStart.hidden = start date
 checkYourAnswers.authorityEnd.hidden = end date
-checkYourAnswers.authorityEnd.indefinite = Upon further notice
 checkYourAnswers.showBalance.hidden = see balance
-checkYourAnswers.YourDetails.label = Your Details
 checkYourAnswers.fullName.label = Your name
 checkYourAnswers.role.label = Your role
 checkYourAnswers.eoriNumber.label = EORI number
@@ -219,53 +228,6 @@ checkYourAnswers.companyDetails.h2 = Authorised company details
 checkYourAnswers.userDetails.h2 = Your Details
 checkYourAnswers.p = I confirm that the information given is true and accurate and I give authorisation to use this account when clearing customs declarations on behalf of my company.
 checkYourAnswers.confirm.button = Confirm this authorisation and submit
-
-authorityStart.title = When do you want the authority to start?
-authorityStart.heading = When do you want the authority to start?
-authorityStart.today = Today (usually active within an hour)
-authorityStart.setDate = On a set date
-authorityStart.checkYourAnswersLabel = Start
-authorityStart.checkYourAnswersLabel.today = Today,
-authorityStart.error.required = Select when you want the authority to start
-
-authorityStartDate.title = What date do you want the authority to start?
-authorityStartDate.heading = What date do you want the authority to start?
-authorityStartDate.checkYourAnswersLabel = AuthorityStartDate
-authorityStartDate.error.required.all = Enter the date you want the authority to start
-authorityStartDate.error.required.two = The date must include {0} and {1}
-authorityStartDate.error.required = The date must include {0}
-authorityStartDate.error.invalid = The start date must be a real date
-authorityStartDate.error.minimum = The start date must be in the future
-authorityStartDate.error.maximum = The start date must be before the end date ({0})
-
-authorityEnd.title = How long should the authority last?
-authorityEnd.heading = How long should the authority last?
-authorityEnd.indefinite = Until further notice
-authorityEnd.setDate = Until a set date
-authorityEnd.checkYourAnswersLabel = End
-authorityEnd.error.required = Select how long the authority should last
-
-authorityEndDate.title = What date do you want the authority to end?
-authorityEndDate.heading = What date do you want the authority to end?
-authorityEndDate.hint = For example, 31 3 2025.
-authorityEndDate.p = Ends at 11:59pm on this date
-authorityEndDate.checkYourAnswersLabel = AuthorityEndDate
-authorityEndDate.error.required.all = Enter the date you want the authority to end
-authorityEndDate.error.required.two = The date must include {0} and {1}
-authorityEndDate.error.required = The date must include {0}
-authorityEndDate.error.invalid = The end date must be a real date
-authorityEndDate.error.minimum = End date must be on or after the start date ({0})
-
-
-showBalance.title = Allow this user to see the available balance?
-showBalance.heading = Allow this user to see the available balance?
-showBalance.yes = Yes
-showBalance.no.singular = No, just allow them to use the account
-showBalance.no.plural = No, just allow them to use the accounts
-showBalance.checkYourAnswers.yes = Yes
-showBalance.checkYourAnswers.no = No
-showBalance.checkYourAnswersLabel = See balance
-showBalance.error.required = Select if you want this user to see the available balance
 
 authorisedUser.title = Check your answers
 authorisedUser.heading = Check your answers
@@ -283,21 +245,6 @@ authorisedUser.declaration.singular = I authorise this user to use this account 
 authorisedUser.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
 authorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
 
-editAuthorisedUser.title = Edit the account authority
-editAuthorisedUser.heading = Edit the account authority
-editAuthorisedUser.yourDetails = Your details
-editAuthorisedUser.checkYourAnswersLabel = editAuthorisedUser
-editAuthorisedUser.fullName = Full name
-editAuthorisedUser.error.fullName.required = Enter your full name
-editAuthorisedUser.error.fullName.length = Your full name must be 255 characters or fewer
-editAuthorisedUser.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
-editAuthorisedUser.jobRole = Role
-editAuthorisedUser.error.jobRole.required = Enter your job role
-editAuthorisedUser.error.jobRole.length = Your job role must be 255 characters or fewer
-editAuthorisedUser.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
-editAuthorisedUser.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
-editAuthorisedUser.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
-editAuthorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
 edit.changed = Changed
 edit.notChanged = Not Changed
 
@@ -337,8 +284,6 @@ remove.error.jobRole.required = Enter your job role
 remove.error.jobRole.length = Your job role must be 255 characters or fewer
 remove.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
 remove.declaration = I confirm I want to remove this user's access.
-remove.confirm = Remove access
-remove.cancel = Cancel
 remove.error.confirmation.required = Select to confirm you want to remove this user''s access.
 
 removeConfirmation.title = User successfully removed
@@ -349,13 +294,17 @@ removeConfirmation.returnLink = Back to manage your account authorities
 manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
 
-#Authorised User
+
+# Authorised User
+
 authorised-user.heading = Your details
 authorised-user.p = We will only use these details if we have questions regarding this authority.
 authorised-user-remove.heading = Remove authority
 authorised-user-remove.p = We will only use these details if we have questions regarding the removal of this authority.
 
-#Remove Check Your Answers
+
+# Remove Check Your Answers
+
 remove-cya-heading = Check your answers
 remove-cya-h2.1 = Account you have authorised
 remove-cya-h2.2 = Remove authority for user
@@ -368,7 +317,9 @@ remove-cya-role = Your role
 remove-cya-visually-hidden-name = your name
 remove-cya-visually-hidden-role = your role
 
-#Edit Check Your Answers
+
+# Edit Check Your Answers
+
 edit-cya-heading = Check your answers
 edit-cya-h2.1 = Account you have authorised
 edit-cya-h2.2 = Authorised company details
@@ -383,7 +334,9 @@ edit-cya-visually-hidden-role = your role
 edit-cya-name = Your name
 edit-cya-role = Your role
 
-#Edit or remove view
+
+# Edit or remove view
+
 view-authority-heading = Account authority
 view-authority-h2.1 = Account you have authorised
 view-authority-h2.2 = Authorised company details
