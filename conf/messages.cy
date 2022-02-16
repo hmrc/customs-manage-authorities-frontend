@@ -116,21 +116,12 @@ manageAuthorities.table.row.edit.CdsCashAccount = Golygu defnyddiwr {0} o’r cy
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Golygu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Golygu defnyddiwr {0} o’r cyfrif gwarant
 
-accounts.title=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
-accounts.heading=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
-accounts.checkYourAnswersLabel.singular=Cyfrif
-accounts.checkYourAnswersLabel.plural=Cyfrifon
-accounts.error.required=Dewiswch y cyfrifon yr ydych eisiau ychwanegu awdurdod atynt
-accounts.type.cash=Cyfrif arian parod
-accounts.type.dutyDeferment=Cyfrif gohirio tollau
-accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
-accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
-accounts.closed = Mae {0} ar gau.
-accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
-
 accounts.noAvailableAccounts.heading = Mae gan {0} fynediad i’ch holl gyfrifon yn barod
 accounts.noAvailableAccounts.p = I adolygu neu olygu mynediad y defnyddiwr hwn, ewch yn ôl i
 accounts.noAvailableAccounts.link = ‘Rheoli awdurdodau eich cyfrif’
+
+
+# What is the EORI number view
 
 eoriNumber.title=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
 eoriNumber.heading=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
@@ -142,6 +133,21 @@ eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi’ch EORI eich hun
 eoriNumber.error.gbnEori.format= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn.
 eoriNumber.error.gbnEori.title= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn
+
+
+# Which accounts to add an authority to view
+
+accounts.title=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
+accounts.heading=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
+accounts.checkYourAnswersLabel.singular=Cyfrif
+accounts.checkYourAnswersLabel.plural=Cyfrifon
+accounts.error.required=Dewiswch y cyfrifon yr ydych eisiau ychwanegu awdurdod atynt
+accounts.type.cash=Cyfrif arian parod
+accounts.type.dutyDeferment=Cyfrif gohirio tollau
+accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
+accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
+accounts.closed = Mae {0} ar gau.
+accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 
 
 # Are these details correct view
@@ -213,7 +219,6 @@ checkYourAnswers.authorityEnd.hidden=Dyddiad dod i ben
 checkYourAnswers.showBalance.hidden=Bwrw golwg dros y balans
 checkYourAnswers.companyDetails.h2 = Manylion y cwmni awdurdodedig
 checkYourAnswers.authorityDuration.h2 = Manylion yr awdurdod
-checkYourAnswers.accounts.h2 = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.userDetails.h2 = Gwiriwch eich atebion
 checkYourAnswers.eoriNumber.label = Rhif EORI
 checkYourAnswers.companyName.label = Enw’r cwmni
@@ -224,30 +229,6 @@ checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
 
-# Are these details correct view
-
-eori-details-title = A yw’r manylion hyn yn gywir?
-eori-details-eori-number = Rhif EORI
-eori-details-business-noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu
-eori-details-business-noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes
-eori-details-radio-yes = Iawn
-eori-details-radio-no = Na, newid y rhif EORI
-
-editAuthorisedUser.title = Golygu awdurdod y cyfrif
-editAuthorisedUser.heading = Golygu awdurdod y cyfrif
-editAuthorisedUser.yourDetails = Eich manylion
-editAuthorisedUser.checkYourAnswersLabel = editAuthorisedUser
-editAuthorisedUser.fullName = Enw llawn
-editAuthorisedUser.error.fullName.required = Nodwch eich enw llawn
-editAuthorisedUser.error.fullName.length = Mae’n rhaid i’ch enw llawn fod yn 255 o gymeriadau neu lai
-editAuthorisedUser.error.fullName.malicious = Mae’n rhaid i’r enw llawn beidio â chynnwys cromfachau, arwyddion doler na slaesau
-editAuthorisedUser.jobRole=Swydd
-editAuthorisedUser.error.jobRole.required = Nodwch eich swydd
-editAuthorisedUser.error.jobRole.length = Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
-editAuthorisedUser.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
-editAuthorisedUser.declaration.singular = Rwyf yn awdurdodi’r defnyddiwr hwn i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy musnes.
-editAuthorisedUser.declaration.plural = Rwyf yn awdurdodi’r defnyddiwr hwn i ddefnyddio’r cyfrifon hyn wrth glirio datganiadau tollau ar ran fy musnes.
-editAuthorisedUser.error.confirmation.required = Dewiswch i gadarnhau eich bod yn awdurdodi’r defnyddiwr hwn i ddefnyddio’ch cyfrif
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
 
@@ -287,8 +268,6 @@ remove.error.jobRole.required=Nodwch eich swydd
 remove.error.jobRole.length=Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
 remove.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
 remove.declaration=Rwyf yn cadarnhau fy mod am dynnu mynediad y defnyddiwr hwn.
-remove.confirm=Tynnu mynediad
-remove.cancel=Canslo
 remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynediad y defnyddiwr hwn.
 
 removeConfirmation.title=Defnyddiwr wedi’i dynnu yn llwyddiannus
@@ -299,13 +278,17 @@ removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
 
+
 # Authorised User
+
 authorised-user.heading = Eich manylion
 authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 authorised-user-remove.heading = Dileu’r awdurdod
 authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 
+
 # Remove Check Your Answers
+
 remove-cya-heading = Gwiriwch eich atebion
 remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
@@ -318,7 +301,9 @@ remove-cya-role = Eich swydd
 remove-cya-visually-hidden-name = eich enw
 remove-cya-visually-hidden-role = eich swydd
 
+
 # Edit Check Your Answers
+
 edit-cya-heading = Gwiriwch eich atebion
 edit-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 edit-cya-h2.2 = Manylion y cwmni awdurdodedig
@@ -333,7 +318,9 @@ edit-cya-visually-hidden-role = eich swydd
 edit-cya-name = Eich enw
 edit-cya-role = Eich swydd
 
+
 # Edit or remove view
+
 view-authority-heading = Awdurdod y cyfrif
 view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 view-authority-h2.2 = Manylion y cwmni awdurdodedig
