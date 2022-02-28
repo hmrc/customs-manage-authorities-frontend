@@ -65,11 +65,9 @@
                           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
                       }</p>
                     }
+                    @hiddenText("accounts.title")
                 </div>
             }
-
-            @hiddenText("accounts.title")
-
             @checkboxes(
                 form = form,
                 legend = messages("accounts.heading"),
@@ -80,5 +78,4 @@
         </fieldset>
         @button("site.saveAndContinue")
     }
-
 }
