@@ -137,8 +137,8 @@ eoriNumber.error.gbnEori.title= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaet
 
 # Which accounts to add an authority to view
 
-accounts.title=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
-accounts.heading=At ba gyfrifon ydych chi eisiau ychwanegu awdurdod?
+accounts.title=At ba gyfrif yr hoffech ychwanegu awdurdod?
+accounts.heading=At ba gyfrif yr hoffech ychwanegu awdurdod?
 accounts.checkYourAnswersLabel.singular=Cyfrif
 accounts.checkYourAnswersLabel.plural=Cyfrifon
 accounts.error.required=Dewiswch y cyfrifon yr ydych eisiau ychwanegu awdurdod atynt
@@ -148,6 +148,7 @@ accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
 accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
 accounts.closed = Mae {0} ar gau.
 accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
+accounts.hint = Dewiswch bob un sy’n berthnasol.
 
 
 # Are these details correct view
@@ -167,7 +168,7 @@ eoriDetails.error.required = Dewiswch a yw’r wybodaeth am y cwmni yn gywir
 
 authorityStart.title=Pryd yr hoffech i’r awdurdod ddechrau?
 authorityStart.heading=Pryd yr hoffech i’r awdurdod ddechrau?
-authorityStart.today=Heddiw (fel arfer yn dod i rym cyn pen awr)
+authorityStart.today=Heddiw
 authorityStart.setDate=Ar ddyddiad penodol
 authorityStart.checkYourAnswersLabel=Dechrau
 authorityStart.checkYourAnswersLabel.today=Heddiw
@@ -184,6 +185,7 @@ authorityStartDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a 
 authorityStartDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
 authorityStartDate.error.invalid=Mae’n rhaid i’r dyddiad dechrau fod yn ddyddiad go iawn
 authorityStartDate.error.minimum=Mae’n rhaid i’r dyddiad dechrau fod yn y dyfodol
+authorityStartDate.hint = Er enghraifft, 31 3 2020.
 
 
 # Allow this user to see the available balance view

@@ -138,8 +138,8 @@ eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
 
 # Which accounts to add an authority to view
 
-accounts.title = Which accounts do you want to add an authority to?
-accounts.heading = Which accounts do you want to add an authority to?
+accounts.title = Which account do you want to add authority to?
+accounts.heading = Which account do you want to add authority to?
 accounts.checkYourAnswersLabel.singular = Account
 accounts.checkYourAnswersLabel.plural = Accounts
 accounts.error.required = Select which accounts you want to add an authority to
@@ -149,6 +149,7 @@ accounts.type.generalGuarantee = General guarantee
 accounts.authorised = {0} is already authorised to
 accounts.closed = {0} is closed.
 accounts.pending = (pending opening on CDS)
+accounts.hint = Select all that apply.
 
 
 # Are these details correct view
@@ -168,7 +169,7 @@ eoriDetails.error.required = Select whether company information is correct
 
 authorityStart.title = When do you want the authority to start?
 authorityStart.heading = When do you want the authority to start?
-authorityStart.today = Today (usually active within an hour)
+authorityStart.today = Today
 authorityStart.setDate = On a set date
 authorityStart.checkYourAnswersLabel = Start
 authorityStart.checkYourAnswersLabel.today = Today,
@@ -185,6 +186,7 @@ authorityStartDate.error.required.two = The date must include {0} and {1}
 authorityStartDate.error.required = The date must include {0}
 authorityStartDate.error.invalid = The start date must be a real date
 authorityStartDate.error.minimum = The start date must be in the future
+authorityStartDate.hint = For example, 31 3 2020.
 
 
 # Allow this user to see the available balance view

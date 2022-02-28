@@ -30,7 +30,8 @@
         button: components.button,
         checkboxes: components.inputCheckboxes,
         h1: components.h1,
-        p: components.p
+        p: components.p,
+        hiddenText: components.hidden_text_legend
 )
 
 @(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -64,17 +65,17 @@
                           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
                       }</p>
                     }
+                    @hiddenText("accounts.title")
                 </div>
             }
-
             @checkboxes(
                 form = form,
                 legend = messages("accounts.heading"),
                 legendAsHeading = false,
-                items = AccountsFormProvider.options(form, accounts.availableAccounts)
+                items = AccountsFormProvider.options(form, accounts.availableAccounts),
+                hint = Some(Html(messages("accounts.hint")))
             )
         </fieldset>
         @button("site.saveAndContinue")
     }
-
 }
