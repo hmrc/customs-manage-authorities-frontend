@@ -29,6 +29,7 @@
         errorSummary: components.errorSummary,
         button: components.button,
         checkboxes: components.inputCheckboxes,
+        checkboxes2: components.inputCheckboxesWithoutInset,
         h1: components.h1,
         p: components.p,
         hiddenText: components.hidden_text_legend
@@ -43,7 +44,11 @@
         @errorSummary(form.errors)
         <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-fieldset__heading")
+                @if(accounts.availableAccounts.length == 1) {
+                    @h1(id=Some("accounts.heading.singleAccount"), msg = "accounts.heading.singleAccount", classes="govuk-fieldset__heading")
+                } else {
+                    @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-fieldset__heading")
+                }
             </legend>
 
             @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
