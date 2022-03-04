@@ -138,8 +138,10 @@ eoriNumber.error.gbnEori.title= You cannot use a GBN EORI with this service
 
 # Which accounts to add an authority to view
 
-accounts.title = Which account do you want to add authority to?
-accounts.heading = Which account do you want to add authority to?
+accounts.title = Which accounts do you want to add authority to?
+accounts.title.singleAccount = Which account do you want to add authority to?
+accounts.heading = Which accounts do you want to add authority to?
+accounts.heading.singleAccount = Which account do you want to add authority to?
 accounts.checkYourAnswersLabel.singular = Account
 accounts.checkYourAnswersLabel.plural = Accounts
 accounts.error.required = Select which accounts you want to add an authority to
