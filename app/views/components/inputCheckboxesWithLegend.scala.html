@@ -16,24 +16,27 @@
 
 @this(govukCheckboxes: GovukCheckboxes)
 
-@(form: Form[_],
-  legendText: String,
-  items: Seq[CheckboxItem],
-  name: String = "value",
-  legendAsHeading: Boolean,
-  hint: Option[Html] = None)(implicit messages: Messages)
+@(
+        form: Form[_],
+        legendText: String,
+        items: Seq[CheckboxItem],
+        name: String = "value",
+        hint: String,
+        classes: String = "govuk-fieldset__legend--xl"
+)(implicit messages: Messages)
 
-    @govukCheckboxes(Checkboxes(
-        fieldset = Some(Fieldset(
-          legend = Some(Legend(
-            content = Text(legendText),
-            classes = "govuk-fieldset__legend--l",
-            isPageHeading = true
+        @govukCheckboxes(Checkboxes(
+            fieldset = Some(Fieldset(
+                legend = Some(Legend(
+                content = Text(legendText),
+                classes = classes,
+                isPageHeading = true
             ))
         )),
-        hint = hint.map(hintHtml => Hint(
-            content = HtmlContent(hintHtml)
+        hint = Some(Hint(
+        content = Text(messages(hint))
         )),
-        items = items,
-        errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-    ))
+        idPrefix = Some("checkbox"),
+        name = "value",
+        items = items
+        ))

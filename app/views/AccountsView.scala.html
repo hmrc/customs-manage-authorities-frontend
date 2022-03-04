@@ -28,8 +28,7 @@
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
         button: components.button,
-        checkboxes: components.inputCheckboxes,
-        checkboxes2: components.inputCheckboxesWithoutInset,
+        checkboxes: components.inputCheckboxesWithLegend,
         h1: components.h1,
         p: components.p,
         hiddenText: components.hidden_text_legend
@@ -42,16 +41,14 @@
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 
         @errorSummary(form.errors)
-        <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
-                @if(accounts.availableAccounts.length == 1) {
-                    @h1(id=Some("accounts.heading.singleAccount"), msg = "accounts.heading.singleAccount", classes="govuk-fieldset__heading")
-                } else {
-                    @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-fieldset__heading")
-                }
-            </legend>
 
-            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+        @if(accounts.availableAccounts.length == 1) {
+            @h1(id=Some("accounts.heading.singleAccount"), msg = "accounts.heading.singleAccount", classes="govuk-heading-xl")
+        } else {
+            @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-heading-xl")
+        }
+            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+
                 <div class="govuk-inset-text">
                     @accounts.alreadyAuthorisedAccounts.map { account =>
                         <p>@{
@@ -70,17 +67,17 @@
                           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
                       }</p>
                     }
-                    @hiddenText("accounts.title")
                 </div>
-            }
+
+        }
             @checkboxes(
                 form = form,
-                legend = messages("accounts.heading"),
-                legendAsHeading = false,
+                legendText = messages("accounts.heading"),
                 items = AccountsFormProvider.options(form, accounts.availableAccounts),
-                hint = Some(Html(messages("accounts.hint")))
-            )
-        </fieldset>
+                hint = "accounts.hint",
+                classes = "govuk-fieldset__legend--xl govuk-visually-hidden")
+
+
         @button("site.saveAndContinue")
     }
 }
