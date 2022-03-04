@@ -30,24 +30,19 @@
         button: components.button,
         checkboxes: components.inputCheckboxesWithLegend,
         h1: components.h1,
-        p: components.p,
-        hiddenText: components.hidden_text_legend
-)
+        p: components.p)
 
 @(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(title(form, "accounts.title", None, Seq())), backLink = Some(call)) {
+@layout(pageTitle = Some(title(form, AccountsFormProvider.accountsHeadingKey(accounts), None, Seq())), backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 
         @errorSummary(form.errors)
 
-        @if(accounts.availableAccounts.length == 1) {
-            @h1(id=Some("accounts.heading.singleAccount"), msg = "accounts.heading.singleAccount", classes="govuk-heading-xl")
-        } else {
-            @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-heading-xl")
-        }
             @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+
+            @h1(id=Some(AccountsFormProvider.accountsHeadingKey(accounts)), msg=AccountsFormProvider.accountsHeadingKey(accounts), classes="govuk-heading-xl")
 
                 <div class="govuk-inset-text">
                     @accounts.alreadyAuthorisedAccounts.map { account =>
@@ -68,15 +63,21 @@
                       }</p>
                     }
                 </div>
+                @checkboxes(
+                    form = form,
+                    legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
+                    items = AccountsFormProvider.options(form, accounts.availableAccounts),
+                    hint = "accounts.hint",
+                    classes = "govuk-fieldset__legend--xl govuk-visually-hidden")
 
-        }
+        } else {
             @checkboxes(
                 form = form,
-                legendText = messages("accounts.heading"),
+                legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
                 items = AccountsFormProvider.options(form, accounts.availableAccounts),
                 hint = "accounts.hint",
-                classes = "govuk-fieldset__legend--xl govuk-visually-hidden")
-
+                classes = "govuk-fieldset__legend--xl")
+        }
 
         @button("site.saveAndContinue")
     }

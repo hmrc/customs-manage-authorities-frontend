@@ -138,6 +138,7 @@ eoriNumber.error.gbnEori.title= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaet
 # Which accounts to add an authority to view
 
 accounts.title=At ba gyfrifon yr hoffech ychwanegu awdurdod?
+accounts.title.singleAccount=At ba gyfrif yr hoffech ychwanegu awdurdod?
 accounts.heading=At ba gyfrifon yr hoffech ychwanegu awdurdod?
 accounts.heading.singleAccount=At ba gyfrif yr hoffech ychwanegu awdurdod?
 accounts.checkYourAnswersLabel.singular=Cyfrif

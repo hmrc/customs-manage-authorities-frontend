@@ -18,12 +18,11 @@ package forms
 
 import forms.mappings.Mappings
 import models.domain.{AccountStatusPending, CDSAccount, DutyDefermentAccount}
-import models.withNameToString
+import models.{AuthorisedAccounts, withNameToString}
 import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-
 import javax.inject.Inject
 
 class AccountsFormProvider @Inject() extends Mappings {
@@ -38,7 +37,13 @@ class AccountsFormProvider @Inject() extends Mappings {
 
 object AccountsFormProvider {
 
+  def accountsHeadingKey(accounts: AuthorisedAccounts): String = {
+    if(accounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
+  }
 
+  def accountsTitleKey(accounts: AuthorisedAccounts): String = {
+    if(accounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
+  }
 
   def options(form: Form[_], accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] = accounts.zipWithIndex.map {
     case(account, index) =>
