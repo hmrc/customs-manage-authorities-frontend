@@ -47,7 +47,7 @@
         } else {
             @h1(id=Some("accounts.heading"), msg = "accounts.heading", classes="govuk-heading-xl")
         }
-            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
 
                 <div class="govuk-inset-text">
                     @accounts.alreadyAuthorisedAccounts.map { account =>
