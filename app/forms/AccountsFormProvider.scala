@@ -38,11 +38,11 @@ class AccountsFormProvider @Inject() extends Mappings {
 object AccountsFormProvider {
 
   def accountsHeadingKey(accounts: AuthorisedAccounts): String = {
-    if(accounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
+    if(accounts.availableAccounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
   }
 
   def accountsTitleKey(accounts: AuthorisedAccounts): String = {
-    if(accounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
+    if(accounts.availableAccounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
   }
 
   def options(form: Form[_], accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] = accounts.zipWithIndex.map {
