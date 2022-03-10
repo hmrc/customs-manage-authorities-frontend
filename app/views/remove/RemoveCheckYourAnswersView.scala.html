@@ -54,6 +54,6 @@
 
             @p(Html(messages("remove-cya-p")))
             @button("remove-cya-button")
-            @p(link(link = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, messageKey = "remove-cya-cancel"))
+            @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, linkMessage = "remove-cya-cancel"))
         }
     }
