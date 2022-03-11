@@ -44,7 +44,7 @@
 
     @h2("view-authority-h2.4")
     @p(Html(messages("view-authority-p")))
-    @p(link(link = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, messageKey = "view-authority-link"))
+    @p(link(location = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, linkMessage = "view-authority-link"))
 }
 
     

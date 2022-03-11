@@ -38,5 +38,5 @@
 
     @p(Html(startDate.fold(messages("editConfirmation.p1.today"))(_ => messages("editConfirmation.p1.setDate"))))
 
-    @p(link(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "editConfirmation.returnLink"))
+    @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "editConfirmation.returnLink"))
 }

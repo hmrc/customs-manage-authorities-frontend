@@ -15,6 +15,28 @@
  *@
 
 @this()
-@(link: String, messageKey: String, id: Option[String] = None)(implicit messages: Messages)
 
-<a href="@link" class="govuk-link" @id.map(x => s"id=$x")>@messages(messageKey)</a>
+@(linkMessage: String,
+    location: String,
+    linkId: Option[String] = None,
+    linkClass: String = "govuk-link",
+    pWrapped: Boolean = true,
+    linkSentence: Boolean = false,
+    preLinkMessage: Option[String] = None,
+    postLinkMessage: Option[String] = None,
+    pId: Option[String] = None,
+    pClass: String = "govuk-body")(implicit messages: Messages)
+
+@link = {
+  <a @{linkId.fold("")(id => s"id=$id")} class="@linkClass" href="@location">@messages(linkMessage)</a>@if(linkSentence){.}
+}
+
+@if(pWrapped){
+  <p @{pId.fold("")(id => s"id=$id")} class="@pClass">
+       @preLinkMessage.map(m => messages(m))
+       @link
+       @postLinkMessage.map(m => messages(m))
+  </p>
+} else {
+    @link
+}

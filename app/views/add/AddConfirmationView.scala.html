@@ -32,6 +32,6 @@ confirmPanel: components.addConfirmationPanel
 
     @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
 
-    @p(link(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "addConfirmation.returnLink"))
+    @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "addConfirmation.returnLink"))
 
 }

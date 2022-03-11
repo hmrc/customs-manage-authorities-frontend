@@ -1,0 +1,47 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.templates.Layout
+
+@this(
+        layout: Layout,
+        h1: components.h1,
+        p: components.p,
+        link: components.link
+)
+
+@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+    @layout(pageTitle = Some(messages("cf.error.not-found.title")), helpAndSupport = false, backLink = None) {
+
+        @h1("cf.error.not-found.heading", id = None, classes = "govuk-heading-xl")
+        @p(Html(messages("cf.error.not-found.message.address-typed-wrong")))
+        @p(Html(messages("cf.error.not-found.message.address-pasted-wrong")))
+        @link(
+            linkMessage = "cf.accounts.view-customs-account",
+            location = appConfig.customsFinancialsFrontendHomepageUrl,
+            linkClass = "govuk-link govuk-link--no-visited-state",
+            preLinkMessage = Some("cf.error.not-found.message.go-to-home-page-text1"),
+            linkSentence = true
+        )
+
+
+
+
+
+
+}

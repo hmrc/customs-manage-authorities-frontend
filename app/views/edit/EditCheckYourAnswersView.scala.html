@@ -52,6 +52,6 @@
 
         @p(Html(messages("edit-cya-p")))
         @button("edit-cya-button")
-        @p(link(link = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url, messageKey = "edit-cya-cancel"))
+        @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url, linkMessage = "edit-cya-cancel"))
     }
 }

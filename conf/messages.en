@@ -19,6 +19,15 @@ cf.account.help-support.message=If you are having issues, phone
 cf.account.help-support.numbers=0300 200 3701
 cf.account.help-support.office-hours=Open 8am to 6pm, Monday to Friday (closed bank holidays).
 
+# Page Not Found Error
+cf.error.not-found.title=Page not found
+cf.error.not-found.heading=Page not found
+cf.error.not-found.message.address-typed-wrong=If you typed the web address, check it is correct.
+cf.error.not-found.message.address-pasted-wrong=If you pasted the web address, check you copied the entire address.
+cf.error.not-found.message.go-to-home-page-text1=Or you can
+cf.error.not-found.message.go-to-home-page-text2=.
+cf.accounts.view-customs-account=view your customs financial accounts
+
 footer.accessibility   = Accessibility statement
 footer.cookies         = Cookies
 footer.privacy         = Privacy policy
