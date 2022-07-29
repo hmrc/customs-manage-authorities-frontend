@@ -4,6 +4,12 @@ POST        /:accountId/:authorityId/change-start-date               controllers
 GET         /:accountId/:authorityId/change-start                    controllers.edit.EditAuthorityStartController.onPageLoad(accountId, authorityId)
 POST        /:accountId/:authorityId/change-start                    controllers.edit.EditAuthorityStartController.onSubmit(accountId, authorityId)
 
+GET         /:accountId/:authorityId/change-end                      controllers.edit.EditAuthorityEndController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-end                      controllers.edit.EditAuthorityEndController.onSubmit(accountId, authorityId)
+
+GET         /:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
+POST        /:accountId/:authorityId/change-end-date                 controllers.edit.EditAuthorityEndDateController.onSubmit(accountId, authorityId)
+
 GET         /:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onPageLoad(accountId, authorityId)
 POST        /:accountId/:authorityId/change-available-balance        controllers.edit.EditShowBalanceController.onSubmit(accountId, authorityId)
 

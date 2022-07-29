@@ -199,6 +199,23 @@ authorityStartDate.error.invalid = The start date must be a real date
 authorityStartDate.error.minimum = The start date must be in the future
 authorityStartDate.hint = For example, 31 3 2020.
 
+authorityEnd.title = How long should the authority last?
+authorityEnd.heading = How long should the authority last?
+authorityEnd.indefinite = Until further notice
+authorityEnd.setDate = Until a set date
+authorityEnd.checkYourAnswersLabel = End
+authorityEnd.error.required = Select how long the authority should last
+
+authorityEndDate.title = What date do you want the authority to end?
+authorityEndDate.heading = What date do you want the authority to end?
+authorityEndDate.hint = For example, 31 3 2025.
+authorityEndDate.p = Ends at 11:59pm on this date
+authorityEndDate.checkYourAnswersLabel = AuthorityEndDate
+authorityEndDate.error.required.all = Enter the date you want the authority to end
+authorityEndDate.error.required.two = The date must include {0} and {1}
+authorityEndDate.error.required = The date must include {0}
+authorityEndDate.error.invalid = The end date must be a real date
+authorityEndDate.error.minimum = End date must be on or after the start date ({0})
 
 # Allow this user to see the available balance view
 

@@ -14,22 +14,16 @@
  * limitations under the License.
  */
 
-package forms
+package pages.edit
 
-import forms.mappings.Mappings
-import models.AuthorityStart
-import play.api.data.Form
-import play.api.i18n.Messages
-import utils.DateUtils
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
 import java.time.LocalDate
-import javax.inject.Inject
 
-class EditAuthorityStartFormProvider @Inject() extends Mappings with DateUtils {
+case class EditAuthorityEndDatePage(accountId: String, authorityId: String) extends QuestionPage[LocalDate] {
 
-  def apply(maybeEndDate: Option[LocalDate], now: LocalDate)(implicit messages: Messages): Form[AuthorityStart] =
-    Form(
-      "value" -> enumerable[AuthorityStart]("authorityStart.error.required")
-        .verifying(maybeMinDate(maybeEndDate, "authorityStartDate.error.maximum", dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))))
-    )
+  override def path: JsPath = JsPath \ "edit" \ accountId \ authorityId \ toString
+
+  override def toString: String = "editAuthorityEndDate"
 }

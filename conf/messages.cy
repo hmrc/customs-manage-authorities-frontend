@@ -199,6 +199,23 @@ authorityStartDate.error.invalid=Mae’n rhaid i’r dyddiad dechrau fod yn ddyd
 authorityStartDate.error.minimum=Mae’n rhaid i’r dyddiad dechrau fod yn y dyfodol
 authorityStartDate.hint = Er enghraifft, 31 3 2020.
 
+authorityEnd.title=Am ba hyd y dylai’r awdurdod bara?
+authorityEnd.heading=Am ba hyd y dylai’r awdurdod bara?
+authorityEnd.indefinite=Hyd nes y clywir yn wahanol
+authorityEnd.setDate=Tan ddyddiad penodol
+authorityEnd.checkYourAnswersLabel=Diwedd
+authorityEnd.error.required=Dewiswch am ba hyd y dylai’r awdurdod bara
+
+authorityEndDate.title=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
+authorityEndDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
+authorityEndDate.hint=Er enghraifft, 31 3 2025.
+authorityEndDate.p=Yn dod i ben am 23:59 ar y dyddiad hwn
+authorityEndDate.checkYourAnswersLabel=AuthorityEndDate
+authorityEndDate.error.required.all=Nodwch y dyddiad yr hoffech i’r awdurdod ddod i ben
+authorityEndDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+authorityEndDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
+authorityEndDate.error.invalid=Mae’n rhaid i’r dyddiad dod i ben fod yn ddyddiad go iawn
+authorityEndDate.error.minimum=Mae’n rhaid i’r dyddiad dod i ben fod naill ai ar neu ar ôl y dyddiad dechrau ({0})
 
 # Allow this user to see the available balance view
 
