@@ -17,19 +17,15 @@
 package forms
 
 import forms.mappings.Mappings
-import models.AuthorityStart
+import models.AuthorityEnd
 import play.api.data.Form
-import play.api.i18n.Messages
-import utils.DateUtils
 
-import java.time.LocalDate
 import javax.inject.Inject
 
-class EditAuthorityStartFormProvider @Inject() extends Mappings with DateUtils {
+class AuthorityEndFormProvider @Inject() extends Mappings {
 
-  def apply(maybeEndDate: Option[LocalDate], now: LocalDate)(implicit messages: Messages): Form[AuthorityStart] =
+  def apply(): Form[AuthorityEnd] =
     Form(
-      "value" -> enumerable[AuthorityStart]("authorityStart.error.required")
-        .verifying(maybeMinDate(maybeEndDate, "authorityStartDate.error.maximum", dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))))
+      "value" -> enumerable[AuthorityEnd]("authorityEnd.error.required")
     )
 }

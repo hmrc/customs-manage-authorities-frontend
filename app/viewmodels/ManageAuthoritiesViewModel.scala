@@ -51,5 +51,7 @@ object ManageAuthoritiesViewModel extends DateUtils {
     }
 
     def formattedFromDate()(implicit messages: Messages): String = dateAsdMMMyyyy(standingAuthority.authorisedFromDate)
+    def formattedToDate()(implicit messages: Messages): Option[String] = standingAuthority.authorisedToDate map dateAsdMMMyyyy
   }
+
 }

@@ -48,7 +48,7 @@ class EditAuthorityStartDateController @Inject()(
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ) { implicit request =>
-      val form: Form[LocalDate] = formProvider()
+      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
       val preparedForm = request.userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -60,7 +60,7 @@ class EditAuthorityStartDateController @Inject()(
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
     ).async { implicit request =>
-      val form: Form[LocalDate] = formProvider()
+      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),

@@ -19,7 +19,7 @@ package services.add
 import com.google.inject.Inject
 import models.domain.{AuthorisedUser, CDSAccount, StandingAuthority}
 import models.requests.Accounts
-import models.{AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.add._
 import services.DateTimeService
 import scala.util.Try
@@ -32,20 +32,25 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
       accounts = extractAccounts(selectedAccounts)
       authorisedEori <- userAnswers.get(EoriNumberPage)
       authorityStart <- userAnswers.get(AuthorityStartPage)
+      authorityEnd <- userAnswers.get(AuthorityEndPage)
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
         userAnswers.get(AuthorityStartDatePage)
       } else {
         Some(dateTimeService.localTime().toLocalDate)
       }
+      authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(AuthorityEndDatePage) else None
       viewBalance <- userAnswers.get(ShowBalancePage)
       authorisedUser <- userAnswers.get(AuthorityDetailsPage)
-
-      standingAuthority <-
+      standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
+        None
+      } else {
         Some(StandingAuthority(
           authorisedEori.eori,
           authorisedFromDate,
+          authorityEndDate,
           viewBalance == ShowBalance.Yes
         ))
+      }
     } yield (accounts, standingAuthority, authorisedUser)
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 
@@ -56,4 +61,5 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
       selected.find(_.accountType == "generalGuarantee").map(_.number)
     )
   }
+
 }

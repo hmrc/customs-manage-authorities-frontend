@@ -17,7 +17,7 @@
 package viewmodels
 
 import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
-import models.{AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -48,6 +48,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
 
   def authorityDurationRows: Seq[SummaryListRow] = {
     Seq(authorityStartRow,
+      authorityEndRow,
       showBalanceRow(userAnswers.get(EditShowBalancePage(accountId, authorityId)))
     ).flatten
   }
@@ -121,6 +122,24 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
           Actions(items = Seq())
         })
     }
+  }
+
+  private def authorityEndRow: Option[SummaryListRow] = {
+    userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).flatMap {
+      case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
+      case AuthorityEnd.Setdate => userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+    }.map(value =>
+      summaryListRow(
+        messages("authorityEnd.checkYourAnswersLabel"),
+        value = value,
+        secondValue = None,
+        actions = Actions(items = Seq(ActionItem(
+          href = controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId).url,
+          content = span(messages("site.change")),
+          visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+        )))
+      )
+    )
   }
 
   private def showBalanceRow(maybeBalance: Option[ShowBalance]): Option[SummaryListRow] = {

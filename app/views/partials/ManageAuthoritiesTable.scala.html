@@ -53,6 +53,13 @@
                 }" scope="col" class="govuk-table__header">
                 @messages("manageAuthorities.table.heading.startDate")
                 </th>
+                <th id="account-authorities-table-end-date-heading-@{
+                    account.accountType
+                }-@{
+                    account.accountNumber
+                }" scope="col" class="govuk-table__header">
+                @messages("manageAuthorities.table.heading.endDate")
+                </th>
                 <th id="account-authorities-table-view-balance-heading-@{
                     account.accountType
                 }-@{
@@ -78,6 +85,16 @@
                 <td class="govuk-table__cell">
                 @authority.formattedFromDate
                 </td>
+                @if(authority.formattedToDate.isDefined) {
+                    <td class="govuk-table__cell">
+                    @authority.formattedToDate.get
+                    </td>
+                } else {
+                    <td class="govuk-table__cell">
+                        <span class="govuk-visually-hidden">@messages("manageAuthorities.table.endDate.empty")</span>
+                        <span aria-hidden="true">@messages("manageAuthorities.table.endDate.unavailable")</span>
+                    </td>
+                }
                 <td class="govuk-table__cell">
                 @messages(authority.viewBalanceAsString)
                 </td>
