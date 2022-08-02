@@ -31,6 +31,8 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(ShowBalancePage.type, JsValue)] ::
     arbitrary[(AuthorityStartDatePage.type, JsValue)] ::
     arbitrary[(AuthorityStartPage.type, JsValue)] ::
+    arbitrary[(AuthorityEndDatePage.type, JsValue)] ::
+    arbitrary[(AuthorityEndPage.type, JsValue)] ::
     arbitrary[(EoriNumberPage.type, JsValue)] ::
     Nil
 

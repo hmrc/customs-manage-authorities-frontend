@@ -201,7 +201,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
-    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, viewBalance = false)
+    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 

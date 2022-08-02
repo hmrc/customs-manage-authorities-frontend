@@ -149,6 +149,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       StandingAuthority(
         "GB123456789012",
         LocalDate.now(),
+        Option(LocalDate.now().plusDays(1)),
         viewBalance = true
       ),
       AuthorisedUser("name", "job")

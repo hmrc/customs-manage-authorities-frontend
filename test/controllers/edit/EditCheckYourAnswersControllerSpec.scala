@@ -21,16 +21,17 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
+import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.Today
 import models.ShowBalance.Yes
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import models.requests.{Accounts, AddAuthorityRequest}
-import models.{AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.edit.{EditAuthorisedUserPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
+import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -51,6 +52,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers = emptyUserAnswers
         .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
         .set(EditAuthorityStartPage("a", "b"), Today).get
+        .set(EditAuthorityEndPage("a", "b"), Indefinite).get
         .set(EditShowBalancePage("a", "b"), Yes).get
         .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
@@ -187,16 +189,17 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     def populatedUserAnswers(userAnswers: UserAnswers) = {
       userAnswers.set(EditShowBalancePage("a", "b"), ShowBalance.Yes)(ShowBalance.writes).success.value
         .set(EditAuthorityStartPage("a", "b"), AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EditAuthorityEndPage("a", "b"), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     }
 
-    val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), viewBalance = true)
+    val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
 
     val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
       ("a" -> accountsWithAuthoritiesWithId)
     ))
 
-    val standingAuthorityPast = StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), viewBalance = true)
+    val standingAuthorityPast = StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
 
     val accountsWithAuthoritiesWithIdPast = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
     val authoritiesWithIdPast: AuthoritiesWithId = AuthoritiesWithId(Map(

@@ -35,7 +35,7 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
   val startDate = LocalDate.parse("2020-03-01")
   val endDate = LocalDate.parse("2020-04-01")
-  val standingAuthority = StandingAuthority("EORI", startDate, viewBalance = false)
+  val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
   val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
     ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
