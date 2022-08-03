@@ -24,6 +24,12 @@ trait PageGenerators {
   implicit lazy val arbitraryAuthorisedUserPage: Arbitrary[AuthorisedUserPage.type] =
     Arbitrary(AuthorisedUserPage)
 
+  implicit lazy val arbitraryAuthorityEndDatePage: Arbitrary[AuthorityEndDatePage.type] =
+    Arbitrary(AuthorityEndDatePage)
+
+  implicit lazy val arbitraryAuthorityEndPage: Arbitrary[AuthorityEndPage.type] =
+    Arbitrary(AuthorityEndPage)
+
   implicit lazy val arbitraryShowBalancePage: Arbitrary[ShowBalancePage.type] =
     Arbitrary(ShowBalancePage)
 

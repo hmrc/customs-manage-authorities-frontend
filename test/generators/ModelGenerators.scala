@@ -28,7 +28,12 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(ShowBalance.values.toSeq)
     }
-  
+
+  implicit lazy val arbitraryAuthorityEnd: Arbitrary[AuthorityEnd] =
+    Arbitrary {
+      Gen.oneOf(AuthorityEnd.values.toSeq)
+    }
+
   implicit lazy val arbitraryAuthorityStart: Arbitrary[AuthorityStart] =
     Arbitrary {
       Gen.oneOf(AuthorityStart.values.toSeq)

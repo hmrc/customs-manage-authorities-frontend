@@ -22,6 +22,7 @@ import java.time.LocalDate
 
 case class StandingAuthority(authorisedEori: EORI,
                              authorisedFromDate: LocalDate,
+                             authorisedToDate: Option[LocalDate],
                              viewBalance: Boolean) {
 
   def containsEori(eori: EORI): Boolean = authorisedEori == eori

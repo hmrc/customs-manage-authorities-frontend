@@ -45,7 +45,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
   val mockValidationService = mock[CheckYourAnswersValidationService]
   val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val backLinkRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+  val backLinkRoute: Call = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
 
   "ShowBalance Controller" must {
 

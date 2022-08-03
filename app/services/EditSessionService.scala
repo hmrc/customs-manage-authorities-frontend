@@ -17,7 +17,7 @@
 package services
 
 import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
-import models.{AuthorityStart, ShowBalance, UserAnswers}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import repositories.SessionRepository
@@ -40,7 +40,9 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
     for {
       populatedStartDatePage <- populateStartDatePage(newUserAnswers, accountId, authorityId, authority)
       populatedStartPage <- populateStartPage(populatedStartDatePage, accountId, authorityId, authority)
-      updatedAnswers <- populateShowBalance(populatedStartPage, accountId, authorityId, authority)
+      populatedEndDatePage <- populateEndDatePage(populatedStartPage, accountId, authorityId, authority)
+      populatedEndPage <- populateEndPage(populatedEndDatePage, accountId, authorityId, authority)
+      updatedAnswers <- populateShowBalance(populatedEndPage, accountId, authorityId, authority)
       _ <- sessionRepository.set(updatedAnswers)
     } yield new CheckYourAnswersEditHelper(updatedAnswers, accountId, authorityId, dateTimeService, authority, account)
   }
@@ -54,7 +56,21 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
     Future.fromTry(userAnswers.set(EditAuthorityStartDatePage(accountId, authorityId), authority.authorisedFromDate))
   }
 
+  private def populateEndDatePage(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {
+    authority.authorisedToDate.map(
+      value => Future.fromTry(userAnswers.set(EditAuthorityEndDatePage(accountId, authorityId), value))
+    ).getOrElse(Future.successful(userAnswers))
+  }
+
+  private def populateEndPage(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {
+    authority.authorisedToDate match {
+      case Some(_) => Future.fromTry(userAnswers.set(EditAuthorityEndPage(accountId, authorityId), AuthorityEnd.Setdate)(AuthorityEnd.writes))
+      case None => Future.fromTry(userAnswers.set(EditAuthorityEndPage(accountId, authorityId), AuthorityEnd.Indefinite)(AuthorityEnd.writes))
+    }
+  }
+
   private def populateShowBalance(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {
     Future.fromTry(userAnswers.set(EditShowBalancePage(accountId, authorityId), ShowBalance.fromBoolean(authority.viewBalance))(ShowBalance.writes))
   }
+
 }

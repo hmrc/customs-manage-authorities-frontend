@@ -41,6 +41,22 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryAuthorityEndDateUserAnswersEntry: Arbitrary[(AuthorityEndDatePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AuthorityEndDatePage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryAuthorityEndUserAnswersEntry: Arbitrary[(AuthorityEndPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AuthorityEndPage.type]
+        value <- arbitrary[AuthorityEnd].map(Json.toJson(_)(AuthorityEnd.writes))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryAuthorityStartDateUserAnswersEntry: Arbitrary[(AuthorityStartDatePage.type, JsValue)] =
     Arbitrary {
       for {

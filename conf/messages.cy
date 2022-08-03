@@ -199,6 +199,23 @@ authorityStartDate.error.invalid=Mae’n rhaid i’r dyddiad dechrau fod yn ddyd
 authorityStartDate.error.minimum=Mae’n rhaid i’r dyddiad dechrau fod yn y dyfodol
 authorityStartDate.hint = Er enghraifft, 31 3 2020.
 
+authorityEnd.title=Am ba hyd y dylai’r awdurdod bara?
+authorityEnd.heading=Am ba hyd y dylai’r awdurdod bara?
+authorityEnd.indefinite=Hyd nes y clywir yn wahanol
+authorityEnd.setDate=Tan ddyddiad penodol
+authorityEnd.checkYourAnswersLabel=Diwedd
+authorityEnd.error.required=Dewiswch am ba hyd y dylai’r awdurdod bara
+
+authorityEndDate.title=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
+authorityEndDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
+authorityEndDate.hint=Er enghraifft, 31 3 2025.
+authorityEndDate.p=Yn dod i ben am 23:59 ar y dyddiad hwn
+authorityEndDate.checkYourAnswersLabel=AuthorityEndDate
+authorityEndDate.error.required.all=Nodwch y dyddiad yr hoffech i’r awdurdod ddod i ben
+authorityEndDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
+authorityEndDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
+authorityEndDate.error.invalid=Mae’n rhaid i’r dyddiad dod i ben fod yn ddyddiad go iawn
+authorityEndDate.error.minimum=Mae’n rhaid i’r dyddiad dod i ben fod naill ai ar neu ar ôl y dyddiad dechrau ({0})
 
 # Allow this user to see the available balance view
 
@@ -232,7 +249,7 @@ checkYourAnswers.authorityStart.hidden=Dyddiad dechrau
 checkYourAnswers.authorityEnd.hidden=Dyddiad dod i ben
 checkYourAnswers.showBalance.hidden=Bwrw golwg dros y balans
 checkYourAnswers.companyDetails.h2 = Manylion y cwmni awdurdodedig
-checkYourAnswers.authorityDuration.h2 = Manylion yr awdurdod
+checkYourAnswers.authorityDuration.h2 = Hyd yr awdurdod
 checkYourAnswers.userDetails.h2 = Gwiriwch eich atebion
 checkYourAnswers.eoriNumber.label = Rhif EORI
 checkYourAnswers.companyName.label = Enw’r cwmni
@@ -242,6 +259,7 @@ checkYourAnswers.p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gy
 checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
+checkYourAnswers.authorityEnd.indefinite=Ar ôl golwg pellach
 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
@@ -337,7 +355,7 @@ edit-cya-role = Eich swydd
 
 view-authority-heading = Awdurdod y cyfrif
 view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-view-authority-h2.2 = Manylion y cwmni awdurdodedig
+view-authority-h2.2 = Hyd yr awdurdod
 view-authority-h2.3 = Manylion yr awdurdod
 view-authority-h2.4 = Dileu’r awdurdod
 view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn.

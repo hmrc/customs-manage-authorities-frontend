@@ -322,6 +322,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val standingAuthority = StandingAuthority(
       "EORI",
       LocalDate.parse("2020-03-01"),
+      Some(LocalDate.parse("2020-04-01")),
       viewBalance = false
     )
 

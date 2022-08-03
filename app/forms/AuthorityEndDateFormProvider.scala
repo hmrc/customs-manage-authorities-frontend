@@ -16,6 +16,7 @@
 
 package forms
 
+import com.google.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -23,18 +24,18 @@ import services.DateTimeService
 import utils.DateUtils
 
 import java.time.LocalDate
-import javax.inject.Inject
 
-class EditAuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService) extends Mappings with DateUtils {
+class AuthorityEndDateFormProvider @Inject()(dateTimeService: DateTimeService) extends Mappings with DateUtils {
 
-  def apply(maybeEndDate: Option[LocalDate])(implicit messages: Messages): Form[LocalDate] =
+  def apply(startDate: LocalDate)(implicit messages: Messages): Form[LocalDate] = {
+    val minimumDate = latestOf(startDate, dateTimeService.localTime().toLocalDate)
     Form(
       "value" -> localDate(
-        invalidKey = "authorityStartDate.error.invalid",
-        allRequiredKey = "authorityStartDate.error.required.all",
-        twoRequiredKey = "authorityStartDate.error.required.two",
-        requiredKey = "authorityStartDate.error.required"
-      ).verifying(minDate(dateTimeService.localTime().toLocalDate, "authorityStartDate.error.minimum"))
-        .verifying(maybeMaxDate(maybeEndDate, "authorityStartDate.error.maximum", dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))))
+        invalidKey     = "authorityEndDate.error.invalid",
+        allRequiredKey = "authorityEndDate.error.required.all",
+        twoRequiredKey = "authorityEndDate.error.required.two",
+        requiredKey    = "authorityEndDate.error.required"
+      ).verifying(minDate(minimumDate, "authorityEndDate.error.minimum", dateAsDayMonthAndYear(minimumDate)))
     )
+  }
 }

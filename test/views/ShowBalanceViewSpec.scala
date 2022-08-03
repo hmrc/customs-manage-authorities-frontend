@@ -32,7 +32,7 @@ class ShowBalanceViewSpec extends SpecBase {
 
   "Showbalance view" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/start"
+      normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/end"
       }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
@@ -53,7 +53,7 @@ class ShowBalanceViewSpec extends SpecBase {
     private val formProvider = new ShowBalanceFormProvider()
     private val form = formProvider()
 
-    private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+    private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     def normalModeView() = Jsoup.parse(app.injector.instanceOf[ShowBalanceView].apply(form,accountsLength = 2,NormalMode,normalModeBackLinkRoute).body)

@@ -199,6 +199,23 @@ authorityStartDate.error.invalid = The start date must be a real date
 authorityStartDate.error.minimum = The start date must be in the future
 authorityStartDate.hint = For example, 31 3 2020.
 
+authorityEnd.title = How long should the authority last?
+authorityEnd.heading = How long should the authority last?
+authorityEnd.indefinite = Until further notice
+authorityEnd.setDate = Until a set date
+authorityEnd.checkYourAnswersLabel = End
+authorityEnd.error.required = Select how long the authority should last
+
+authorityEndDate.title = What date do you want the authority to end?
+authorityEndDate.heading = What date do you want the authority to end?
+authorityEndDate.hint = For example, 31 3 2025.
+authorityEndDate.p = Ends at 11:59pm on this date
+authorityEndDate.checkYourAnswersLabel = AuthorityEndDate
+authorityEndDate.error.required.all = Enter the date you want the authority to end
+authorityEndDate.error.required.two = The date must include {0} and {1}
+authorityEndDate.error.required = The date must include {0}
+authorityEndDate.error.invalid = The end date must be a real date
+authorityEndDate.error.minimum = End date must be on or after the start date ({0})
 
 # Allow this user to see the available balance view
 
@@ -237,10 +254,11 @@ checkYourAnswers.companyName.label = Company name
 checkYourAnswers.accounts.h2.plural = Accounts you wish to authorise
 checkYourAnswers.accounts.h2.singular = Account you wish to authorise
 checkYourAnswers.authorityDuration.h2 = Authority details
-checkYourAnswers.companyDetails.h2 = Authorised company details
+checkYourAnswers.companyDetails.h2 = Authority duration
 checkYourAnswers.userDetails.h2 = Your Details
 checkYourAnswers.p = I confirm that the information given is true and accurate and I give authorisation to use this account when clearing customs declarations on behalf of my company.
 checkYourAnswers.confirm.button = Confirm this authorisation and submit
+checkYourAnswers.authorityEnd.indefinite = Upon further notice
 
 authorisedUser.title = Check your answers
 authorisedUser.heading = Check your answers
@@ -352,7 +370,7 @@ edit-cya-role = Your role
 
 view-authority-heading = Account authority
 view-authority-h2.1 = Account you have authorised
-view-authority-h2.2 = Authorised company details
+view-authority-h2.2 = Authority duration
 view-authority-h2.3 = Authority details
 view-authority-h2.4 = Remove authority
 view-authority-p = You will be asked to confirm whether you wish to remove this authority.

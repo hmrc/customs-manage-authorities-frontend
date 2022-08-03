@@ -31,7 +31,7 @@ class EditAuthorityStartDateFormProviderSpec extends DateBehaviours {
   val mockDateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
-  val form = new EditAuthorityStartDateFormProvider(mockDateTimeService)()
+  val form = new EditAuthorityStartDateFormProvider(mockDateTimeService)(None)
 
   ".value" should {
 
