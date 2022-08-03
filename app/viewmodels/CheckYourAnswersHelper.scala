@@ -47,8 +47,6 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
     else {
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage)),
-        authorityStartRow(userAnswers),
-        authorityEndRow(userAnswers),
         companyNameRow(userAnswers.get(EoriNumberPage))
 
       ).flatten
@@ -64,6 +62,7 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   def authorityDurationRows: Seq[SummaryListRow] = {
     Seq(
       authorityStartRow(userAnswers),
+      authorityEndRow(userAnswers),
       showBalanceRow(userAnswers.get(ShowBalancePage))
     ).flatten
   }
