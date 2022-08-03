@@ -259,6 +259,7 @@ checkYourAnswers.p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gy
 checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
+checkYourAnswers.authorityEnd.indefinite=Ar ôl golwg pellach
 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
