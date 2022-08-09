@@ -28,12 +28,14 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    val authorityId: String,
                                    authorisedUser: AuthorisedUser,
                                    val standingAuthority: StandingAuthority,
-                                   account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper {
+                                   account: AccountWithAuthoritiesWithId,
+                                   companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper {
 
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
-      eoriNumberRow(Some(standingAuthority.authorisedEori))
+      eoriNumberRow(Some(standingAuthority.authorisedEori)),
+      companyNameRow(companyName)
     ).flatten
   }
 
@@ -54,6 +56,17 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
     number.map(x =>
       summaryListRow(
         messages("checkYourAnswers.eoriNumber.label"),
+        value = HtmlFormat.escape(x).toString(),
+        actions = Actions(items = Seq()),
+        secondValue = None
+      )
+    )
+  }
+
+  private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] = {
+    companyName.map(x =>
+      summaryListRow(
+        messages("remove-cya-h2.4"),
         value = HtmlFormat.escape(x).toString(),
         actions = Actions(items = Seq()),
         secondValue = None

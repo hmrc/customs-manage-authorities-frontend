@@ -32,7 +32,8 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  authorityId: String,
                                  dateTimeService: DateTimeService,
                                  val standingAuthority: StandingAuthority,
-                                 account: AccountWithAuthoritiesWithId)(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
+                                 account: AccountWithAuthoritiesWithId,
+                                 companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
 
   def yourAccountRow: Seq[SummaryListRow] = {
     Seq(
@@ -42,7 +43,8 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
-      eoriNumberRow(Some(standingAuthority.authorisedEori))
+      eoriNumberRow(Some(standingAuthority.authorisedEori)),
+      companyNameRow(companyName)
     ).flatten
   }
 
@@ -94,6 +96,17 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     number.map(x =>
       summaryListRow(
         messages("checkYourAnswers.eoriNumber.label"),
+        value = HtmlFormat.escape(x).toString(),
+        actions = Actions(items = Seq()),
+        secondValue = None
+      )
+    )
+  }
+
+  private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] = {
+    companyName.map(x =>
+      summaryListRow(
+        messages("view-authority-h2.5"),
         value = HtmlFormat.escape(x).toString(),
         actions = Actions(items = Seq()),
         secondValue = None

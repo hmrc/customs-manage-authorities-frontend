@@ -41,7 +41,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId)(messages(app)))
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, Some("Company Name"))(messages(app)))
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate

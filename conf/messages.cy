@@ -325,6 +325,7 @@ remove-cya-heading = Gwiriwch eich atebion
 remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
 remove-cya-h2.3 = Your details
+remove-cya-h2.4 = Enw’r cwmni
 remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion.
 remove-cya-button = Cadarnhau a chyflwyno
 remove-cya-cancel = Canslo
@@ -358,6 +359,7 @@ view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 view-authority-h2.2 = Manylion y cwmni awdurdodedig
 view-authority-h2.3 = Hyd yr awdurdod
 view-authority-h2.4 = Dileu’r awdurdod
+view-authority-h2.5 = Enw’r cwmni
 view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn.
 view-authority-link = Dileu’r awdurdod
 

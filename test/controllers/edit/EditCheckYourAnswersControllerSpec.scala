@@ -212,7 +212,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       "b",
       mockDateTimeService,
       authority,
-      accountsWithAuthoritiesWithId)(messages(application))
+      accountsWithAuthoritiesWithId, None)(messages(application))
 
     val mockValidator = mock[CheckYourAnswersValidationService]
     val mockAuthoritiesRepo = mock[AuthoritiesRepository]
