@@ -87,6 +87,7 @@ service.technical-difficulties.p = Please try again in a few minutes.
 
 manageAuthorities.title = Manage your account authorities
 manageAuthorities.heading = Manage your account authorities
+manageAuthorities.accounts.authorised = Accounts you have already authorised
 manageAuthorities.notification.noAuthorities = You have not given anyone permission to use any of your accounts yet. You can add authority for someone to use your duty deferment, general guarantee or cash accounts.
 manageAuthorities.notification.cdsAuthorities = Authorities you add here will only be valid for use on the Customs Declaration Service (CDS).
 manageAuthorities.addAuthority = Add an authority
@@ -107,7 +108,7 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = G
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
 
 manageAuthorities.table.view-or-change = View or change
-manageAuthorities.table.heading.user = User
+manageAuthorities.table.heading.user = Authorised user
 manageAuthorities.table.heading.startDate = Start date
 manageAuthorities.table.heading.endDate = End date
 manageAuthorities.table.heading.balance = View balance
