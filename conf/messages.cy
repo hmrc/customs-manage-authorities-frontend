@@ -87,6 +87,7 @@ service.technical-difficulties.p = Rhowch gynnig arall arni mewn ychydig o funud
 
 manageAuthorities.title=Rheoli awdurdodau eich cyfrif
 manageAuthorities.heading=Rheoli awdurdodau eich cyfrif
+manageAuthorities.accounts.authorised = Cyfrifon rydych eisoes wedi’u hawdurdodi
 manageAuthorities.notification.noAuthorities=Nid ydych wedi rhoi caniatâd i unrhyw un ddefnyddio unrhyw un o’ch cyfrifon eto. Gallwch ychwanegu awdurdod er mwyn i rywun allu defnyddio’ch cyfrif gohirio tollau, cyfrif gwarant cyffredinol neu gyfrif arian parod.
 manageAuthorities.notification.cdsAuthorities=Bydd awdurdodau rydych yn eu hychwanegu yma dim ond yn ddilys i’w defnyddio ar y Gwasanaeth Datgan Tollau.
 manageAuthorities.addAuthority=Ychwanegu awdurdod
@@ -107,7 +108,7 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = C
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Cyfrif gohirio tollau: {0} (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 
 manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
-manageAuthorities.table.heading.user=Defnyddiwr
+manageAuthorities.table.heading.user=Defnyddiwr awdurdodedig
 manageAuthorities.table.heading.startDate=Dyddiad dechrau
 manageAuthorities.table.heading.endDate=Dyddiad dod i ben
 manageAuthorities.table.heading.balance=Bwrw golwg dros y balans

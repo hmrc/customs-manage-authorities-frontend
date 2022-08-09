@@ -27,6 +27,7 @@
     button: components.button,
     inputText: components.inputText,
     h1: components.h1,
+    h2: components.h2,
     inset: components.inset,
     p: components.p
 )
@@ -49,6 +50,7 @@
         @button(msg = "manageAuthorities.addAuthority", href = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
     </div>
 
+    @h2("manageAuthorities.accounts.authorised") <br>
     @if(viewModel.hasAccounts) {
         <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6">
             @for((id, account) <- viewModel.sortedAccounts) {
