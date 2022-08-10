@@ -53,7 +53,9 @@
             @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
 
             @p(Html(messages("remove-cya-p")))
-            @button("remove-cya-button")
-            @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, linkMessage = "remove-cya-cancel"))
+            <div class="govuk-button-group">
+                @button("remove-cya-button")
+                @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, linkMessage = "remove-cya-cancel"))
+            </div>
         }
     }
