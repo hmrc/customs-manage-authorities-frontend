@@ -17,7 +17,7 @@
 package controllers.remove
 
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.RevokeAuthorityRequest
 import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
@@ -32,7 +32,8 @@ import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
                                        view: RemoveCheckYourAnswersView,
@@ -40,26 +41,29 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
                                        customsFinancialsConnector: CustomsFinancialsConnector,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       mcc: MessagesControllerComponents
+                                       mcc: MessagesControllerComponents,
+                                       dataStore: CustomsDataStoreConnector
                                       )(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendController(mcc) with Logging with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+
+    val companyName:Option[String] = Await.result(dataStore.getCompanyName(request.eoriNumber), Duration.Inf)
+
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAccount) => errorPage(MissingAccountError)
       case Left(NoAuthority) => errorPage(MissingAuthorityError)
       case Right(AccountAndAuthority(account, authority)) =>
         request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
           case Some(authorisedUser) =>
-            val helper =
-              new CheckYourAnswersRemoveHelper(
-                request.userAnswers,
-                accountId,
-                authorityId,
-                authorisedUser,
-                authority,
-                account
-              )
-            Ok(view(helper))
+            Ok(view(new CheckYourAnswersRemoveHelper(
+              request.userAnswers,
+              accountId,
+              authorityId,
+              authorisedUser,
+              authority,
+              account,
+              companyName
+            )))
           case None => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
         }
     }

@@ -18,9 +18,9 @@ package controllers.remove
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage
@@ -93,10 +93,13 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
       val appConfig = app.injector.instanceOf[FrontendAppConfig]
-      val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId)(messages(app))
+      val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId, None)(messages(app))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(None))
 
       running(app) {
         val result = route(app, getRequest).value
@@ -198,6 +201,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   trait Setup {
     val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
     val mockCustomsFinancialsConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")

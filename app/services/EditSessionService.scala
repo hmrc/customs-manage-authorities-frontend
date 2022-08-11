@@ -34,7 +34,8 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
                        authorityId: String,
                        userAnswers: UserAnswers,
                        authority: StandingAuthority,
-                       account: AccountWithAuthoritiesWithId
+                       account: AccountWithAuthoritiesWithId,
+                       companyName: Option[String],
                          )(implicit messages: Messages): Future[CheckYourAnswersEditHelper] = {
     val newUserAnswers = UserAnswers(userAnswers.id)
     for {
@@ -44,7 +45,7 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
       populatedEndPage <- populateEndPage(populatedEndDatePage, accountId, authorityId, authority)
       updatedAnswers <- populateShowBalance(populatedEndPage, accountId, authorityId, authority)
       _ <- sessionRepository.set(updatedAnswers)
-    } yield new CheckYourAnswersEditHelper(updatedAnswers, accountId, authorityId, dateTimeService, authority, account)
+    } yield new CheckYourAnswersEditHelper(updatedAnswers, accountId, authorityId, dateTimeService, authority, account, companyName)
   }
 
   private def populateStartPage(userAnswers: UserAnswers, accountId: String, authorityId: String, authority: StandingAuthority): Future[UserAnswers] = {

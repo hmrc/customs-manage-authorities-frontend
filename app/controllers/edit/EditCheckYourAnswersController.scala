@@ -60,7 +60,7 @@ class EditCheckYourAnswersController @Inject()(
       case Left(NoAccount) => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
         val helper = new CheckYourAnswersEditHelper(
-          request.userAnswers, accountId, authorityId, dateTimeService, authority, account)
+          request.userAnswers, accountId, authorityId, dateTimeService, authority, account, None)
         Ok(view(helper, accountId, authorityId))
     }
   }
@@ -74,8 +74,6 @@ class EditCheckYourAnswersController @Inject()(
       )
     }
   }
-
-
 
   private def doSubmission(userAnswers: UserAnswers,
                            accountId: String,
