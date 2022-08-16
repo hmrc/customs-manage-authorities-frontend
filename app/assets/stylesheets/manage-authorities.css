@@ -5,8 +5,4 @@
     .govuk-table {
         table-layout: fixed;
     }
-    .govuk-table__cell, 
-    .govuk-table__header {
-        width: 250px;
-    }
 }
