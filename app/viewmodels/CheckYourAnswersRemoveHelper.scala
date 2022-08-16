@@ -16,12 +16,17 @@
 
 package viewmodels
 
+import connectors.CustomsDataStoreConnector
 import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
 import models.UserAnswers
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
+import uk.gov.hmrc.http.HeaderCarrier
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    val accountId: String,
@@ -29,8 +34,9 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    authorisedUser: AuthorisedUser,
                                    val standingAuthority: StandingAuthority,
                                    account: AccountWithAuthoritiesWithId,
-                                   companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper {
+                                   dataStore: CustomsDataStoreConnector)(implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
 
+  val companyName:Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
@@ -64,14 +70,21 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
   }
 
   private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] = {
-    companyName.map(x =>
-      summaryListRow(
+
+    companyName match {
+      case Some(x) => Some(summaryListRow(
         messages("remove-cya-h2.4"),
         value = HtmlFormat.escape(x).toString(),
         actions = Actions(items = Seq()),
         secondValue = None
-      )
-    )
+      ))
+      case _ => Some(summaryListRow(
+        messages("remove-cya-h2.4"),
+        value = messages("remove-cya-h2.5"),
+        actions = Actions(items = Seq()),
+        secondValue = None
+      ))
+    }
   }
 
   private def authorisedUserNameRow(authorisedUser: AuthorisedUser): SummaryListRow = {

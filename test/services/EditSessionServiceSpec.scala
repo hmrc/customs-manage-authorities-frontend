@@ -17,15 +17,17 @@
 package services
 
 import base.SpecBase
+import connectors.CustomsDataStoreConnector
 import models.{AuthorityEnd, AuthorityStart}
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit._
 import play.api.test.Helpers._
 import play.api.{Application, inject}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -37,11 +39,16 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
       val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(None))
+
+      implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, Some("Company Name"))(messages(app)))
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate

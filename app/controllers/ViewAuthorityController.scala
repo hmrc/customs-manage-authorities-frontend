@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import connectors.CustomsDataStoreConnector
 import controllers.actions._
-import models.{UserAnswers}
+import models.UserAnswers
 import play.api.i18n._
 import play.api.mvc._
 import services._
@@ -41,12 +41,10 @@ class ViewAuthorityController @Inject()(view: EditOrRemoveView,
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
       case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad))
       case Right(AccountAndAuthority(account, authority)) =>
-
-        for {
-          compName <- dataStore.getCompanyName(request.eoriNumber)
-          userAnswers = request.userAnswers.getOrElse(UserAnswers(request.internalId.value))
-          checkYourAnswersEditHelper <-  editSessionService.resetUserAnswers(accountId, authorityId, userAnswers, authority, account, compName)
-        } yield Ok(view(checkYourAnswersEditHelper, accountId, authorityId))
+        val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.internalId.value))
+        editSessionService.resetUserAnswers(accountId, authorityId, userAnswers, authority, account, dataStore).map { checkYourAnswersEditHelper =>
+          Ok(view(checkYourAnswersEditHelper, accountId, authorityId))
+        }
     }
   }
 }

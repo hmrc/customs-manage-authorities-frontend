@@ -104,14 +104,21 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   }
 
   private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] = {
-    companyName.map(x =>
-      summaryListRow(
+
+    companyName match {
+      case Some(x) => Some(summaryListRow(
         messages("view-authority-h2.5"),
         value = HtmlFormat.escape(x).toString(),
         actions = Actions(items = Seq()),
         secondValue = None
-      )
-    )
+      ))
+      case _ => Some(summaryListRow(
+        messages("view-authority-h2.5"),
+        value = messages("view-authority-h2.6"),
+        actions = Actions(items = Seq()),
+        secondValue = None
+      ))
+    }
   }
 
   private def authorityStartRow: Option[SummaryListRow] = {

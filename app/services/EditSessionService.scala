@@ -16,15 +16,18 @@
 
 package services
 
+import connectors.CustomsDataStoreConnector
 import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.CheckYourAnswersEditHelper
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 class EditSessionService @Inject()(sessionRepository: SessionRepository,
                                    dateTimeService: DateTimeService
@@ -35,9 +38,10 @@ class EditSessionService @Inject()(sessionRepository: SessionRepository,
                        userAnswers: UserAnswers,
                        authority: StandingAuthority,
                        account: AccountWithAuthoritiesWithId,
-                       companyName: Option[String],
-                         )(implicit messages: Messages): Future[CheckYourAnswersEditHelper] = {
+                       dataStore: CustomsDataStoreConnector
+                         )(implicit messages: Messages, hc: HeaderCarrier): Future[CheckYourAnswersEditHelper] = {
     val newUserAnswers = UserAnswers(userAnswers.id)
+    val companyName = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
     for {
       populatedStartDatePage <- populateStartDatePage(newUserAnswers, accountId, authorityId, authority)
       populatedStartPage <- populateStartPage(populatedStartDatePage, accountId, authorityId, authority)
