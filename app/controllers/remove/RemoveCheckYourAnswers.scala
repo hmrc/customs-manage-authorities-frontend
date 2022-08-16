@@ -47,8 +47,6 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
 
-    val companyName:Option[String] = Await.result(dataStore.getCompanyName(request.eoriNumber), Duration.Inf)
-
     authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAccount) => errorPage(MissingAccountError)
       case Left(NoAuthority) => errorPage(MissingAuthorityError)
@@ -62,7 +60,7 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
               authorisedUser,
               authority,
               account,
-              companyName
+              dataStore
             )))
           case None => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
         }

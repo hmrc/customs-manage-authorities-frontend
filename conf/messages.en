@@ -341,6 +341,7 @@ remove-cya-h2.1 = Account you have authorised
 remove-cya-h2.2 = Remove authority for user
 remove-cya-h2.3 = Your details
 remove-cya-h2.4 = Company name
+remove-cya-h2.5 = This business has not consented to their name being shared.
 remove-cya-p = I confirm that I wish to remove access for this user. I understand this means they will no longer be able to use this account on a customs import declaration.
 remove-cya-button = Confirm and submit
 remove-cya-cancel = Cancel
@@ -375,6 +376,7 @@ view-authority-h2.2 = Authorised company details
 view-authority-h2.3 = Authority duration
 view-authority-h2.4 = Remove authority
 view-authority-h2.5 = Company name
+view-authority-h2.6 = This business has not consented to their name being shared.
 view-authority-p = You will be asked to confirm whether you wish to remove this authority.
 view-authority-link = Remove authority
 

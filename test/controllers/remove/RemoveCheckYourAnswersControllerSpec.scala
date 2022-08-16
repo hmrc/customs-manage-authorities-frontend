@@ -29,6 +29,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
+import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
 
@@ -93,13 +94,15 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
       val appConfig = app.injector.instanceOf[FrontendAppConfig]
-      val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId, None)(messages(app))
-
-      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
-        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+      implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockDataStoreConnector.getCompanyName(anyString())(any()))
         .thenReturn(Future.successful(None))
+
+      val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc)
+
+      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(app) {
         val result = route(app, getRequest).value
