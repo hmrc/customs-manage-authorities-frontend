@@ -19,7 +19,7 @@ package controllers.edit
 import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.Today
@@ -28,7 +28,7 @@ import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuth
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.Matchers.any
+import org.mockito.Matchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
@@ -42,6 +42,7 @@ import services.add.CheckYourAnswersValidationService
 import services.edit.EditAuthorityValidationService
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
+
 import scala.concurrent.Future
 
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
@@ -59,11 +60,15 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(Some(userAnswers))
         .overrides(
           bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
           bind[CheckYourAnswersValidationService].toInstance(mockValidator),
           bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
           bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
         ).configure(Map("features.edit-journey" -> true))
         .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
@@ -185,6 +190,8 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     val mockConnector = mock[CustomsFinancialsConnector]
     when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
+
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
     def populatedUserAnswers(userAnswers: UserAnswers) = {
       userAnswers.set(EditShowBalancePage("a", "b"), ShowBalance.Yes)(ShowBalance.writes).success.value
