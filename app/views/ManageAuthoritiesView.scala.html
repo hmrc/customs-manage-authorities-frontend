@@ -50,9 +50,10 @@
         @button(msg = "manageAuthorities.addAuthority", href = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
     </div>
 
-    @h2("manageAuthorities.accounts.authorised") <br>
+    
+    @h2("manageAuthorities.accounts.authorised")
     @if(viewModel.hasAccounts) {
-        <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6">
+        <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
             @for((id, account) <- viewModel.sortedAccounts) {
                 @ManageAuthoritiesTable(id, account)
             }
