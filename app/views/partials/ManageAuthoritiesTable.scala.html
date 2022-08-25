@@ -21,7 +21,7 @@
 @(accountId: String, account: AccountWithAuthoritiesWithId)(implicit messages: Messages)
 
 <div id="@account.id" class="account-with-authorities">
-    <table class="govuk-table govuk-!-margin-bottom-9">
+    <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
         <caption id="@account.id-heading" class="govuk-table__caption">
         @{
             account.accountStatus match {
@@ -80,23 +80,48 @@
         @for((authorityId, authority) <- account.sortedAuthorities) {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
-                @authority.authorisedEori
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
+                        <abbr title="Movement reference number">
+                            @messages("manageAuthorities.table.heading.user")
+                        </abbr>
+                    </span>
+                    @authority.authorisedEori
                 </td>
                 <td class="govuk-table__cell">
-                @authority.formattedFromDate
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
+                        <abbr title="Movement reference number">
+                            @messages("manageAuthorities.table.heading.startDate")
+                        </abbr>
+                    </span>
+                    @authority.formattedFromDate
                 </td>
                 @if(authority.formattedToDate.isDefined) {
                     <td class="govuk-table__cell">
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
+                        <abbr title="Movement reference number">
+                           @messages("manageAuthorities.table.heading.endDate")
+                        </abbr>
+                    </span>
                     @authority.formattedToDate.get
                     </td>
                 } else {
                     <td class="govuk-table__cell">
+                        <span class="hmrc-responsive-table__heading" aria-hidden="true">
+                            <abbr title="Movement reference number">
+                            @messages("manageAuthorities.table.heading.endDate")
+                            </abbr>
+                        </span>
                         <span class="govuk-visually-hidden">@messages("manageAuthorities.table.endDate.empty")</span>
                         <span aria-hidden="true">@messages("manageAuthorities.table.endDate.unavailable")</span>
                     </td>
                 }
                 <td class="govuk-table__cell">
-                @messages(authority.viewBalanceAsString)
+                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
+                        <abbr title="Movement reference number">
+                        @messages("manageAuthorities.table.heading.balance")
+                        </abbr>
+                    </span>
+                    @messages(authority.viewBalanceAsString)
                 </td>
                     <td class="govuk-table__cell view-or-change">
                     @if(account.accountStatus.fold(true)(v => v != AccountStatusClosed)) {
