@@ -108,7 +108,7 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = G
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
 
 manageAuthorities.table.view-or-change = View or change
-manageAuthorities.table.heading.user = Authorised user
+manageAuthorities.table.heading.user = Authorised company
 manageAuthorities.table.heading.startDate = Start date
 manageAuthorities.table.heading.endDate = End date
 manageAuthorities.table.heading.balance = View balance
