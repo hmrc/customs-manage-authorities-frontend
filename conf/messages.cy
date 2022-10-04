@@ -304,8 +304,11 @@ remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynedi
 
 removeConfirmation.title=Defnyddiwr wedi’i dynnu yn llwyddiannus
 removeConfirmation.heading={0} wedi’i dynnu yn llwyddiannus
-removeConfirmation.p1=fallai y byddwch am roi gwybod i’r defnyddiwr fod ei fynediad wedi’i dynnu.
+removeConfirmation.p1=Efallai y byddwch am roi gwybod i’r cwmni fod ei awdurdod wedi’i dynnu.
 removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
+removeConfirmation.authorityRemoved=Awdurdod wedi’i dynnu
+removeConfirmation.companyName=Enw’r cwmni:
+removeConfirmation.eoriNumber=Rhif EORI:
 
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
