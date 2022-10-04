@@ -108,7 +108,7 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = C
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Cyfrif gohirio tollau: {0} (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 
 manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
-manageAuthorities.table.heading.user=Defnyddiwr awdurdodedig
+manageAuthorities.table.heading.user= Cwmni awdurdodedig
 manageAuthorities.table.heading.startDate=Dyddiad dechrau
 manageAuthorities.table.heading.endDate=Dyddiad dod i ben
 manageAuthorities.table.heading.balance=Bwrw golwg dros y balans
