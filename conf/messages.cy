@@ -323,11 +323,11 @@ authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes genny
 
 remove-cya-heading = Gwiriwch eich atebion
 remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-remove-cya-h2.2 = Dileu’r awdurdod ar gyfer y defnyddiwr
+remove-cya-h2.2 = Tynnu’r awdurdod ar gyfer y cwmni
 remove-cya-h2.3 = Your details
 remove-cya-h2.4 = Enw’r cwmni
 remove-cya-h2.5 = Nid yw’r busnes hwn wedi caniatáu i’w enw gael ei rannu.
-remove-cya-p = Rwy’n cadarnhau fy mod am ddileu mynediad i’r defnyddiwr hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion.
+remove-cya-p = Rwy’n cadarnhau fy mod am dynnu awdurdod ar gyfer y cwmni hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion.
 remove-cya-button = Cadarnhau a chyflwyno
 remove-cya-cancel = Canslo
 remove-cya-name = Eich enw
