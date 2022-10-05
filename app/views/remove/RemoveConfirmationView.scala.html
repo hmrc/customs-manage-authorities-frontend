@@ -23,7 +23,7 @@
     h1: components.h1,
     panel: components.panelIndent,
     p: components.p,
-    confirmPanel: components.confirmPanel,
+    confirmPanel: components.removeConfirmPanel,
     link: components.link
 )
 
@@ -31,28 +31,7 @@
 
 @layout(pageTitle = Some(titleNoForm("removeConfirmation.title", None, Seq())), backLink = None) {
 
-    <div class="govuk-panel govuk-panel--confirmation">
-        <h1 class="govuk-panel__title">
-            @messages("removeConfirmation.authorityRemoved")
-        </h1>
-        @if(companyName.nonEmpty) {
-        <div class="govuk-panel__body">
-            @messages("removeConfirmation.companyName")<br>
-            <strong>@companyName</strong>
-        </div>
-        }
-        <div class="govuk-panel__body">
-            @messages("removeConfirmation.eoriNumber")<br>
-            <strong>@eori</strong>
-        </div>
-        <div class="govuk-panel__body govuk-!-padding-top-5">
-            <span class="govuk-!-font-size-19">
-                <strong>
-                    @messages("removeConfirmation.removalAuthority")
-                </strong>
-            </span>
-        </div>
-    </div>
+    @confirmPanel(message = Some(messages("removeConfirmation.authorityRemoved")), eori = Some(eori), companyName = companyName)
 
     @p(Html(messages("removeConfirmation.p1")))
 
