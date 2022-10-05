@@ -309,6 +309,7 @@ removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 removeConfirmation.authorityRemoved=Awdurdod wedi’i dynnu
 removeConfirmation.companyName=Enw’r cwmni:
 removeConfirmation.eoriNumber=Rhif EORI:
+removeConfirmation.removalAuthority = Bydd yr awdurdod hwn cael ei ddileu ar unwaith.
 
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
