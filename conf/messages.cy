@@ -259,7 +259,7 @@ checkYourAnswers.p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gy
 checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
-checkYourAnswers.authorityEnd.indefinite=Ar ôl golwg pellach
+checkYourAnswers.authorityEnd.indefinite=Hyd nes y clywir yn wahanol
 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
@@ -281,7 +281,7 @@ editConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
 editConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 editConfirmation.body.setDate=Yn dechrau ar {0}
 editConfirmation.p1.today=Dylech roi gwybod i’r defnyddiwr eich bod wedi trefnu hyn. Gall gymryd hyd at awr i’r mynediad ddod i rym.
-editConfirmation.p1.setDate=Dylech roi gwybod i’r defnyddiwr eich bod wedi trefnu hyn.
+editConfirmation.p1.setDate=Dylech roi gwybod i’r cwmni eich bod wedi newid yr awdurdod hwn. Gall gymryd hyd at awr i’r newidiadau ddod i rym.
 editConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 remove.title=A ydych yn si?r eich bod am ddileu awdurdod y cyfrif hwn?
