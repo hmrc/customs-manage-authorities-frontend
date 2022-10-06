@@ -23,20 +23,16 @@
     h1: components.h1,
     panel: components.panelIndent,
     p: components.p,
-    confirmPanel: components.confirmPanel,
+    confirmPanel: components.editConfirmPanel,
     link: components.link
 )
 
-@(eori: String, startDate: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(eori: String, startDate: Option[String], companyName: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(titleNoForm("editConfirmation.title", None, Seq())), backLink = None) {
 
-   @confirmPanel(
-    h1(msg = messages("editConfirmation.heading", eori), classes="govuk-panel__title"),
-
-    Some(Html(p(content = Html({startDate.fold(messages("editConfirmation.body.today.singular"))(messages("editConfirmation.body.setDate", _))}), classes="govuk-panel__body-s"))))
+    @confirmPanel(eori = Some(eori), companyName = companyName)
 
     @p(Html(startDate.fold(messages("editConfirmation.p1.today"))(_ => messages("editConfirmation.p1.setDate"))))
-
     @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "editConfirmation.returnLink"))
 }

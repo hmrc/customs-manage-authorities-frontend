@@ -291,7 +291,10 @@ addConfirmation.p1.setDate = When the authority has started ask the company or p
 addConfirmation.returnLink = Back to manage your account authorities
 
 editConfirmation.title = User added successfully
-editConfirmation.heading = {0} successfully changed
+editConfirmation.heading = Authority changed
+editConfirmation.body.company.name = Company name:
+editConfirmation.body.eori.number = EORI number:
+editConfirmation.body.changes = Changes may take up to one hour to be active.
 editConfirmation.body.today.singular = They can now use your account
 editConfirmation.body.today.plural = They can now use your accounts
 editConfirmation.body.setDate = Starting on {0}
@@ -319,7 +322,6 @@ remove.error.confirmation.required = Select to confirm you want to remove this u
 
 removeConfirmation.title = User successfully removed
 removeConfirmation.heading = {0} successfully removed
-removeConfirmation.remove = Authority removed
 removeConfirmation.p1 = You may want to tell the user that their access has been removed.
 removeConfirmation.returnLink = Back to manage your account authorities
 

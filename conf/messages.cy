@@ -277,6 +277,9 @@ addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 editConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
 editConfirmation.heading={0} wedi’i ychwanegu yn llwyddiannus
+editConfirmation.body.company.name = Enw’r cwmni:
+editConfirmation.body.eori.number = Rhif EORI:
+editConfirmation.body.changes =
 editConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
 editConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 editConfirmation.body.setDate=Yn dechrau ar {0}
