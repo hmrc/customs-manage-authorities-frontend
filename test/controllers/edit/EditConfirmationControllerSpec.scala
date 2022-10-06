@@ -81,7 +81,7 @@ class EditConfirmationControllerSpec extends SpecBase {
         when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some(""))).success.value
           .set(AccountsPage, List(cashAccount)).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
@@ -93,7 +93,6 @@ class EditConfirmationControllerSpec extends SpecBase {
 
         running(application) {
           val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-
           val result = route(application, request).value
 
           val view = application.injector.instanceOf[EditConfirmationView]
@@ -106,7 +105,7 @@ class EditConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None, Some("Tony Stark"))(request, messages(application), appConfig).toString
+            view("GB123456789012", None, Some(""))(request, messages(application), appConfig).toString
         }
       }
     }
