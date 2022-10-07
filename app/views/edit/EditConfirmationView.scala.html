@@ -33,6 +33,6 @@
 
     @confirmPanel(eori = Some(eori), companyName = companyName)
 
-    @p(Html(startDate.fold(messages("editConfirmation.p1.today"))(_ => messages("editConfirmation.p1.setDate"))))
+    @p(Html(messages("editConfirmation.p1.setDate")))
     @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "editConfirmation.returnLink"))
 }

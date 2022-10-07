@@ -98,7 +98,6 @@ class EditConfirmationControllerSpec extends SpecBase {
               "a", "b").url)
 
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[EditConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -109,7 +108,7 @@ class EditConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None, Some("Tony Stark"))(request, messages(application), appConfig).toString
+            view("GB123456789012", Some("Tony Stark"), Some("Tony Stark"))(request, messages(application), appConfig).toString
         }
       }
     }
