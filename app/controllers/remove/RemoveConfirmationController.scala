@@ -20,6 +20,7 @@ import cats.data.OptionT
 import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
+import connectors.CustomsDataStoreConnector
 import org.slf4j.LoggerFactory
 import pages.ConfirmationPage
 import play.api.i18n._
@@ -40,19 +41,21 @@ class RemoveConfirmationController @Inject()(
                                            getData : DataRetrievalAction,
                                            confirmationService: ConfirmationService,
                                            implicit val controllerComponents: MessagesControllerComponents,
-                                           view: RemoveConfirmationView
+                                           view: RemoveConfirmationView,
+                                           dataStore: CustomsDataStoreConnector
                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val maybeResult = (for {
-         ids       <- OptionT.liftF(service.retrieveAuthorities(request.internalId))
-         account   <- OptionT.fromOption[Future](ids.authorities.get(accountId))
-         authority <- OptionT.fromOption[Future](account.authorities.get(authorityId))
-          _        <- OptionT.liftF(repository.clear(request.internalId.value))
-         _         <- OptionT.liftF(confirmationService.populateConfirmation(request.internalId.value, authority.authorisedEori))
-      } yield Ok(view(authority.authorisedEori))).value
+         ids          <- OptionT.liftF(service.retrieveAuthorities(request.internalId))
+         account      <- OptionT.fromOption[Future](ids.authorities.get(accountId))
+         authority    <- OptionT.fromOption[Future](account.authorities.get(authorityId))
+         companyName  <- OptionT.liftF(dataStore.getCompanyName(authority.authorisedEori))
+         _            <- OptionT.liftF(repository.clear(request.internalId.value))
+         _            <- OptionT.liftF(confirmationService.populateConfirmation(request.internalId.value, authority.authorisedEori))
+      } yield Ok(view(authority.authorisedEori, companyName))).value
 
       maybeResult flatMap {
         case Some(result) => Future.successful(result)
@@ -61,7 +64,7 @@ class RemoveConfirmationController @Inject()(
         case _ =>
           request.userAnswers match {
             case Some(userAnswers) => userAnswers.get(ConfirmationPage) match {
-              case Some(value) => Ok(view(value.eori))
+              case Some(value) => Ok(view(value.eori, value.companyName))
               case None => reportSessionExpired
             }
             case None => reportSessionExpired

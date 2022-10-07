@@ -319,8 +319,12 @@ remove.error.confirmation.required = Select to confirm you want to remove this u
 
 removeConfirmation.title = User successfully removed
 removeConfirmation.heading = {0} successfully removed
-removeConfirmation.p1 = You may want to tell the user that their access has been removed.
+removeConfirmation.p1 = You may want to tell the company that their authority has been removed.
 removeConfirmation.returnLink = Back to manage your account authorities
+removeConfirmation.authorityRemoved	= Authority removed
+removeConfirmation.companyName = Company name:
+removeConfirmation.eoriNumber = EORI number:
+removeConfirmation.removalAuthority = The removal of this authority is immediate.
 
 manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
