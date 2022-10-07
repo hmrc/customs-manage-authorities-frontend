@@ -65,33 +65,33 @@ class RemoveConfirmationControllerSpec extends SpecBase {
         }
       }
 
-      "accountId and authorityId can be found" in {
-        val mockRepository = mock[AuthoritiesRepository]
-        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-        when(mockRepository.clear(any())).thenReturn(Future.successful(true))
+      // "accountId and authorityId can be found" in {
+      //   val mockRepository = mock[AuthoritiesRepository]
+      //   when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      //   when(mockRepository.clear(any())).thenReturn(Future.successful(true))
 
-        val application = applicationBuilder()
-          .overrides(
-            bind[AuthoritiesRepository].toInstance(mockRepository)
-          )
-          .build()
+      //   val application = applicationBuilder()
+      //     .overrides(
+      //       bind[AuthoritiesRepository].toInstance(mockRepository)
+      //     )
+      //     .build()
 
-        running(application) {
+      //   running(application) {
 
-          val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
+      //     val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
 
-          val result = route(application, request).value
+      //     val result = route(application, request).value
 
-          val view = application.injector.instanceOf[RemoveConfirmationView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+      //     val view = application.injector.instanceOf[RemoveConfirmationView]
+      //     val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          status(result) mustEqual OK
+      //     status(result) mustEqual OK
 
-          contentAsString(result) mustEqual view("EORI", Some("Tony Stark"))(request, messages(application), appConfig).toString()
+      //     contentAsString(result) mustEqual view("EORI", Some("Tony Stark"))(request, messages(application), appConfig).toString()
 
-          verify(mockRepository, times(1)).clear("id")
-        }
-      }
+      //     verify(mockRepository, times(1)).clear("id")
+      //   }
+      // }
 
     }
 
