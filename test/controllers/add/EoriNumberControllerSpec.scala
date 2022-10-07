@@ -44,7 +44,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val eoriNumberRoute = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
   val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
-  private lazy val GBNValidationRoute = controllers.add.routes.GBNEoriController.showGBNEori().url
 
   "EoriNumber Controller" must {
 
@@ -112,6 +111,35 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val request =
           fakeRequest(POST, eoriNumberRoute)
             .withFormUrlEncodedBody(("value", "GB123456789011"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "redirect to the next page when GBN EORI is submitted" in {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberRoute)
+            .withFormUrlEncodedBody(("value", "GBN23456789011"))
 
         val result = route(application, request).value
 
@@ -222,26 +250,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         contentAsString(result) mustEqual
           view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
-      }
-    }
-
-
-    "redirect to GBNEoriErrorView page when GBN EORI is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CustomsFinancialsConnector].toInstance(mockConnector),
-      ).build()
-      running(application) {
-        val request =
-          fakeRequest(POST, eoriNumberRoute
-          )
-            .withFormUrlEncodedBody(("value", "GBN123456789011"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual GBNValidationRoute
-
       }
     }
 

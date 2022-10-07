@@ -142,8 +142,6 @@ eoriNumber.error.required=Nodwch rif EORI
 eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
 eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi’ch EORI eich hun
-eoriNumber.error.gbnEori.format= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn.
-eoriNumber.error.gbnEori.title= Ni allwch ddefnyddio EORI GBN gyda’r gwasanaeth hwn
 
 
 # Which accounts to add an authority to view

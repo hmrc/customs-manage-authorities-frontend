@@ -26,7 +26,7 @@ class EoriNumberFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("eoriNumber.error.required")
-        .verifying(checkEORI("eoriNumber.error.gbnEori.format","eoriNumber.error.format"))
+        .verifying(checkEORI("eoriNumber.error.format"))
     )
 
 }

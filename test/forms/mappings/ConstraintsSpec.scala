@@ -191,18 +191,18 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
   "checkEORI" must {
 
-    "return Invalid when GBN EORI is provided" in {
-      val result = checkEORI("error.invalid1", "error.invalid2")("GBN453")
-      result mustEqual Invalid("error.invalid1", """^GBN[0-9]*""")
+    "return valid when GBN EORI is provided" in {
+      val result = checkEORI("error.invalid2")("GBN45365789211")
+      result mustEqual Valid
     }
 
     "return Invalid when an incorrect EORI format is provided" in {
-      val result = checkEORI("error.invalid1", "error.invalid2")("XI453")
+      val result = checkEORI("error.invalid2")("XI453")
       result mustEqual Invalid("error.invalid2", """GB\d{12}""")
     }
 
     "return Valid for an input that does not match the expression" in {
-      val result = checkEORI("error.invalid1", "error.invalid2")("GB123456789102")
+      val result = checkEORI("error.invalid2")("GB123456789102")
       result mustEqual Valid
     }
   }

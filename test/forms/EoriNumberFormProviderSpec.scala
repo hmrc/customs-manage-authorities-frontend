@@ -48,12 +48,5 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with Constraints{
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
-
-    behave like fieldWithRegex(
-      form,
-      fieldName,
-      invalidValues = Seq("GBN1234567890"),
-      invalidError = FormError(fieldName, "eoriNumber.error.gbnEori.format", Seq(gbnEoriRegex))
-    )
   }
 }

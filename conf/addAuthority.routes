@@ -49,4 +49,3 @@ GET         /check-answers                                            controller
 POST        /check-answers                                            controllers.add.AuthorisedUserController.onSubmit()
 
 GET         /confirmation                                             controllers.add.AddConfirmationController.onPageLoad()
-GET         /eori-number/cannot-use-gbn-eori                          controllers.add.GBNEoriController.showGBNEori()
