@@ -136,7 +136,7 @@ accounts.noAvailableAccounts.link = ‘Rheoli awdurdodau eich cyfrif’
 
 eoriNumber.title=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
 eoriNumber.heading=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
-eoriNumber.hint=Mae rhif EORI yn dechrau gyda GB, wedi’i ddilyn gan 12 digid. Er enghraifft, GB345834921000.
+eoriNumber.hint=Mae rhif EORI yn dechrau gyda GB neu GBN. <br>Er enghraifft, GB345834921000 neu GBN10537914000.
 eoriNumber.checkYourAnswersLabel=Rhif EORI y defnyddiwr
 eoriNumber.error.required=Nodwch rif EORI
 eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
