@@ -150,7 +150,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         )
       }*/
 
-      /*"only EORI number row is displayed when no company name is present" in {
+      "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
         helper.accountsRows mustBe Seq(
@@ -174,7 +174,13 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
               content = span(messages("site.change")),
               visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
             )))
-          ))
+          ),
+          summaryListRow(
+            "view-authority-h2.5",
+            "view-authority-h2.6",
+            None,
+            actions = Actions(items = Seq()))
+          )
         helper.authorityDurationRows mustBe Seq(
           summaryListRow(
             "authorityStart.checkYourAnswersLabel",
@@ -197,7 +203,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             )))
           )
         )
-      }*/
+      }
 
      /* "a single account is selected (set date to set date)" in {
         implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
