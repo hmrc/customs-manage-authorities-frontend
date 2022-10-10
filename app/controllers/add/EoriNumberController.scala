@@ -30,7 +30,6 @@ import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.GBNEoriErrorView
 import views.html.add.EoriNumberView
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.dtd.ValidationException
@@ -44,7 +43,6 @@ class EoriNumberController @Inject()(
                                       formProvider: EoriNumberFormProvider,
                                       val controllerComponents: MessagesControllerComponents,
                                       view: EoriNumberView,
-                                      gbnEoriView: GBNEoriErrorView,
                                       connector: CustomsFinancialsConnector,
                                       dataStore: CustomsDataStoreConnector
                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
@@ -65,12 +63,7 @@ class EoriNumberController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>{
-          val errorMessages = formWithErrors.errors.flatMap(_.messages)
-          if(errorMessages.contains("eoriNumber.error.gbnEori.format")) {
-            Future.successful(Redirect(controllers.add.routes.GBNEoriController.showGBNEori()))
-          } else{
             Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode))))
-          }
         },
 
         eoriNumber => {

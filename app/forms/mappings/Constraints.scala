@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 trait Constraints {
   lazy val textFieldRegex: String = """^[^(){}$<>\[\]\\\/]*$"""
-  lazy val gbnEoriRegex: String = "^GBN[0-9]*"
+  lazy val gbnEoriRegex: String = "GBN\\d{11}"
   lazy val eoriRegex: String = "GB\\d{12}"
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
@@ -139,10 +139,10 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def checkEORI(gbnErrorKey: String, invalidFormatErrorKey: String): Constraint[String] =
+  protected def checkEORI(invalidFormatErrorKey: String): Constraint[String] =
     Constraint {
       case str if stripWhitespace(str).matches(gbnEoriRegex) =>
-        Invalid(gbnErrorKey,gbnEoriRegex)
+        Valid
       case str if stripWhitespace(str).matches(eoriRegex) =>
         Valid
       case _ =>
