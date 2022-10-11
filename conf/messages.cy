@@ -256,7 +256,7 @@ checkYourAnswers.role.label = Eich swydd
 checkYourAnswers.p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni.
 checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
-checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
+checkYourAnswers.confirm.button = Cadarnhau a chyflwyno
 checkYourAnswers.authorityEnd.indefinite=Hyd nes y clywir yn wahanol
 
 edit.changed = Wedi newid
