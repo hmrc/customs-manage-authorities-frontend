@@ -276,7 +276,7 @@ addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i’r 
 addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 editConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
-editConfirmation.heading={0} wedi’i ychwanegu yn llwyddiannus
+editConfirmation.heading=Awdurdod wedi newid
 editConfirmation.body.company.name = Enw’r cwmni:
 editConfirmation.body.eori.number = Rhif EORI:
 editConfirmation.body.changes = Gall gymryd hyd at awr i newidiadau ddod i rym.
