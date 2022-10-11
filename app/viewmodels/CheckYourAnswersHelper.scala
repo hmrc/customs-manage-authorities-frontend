@@ -41,7 +41,8 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   def companyDetailsRows: Seq[SummaryListRow] = {
     if (companyName.isEmpty) {
       Seq(
-        eoriNumberRow(userAnswers.get(EoriNumberPage))
+        eoriNumberRow(userAnswers.get(EoriNumberPage)),
+        companyNameNoConsentRow
       ).flatten
     }
     else {
@@ -114,6 +115,14 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
     )
   }
 
+  private def companyNameNoConsentRow : Option[SummaryListRow] = {
+    Some(summaryListRow(
+      messages("view-authority-h2.5"),
+      value = messages("view-authority-h2.6"),
+      actions = Actions(items = Seq()),
+      secondValue = None
+    ))
+  }
 
   private def yourDetailsRows(authorityDetails: Option[AuthorisedUser]): Seq[SummaryListRow] = {
       Seq(summaryListRow(
