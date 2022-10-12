@@ -283,8 +283,7 @@ editConfirmation.body.changes = Gall gymryd hyd at awr i newidiadau ddod i rym.
 editConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
 editConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 editConfirmation.body.setDate=Yn dechrau ar {0}
-editConfirmation.p1.today=Dylech roi gwybod i’r defnyddiwr eich bod wedi trefnu hyn. Gall gymryd hyd at awr i’r mynediad ddod i rym.
-editConfirmation.p1.setDate=Dylech roi gwybod i’r cwmni eich bod wedi newid yr awdurdod hwn. Gall gymryd hyd at awr i’r newidiadau ddod i rym.
+editConfirmation.p1.setDate=Dylech roi gwybod i’r cwmni eich bod wedi newid yr awdurdod hwn.
 editConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 remove.title=A ydych yn si?r eich bod am ddileu awdurdod y cyfrif hwn?

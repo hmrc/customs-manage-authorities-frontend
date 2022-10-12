@@ -298,7 +298,7 @@ editConfirmation.body.changes = Changes may take up to one hour to be active.
 editConfirmation.body.today.singular = They can now use your account
 editConfirmation.body.today.plural = They can now use your accounts
 editConfirmation.body.setDate = Starting on {0}
-editConfirmation.p1.setDate = You should tell the company that you have changed this authority. It may take up to one hour for the changes to be active.
+editConfirmation.p1.setDate = You should tell the company that you have changed this authority.
 editConfirmation.returnLink = Back to manage your account authorities
 
 remove.title = Are you sure you want to delete this account authority?
