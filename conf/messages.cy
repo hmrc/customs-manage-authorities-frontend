@@ -246,7 +246,7 @@ checkYourAnswers.eoriNumber.hidden=rhif EORI y defnyddiwr
 checkYourAnswers.authorityStart.hidden=Dyddiad dechrau
 checkYourAnswers.authorityEnd.hidden=Dyddiad dod i ben
 checkYourAnswers.showBalance.hidden=Bwrw golwg dros y balans
-checkYourAnswers.companyDetails.h2 = Manylion y cwmni awdurdodedig
+checkYourAnswers.companyDetails.h2 = Cwmni awdurdodedig
 checkYourAnswers.authorityDuration.h2 = Manylion yr awdurdod
 checkYourAnswers.userDetails.h2 = Gwiriwch eich atebion
 checkYourAnswers.eoriNumber.label = Rhif EORI
@@ -345,7 +345,7 @@ remove-cya-visually-hidden-role = eich swydd
 
 edit-cya-heading = Gwiriwch eich atebion
 edit-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-edit-cya-h2.2 = Manylion y cwmni awdurdodedig
+edit-cya-h2.2 = Cwmni awdurdodedig
 edit-cya-h2.3 = Manylion yr awdurdod
 edit-cya-h2.4 = Eich manylion
 edit-cya-p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni
