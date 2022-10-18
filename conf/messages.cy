@@ -258,6 +258,7 @@ checkYourAnswers.accounts.h2.singular = Y cyfrif rydych yn dymuno ei awdurdodi
 checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau a chyflwyno
 checkYourAnswers.authorityEnd.indefinite=Hyd nes y clywir yn wahanol
+checkYourAnswers.cancel = Canslo
 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
