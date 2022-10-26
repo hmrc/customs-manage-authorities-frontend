@@ -348,7 +348,6 @@ edit-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
 edit-cya-h2.2 = Cwmni awdurdodedig
 edit-cya-h2.3 = Manylion yr awdurdod
 edit-cya-h2.4 = Eich manylion
-edit-cya-p = Rwy’n cadarnhau bod yr wybodaeth a roddir yn wir ac yn gywir a rhoddaf awdurdodiad i ddefnyddio’r cyfrif hwn wrth glirio datganiadau tollau ar ran fy nghwmni
 edit-cya-button = Cadarnhau a chyflwyno
 edit-cya-cancel = Canslo
 edit-cya-account-number = Eich cyfrif

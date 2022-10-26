@@ -50,7 +50,6 @@
         @h2("edit-cya-h2.4")
         @summaryList(viewmodels.SummaryList(model.authorisedUserRows))
 
-        @p(Html(messages("edit-cya-p")))
         <div class="govuk-button-group">
             @button("edit-cya-button")
             @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url, linkMessage = "edit-cya-cancel"))
