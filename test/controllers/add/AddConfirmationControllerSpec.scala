@@ -19,7 +19,7 @@ package controllers.add
 import base.SpecBase
 import config.FrontendAppConfig
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
-import org.mockito.Matchers.{any, contains}
+import org.mockito.Matchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, AuthorityStartDatePage, EoriNumberPage}
@@ -31,9 +31,7 @@ import services.ConfirmationService
 import views.html.add.AddConfirmationView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 import models.CompanyDetails
-
 import scala.concurrent.Future
 
 class AddConfirmationControllerSpec extends SpecBase {

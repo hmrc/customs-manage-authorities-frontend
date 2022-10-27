@@ -19,14 +19,11 @@ package services
 import base.SpecBase
 import models._
 import models.domain._
-import models.requests.Accounts
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
-import play.api.libs.json.{JsString, Writes}
 import services.add.CheckYourAnswersValidationService
-
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDateTime
 
 class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
@@ -34,11 +31,9 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   val service = new CheckYourAnswersValidationService(mockDateTimeService)
-
   val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
   val generalGuarantee = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
-
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
   val completeUserAnswers: UserAnswers = UserAnswers("id")
@@ -149,5 +144,4 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       service.validate(userAnswers) mustBe None
     }
   }
-
 }
