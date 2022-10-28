@@ -22,14 +22,11 @@ import forms.EditAuthorityStartDateFormProvider
 import models.NormalMode
 import navigation.Navigator
 import pages.edit._
-import play.api.data.Form
 import play.api.i18n._
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.edit.EditAuthorityStartDateView
-
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent._
 

@@ -32,7 +32,6 @@ import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuth
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
-
 import java.time.LocalDate
 import scala.concurrent.Future
 

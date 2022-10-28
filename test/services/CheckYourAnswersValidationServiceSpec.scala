@@ -44,7 +44,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
   "CheckYourAnswersValidationService" must {
 
-   /* "validate complete submission from today to indefinite" in {
+    /* "validate complete submission from today to indefinite" in {
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
       val authorisedUser = AuthorisedUser("username", "role")
@@ -61,7 +61,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
     }
 */
-   /* "validate complete submission with only one account" in {
+    /* "validate complete submission with only one account" in {
       val userAnswer = completeUserAnswers
         .set(AccountsPage, List(dutyDeferment)).success.value
 
@@ -70,7 +70,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
     }*/
 
-   /* "validate complete submission from today to set date and show balance no" in {
+    /* "validate complete submission from today to set date and show balance no" in {
       implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
 
       val endDate = LocalDate.now().plusYears(1)
@@ -83,7 +83,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }*/
 
-   /* "validate complete submission from set date to set date" in {
+    /* "validate complete submission from set date to set date" in {
       implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
 
       val startDate = LocalDate.now().plusMonths(6)
