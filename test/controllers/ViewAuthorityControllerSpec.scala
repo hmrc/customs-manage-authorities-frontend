@@ -17,9 +17,10 @@
 package controllers
 
 import java.time.LocalDate
+
 import base.SpecBase
 import models.CompanyDetails
-import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
+import models.domain._
 import pages.add.{AccountsPage, AuthorityStartDatePage, EoriNumberPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

@@ -91,8 +91,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
       ).build()
 
-      val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
-      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      //val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
+      //val appConfig = app.injector.instanceOf[FrontendAppConfig]
       implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
 
       when(mockDataStoreConnector.getCompanyName(anyString())(any()))
@@ -107,7 +107,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         val result = route(app, getRequest).value
         status(result) mustBe OK
         //TODO find why this comparison is running successfully in local environment but not in Jenkins build - Temporarily commenting this
-//        contentAsString(result) mustBe view(helper)(getRequest, messages(app), appConfig).toString()
+        //contentAsString(result) mustBe view(helper)(getRequest, messages(app), appConfig).toString()
       }
     }
   }
