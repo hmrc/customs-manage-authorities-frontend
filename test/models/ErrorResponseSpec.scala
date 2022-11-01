@@ -16,10 +16,9 @@
 
 package models
 
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import base.SpecBase
 
-class ErrorResponseSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class ErrorResponseSpec extends SpecBase {
 
   "ErrorResponse" must {
     "show correct error message for EORIValidationError" in {
