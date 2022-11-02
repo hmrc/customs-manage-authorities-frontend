@@ -14,19 +14,26 @@
  * limitations under the License.
  */
 
-package viewmodels
+package pages
 
-import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
-import play.api.i18n.Messages
+import base.SpecBase
+import pages.add.{AccountsPage, AuthorisedUserPage}
 
-case class RemoveViewModel(
-                            accountId: String,
-                            authorityId: String,
-                            accountWithAuthorities: AccountWithAuthoritiesWithId,
-                            standingAuthority: StandingAuthority
-                          ) {
+class PageSpec extends SpecBase {
 
-  def headingCaptionKey(implicit messages: Messages): String = {
-    messages("remove.heading.caption." + accountWithAuthorities.accountType, accountWithAuthorities.accountNumber)
+  "Page" must {
+    "Pages defined toString converts page to string" in {
+      val page = AccountsPage
+      val res = Page.toString(page)
+      res mustBe page.toString
+    }
+  }
+
+  "AuthorisedUserPage" must {
+    "AuthorisedUserPage defined toString converts page to string" in {
+      val page = AuthorisedUserPage
+      val res = page.toString
+      res mustBe "authorisedUser"
+    }
   }
 }
