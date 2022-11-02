@@ -46,8 +46,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
       }
     }
 
-
-  trait Setup  {
+  trait Setup {
 
     val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
     val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))

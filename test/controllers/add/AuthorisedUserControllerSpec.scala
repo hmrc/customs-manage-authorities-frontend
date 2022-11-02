@@ -31,9 +31,7 @@ import play.api.test.Helpers._
 import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import java.time.{LocalDate, LocalDateTime}
-
 import play.api.i18n.Messages
-
 import scala.concurrent.Future
 
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
