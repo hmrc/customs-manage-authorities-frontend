@@ -20,14 +20,12 @@ import forms.behaviours.DateBehaviours
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import services.DateTimeService
-
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 class AuthorityStartDateFormProviderSpec extends DateBehaviours {
 
   val mockDateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-
   val form = new AuthorityStartDateFormProvider(mockDateTimeService)()
 
   ".value" should {
@@ -38,7 +36,6 @@ class AuthorityStartDateFormProviderSpec extends DateBehaviours {
     )
 
     behave like dateField(form, "value", validData)
-
     behave like mandatoryDateField(form, "value", "authorityStartDate.error.required.all")
   }
 }

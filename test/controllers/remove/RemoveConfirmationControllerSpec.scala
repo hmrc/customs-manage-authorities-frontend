@@ -18,16 +18,15 @@ package controllers.remove
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
+import models.domain._
 import org.mockito.Matchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.{ConfirmationDetails, ConfirmationPage}
 import play.api.inject.bind
 import play.api.test.Helpers._
 import repositories.AuthoritiesRepository
 import views.html.remove.RemoveConfirmationView
-
 import java.time.LocalDate
 import scala.concurrent.Future
 

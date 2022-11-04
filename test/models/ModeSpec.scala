@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package viewmodels
+package models
 
-import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
-import play.api.i18n.Messages
+import base.SpecBase
 
-case class RemoveViewModel(
-                            accountId: String,
-                            authorityId: String,
-                            accountWithAuthorities: AccountWithAuthoritiesWithId,
-                            standingAuthority: StandingAuthority
-                          ) {
+class ModeSpec extends SpecBase {
 
-  def headingCaptionKey(implicit messages: Messages): String = {
-    messages("remove.heading.caption." + accountWithAuthorities.accountType, accountWithAuthorities.accountNumber)
+  "Mode" must {
+    "return correct string for CheckMode" in {
+      val mode: Mode = CheckMode
+      val result: String = Mode.jsLiteral.to(mode)
+      result mustBe "CheckMode"
+    }
+
+    "return correct string for NormalMode" in {
+      val mode: Mode = NormalMode
+      val result: String = Mode.jsLiteral.to(mode)
+      result mustBe "NormalMode"
+    }
   }
 }

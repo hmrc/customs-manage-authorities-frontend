@@ -32,29 +32,43 @@ import java.time.LocalDate
 
 class RemoveViewSpec extends SpecBase {
 
-
   "Remove view" should {
-      "have back link" in new Setup {
-        val viewModel = RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
-        view(viewModel).getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/view-authority/a/b"
-      }
+    "have back link" in new Setup {
+      val viewModel = RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
+
+      view(viewModel).getElementsByClass("govuk-back-link").attr(
+        "href") mustBe s"/customs/manage-authorities/view-authority/a/b"
     }
 
+    "produce correct rows" in new Setup {
+
+      val rvm = RemoveViewModel("a", "b",
+        accountsWithAuthoritiesWithId, standingAuthority).headingCaptionKey(messages)
+
+      rvm mustBe messages("remove.heading.caption."
+          + accountsWithAuthoritiesWithId.accountType, accountsWithAuthoritiesWithId.accountNumber)
+    }
+  }
 
   trait Setup  {
     val startDate = LocalDate.parse("2020-03-01")
     val endDate = LocalDate.parse("2020-04-01")
     val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-    val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
-
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+    val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+      CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+
     implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new AuthorisedUserFormProvider()
     private val form = formProvider()
 
-    def view(viewModel: RemoveViewModel) = Jsoup.parse(app.injector.instanceOf[RemoveAuthorisedUserView].apply(form,viewModel).body)
+    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(
+      "GET", "/some/resource/path")
+
+    def view(viewModel: RemoveViewModel) = Jsoup.parse(
+      app.injector.instanceOf[RemoveAuthorisedUserView].apply(form,viewModel).body)
   }
 }

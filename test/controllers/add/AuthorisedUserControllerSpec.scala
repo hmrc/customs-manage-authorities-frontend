@@ -17,41 +17,30 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
-import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import models.domain.{AccountStatusOpen, AccountWithAuthorities, AuthorisedUser, CDSAccount, CDSCashBalance, CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance, StandingAuthority}
+import models.domain._
 import models.requests.Accounts
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.Matchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.add.{AccountsPage, AuthorisedUserPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
-import play.api.inject.bind
+import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import repositories.SessionRepository
 import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
-import viewmodels.CheckYourAnswersHelper
-import views.html.add.AuthorisedUserView
 import java.time.{LocalDate, LocalDateTime}
-
 import play.api.i18n.Messages
-
 import scala.concurrent.Future
 
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
-
-  private def onwardRoute = Call("GET", "/foo")
 
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   private val formProvider = new AuthorisedUserFormProviderWithConsent()
   private val form = formProvider()
-
+  private def onwardRoute = Call("GET", "/foo")
   private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad.url
 
   val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
@@ -69,7 +58,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
   val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
-
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
   val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
@@ -79,7 +67,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
     .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
-
 
   "AuthorisedUser Controller" must {
 
