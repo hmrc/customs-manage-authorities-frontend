@@ -9,6 +9,7 @@ dist
 /.idea
 /*.iml
 /*.ipr
+/.bsp/
 /out
 /.idea_modules
 /.classpath
