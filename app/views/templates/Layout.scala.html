@@ -20,7 +20,6 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLanguageSelectHelper
-@import views.html.components.help_and_support_message
 @import views.html.helper.CSPNonce
 
 @this(
@@ -70,9 +69,6 @@
 
 @mainContent = {
     @contentBlock
-    @if(helpAndSupport) {
-        @help_and_support_message()
-    }
 
     @if(deskpro) {
         @hmrcReportTechnicalIssueHelper()

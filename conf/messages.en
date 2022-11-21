@@ -13,12 +13,6 @@ site.saveAndContinue = Continue
 site.govuk = GOV.UK
 site.change = Change
 
-# Help and Support
-cf.help-and-support.title=Help and support
-cf.account.help-support.message=If you are having issues, phone
-cf.account.help-support.numbers=0300 200 3701
-cf.account.help-support.office-hours=Open 8am to 6pm, Monday to Friday (closed bank holidays).
-
 # Page Not Found Error
 cf.error.not-found.title=Page not found
 cf.error.not-found.heading=Page not found

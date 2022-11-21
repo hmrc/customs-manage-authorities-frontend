@@ -13,12 +13,6 @@ site.saveAndContinue=Yn eich blaen
 site.govuk=GOV.UK
 site.change=Newid
 
-# Help and Support
-cf.help-and-support.title=Help a chymorth
-cf.account.help-support.message=Os ydych yn profi anawsterau, ffoniwch
-cf.account.help-support.numbers=0300 200 3705
-cf.account.help-support.office-hours=Ar agor 08:30 i 17:00, o ddydd Llun i ddydd Gwener (ar gau ar wyliau banc).
-
 # Page Not Found Error
 cf.error.not-found.title=Heb ddod o hyd i’r dudalen
 cf.error.not-found.heading=Heb ddod o hyd i’r dudalen
