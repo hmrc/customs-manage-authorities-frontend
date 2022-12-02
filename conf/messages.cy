@@ -135,7 +135,7 @@ eoriNumber.checkYourAnswersLabel=Rhif EORI y defnyddiwr
 eoriNumber.error.required=Nodwch rif EORI
 eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
 eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
-eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi’ch EORI eich hun
+eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi eich rhif EORI eich hun
 
 
 # Which accounts to add an authority to view
