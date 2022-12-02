@@ -78,7 +78,7 @@
 @hmrcLayout(
     userResearchBannerUrl = if (userResearchBanner) Some(appConfig.helpMakeGovUkBetterUrl) else None,
     pageTitle = fullPageTitle,
-    serviceUrl = Some(controllers.routes.IndexController.onPageLoad.url),
+    serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
     signOutUrl = Some(controllers.routes.LogoutController.logout.url),
     nonce = CSPNonce.get,
     backLinkUrl = backLink,

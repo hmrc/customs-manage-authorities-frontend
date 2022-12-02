@@ -31,7 +31,6 @@ import views.html.AccountsView
 
 class AccountsViewSpec extends SpecBase with MockitoSugar {
 
-
   "AccountsView" should {
      "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
        normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/eori-number"
@@ -40,7 +39,7 @@ class AccountsViewSpec extends SpecBase with MockitoSugar {
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
       checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
-    }
+  }
 
 
   trait Setup  {
