@@ -26,10 +26,11 @@
     preLinkMessage: Option[String] = None,
     postLinkMessage: Option[String] = None,
     pId: Option[String] = None,
+    ariaLabel: Option[String] = None,
     pClass: String = "govuk-body")(implicit messages: Messages)
 
 @link = {
-  <a @{linkId.fold("")(id => s"id=$id")} class="@linkClass @linkSpace" href="@location">@messages(linkMessage)</a>@if(linkSentence){.}
+  <a @{linkId.fold("")(id => s"id=$id")} class="@linkClass @linkSpace" href="@location" aria-label="@ariaLabel">@messages(linkMessage)</a>@if(linkSentence){.}
 }
 
 @if(pWrapped){
