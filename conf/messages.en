@@ -252,6 +252,9 @@ checkYourAnswers.p = I confirm that the information given is true and accurate a
 checkYourAnswers.confirm.button = Confirm this authorisation and submit
 checkYourAnswers.authorityEnd.indefinite = Until further notice
 checkYourAnswers.cancel = Cancel
+checkYourAnswers.cancelScreenReader = Cancel submission and return to authorities list
+
+
 
 authorisedUser.title = Check your answers
 authorisedUser.heading = Check your answers

@@ -253,6 +253,7 @@ checkYourAnswers.accounts.h2.plural = Y cyfrifon rydych yn dymuno ei awdurdodi
 checkYourAnswers.confirm.button = Cadarnhau’r awdurdodiad hwn a’i gyflwyno
 checkYourAnswers.authorityEnd.indefinite=Hyd nes y clywir yn wahanol
 checkYourAnswers.cancel = Canslo
+checkYourAnswers.cancelScreenReader = Canslo’r cyflwyniad a mynd yn ôl i’r rhestr awdurdodau
 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
