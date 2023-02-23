@@ -165,7 +165,7 @@ eoriDetail.eoriNumber.label = EORI
 eoriDetail.companyName.label = Company name
 eoriDetails.noConsent = The business name this number is registered to has not consented to their name being shared.
 eoriDetails.noConsent.2 = If you need more information, contact the business directly.
-eoriDetails.radioYes = Yes
+eoriDetails.radioYes = Yes, these details are correct
 eoriDetails.radioNo = No, change EORI
 eoriDetails.error.required = Select whether company information is correct
 
