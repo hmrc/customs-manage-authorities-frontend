@@ -165,7 +165,7 @@ eoriDetail.eoriNumber.label = EORI
 eoriDetail.companyName.label = Enw’r cwmni
 eoriDetails.noConsent = Nid yw’r busnes y mae’r rhif hwn wedi’i gofrestru iddo wedi caniatáu i’w enw gael ei rannu.
 eoriDetails.noConsent.2 = Os oes angen rhagor o wybodaeth arnoch, cysylltwch yn uniongyrchol â’r busnes.
-eoriDetails.radioYes = Iawn
+eoriDetails.radioYes = Iawn, mae’r manylion hyn yn gywir
 eoriDetails.radioNo = Na, newid y rhif EORI
 eoriDetails.error.required = Dewiswch a yw’r wybodaeth am y cwmni yn gywir
 
