@@ -214,7 +214,7 @@ authorityEndDate.error.minimum=Mae’n rhaid i’r dyddiad dod i ben fod naill a
 
 showBalance.title=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
 showBalance.heading=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
-showBalance.yes=Iawn
+showBalance.yes=Iawn, caniatáu iddynt weld y balans sydd ar gael
 showBalance.no.singular=Na, rhowch ganiatâd iddo ddefnyddio’r cyfrif yn unig
 showBalance.no.plural=Na, rhowch ganiatâd iddo ddefnyddio’r cyfrifon yn unig
 showBalance.checkYourAnswers.yes=Iawn
