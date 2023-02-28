@@ -214,7 +214,7 @@ authorityEndDate.error.minimum=Mae’n rhaid i’r dyddiad dod i ben fod naill a
 
 showBalance.title=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
 showBalance.heading=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
-showBalance.yes=Iawn, caniatáu iddynt weld y balans sydd ar gael
+showBalance.yes=Iawn
 showBalance.no.singular=Na, rhowch ganiatâd iddo ddefnyddio’r cyfrif yn unig
 showBalance.no.plural=Na, rhowch ganiatâd iddo ddefnyddio’r cyfrifon yn unig
 showBalance.checkYourAnswers.yes=Iawn
@@ -236,11 +236,11 @@ authorityDetails.role=Swydd
 
 checkYourAnswers.title=Gwiriwch eich atebion
 checkYourAnswers.heading=Gwiriwch eich atebion
-checkYourAnswers.accounts.hidden=Newid cyfrifon
-checkYourAnswers.eoriNumber.hidden=Newid rhif EORI y defnyddiwr
-checkYourAnswers.authorityStart.hidden=Newid Dyddiad dechrau
-checkYourAnswers.authorityEnd.hidden=Newid Dyddiad dod i ben
-checkYourAnswers.showBalance.hidden=Newid Bwrw golwg dros y balans
+checkYourAnswers.accounts.hidden=cyfrifon
+checkYourAnswers.eoriNumber.hidden=rhif EORI y defnyddiwr
+checkYourAnswers.authorityStart.hidden=Dyddiad dechrau
+checkYourAnswers.authorityEnd.hidden=Dyddiad dod i ben
+checkYourAnswers.showBalance.hidden=Bwrw golwg dros y balans
 checkYourAnswers.companyDetails.h2 = Cwmni awdurdodedig
 checkYourAnswers.authorityDuration.h2 = Manylion yr awdurdod
 checkYourAnswers.userDetails.h2 = Gwiriwch eich atebion

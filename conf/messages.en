@@ -214,7 +214,7 @@ authorityEndDate.error.minimum = End date must be on or after the start date ({0
 
 showBalance.title = Allow this user to see the available balance?
 showBalance.heading = Allow this user to see the available balance?
-showBalance.yes = Yes, allow them to see the available balance
+showBalance.yes = Yes
 showBalance.no.singular = No, just allow them to use the account
 showBalance.no.plural = No, just allow them to use the accounts
 showBalance.checkYourAnswers.yes = Yes
@@ -235,11 +235,11 @@ authorityDetails.role = Role
 
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
-checkYourAnswers.accounts.hidden =Change accounts
-checkYourAnswers.eoriNumber.hidden =Change user EORI number
-checkYourAnswers.authorityStart.hidden =Change start date
-checkYourAnswers.authorityEnd.hidden =Change end date
-checkYourAnswers.showBalance.hidden =Change see balance
+checkYourAnswers.accounts.hidden = accounts
+checkYourAnswers.eoriNumber.hidden = user EORI number
+checkYourAnswers.authorityStart.hidden = start date
+checkYourAnswers.authorityEnd.hidden = end date
+checkYourAnswers.showBalance.hidden = see balance
 checkYourAnswers.fullName.label = Your name
 checkYourAnswers.role.label = Your role
 checkYourAnswers.eoriNumber.label = EORI number
