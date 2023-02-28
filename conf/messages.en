@@ -234,12 +234,14 @@ authorityDetails.role = Role
 # Check your answers view
 
 checkYourAnswers.title = Check your answers
-checkYourAnswers.heading = Check your answers
+checkYourAnswers.heading = Check your anFswers
 checkYourAnswers.accounts.hidden = accounts
 checkYourAnswers.eoriNumber.hidden = user EORI number
 checkYourAnswers.authorityStart.hidden = start date
 checkYourAnswers.authorityEnd.hidden = end date
 checkYourAnswers.showBalance.hidden = see balance
+checkYourAnswers.fullName.hidden = full name
+checkYourAnswers.role.hidden = your role
 checkYourAnswers.fullName.label = Your name
 checkYourAnswers.role.label = Your role
 checkYourAnswers.eoriNumber.label = EORI number
