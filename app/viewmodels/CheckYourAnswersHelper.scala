@@ -131,7 +131,7 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
         actions = Actions(items = Seq(ActionItem(
           href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
           content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+          visuallyHiddenText = Some(messages("checkYourAnswers.fullName.hidden"))
         ))),
         secondValue = None
       ),
@@ -141,7 +141,7 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
         actions = Actions(items = Seq(ActionItem(
           href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
           content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+          visuallyHiddenText = Some(messages("checkYourAnswers.role.hidden"))
         ))),
         secondValue = None
       )
