@@ -191,6 +191,7 @@ authorityStartDate.error.required.two = The date must include {0} and {1}
 authorityStartDate.error.required = The date must include {0}
 authorityStartDate.error.invalid = The start date must be a real date
 authorityStartDate.error.minimum = The start date must be in the future
+authorityStartDate.error.year.length = Year must include 4 numbers
 authorityStartDate.hint = For example, 31 3 2020.
 
 authorityEnd.title = How long should the authority last?
