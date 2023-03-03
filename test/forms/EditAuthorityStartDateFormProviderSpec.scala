@@ -41,7 +41,6 @@ class EditAuthorityStartDateFormProviderSpec extends DateBehaviours {
     )
 
     behave like dateField(form, "value", validData)
-
     behave like mandatoryDateField(form, "value", "authorityStartDate.error.required.all")
   }
 }

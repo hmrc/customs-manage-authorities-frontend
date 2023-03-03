@@ -182,9 +182,18 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       forAll(gen) {
         case (min, date) =>
 
-          val result = minDate(min, "error.past", "foo")(date)
-          result mustEqual Invalid("error.past", "foo")
+          val result = minDate(min, "foo")(date)
+          result mustEqual Invalid("authorityStartDate.error.minimum", "foo")
       }
+    }
+
+    "return Invalid for a date below the minimum length" in {
+
+      val date = LocalDate.of(200,1,2)
+      val min = LocalDate.of(200,1,1)
+      val result = minDate(min,"foo")(date)
+      result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
+
     }
   }
 

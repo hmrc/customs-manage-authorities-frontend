@@ -17,9 +17,8 @@
 package controllers.remove
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
+import models.domain._
 import org.mockito.Matchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,7 +30,6 @@ import play.api.test.Helpers._
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.CheckYourAnswersRemoveHelper
-import views.html.remove.RemoveCheckYourAnswersView
 import java.time.LocalDate
 import scala.concurrent.Future
 

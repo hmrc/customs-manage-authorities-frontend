@@ -191,6 +191,7 @@ authorityStartDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a 
 authorityStartDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
 authorityStartDate.error.invalid=Mae’n rhaid i’r dyddiad dechrau fod yn ddyddiad go iawn
 authorityStartDate.error.minimum=Mae’n rhaid i’r dyddiad dechrau fod yn y dyfodol
+authorityStartDate.error.year.length = Mae’n rhaid i’r flwyddyn gynnwys pedwar rhif
 authorityStartDate.hint = Er enghraifft, 31 3 2020.
 
 authorityEnd.title=Am ba hyd y dylai’r awdurdod bara?

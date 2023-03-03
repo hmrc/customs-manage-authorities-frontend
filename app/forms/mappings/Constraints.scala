@@ -115,12 +115,15 @@ trait Constraints {
       }
     }
 
-  protected def minDate(minimum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+  protected def minDate(minimum: LocalDate, args: Any*): Constraint[LocalDate] =
     Constraint {
+      case date if date.getYear.toString.length() < 4 =>
+        Invalid("authorityStartDate.error.year.length", args: _*)
+
       case date if date.isBefore(minimum) =>
-        Invalid(errorKey, args: _*)
-      case _ =>
-        Valid
+        Invalid("authorityStartDate.error.minimum", args: _*)
+
+      case _ => Valid
     }
 
   protected def nonEmptySet(errorKey: String): Constraint[Set[_]] =
