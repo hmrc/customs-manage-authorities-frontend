@@ -35,7 +35,8 @@ class AuthorityEndDateFormProvider @Inject()(dateTimeService: DateTimeService) e
         allRequiredKey = "authorityEndDate.error.required.all",
         twoRequiredKey = "authorityEndDate.error.required.two",
         requiredKey    = "authorityEndDate.error.required"
-      ).verifying(minDate(minimumDate, dateAsDayMonthAndYear(minimumDate)))
+      ).verifying(minDate(minimumDate, "authorityEndDate.error.minimum",
+        "authorityStartDate.error.year.length", dateAsDayMonthAndYear(minimumDate)))
     )
   }
 }

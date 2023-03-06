@@ -115,13 +115,13 @@ trait Constraints {
       }
     }
 
-  protected def minDate(minimum: LocalDate, args: Any*): Constraint[LocalDate] =
+  protected def minDate(minimum: LocalDate, minimumMsg: String, yearMsg: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.getYear.toString.length() < 4 =>
-        Invalid("authorityStartDate.error.year.length", args: _*)
+        Invalid(yearMsg, args: _*)
 
       case date if date.isBefore(minimum) =>
-        Invalid("authorityStartDate.error.minimum", args: _*)
+        Invalid(minimumMsg, args: _*)
 
       case _ => Valid
     }

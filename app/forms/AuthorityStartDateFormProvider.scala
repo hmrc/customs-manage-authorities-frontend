@@ -32,7 +32,7 @@ class AuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService)
         allRequiredKey = "authorityStartDate.error.required.all",
         twoRequiredKey = "authorityStartDate.error.required.two",
         requiredKey    = "authorityStartDate.error.required"
-      )
-       .verifying(minDate(dateTimeService.localTime().toLocalDate))
+      ).verifying(minDate(dateTimeService.localTime().toLocalDate,
+        "authorityStartDate.error.minimum", "authorityStartDate.error.year.length"))
     )
 }
