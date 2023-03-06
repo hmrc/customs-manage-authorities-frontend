@@ -180,7 +180,6 @@ authorityStart.checkYourAnswersLabel = Start
 authorityStart.checkYourAnswersLabel.today = Today,
 authorityStart.error.required = Select when you want the authority to start
 
-
 # What date do you want the authority to start view (on a set date)
 
 authorityStartDate.title = What date do you want the authority to start?
