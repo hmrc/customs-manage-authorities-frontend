@@ -11,6 +11,7 @@ object AppDependencies {
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.71.0",
     "org.typelevel" %% "cats-core" % "2.3.0"
   )
+
   val test = Seq(
     "org.scalatest" %% "scalatest" % "3.0.8",
     "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2",
