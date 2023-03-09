@@ -14,6 +14,11 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukErrorSummary
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorLink
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.errorsummary.ErrorSummary
+
 @this(govukErrorSummary: GovukErrorSummary)
 
 @(errors: Seq[FormError], errorFieldName: Option[String] = None)(implicit messages: Messages)
