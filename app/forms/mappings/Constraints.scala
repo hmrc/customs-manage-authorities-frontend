@@ -117,7 +117,7 @@ trait Constraints {
 
   protected def minDate(minimum: LocalDate, minimumMsg: String, yearMsg: String, args: Any*): Constraint[LocalDate] =
     Constraint {
-      case date if date.getYear.toString.length() < 4 =>
+      case date if date.getYear.toString.length() != 4 =>
         Invalid(yearMsg, args: _*)
 
       case date if date.isBefore(minimum) =>
