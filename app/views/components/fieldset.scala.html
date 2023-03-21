@@ -16,7 +16,7 @@
 
 @this(govukFieldset: GovukFieldset)
 
-@(legend: String, asHeading: Boolean = true)(content: Html)(implicit messages: Messages)
+@(legend: String, asHeading: Boolean = true, describedBy: Option[String])(content: Html)(implicit messages: Messages)
 
 @govukFieldset(Fieldset(
     legend = Some(Legend(
@@ -24,6 +24,7 @@
         classes = if(asHeading) "govuk-fieldset__legend--xl" else "",
         isPageHeading = asHeading
     )),
+    describedBy = describedBy,
     html = content
 ))
 

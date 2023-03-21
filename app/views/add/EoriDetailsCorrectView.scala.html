@@ -45,6 +45,7 @@
 
         @fieldset(
             legend = messages("eoriDetails.heading"),
+            describedBy = Some("radio-hint")
         ) {
             @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-5 govuk-summary-list--wide "))
 
