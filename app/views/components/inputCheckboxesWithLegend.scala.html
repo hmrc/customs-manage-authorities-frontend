@@ -39,5 +39,5 @@
             idPrefix = Some("checkbox"),
             name = "value",
             items = items,
-            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)), visuallyHiddenText = Some(messages("site.error"))))
         ))
