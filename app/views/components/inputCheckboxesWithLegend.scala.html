@@ -33,10 +33,11 @@
                 isPageHeading = true
             ))
         )),
-        hint = Some(Hint(
-        content = Text(messages(hint))
-        )),
-        idPrefix = Some("checkbox"),
-        name = "value",
-        items = items
+            hint = Some(Hint(
+            content = Text(messages(hint))
+            )),
+            idPrefix = Some("checkbox"),
+            name = "value",
+            items = items,
+            errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
         ))
