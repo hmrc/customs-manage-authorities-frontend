@@ -6,13 +6,14 @@ object AppDependencies {
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "5.16.0",
-    "uk.gov.hmrc" %% "play-frontend-hmrc" % "1.26.0-play-28",
+    "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % "7.15.0",
+    "uk.gov.hmrc" %% "play-frontend-hmrc" % "7.1.0-play-28",
     "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "0.71.0",
     "org.typelevel" %% "cats-core" % "2.3.0"
   )
 
   val test = Seq(
+    "uk.gov.hmrc" %% "bootstrap-test-play-28" % "7.15.0",
     "org.scalatest" %% "scalatest" % "3.0.8",
     "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2",
     "org.pegdown" % "pegdown" % "1.6.0",
