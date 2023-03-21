@@ -12,6 +12,7 @@ site.confirm=Cadarnhau
 site.saveAndContinue=Yn eich blaen
 site.govuk=GOV.UK
 site.change=Newid
+site.error = Gwall
 
 # Page Not Found Error
 cf.error.not-found.title=Heb ddod o hyd i’r dudalen

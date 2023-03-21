@@ -12,6 +12,7 @@ site.confirm = Confirm
 site.saveAndContinue = Continue
 site.govuk = GOV.UK
 site.change = Change
+site.error = Error
 
 # Page Not Found Error
 cf.error.not-found.title=Page not found
