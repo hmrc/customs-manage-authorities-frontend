@@ -116,7 +116,14 @@
                 </td>
                     <td class="govuk-table__cell view-or-change">
                     @if(account.accountStatus.fold(true)(v => v != AccountStatusClosed)) {
-                        <a class="govuk-link" href="@controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)" aria-label="@messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber)">@messages("manageAuthorities.table.view-or-change")</a>
+                        <a class="govuk-link" href="@controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)">
+                            <span aria-hidden="true">
+                                @messages("manageAuthorities.table.view-or-change")
+                            </span>
+                            <span class="govuk-visually-hidden">
+                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber) @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+                            </span>
+                        </a>
                     }
                     </td>
             </tr>
