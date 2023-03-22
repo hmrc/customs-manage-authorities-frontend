@@ -67,7 +67,7 @@ class EoriNumberController @Inject()(
         },
 
         eoriNumber => {
-          val eori = stripWhitespace(eoriNumber)
+          val eori = formatGBEori(eoriNumber)
           if (request.eoriNumber.equalsIgnoreCase(eori)) {
             Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           } else {
@@ -93,6 +93,5 @@ class EoriNumberController @Inject()(
     }
   }
 
-  protected def stripWhitespace(str: String): String =
-    str.replaceAll("\\s", "")
+  protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").replace("\b[a-z]","\b[A-Z]")
 }
