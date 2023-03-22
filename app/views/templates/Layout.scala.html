@@ -41,7 +41,6 @@
         isFullWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-<link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css"/>
 
 @phaseBannerContent = {
     @messages("feedback.before")
@@ -65,6 +64,7 @@
         signOutUrl = Some(controllers.routes.LogoutController.logout.url),
         timeoutUrl = Some(controllers.routes.LogoutController.logoutNoSurvey.url)
     ))
+    <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css"/>
 }
 
 @mainContent = {
