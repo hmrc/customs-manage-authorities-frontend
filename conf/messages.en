@@ -12,6 +12,7 @@ site.confirm = Confirm
 site.saveAndContinue = Continue
 site.govuk = GOV.UK
 site.change = Change
+site.error = Error
 
 # Page Not Found Error
 cf.error.not-found.title=Page not found
@@ -120,7 +121,7 @@ manageAuthorities.table.row.edit = Edit
 manageAuthorities.table.row.edit.CdsCashAccount = Edit user {0} from Cash account
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Edit user {0} from Duty Deferment account {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Edit user {0} from Guarantee account
-manageAuthorities.table.row.viewLink = View or change authority for {0}
+manageAuthorities.table.row.viewLink = View or change authority for {0} for
 
 accounts.noAvailableAccounts.heading = {0} already has access to all your accounts
 accounts.noAvailableAccounts.p = To review or edit this user's access, go back to

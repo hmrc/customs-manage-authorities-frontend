@@ -14,17 +14,12 @@
  * limitations under the License.
  *@
 
-@this(govukFieldset: GovukFieldset)
+@this()
 
-@(legend: String, asHeading: Boolean = true, describedBy: Option[String])(content: Html)(implicit messages: Messages)
+@(contentBlock: Html)
 
-@govukFieldset(Fieldset(
-    legend = Some(Legend(
-        content = Text(messages(legend)),
-        classes = if(asHeading) "govuk-fieldset__legend--xl" else "",
-        isPageHeading = asHeading
-    )),
-    describedBy = describedBy,
-    html = content
-))
-
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        @contentBlock
+    </div>
+</div>

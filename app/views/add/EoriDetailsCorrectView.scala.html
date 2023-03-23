@@ -31,7 +31,8 @@
         h1: components.h1,
         button: components.button,
         p: components.p,
-        inset: components.inset
+        inset: components.inset,
+        fieldset: components.fieldset
 )
 
 @(form: Form[_], mode: Mode, call: Call, helper: EoriDetailsCorrectHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -42,21 +43,24 @@
 
         @errorSummary(form.errors)
 
-        @h1("eoriDetails.heading")
-
-        @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-5 govuk-summary-list--wide "))
-
-        @if(helper.companyName.isEmpty){
-                <div class="govuk-inset-text">
-                @p(Html(messages("eoriDetails.noConsent")))
-                @p(Html(messages("eoriDetails.noConsent.2")))
-                </div>
-        }
-        @inputRadio(
-            form = form,
+        @fieldset(
             legend = messages("eoriDetails.heading"),
-            items = EoriDetailsCorrect.options(form)
-        )
+            describedBy = Some("radio-hint")
+        ) {
+            @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-5 govuk-summary-list--wide "))
+
+            @if(helper.companyName.isEmpty){
+                <div class="govuk-inset-text">
+                    @p(Html(messages("eoriDetails.noConsent")))
+                    @p(Html(messages("eoriDetails.noConsent.2")))
+                </div>
+            }
+            @inputRadio(
+                form = form,
+                legend = messages("eoriDetails.heading"),
+                items = EoriDetailsCorrect.options(form)
+            )
+        }
 
         @button("site.saveAndContinue")
     }

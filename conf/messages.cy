@@ -12,6 +12,7 @@ site.confirm=Cadarnhau
 site.saveAndContinue=Yn eich blaen
 site.govuk=GOV.UK
 site.change=Newid
+site.error = Gwall
 
 # Page Not Found Error
 cf.error.not-found.title=Heb ddod o hyd i’r dudalen
@@ -120,7 +121,7 @@ manageAuthorities.table.row.edit=Golygu
 manageAuthorities.table.row.edit.CdsCashAccount = Golygu defnyddiwr {0} o’r cyfrif arian parod
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Golygu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Golygu defnyddiwr {0} o’r cyfrif gwarant
-manageAuthorities.table.row.viewLink = Gweld neu newid yr awdurdod ar gyfer {0}
+manageAuthorities.table.row.viewLink = Gweld neu newid yr awdurdod ar gyfer {0} gyfer
 
 accounts.noAvailableAccounts.heading = Mae gan {0} fynediad i’ch holl gyfrifon yn barod
 accounts.noAvailableAccounts.p = I adolygu neu olygu mynediad y defnyddiwr hwn, ewch yn ôl i

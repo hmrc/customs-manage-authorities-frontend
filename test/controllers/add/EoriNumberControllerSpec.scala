@@ -119,6 +119,35 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "redirect to the next page when valid eori with lowercase is submitted" in {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberRoute)
+            .withFormUrlEncodedBody(("value", "gb123456789011"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
     "redirect to the next page when GBN EORI is submitted" in {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
@@ -169,6 +198,35 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val request =
           fakeRequest(POST, eoriNumberRoute)
             .withFormUrlEncodedBody(("value", "GB 12 34 56 78 90 11"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "redirect to the next page when valid eori with whitespace and lowercase is submitted" in {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberRoute)
+            .withFormUrlEncodedBody(("value", "gb 12 34 56 78 90 11"))
 
         val result = route(application, request).value
 
