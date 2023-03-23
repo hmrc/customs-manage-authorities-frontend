@@ -15,8 +15,8 @@ object AppDependencies {
 
   val test = Seq(
     "uk.gov.hmrc" %% "bootstrap-test-play-28" % "5.24.0" % Test,
-    "org.scalatest" %% "scalatest" % "3.1.0" % Test,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
+    "org.scalatest" %% "scalatest" % "3.0.8" % Test,
+    "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % Test,
     "org.pegdown" % "pegdown" % "1.6.0" % Test,
     "org.jsoup" % "jsoup" % "1.12.1" % Test,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % Test,
