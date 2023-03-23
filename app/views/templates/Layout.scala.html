@@ -21,6 +21,7 @@
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
 @import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLanguageSelectHelper
 @import views.html.helper.CSPNonce
+@import views.html.components.fullWidthMainContent
 
 @this(
     appConfig: FrontendAppConfig,
@@ -29,7 +30,8 @@
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
-    twoThirdsMainContent: TwoThirdsMainContent
+    twoThirdsMainContent: TwoThirdsMainContent,
+    fullWidthMainContent: fullWidthMainContent
 )
 
 @(pageTitle: Option[String] = None,
@@ -87,5 +89,5 @@
     phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
     isWelshTranslationAvailable = welshToggle,
     accessibilityStatementUrl = Some("/accessibility-statement/customs-financials"),
-    mainContentLayout = if(isFullWidth) None else Some(twoThirdsMainContent(_))
+    mainContentLayout = Some(if(isFullWidth) fullWidthMainContent(_) else twoThirdsMainContent(_))
 )(mainContent)
