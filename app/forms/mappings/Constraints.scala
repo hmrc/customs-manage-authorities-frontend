@@ -144,14 +144,14 @@ trait Constraints {
 
   protected def checkEORI(invalidFormatErrorKey: String): Constraint[String] =
     Constraint {
-      case str if stripWhitespace(str).matches(gbnEoriRegex) =>
+      case str if formatEORINumber(str).matches(gbnEoriRegex) =>
         Valid
-      case str if stripWhitespace(str).matches(eoriRegex) =>
+      case str if formatEORINumber(str).matches(eoriRegex) =>
         Valid
       case _ =>
         Invalid(invalidFormatErrorKey,eoriRegex)
     }
 
-  protected def stripWhitespace(str: String): String =
-    str.replaceAll("\\s", "")
+  protected def formatEORINumber(str: String): String =
+    str.replaceAll("\\s", "").toUpperCase
 }

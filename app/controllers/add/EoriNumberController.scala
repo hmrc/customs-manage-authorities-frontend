@@ -93,5 +93,5 @@ class EoriNumberController @Inject()(
     }
   }
 
-  protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").replace("\b[a-z]","\b[A-Z]")
+  protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").toUpperCase
 }
