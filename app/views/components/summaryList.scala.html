@@ -31,10 +31,7 @@
 @row.value.content.asHtml
 </dd>
 @row.secondValue.fold{
-@if(anyRowHasActions) {
-@* Add dummy column to extend border *@
-<span class="govuk-summary-list__actions"></span>
-}
+
 } { sv =>
 <dd class="@toClasses("govuk-summary-list__value", sv.classes)">
 @sv.content.asHtml
