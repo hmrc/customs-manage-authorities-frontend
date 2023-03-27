@@ -14,6 +14,8 @@
  * limitations under the License.
  *@
 
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+
 @this(govukDateInput: GovukDateInput)
 
 @(
@@ -24,38 +26,43 @@
   hintText: Option[String] = None,
   legendAsPageHeading: Boolean = true)(implicit messages: Messages)
 
-@govukDateInput(DateInput(
-    fieldset = Some(Fieldset(
-        legend = Some(
-            Legend(
-                content = Text(messages(legendContent)),
-                isPageHeading = legendAsPageHeading,
-                classes = legendClasses
+@defining{
+    @(if(form(id).error.isDefined) "govuk-input--error" else "")} { errorClass =>
+    @govukDateInput(DateInput(
+        fieldset = Some(Fieldset(
+            legend = Some(
+                Legend(
+                    content = Text(messages(legendContent)),
+                    isPageHeading = legendAsPageHeading,
+                    classes = legendClasses
+                )
             )
-        )
-    )),
-    id = id,
-    items = Seq(
-        InputItem(
-            classes = "govuk-input--width-2",
-            name  =  s"$id.day",
-            label = Some(messages("date.day")),
-            value = form(s"$id.day").value,
-            id    = s"date-$id.day"
+        )),
+        id = id,
+        items = Seq(
+            InputItem(
+                id = s"$id.day",
+                classes = "govuk-input--width-2" + errorClass,
+                name =  s"$id.day",
+                label = Some(messages("date.day")),
+                value = form(s"$id.day").value,
+            ),
+            InputItem(
+                id = s"$id.month",
+                classes = "govuk-input--width-2" + errorClass,
+                name = s"$id.month",
+                label = Some(messages("date.month")),
+                value = form(s"$id.month").value
+            ),
+            InputItem(
+                id = s"$id.year",
+                classes = "govuk-input--width-4" + errorClass,
+                name = s"$id.year",
+                label = Some(messages("date.year")),
+                value = form(s"$id.year").value
+            )
         ),
-        InputItem(
-            classes = "govuk-input--width-2",
-            name = s"$id.month",
-            label = Some(messages("date.month")),
-            value = form(s"$id.month").value
-        ),
-        InputItem(
-            classes = "govuk-input--width-4",
-            name = s"$id.year",
-            label = Some(messages("date.year")),
-            value = form(s"$id.year").value
-        )
-    ),
-    hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
-    errorMessage = form(id).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
-))
+        hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
+        errorMessage = form(id).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+    ))
+}
