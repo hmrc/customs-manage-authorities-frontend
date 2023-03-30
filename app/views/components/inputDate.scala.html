@@ -77,3 +77,4 @@
         hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
         errorMessage = form(id).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ))
+    
