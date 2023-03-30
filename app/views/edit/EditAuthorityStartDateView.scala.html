@@ -31,7 +31,7 @@
 
     @formHelper(action = controllers.edit.routes.EditAuthorityStartDateController.onSubmit(accountId, authorityId), 'autoComplete -> "off") {
 
-        @errorSummary(form.errors, Some("date-value.day"))
+        @errorSummary(form.errors)
 
         @inputDate(form, "authorityStartDate.heading")
 

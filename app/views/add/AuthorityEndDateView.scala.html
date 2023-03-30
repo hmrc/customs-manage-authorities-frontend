@@ -32,7 +32,7 @@ button: components.button
 
     @formHelper(action = controllers.add.routes.AuthorityEndDateController.onSubmit(mode), 'autoComplete -> "off") {
 
-        @errorSummary(form.errors, Some("date-value.day"))
+        @errorSummary(form.errors, None)
 
         @inputDate(
             form,

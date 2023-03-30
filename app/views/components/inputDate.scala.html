@@ -26,8 +26,22 @@
   hintText: Option[String] = None,
   legendAsPageHeading: Boolean = true)(implicit messages: Messages)
 
-@defining{
-    @(if(form(id).error.isDefined) "govuk-input--error" else "")} { errorClass =>
+@dayError = @{
+    if(form(s"$id-day").value.contains("")){ "govuk-input--error"} else {""}
+}
+
+@monthError = @{
+    if(form(s"$id-month").value.contains("")){ "govuk-input--error"} else {""}
+}
+
+@yearError = @{
+    if(form(s"$id-year").value.contains("")){ "govuk-input--error"} else {""}
+}
+
+@allError = @{
+    if(!dayError && !monthError && !yearError && form(s"$id").hasErrors) {"govuk-input--error"} else {""}
+}
+
     @govukDateInput(DateInput(
         fieldset = Some(Fieldset(
             legend = Some(
@@ -41,28 +55,27 @@
         id = id,
         items = Seq(
             InputItem(
-                id = s"$id.day",
-                classes = "govuk-input--width-2" + errorClass,
-                name =  s"$id.day",
+                id = s"$id-day",
+                classes = s"govuk-input--width-2 $dayError $allError",
+                name =  s"$id-day",
                 label = Some(messages("date.day")),
-                value = form(s"$id.day").value,
+                value = form(s"$id-day").value,
             ),
             InputItem(
-                id = s"$id.month",
-                classes = "govuk-input--width-2" + errorClass,
-                name = s"$id.month",
+                id = s"$id-month",
+                classes = s"govuk-input--width-2 $monthError $allError",
+                name = s"$id-month",
                 label = Some(messages("date.month")),
-                value = form(s"$id.month").value
+                value = form(s"$id-month").value
             ),
             InputItem(
-                id = s"$id.year",
-                classes = "govuk-input--width-4" + errorClass,
-                name = s"$id.year",
+                id = s"$id-year",
+                classes = s"govuk-input--width-4 $yearError $allError",
+                name = s"$id-year",
                 label = Some(messages("date.year")),
-                value = form(s"$id.year").value
+                value = form(s"$id-year").value
             )
         ),
         hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
         errorMessage = form(id).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ))
-}
