@@ -24,6 +24,7 @@
   hintText: Option[String] = None,
   legendAsPageHeading: Boolean = true)(implicit messages: Messages)
 
+  
 @dayError = @{
     if(form(s"$id-day").value.contains("")){ "govuk-input--error"} else {""}
 }
@@ -77,4 +78,4 @@
         hint = hintText.map(hint => Hint(content = Text(messages(hint)))),
         errorMessage = form(id).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
     ))
-    
+
