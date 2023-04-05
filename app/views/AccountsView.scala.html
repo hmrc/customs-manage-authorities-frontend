@@ -42,50 +42,44 @@
 
         @errorSummary(form.errors)
 
-        @fieldset(
-            legend = AccountsFormProvider.accountsHeadingKey(accounts),
-            describedBy = if (form.hasErrors || form.hasGlobalErrors) Some("checkbox-error") else Some("") 
-        ){
+        @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
 
-                @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+            <div class="govuk-inset-text">
+                @accounts.alreadyAuthorisedAccounts.map { account =>
+                    <p>@{
+                        messages("accounts.authorised", accounts.enteredEori)
+                    } @{
+                        s"${formattedAccountType(account)}."
+                    }</p>
+                }
+                @accounts.closedAccounts.map { account =>
+                    <p>@{
+                        messages("accounts.closed", formattedAccountType(account))
+                    }</p>
+                }
+                @accounts.pendingAccounts.map { account =>
+                <p>@{
+                    s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
+                }</p>
+                }
+            </div>
+            @checkboxes(
+                form = form,
+                legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
+                items = AccountsFormProvider.options(form, accounts.availableAccounts),
+                hint = "accounts.hint",
+                classes = "govuk-fieldset__legend--xl govuk-visually-hidden")
 
-                    <div class="govuk-inset-text">
-                        @accounts.alreadyAuthorisedAccounts.map { account =>
-                            <p>@{
-                                messages("accounts.authorised", accounts.enteredEori)
-                            } @{
-                                s"${formattedAccountType(account)}."
-                            }</p>
-                        }
-                        @accounts.closedAccounts.map { account =>
-                            <p>@{
-                                messages("accounts.closed", formattedAccountType(account))
-                            }</p>
-                        }
-                        @accounts.pendingAccounts.map { account =>
-                        <p>@{
-                            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
-                        }</p>
-                        }
-                    </div>
-                    @checkboxes(
-                        form = form,
-                        legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
-                        items = AccountsFormProvider.options(form, accounts.availableAccounts),
-                        hint = "accounts.hint",
-                        classes = "govuk-fieldset__legend--xl govuk-visually-hidden")
-
-            } else {
-                @checkboxes(
-                    form = form,
-                    legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
-                    items = AccountsFormProvider.options(form, accounts.availableAccounts),
-                    hint = "accounts.hint",
-                    classes = "govuk-fieldset__legend--xl govuk-!-margin-bottom-7")
-            }
-
+        } else {
+            @checkboxes(
+                form = form,
+                legendText = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
+                items = AccountsFormProvider.options(form, accounts.availableAccounts),
+                hint = "accounts.hint",
+                classes = "govuk-fieldset__legend--xl govuk-!-margin-bottom-7")
         }
 
         @button("site.saveAndContinue")
     }
 }
+
