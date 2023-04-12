@@ -20,7 +20,7 @@ import base.SpecBase
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount}
 import models.requests.DataRequest
 import models.{AuthorisedAccounts, CompanyDetails, InternalId, UserAnswers}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar

@@ -22,7 +22,7 @@ import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import models.{AuthorisedAccounts, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, EoriNumberPage}

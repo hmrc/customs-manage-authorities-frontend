@@ -20,7 +20,8 @@ import base.SpecBase
 import connectors.CustomsDataStoreConnector
 import models.{AuthorityEnd, AuthorityStart}
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
-import org.mockito.Matchers.{any, anyString}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit._

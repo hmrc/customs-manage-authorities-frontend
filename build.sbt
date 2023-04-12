@@ -2,10 +2,11 @@ import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
+import uk.gov.hmrc.DefaultBuildSettings.targetJvm
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
-val silencerVersion = "1.6.0"
+val silencerVersion = "1.7.12"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
@@ -17,7 +18,8 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0)
   .settings(useSuperShell in ThisBuild := false)
   .settings(
-    scalaVersion := "2.12.10",
+    scalaVersion := "2.13.8",
+    targetJvm := "jvm-11",
     name := appName,
     RoutesKeys.routesImport += "models._",
     TwirlKeys.templateImports ++= Seq(
@@ -65,7 +67,8 @@ lazy val root = (project in file("."))
     scalacOptions += "-P:silencer:globalFilters=possible missing interpolator: detected interpolated identifier `\\$date`",
     libraryDependencies ++= Seq(
       compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
-      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+      "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full,
+      "com.vladsch.flexmark" % "flexmark-all" % "0.62.2"
     )
   )
 

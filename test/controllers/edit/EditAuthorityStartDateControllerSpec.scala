@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.AuthorityStartDateFormProvider
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit.EditAuthorityStartDatePage

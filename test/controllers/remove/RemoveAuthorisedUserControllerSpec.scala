@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.AuthorisedUserFormProvider
 import models.UserAnswers
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage

@@ -19,7 +19,8 @@ package controllers.remove
 import base.SpecBase
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import models.domain._
-import org.mockito.Matchers.{any, anyString}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage

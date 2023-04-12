@@ -28,7 +28,8 @@ import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuth
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
-import org.mockito.Matchers.{any, anyString}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
