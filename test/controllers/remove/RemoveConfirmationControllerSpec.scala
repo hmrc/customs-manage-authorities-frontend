@@ -19,7 +19,7 @@ package controllers.remove
 import base.SpecBase
 import config.FrontendAppConfig
 import models.domain._
-import org.mockito.Matchers.any
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.{ConfirmationDetails, ConfirmationPage}
