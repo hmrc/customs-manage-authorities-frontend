@@ -23,7 +23,7 @@ import java.time.LocalDate
 trait Constraints {
   lazy val textFieldRegex: String = """^[^(){}$<>\[\]\\\/]*$"""
   lazy val gbnEoriRegex: String = "GBN\\d{11}"
-  lazy val eoriRegex: String = "GB\\d{12}"
+  lazy val eoriRegex: String = "([Gg][Bb])\\\\d{12}"
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
