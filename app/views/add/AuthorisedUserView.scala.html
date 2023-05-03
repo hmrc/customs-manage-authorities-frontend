@@ -64,11 +64,10 @@
         @p(Html(messages("checkYourAnswers.p")))
         <div class="govuk-button-group">
             @button("checkYourAnswers.confirm.button")
-            @p(link(
-                    location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, 
-                    linkMessage = "checkYourAnswers.cancel",
-                    ariaLabel = Some(messages("checkYourAnswers.cancelScreenReader"))
-                )
+            @link(
+                location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, 
+                linkMessage = "checkYourAnswers.cancel",
+                ariaLabel = Some(messages("checkYourAnswers.cancelScreenReader"))
             )
         </div>
     }
