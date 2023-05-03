@@ -216,7 +216,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
     "return Invalid when an incorrect EORI format is provided" in {
       val result = checkEORI("error.invalid2")("XI453")
-      result mustEqual Invalid("error.invalid2", """([Gg][Bb])\d{12}""")
+      result mustEqual Invalid("error.invalid2", """([Gg][Bb])\\d{12}""")
     }
 
     "return Valid for an input that does not match the expression" in {
