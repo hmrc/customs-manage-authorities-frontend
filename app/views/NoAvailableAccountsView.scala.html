@@ -20,7 +20,7 @@
 
 @this(
         layout: Layout,
-        h1: components.h1,
+        h2: components.h2,
         p: components.p,
         linkP: components.link_p,
         link: components.link
@@ -30,7 +30,7 @@
 
 @layout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())), backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
 
- @h1(id=Some("accounts.heading"), msg = messages("accounts.noAvailableAccounts.heading", enteredEori))
+ @h2(id=Some("accounts.heading"), msg = messages("accounts.noAvailableAccounts.heading", enteredEori))
 
  @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "accounts.noAvailableAccounts.link", pMessageKey = "accounts.noAvailableAccounts.p")
 }
