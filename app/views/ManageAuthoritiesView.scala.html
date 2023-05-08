@@ -54,7 +54,7 @@
         @h2("manageAuthorities.accounts.authorised")
         <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
             @for((id, account) <- viewModel.sortedAccounts) {
-                @ManageAuthoritiesTable(id, account)
+                @ManageAuthoritiesTable(id, account, viewModel.niIndicator(account.accountNumber))
             }
         </div>
     }

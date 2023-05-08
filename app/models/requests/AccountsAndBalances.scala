@@ -75,13 +75,13 @@ case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvai
 case class ReturnParameters(paramName: String, paramValue: String)
 
 case class DutyDefermentAccount(account: AccountWithStatus, limits: Option[Limits], balances: Option[DefermentBalances]) {
-  def toDomain: domain.DutyDefermentAccount = {
+  def toDomain(isNiAccount: Boolean = false): domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
       limits.map(limit => BigDecimal(limit.periodGuaranteeLimit)),
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
       balances.map(balance => BigDecimal(balance.periodAvailableGuaranteeBalance)),
       balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance)))
-    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance)
+    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance, isNiAccount)
   }
 }
 
@@ -104,6 +104,7 @@ case class CdsCashAccount(account: AccountWithStatus, availableAccountBalance: O
 
 case class AccountResponseDetail(EORINo: Option[String],
                                  referenceDate: Option[String],
+                                 isNiAccount: Option[Boolean] = Some(false),
                                  dutyDefermentAccount: Option[Seq[DutyDefermentAccount]],
                                  generalGuaranteeAccount: Option[Seq[GeneralGuaranteeAccount]],
                                  cdsCashAccount: Option[Seq[CdsCashAccount]]) {
@@ -118,7 +119,7 @@ case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: Acc
   def toCdsAccounts(eori: String): domain.CDSAccounts = {
     val details = this.accountsAndBalancesResponse.responseDetail
     val accounts: List[CDSAccount] = List(
-      details.dutyDefermentAccount.map(_.map(_.toDomain)),
+      details.dutyDefermentAccount.map(_.map(_.toDomain(isNiAccount = details.isNiAccount.getOrElse(false)))),
       details.generalGuaranteeAccount.map(_.map(_.toDomain)),
       details.cdsCashAccount.map(_.map(_.toDomain))
     ).flatten.flatten

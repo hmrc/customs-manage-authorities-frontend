@@ -31,7 +31,7 @@ class AuthorisedAccountsService @Inject()(
 
   def getAuthorisedAccounts(enteredEori: EORI)(implicit request: DataRequest[_], hc: HeaderCarrier): Future[AuthorisedAccounts] = for {
     authorities <- authoritiesCache.retrieveAuthorities(request.internalId)
-    accounts <- accountsService.retrieveAccounts(request.internalId, request.eoriNumber)
+    accounts <- accountsService.retrieveAccounts(request.internalId, Seq(request.eoriNumber))
   } yield {
     val availableAccountNumbers = authorities.authorisedWithEori(enteredEori).map(_.accountNumber)
     AuthorisedAccounts(

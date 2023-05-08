@@ -95,6 +95,7 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount=Cyfrif gwaran
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cyfrif arian parod: {0} (ar gau)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Cyfrif gohirio tollau: {0} (ar gau)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = Cyfrif gwarant cyffredinol: {0} (ar gau)
+manageAuthorities.table.heading.account.Northern-Ireland = (Gogledd Iwerddon)
 
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cyfrif arian parod: {0} (wedi’i ohirio)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Cyfrif gohirio tollau: {0} (wedi’i ohirio)
