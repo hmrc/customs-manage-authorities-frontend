@@ -48,10 +48,14 @@ object AccountsFormProvider {
   def options(form: Form[_], accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] = accounts.zipWithIndex.map {
     case(account, index) =>
       val message = account match {
-        case DutyDefermentAccount(_, _, status, _) if status == AccountStatusPending =>
+        case DutyDefermentAccount(_, _, status, _, _) if status == AccountStatusPending =>
           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
         case _ =>
-          s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+          if (account.isNIAccount) {
+            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.ni")}"
+          } else {
+            s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+          }
       }
 
       CheckboxItem(
@@ -62,5 +66,4 @@ object AccountsFormProvider {
         checked = form.data.values.contains(s"account_${index.toString}")
       )
   }
-
 }

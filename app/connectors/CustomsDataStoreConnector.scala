@@ -19,6 +19,9 @@ package connectors
 import config.FrontendAppConfig
 import javax.inject.Inject
 import models.CompanyInformation
+import play.api.Logger
+import play.api.libs.json.{Json, OFormat}
+import models.domain.XiEoriAddressInformation
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions}
 import scala.concurrent.{ExecutionContext, Future}
@@ -27,6 +30,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
                                           httpClient: HttpClient
                                           )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
+  val log = Logger(this.getClass)
 
   def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/company-information"
@@ -34,9 +38,27 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       response.consent match {
         case "1" => Some(response.name)
         case _ => None
-      }
-    }).recover { case e =>
-        None
-      }
+      }}).recover { case e =>
+      log.error(s"Call to data stored failed for getCompanyName exception=$e")
+      None
+    }
+  }
+
+  def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/xieori-information"
+    httpClient.GET[XiEoriInformationReponse](dataStoreEndpoint).map(
+      response => Some(response.xiEori))
+    }.recover { case e =>
+    log.error(s"Call to data stored failed for getXiEori. exception=$e")
+    None
   }
 }
+
+case class XiEoriInformationReponse(xiEori: String, consent: String, address: XiEoriAddressInformation)
+
+object XiEoriInformationReponse {
+  implicit val format: OFormat[XiEoriInformationReponse] = Json.format[XiEoriInformationReponse]
+}
+
+
+

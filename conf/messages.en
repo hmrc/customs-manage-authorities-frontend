@@ -132,12 +132,14 @@ accounts.noAvailableAccounts.link = manage your account authorities
 
 eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
-eoriNumber.hint = An EORI number starts GB or GBN. <br> For example, GB345834921000 or GBN10537914000.
+eoriNumber.hint = EORI starts with GB or XI followed by 12 digits. <br> For example, GB345834921000 or XI345834921000.
 eoriNumber.checkYourAnswersLabel = User EORI number
 eoriNumber.error.required = Enter an EORI number
 eoriNumber.error.format = Enter an EORI number in the correct format
 eoriNumber.error.invalid = Enter an EORI that has been registered with HMRC
 eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI number
+eoriNumber.details.label = Using your Northern Ireland duty deferment account?
+eoriNumber.details.text = if you wish to give authority to a company or person to use your Northern Ireland duty deferement account you need to use their XI EORI number.
 
 
 # Which accounts to add an authority to view
@@ -155,6 +157,7 @@ accounts.type.generalGuarantee = General guarantee
 accounts.authorised = {0} is already authorised to
 accounts.closed = {0} is closed.
 accounts.pending = (pending opening on CDS)
+accounts.ni = (Northern Ireland)
 accounts.hint = Select all that apply.
 
 

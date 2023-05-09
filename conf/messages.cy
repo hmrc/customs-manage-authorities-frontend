@@ -155,6 +155,7 @@ accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
 accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
 accounts.closed = Mae {0} ar gau.
 accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
+accounts.ni = (Gogledd Iwerddon)
 accounts.hint = Dewiswch bob un sy’n berthnasol.
 
 

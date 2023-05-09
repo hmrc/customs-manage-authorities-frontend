@@ -27,18 +27,14 @@ import java.time.temporal.ChronoUnit
 import scala.util.Random
 
 case class AccountsRequestDetail(EORINo: String, accountType: Option[String], accountNumber: Option[String], referenceDate: Option[String])
-
 case class AccountsAndBalancesRequest(requestCommon: AccountsRequestCommon, requestDetail: AccountsRequestDetail)
-
 case class AccountsAndBalancesRequestContainer(accountsAndBalancesRequest: AccountsAndBalancesRequest)
 
 object AccountsAndBalancesRequestContainer {
-
   implicit val accountsRequestCommonFormat: OFormat[AccountsRequestCommon] = Json.format[AccountsRequestCommon]
   implicit val accountsRequestDetailFormat: OFormat[AccountsRequestDetail] = Json.format[AccountsRequestDetail]
   implicit val accountsAndBalancesRequestFormat: OFormat[AccountsAndBalancesRequest] = Json.format[AccountsAndBalancesRequest]
   implicit val accountsAndBalancesRequestContainerFormat: OFormat[AccountsAndBalancesRequestContainer] = Json.format[AccountsAndBalancesRequestContainer]
-
 }
 
 case class AccountsRequestCommon(PID: Option[String], originatingSystem: Option[String], receiptDate: String, acknowledgementReference: String, regime: String)
@@ -65,13 +61,10 @@ case class AccountWithStatus(number: String,
                              `type`: String,
                              owner: String,
                              accountStatus: CDSAccountStatus = AccountStatusOpen,
-                             viewBalanceIsGranted: Boolean = false
-                            )
+                             viewBalanceIsGranted: Boolean = false)
 
 case class Limits(periodGuaranteeLimit: String, periodAccountLimit: String)
-
 case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvailableAccountBalance: String)
-
 case class ReturnParameters(paramName: String, paramValue: String)
 
 case class DutyDefermentAccount(account: AccountWithStatus, limits: Option[Limits], balances: Option[DefermentBalances]) {
@@ -81,7 +74,7 @@ case class DutyDefermentAccount(account: AccountWithStatus, limits: Option[Limit
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
       balances.map(balance => BigDecimal(balance.periodAvailableGuaranteeBalance)),
       balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance)))
-    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance)
+      domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance, true)
   }
 }
 
@@ -91,14 +84,14 @@ case class GeneralGuaranteeAccount(account: AccountWithStatus, guaranteeLimit: O
       case (Some(limit), Some(balance)) => Some(GeneralGuaranteeBalance(BigDecimal(limit), BigDecimal(balance)))
       case _ => None
     }
-    domain.GeneralGuaranteeAccount(account.number, account.owner, account.accountStatus, balance)
+    domain.GeneralGuaranteeAccount(account.number, account.owner, account.accountStatus, balance, true)
   }
 }
 
 case class CdsCashAccount(account: AccountWithStatus, availableAccountBalance: Option[String]) {
   def toDomain: domain.CashAccount = {
     val balance = domain.CDSCashBalance(availableAccountBalance.map(BigDecimal(_)))
-    domain.CashAccount(account.number, account.owner, account.accountStatus, balance)
+    domain.CashAccount(account.number, account.owner, account.accountStatus, balance, true)
   }
 }
 
@@ -111,7 +104,6 @@ case class AccountResponseDetail(EORINo: Option[String],
 }
 
 case class AccountResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[ReturnParameters]])
-
 case class AccountsAndBalancesResponse(responseCommon: Option[AccountResponseCommon], responseDetail: AccountResponseDetail)
 
 case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: AccountsAndBalancesResponse) {
@@ -129,7 +121,6 @@ case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: Acc
 object AccountsAndBalancesResponseContainer {
 
   implicit val returnParametersReads: Reads[ReturnParameters] = Json.reads[ReturnParameters]
-
   implicit val accountWithStatusReads: Reads[AccountWithStatus] = Json.reads[AccountWithStatus]
   implicit val limitsReads: Reads[Limits] = Json.reads[Limits]
   implicit val balancesReads: Reads[DefermentBalances] = Json.reads[DefermentBalances]
@@ -142,5 +133,4 @@ object AccountsAndBalancesResponseContainer {
   implicit val accountResponseCommonReads: Reads[AccountResponseCommon] = Json.reads[AccountResponseCommon]
   implicit val accountsAndBalancesResponseReads: Reads[AccountsAndBalancesResponse] = Json.reads[AccountsAndBalancesResponse]
   implicit val accountsAndBalancesResponseContainerReads: Reads[AccountsAndBalancesResponseContainer] = Json.reads[AccountsAndBalancesResponseContainer]
-
 }
