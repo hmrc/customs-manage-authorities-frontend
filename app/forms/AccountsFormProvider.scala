@@ -51,7 +51,11 @@ object AccountsFormProvider {
         case DutyDefermentAccount(_, _, status, _, _) if status == AccountStatusPending =>
           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
         case _ =>
-          s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+          if (account.isNiAccount) {
+            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.ni")}"
+          } else {
+            s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+          }
       }
 
       CheckboxItem(

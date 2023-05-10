@@ -35,9 +35,7 @@ case class AddAuthorityRequest(
                               )
 
 object AddAuthorityRequest {
-
   implicit val addAuthorityRequestFormat: Format[AddAuthorityRequest] = Json.format[AddAuthorityRequest]
-
 }
 
 case class RevokeAuthorityRequest(
@@ -48,7 +46,6 @@ case class RevokeAuthorityRequest(
                                  )
 
 object RevokeAuthorityRequest {
-
   implicit val revokeAuthorityRequestFormat: OFormat[RevokeAuthorityRequest] = Json.format[RevokeAuthorityRequest]
 }
 

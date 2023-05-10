@@ -139,6 +139,8 @@ eoriNumber.error.required=Nodwch rif EORI
 eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
 eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi eich rhif EORI eich hun
+eoriNumber.details.label = Defnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon?
+eoriNumber.details.text = Os ydych am awdurdodi cwmni neu berson i ddefnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon, mae angen i chi ddefnyddio rhif EORI XI y cwmni neu’r person hwnnw.
 
 
 # Which accounts to add an authority to view
@@ -155,6 +157,7 @@ accounts.type.dutyDeferment=Cyfrif gohirio tollau
 accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
 accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
 accounts.closed = Mae {0} ar gau.
+accounts.ni = (Gogledd Iwerddon)
 accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 accounts.hint = Dewiswch bob un sy’n berthnasol.
 

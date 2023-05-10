@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
+import play.api.Logger
 import models.{CompanyInformation, XiEoriInformationResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions}
@@ -27,6 +28,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
                                           httpClient: HttpClient
                                           )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
+  val log = Logger(this.getClass)
 
   def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/company-information"
@@ -36,6 +38,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
         case _ => None
       }
     }).recover { case e =>
+      log.error(s"Call to data stored failed for getCompanyName exception=$e")
       None
     }
   }
@@ -45,6 +48,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
     httpClient.GET[XiEoriInformationResponse](dataStoreEndpoint).map(
       response => Some(response.xiEori)
     ).recover { case e =>
+      log.error(s"Call to data stored failed for getXiEori exception=$e")
       None
     }
   }

@@ -24,6 +24,7 @@ trait Constraints {
   lazy val textFieldRegex: String = """^[^(){}$<>\[\]\\\/]*$"""
   lazy val gbnEoriRegex: String = "GBN\\d{11}"
   lazy val eoriRegex: String = "GB\\d{12}"
+  lazy val xiEoriRegex: String = "XI\\d{12}"
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint {
@@ -144,12 +145,10 @@ trait Constraints {
 
   protected def checkEORI(invalidFormatErrorKey: String): Constraint[String] =
     Constraint {
-      case str if formatEORINumber(str).matches(gbnEoriRegex) =>
-        Valid
-      case str if formatEORINumber(str).matches(eoriRegex) =>
-        Valid
-      case _ =>
-        Invalid(invalidFormatErrorKey,eoriRegex)
+      case str if formatEORINumber(str).matches(gbnEoriRegex) => Valid
+      case str if formatEORINumber(str).matches(eoriRegex) => Valid
+      case str if formatEORINumber(str).matches(xiEoriRegex) => Valid
+      case _ => Invalid(invalidFormatErrorKey,eoriRegex)
     }
 
   protected def formatEORINumber(str: String): String =
