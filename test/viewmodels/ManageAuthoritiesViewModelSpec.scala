@@ -73,15 +73,20 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
 
     "return correct values for hasAccounts and hasNoAccounts" when {
 
+      val cdsAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
       "there is at least one authority" in {
-        val viewModel = ManageAuthoritiesViewModel(authorities)
+        val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
 
         viewModel.hasAccounts mustBe true
         viewModel.hasNoAccounts mustBe false
       }
 
       "there are no authorities" in {
-        val viewModel = ManageAuthoritiesViewModel(AuthoritiesWithId(Seq.empty))
+        val viewModel = ManageAuthoritiesViewModel(AuthoritiesWithId(Seq.empty), cdsAccounts)
 
         viewModel.hasAccounts mustBe false
         viewModel.hasNoAccounts mustBe true
@@ -90,7 +95,12 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     }
 
     "sort accounts by Cash, Duty deferment and General guarantee, then account number" in {
-      val viewModel = ManageAuthoritiesViewModel(authorities)
+      val cdsAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
 
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
     }
@@ -98,7 +108,12 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     "sort authorities by start date" in {
       import viewmodels.ManageAuthoritiesViewModel.AccountWithAuthoritiesViewModel
 
-      val viewModel = ManageAuthoritiesViewModel(authorities)
+      val cdsAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
 
       viewModel.sortedAccounts.get("a").value.sortedAuthorities.keys.toSeq mustBe Seq("2", "1")
     }
@@ -106,7 +121,12 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     "assign id to authorities based on account type and account number" in {
       import viewmodels.ManageAuthoritiesViewModel.AccountWithAuthoritiesViewModel
 
-      val viewModel = ManageAuthoritiesViewModel(authorities)
+      val cdsAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
 
       viewModel.sortedAccounts.get("a").value.id mustBe "CdsDutyDefermentAccount-1"
       viewModel.sortedAccounts.get("b").value.id mustBe "CdsGeneralGuaranteeAccount-2"

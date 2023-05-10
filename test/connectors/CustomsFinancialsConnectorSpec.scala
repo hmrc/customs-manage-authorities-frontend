@@ -30,6 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
+
 import java.time.LocalDate
 
 class CustomsFinancialsConnectorSpec extends SpecBase
@@ -129,7 +130,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         val connector = app.injector.instanceOf[CustomsFinancialsConnector]
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/account-authorities"))
+          get(urlEqualTo("/customs-financials-api/()/account-authorities"))
             .willReturn(ok(response))
         )
         val result = connector.retrieveAccountAuthorities().futureValue

@@ -18,7 +18,7 @@ package services
 
 import connectors.CustomsFinancialsConnector
 import models.InternalId
-import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
+import models.domain.{AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
 import repositories.AuthoritiesRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,12 +27,25 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
 
-  def retrieveAuthorities(internalId: InternalId)(implicit hc: HeaderCarrier): Future[AuthoritiesWithId] = {
+  def retrieveAuthorities(internalId: InternalId, eoriList: Seq[String]=Seq.empty)(implicit hc: HeaderCarrier): Future[AuthoritiesWithId] = {
+    val authorities = for {
+      a <- Future.sequence(eoriList.map(eachEori=> connector.retrieveAccountAuthorities(eachEori)))
+    } yield {
+      a.flatten
+        .groupBy(_.accountNumber)
+        .map { case (accountNumber, accountsWithSameAccountNumber) =>
+          val accountType = accountsWithSameAccountNumber.head.accountType
+          val accountStatus = accountsWithSameAccountNumber.head.accountStatus
+          val authorities = accountsWithSameAccountNumber.flatMap(_.authorities)
+          AccountWithAuthorities(accountType, accountNumber, accountStatus, authorities)
+        }
+        .toSeq
+    }
     repository.get(internalId.value).flatMap {
       case Some(value) => Future.successful(value)
       case None =>
         for {
-          authorities <- connector.retrieveAccountAuthorities()
+          authorities <- authorities
           authoritiesWithId = AuthoritiesWithId(authorities)
           _ <- repository.set(internalId.value, authoritiesWithId)
         } yield authoritiesWithId
@@ -41,7 +54,7 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, conne
 
   def getAccountAndAuthority(internalId: InternalId, authorityId: String, accountId: String)
                             (implicit hc: HeaderCarrier): Future[Either[AuthoritiesCacheErrorResponse, AccountAndAuthority]] = {
-    retrieveAuthorities(internalId).map { accountsWithAuthorities =>
+    retrieveAuthorities(internalId, Seq("")).map { accountsWithAuthorities =>
       accountsWithAuthorities.authorities.get(accountId).map { account =>
         account.authorities.get(authorityId).map { authority =>
           Right(AccountAndAuthority(account, authority))

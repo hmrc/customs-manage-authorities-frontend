@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import javax.inject.Inject
-import models.CompanyInformation
+import models.{CompanyInformation, XiEoriInformationResponse}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +36,16 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
         case _ => None
       }
     }).recover { case e =>
-        None
-      }
+      None
+    }
+  }
+
+  def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/xieori-information"
+    httpClient.GET[XiEoriInformationResponse](dataStoreEndpoint).map(
+      response => Some(response.xiEori)
+    ).recover { case e =>
+      None
+    }
   }
 }

@@ -27,15 +27,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AccountsCacheService @Inject()(repository: AccountsRepository, connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
 
-  def retrieveAccounts(internalId: InternalId, eori: String)(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
+  def retrieveAccounts(internalId: InternalId, eoriList: Seq[String])(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
     repository.get(internalId.value).flatMap {
       case Some(value) => Future.successful(value)
       case None =>
         for {
-          accounts <- connector.retrieveAccounts(eori)
-          _ <- repository.set(internalId.value, accounts)
-        } yield accounts
+          accounts <- Future.sequence(eoriList.map(eachEori => connector.retrieveAccounts(eachEori)))
+          _ <- repository.set(internalId.value, merge(accounts))
+        } yield merge(accounts)
     }
+  }
+
+  def merge(accounts: Seq[CDSAccounts]): CDSAccounts = {
+    val mergedAccounts = accounts.flatMap(_.accounts).toList
+    CDSAccounts("", mergedAccounts)
   }
 
 }
