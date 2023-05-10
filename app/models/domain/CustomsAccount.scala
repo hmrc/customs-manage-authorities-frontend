@@ -93,12 +93,14 @@ sealed trait CDSAccount {
   val number: String
   val owner: String
   val accountType: String
+  val isNiAccount: Boolean
 }
 
 case class DutyDefermentAccount(number: String,
                                 owner: String,
                                 status: CDSAccountStatus,
-                                balances: DutyDefermentBalance
+                                balances: DutyDefermentBalance,
+                                isNiAccount: Boolean = false
                                ) extends Ordered[DutyDefermentAccount] with CDSAccount {
   override def compare(that: DutyDefermentAccount): Int = number.compareTo(that.number)
   override val accountType: String = "dutyDeferment"
@@ -107,7 +109,8 @@ case class DutyDefermentAccount(number: String,
 case class GeneralGuaranteeAccount(number: String,
                                    owner: String,
                                    status: CDSAccountStatus,
-                                   balances: Option[GeneralGuaranteeBalance]
+                                   balances: Option[GeneralGuaranteeBalance],
+                                   isNiAccount: Boolean = false
                                   ) extends CDSAccount {
   override val accountType: String = "generalGuarantee"
 }
@@ -115,7 +118,8 @@ case class GeneralGuaranteeAccount(number: String,
 case class CashAccount(number: String,
                        owner: String,
                        status: CDSAccountStatus,
-                       balances: CDSCashBalance
+                       balances: CDSCashBalance,
+                       isNiAccount: Boolean = false
                       ) extends CDSAccount {
   override val accountType: String = "cash"
 }
@@ -129,26 +133,26 @@ object CDSAccount {
 
   def formattedAccountType(cdsAccount: CDSAccount)(implicit messages: Messages): String = {
     cdsAccount match {
-      case CashAccount(_, _, _, _) => messages("remove.heading.caption.CdsCashAccount", cdsAccount.number)
-      case DutyDefermentAccount(_, _, _, _) => messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
-      case GeneralGuaranteeAccount(_, _, _, _) => messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
+      case CashAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsCashAccount", cdsAccount.number)
+      case DutyDefermentAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
+      case GeneralGuaranteeAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
     }
   }
 }
 
 case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
-  lazy val (myAccounts, authorizedToView) = accounts.partition(_.owner == eori)
-  lazy val isAgent: Boolean = authorizedToView.nonEmpty
+  lazy val myAccounts = accounts
+  //  lazy val isAgent: Boolean = authorizedToView.nonEmpty
   lazy val closedAccounts: Seq[CDSAccount] = myAccounts.flatMap {
-    case value@GeneralGuaranteeAccount(_, _, status, _) if status == AccountStatusClosed => Some(value)
-    case value@CashAccount(_, _, status, _) if status == AccountStatusClosed => Some(value)
-    case value@DutyDefermentAccount(_, _, status, _) if status == AccountStatusClosed => Some(value)
+    case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
+    case value@CashAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
+    case value@DutyDefermentAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case _ => None
   }
   lazy val pendingAccounts: Seq[CDSAccount] = myAccounts.flatMap {
-    case value@GeneralGuaranteeAccount(_, _, status, _) if status == AccountStatusPending => Some(value)
-    case value@CashAccount(_, _, status, _) if status == AccountStatusPending => Some(value)
-    case value@DutyDefermentAccount(_, _, status, _) if status == AccountStatusPending => Some(value)
+    case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
+    case value@CashAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
+    case value@DutyDefermentAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
     case _ => None
   }
 

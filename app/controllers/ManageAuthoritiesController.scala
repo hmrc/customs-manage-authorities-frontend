@@ -17,7 +17,10 @@
 package controllers
 
 import config.FrontendAppConfig
+import connectors.CustomsDataStoreConnector
 import controllers.actions._
+import models.domain.{AuthoritiesWithId, CDSAccounts, EORI}
+import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.i18n._
 import play.api.mvc._
@@ -36,6 +39,7 @@ class ManageAuthoritiesController @Inject()(
                                              identify: IdentifierAction,
                                              service: AuthoritiesCacheService,
                                              accountsCacheService: AccountsCacheService,
+                                             dataStoreConnector: CustomsDataStoreConnector,
                                              noAccountsView: NoAccountsView,
                                              val controllerComponents: MessagesControllerComponents,
                                              view: ManageAuthoritiesView,
@@ -46,18 +50,15 @@ class ManageAuthoritiesController @Inject()(
   def onPageLoad: Action[AnyContent] = identify.async {
     implicit request =>
       val response = for {
-        accounts <- accountsCacheService.retrieveAccounts(request.internalId, request.eoriNumber)
-        authorities <- if (accounts.openAccounts.nonEmpty || accounts.closedAccounts.nonEmpty) {
-          service.retrieveAuthorities(request.internalId).map(Some(_))
-        } else {
-          Future.successful(None)
-        }
-      } yield authorities
+        xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
+        accounts <- getAllAccounts(request.eoriNumber, xiEori)
+        authorities <- getAllAuthorities(request.eoriNumber, xiEori, accounts)
+      } yield (authorities, accounts)
 
       response.map {
-        case Some(authorities) =>
-          Ok(view(ManageAuthoritiesViewModel(authorities)))
-        case None =>
+        case (Some(authorities), accounts) =>
+          Ok(view(ManageAuthoritiesViewModel(authorities, accounts)))
+        case (None, _) =>
           Ok(noAccountsView())
       }.recover {
         case  UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error")=>
@@ -67,6 +68,23 @@ class ManageAuthoritiesController @Inject()(
           logger.warn(s"[FetchAccountAuthorities API] Failed with error: ${e.getMessage}")
           Redirect(routes.ManageAuthoritiesController.unavailable)
       }
+  }
+
+  private def getAllAccounts(eori: EORI, xiEori: Option[String])(implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
+    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+    for {
+      accounts <- accountsCacheService.retrieveAccounts(request.internalId, eoriList)
+    } yield accounts
+  }
+
+  private def getAllAuthorities(eori: EORI, xiEori: Option[String], accounts: CDSAccounts)
+                               (implicit request: IdentifierRequest[AnyContent]): Future[Option[AuthoritiesWithId]] = {
+    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+    for {
+      authorities <- if (accounts.openAccounts.nonEmpty || accounts.closedAccounts.nonEmpty) {
+        service.retrieveAuthorities(request.internalId, eoriList).map(Some(_))
+      } else { Future.successful(None) }
+    } yield authorities
   }
 
   def unavailable(): Action[AnyContent] = identify.async {
@@ -79,3 +97,4 @@ class ManageAuthoritiesController @Inject()(
       Future.successful(Ok(invalidAuthorityView()))
   }
 }
+case object TimeoutResponse extends Exception

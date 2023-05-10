@@ -18,7 +18,7 @@
 @import viewmodels.ManageAuthoritiesViewModel._
 @import models.domain.AccountStatusSuspended
 
-@(accountId: String, account: AccountWithAuthoritiesWithId)(implicit messages: Messages)
+@(accountId: String, account: AccountWithAuthoritiesWithId, isNiAccount: Boolean)(implicit messages: Messages)
 
 <div id="@account.id" class="account-with-authorities">
     <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
@@ -35,7 +35,8 @@
                 }
                 case None => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
             }
-        }
+            }
+            @if(isNiAccount) { @messages("manageAuthorities.table.heading.account.Northern-Ireland") }
         </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">

@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
+import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, StandingAuthority}
 import play.api.i18n.Messages
 import utils.DateUtils
 import viewmodels.ManageAuthoritiesViewModel.accountWithAuthoritiesOrdering
@@ -25,12 +25,16 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import scala.collection.immutable.ListMap
 
-case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId) {
+
+case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId, accounts: CDSAccounts) {
 
 
   def hasAccounts = authorities.accounts.nonEmpty
   def hasNoAccounts = authorities.accounts.isEmpty
   def sortedAccounts = ListMap(authorities.authorities.toSeq.sortBy(_._2):_*)
+  def niIndicator(acc: String) = accounts.accounts.filter(_.number == acc).map(_.isNiAccount).head
+  //def apply(authorities: AuthoritiesWithId, accounts: CDSAccounts): ManageAuthoritiesViewModel
+
 }
 
 object ManageAuthoritiesViewModel extends DateUtils {

@@ -21,41 +21,42 @@
 
 
 @this(
-    layout: Layout,
-    formHelper: FormWithCSRF,
-    errorSummary: components.errorSummary,
-    button: components.button,
-    inputText: components.inputText,
-    h1: components.h1,
-    h2: components.h2,
-    inset: components.inset,
-    p: components.p
+layout: Layout,
+formHelper: FormWithCSRF,
+errorSummary: components.errorSummary,
+button: components.button,
+inputText: components.inputText,
+h1: components.h1,
+h2: components.h2,
+inset: components.inset,
+p: components.p
 )
 
 @(viewModel: ManageAuthoritiesViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())), backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), isFullWidth = viewModel.hasAccounts) {
 
-    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
+@h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
-    @if(viewModel.hasNoAccounts) {
-        @p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
-        classes = "govuk-body govuk-!-margin-bottom-6")
+@if(viewModel.hasNoAccounts) {
+@p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
+classes = "govuk-body govuk-!-margin-bottom-6")
 
-        @inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
-        classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
+@inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
+classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
+}
+
+<div class="govuk-form-group">
+    @button(msg = "manageAuthorities.addAuthority", href =
+    Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
+</div>
+
+@if(viewModel.hasAccounts) {
+@h2("manageAuthorities.accounts.authorised")
+<div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
+    @for((id, account) <- viewModel.sortedAccounts) {
+    @ManageAuthoritiesTable(id, account, viewModel.niIndicator(account.accountNumber))
     }
-
-    <div class="govuk-form-group">
-        @button(msg = "manageAuthorities.addAuthority", href = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
-    </div>
-
-    @if(viewModel.hasAccounts) {
-        @h2("manageAuthorities.accounts.authorised")
-        <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
-            @for((id, account) <- viewModel.sortedAccounts) {
-                @ManageAuthoritiesTable(id, account)
-            }
-        </div>
-    }
+</div>
+}
 }

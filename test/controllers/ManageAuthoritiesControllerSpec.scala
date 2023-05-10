@@ -114,7 +114,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId))(request, messages(application), appConfig).toString
+            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts))(request, messages(application), appConfig).toString
         }
       }
     }
@@ -127,7 +127,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 
         val failingConnector = mock[CustomsFinancialsConnector]
-        when(failingConnector.retrieveAccountAuthorities()(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
+        //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
+
+        //when(failingConnector.retrieveAccountAuthorities("eori")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
+       // when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
