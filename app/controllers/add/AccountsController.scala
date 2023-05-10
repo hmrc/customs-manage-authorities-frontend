@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.AccountsFormProvider
 import models.domain.CDSAccount
 import models.requests.DataRequest
-import models.{EoriDetailsCorrect, Mode, NormalMode}
+import models.{AuthorisedAccounts, EoriDetailsCorrect, Mode, NormalMode}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
@@ -32,6 +32,7 @@ import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccountsController @Inject()(
@@ -58,11 +59,23 @@ class AccountsController @Inject()(
         case Some(enteredEori) =>
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).map { authorisedAccounts =>
             if (authorisedAccounts.availableAccounts.nonEmpty) {
-              Ok(view(
-                populateForm(authorisedAccounts.availableAccounts),
-                authorisedAccounts,
-                mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
-              )
+
+              if(enteredEori.eori.contains("GB")) {
+                val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
+                  authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
+
+                Ok(view(populateForm(authorisedAccounts.availableAccounts), accounts, mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
+                )
+              } else {
+                val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
+                  authorisedAccounts.availableAccounts.filter(x => x.isNiAccount))
+
+                Ok(view(populateForm(authorisedAccounts.availableAccounts), accounts, mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
+                )
+              }
+
             } else {
               Ok(noAvailableAccounts(authorisedAccounts.enteredEori))
             }
@@ -71,6 +84,11 @@ class AccountsController @Inject()(
           }
       }
   }
+
+  def getAuthorisedAccountsList(accounts: AuthorisedAccounts,
+    cdsAcc: Seq[CDSAccount]): AuthorisedAccounts = AuthorisedAccounts(
+    accounts.alreadyAuthorisedAccounts, cdsAcc,
+    accounts.closedAccounts, accounts.pendingAccounts, accounts.enteredEori)
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
