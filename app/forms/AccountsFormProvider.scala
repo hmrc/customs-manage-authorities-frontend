@@ -51,7 +51,7 @@ object AccountsFormProvider {
         case DutyDefermentAccount(_, _, status, _, _) if status == AccountStatusPending =>
           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
         case _ =>
-          if (account.isNiAccount && account.) {
+          if (account.isNiAccount) {
             s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.ni")}"
           } else {
             s"${messages("accounts.type." + account.accountType)}: ${account.number}"
