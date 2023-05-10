@@ -142,7 +142,6 @@ object CDSAccount {
 
 case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   lazy val myAccounts = accounts
-  //  lazy val isAgent: Boolean = authorizedToView.nonEmpty
   lazy val closedAccounts: Seq[CDSAccount] = myAccounts.flatMap {
     case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case value@CashAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
@@ -157,7 +156,6 @@ case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   }
 
   lazy val openAccounts: Seq[CDSAccount] = myAccounts.diff(closedAccounts).diff(pendingAccounts)
-
   def alreadyAuthorised(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.filter(accountNumbers contains _.number)
   def canAuthoriseAccounts(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.diff(alreadyAuthorised(accountNumbers))
 }
