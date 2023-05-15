@@ -122,7 +122,7 @@ case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: Acc
       details.dutyDefermentAccount.map(_.map(_.toDomain(isNiAccount = details.isNiAccount.getOrElse(false)))),
       details.generalGuaranteeAccount.map(_.map(_.toDomain)),
       details.cdsCashAccount.map(_.map(_.toDomain))
-    ).flatten.flatten
+    ).flatten.flatten.filter(_.owner == eori)
     domain.CDSAccounts(eori, accounts)
   }
 }

@@ -17,7 +17,7 @@
 package services
 
 import models.AuthorisedAccounts
-import models.domain.EORI
+import models.domain.{CDSAccount, EORI}
 import models.requests.DataRequest
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,10 +37,15 @@ class AuthorisedAccountsService @Inject()(
     AuthorisedAccounts(
       accounts.alreadyAuthorised(availableAccountNumbers),
       accounts.canAuthoriseAccounts(availableAccountNumbers),
-      accounts.closedAccounts,
-      accounts.pendingAccounts,
+      filterAccounts(enteredEori,accounts.closedAccounts),
+      filterAccounts(enteredEori,accounts.pendingAccounts),
       enteredEori
     )
   }
+
+  def filterAccounts(enteredEori: EORI, accounts: Seq[CDSAccount]): Seq[CDSAccount] =
+    if(enteredEori.startsWith("GB")) {
+      accounts.filter(!_.isNiAccount)
+    } else { accounts.filter(_.isNiAccount)}
 
 }

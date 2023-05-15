@@ -143,23 +143,22 @@ class CustomsDataStoreConnectorSpec extends SpecBase
     }
   }
 
-  /*".getXiEori" must {
-    "return XiEori when consent is defined as 1(True)" in {
+  ".get XiEori" must {
+    "return xi eori when it is returned from data store" in {
       val response =
         """
           |{
-          |   "name":"Tony Stark",
+          |   "xiEori":"XI1234567",
           |   "consent":"1",
           |   "address":{
-          |      "streetAndNumber":"86 Mysore Road",
+          |      "streetNumber1":"86 street",
           |      "city":"London",
-          |      "postalCode":"SW11 5RZ",
           |      "countryCode":"GB"
           |   }
           |}
           |""".stripMargin
 
-      val expected = Some("Tony Stark")
+      val expected = Some("XI1234567")
 
       val app = application
 
@@ -176,21 +175,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       }
     }
 
-
-    "return None when consent is defined as 0(False)" in {
-      val response =
-        """
-          |{
-          |   "name":"Tony Stark",
-          |   "consent":"0",
-          |   "address":{
-          |      "streetAndNumber":"86 Mysore Road",
-          |      "city":"London",
-          |      "postalCode":"SW11 5RZ",
-          |      "countryCode":"GB"
-          |   }
-          |}
-          |""".stripMargin
+    "return None when error response is returned" in {
 
       val expected = None
 
@@ -202,43 +187,11 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(ok(response))
+            .willReturn(serverError())
         )
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe expected
       }
     }
-
-    "return None when consent is empty" in {
-      val response =
-        """
-          |{
-          |   "name":"Tony Stark",
-          |   "consent": None,
-          |   "address":{
-          |      "streetAndNumber":"86 Mysore Road",
-          |      "city":"London",
-          |      "postalCode":"SW11 5RZ",
-          |      "countryCode":"GB"
-          |   }
-          |}
-          |""".stripMargin
-
-      val expected = None
-
-      val app = application
-
-      running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
-
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(ok(response))
-        )
-        val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe expected
-      }
-    }
-  }*/
+  }
 }
