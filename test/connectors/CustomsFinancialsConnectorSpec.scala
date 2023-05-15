@@ -23,7 +23,7 @@ import models._
 import models.domain._
 import models.requests._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{EitherValues, MustMatchers, OptionValues}
+import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -36,7 +36,6 @@ import java.time.LocalDate
 class CustomsFinancialsConnectorSpec extends SpecBase
   with WireMockHelper
   with ScalaFutures
-  with MustMatchers
   with IntegrationPatience
   with EitherValues
   with OptionValues
@@ -264,19 +263,19 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   ".validateEori" must {
-      "return true for valid eori" in {
-        val app = application
+    "return true for valid eori" in {
+      val app = application
 
-        running(app) {
-          val connector = app.injector.instanceOf[CustomsFinancialsConnector]
-          server.stubFor(
-            get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
-              .willReturn(ok())
-          )
-          val result = connector.validateEori(121312).futureValue
-          result mustBe Right(true)
-        }
+      running(app) {
+        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
+            .willReturn(ok())
+        )
+        val result = connector.validateEori(121312).futureValue
+        result mustBe Right(true)
       }
+    }
     "return false for not found" in {
       val app = application
 
@@ -288,6 +287,37 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         )
         val result = connector.validateEori(121312).futureValue
         result mustBe Right(false)
+      }
+    }
+
+    "return validation error for internal server error" in {
+      val app = application
+
+      running(app) {
+        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
+            .willReturn(serverError())
+        )
+        val result = connector.validateEori(121312).futureValue
+        result mustBe Left(EORIValidationError)
+      }
+    }
+  }
+
+  ".retrieve eori company name" must {
+    "return success response" in {
+      val app = application
+
+      running(app) {
+        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+        val json = """{"name" : "ABCD", "consent":"1"}"""
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/subscriptions/company-name"))
+            .willReturn(ok(json))
+        )
+        val result = connector.retrieveEoriCompanyName().futureValue
+        result.name mustBe Some("ABCD")
       }
     }
   }
