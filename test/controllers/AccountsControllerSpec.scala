@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import models.{AuthorisedAccounts, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -34,40 +34,14 @@ import repositories.SessionRepository
 import services.{AccountsCacheService, AuthorisedAccountsService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.InternalServerException
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
-import org.mockito.ArgumentMatchers.{eq => eqTo}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
+class AccountsControllerSpec extends SpecBase with MockitoSugar {
   "Accounts Controller" must {
 
     "return OK and the correct view for a GET" when {
-
-      "user answers exists" in new Setup {
-
-        val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
-          .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
-          .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
-          .build()
-
-        running(application) {
-
-          val request = fakeRequest(GET, accountsRoute)
-
-          val result = route(application, request).value
-
-          val view = application.injector.instanceOf[AccountsView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          status(result) mustEqual OK
-
-          contentAsString(result) mustEqual
-            view(form, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-              CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-            ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
-        }
-      }
 
       "user answers exists with no entered EORI" in new Setup {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -125,19 +99,46 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
             view()(request, messages(application), appConfig).toString
         }
       }
-    }
 
-    "return OK and the no accounts available view for a GET" when {
-     "there are no available accounts to select" in new Setup {
+      "user answers exists" in new Setup {
+
         val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
           .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
           .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+          .overrides(bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService))
           .build()
 
-        val noAvailableAccounts = CDSAccounts("GB123456789012", List(
-          CashAccount("12345", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00))),
-          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-        ))
+        running(application) {
+
+          val request = fakeRequest(GET, accountsRoute)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[AccountsView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual
+            view(form, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
+              CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+            ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+        }
+      }
+    }
+
+    "return OK and the no accounts available view for a GET" when {
+      "there are no available accounts to select" in new Setup {
+        val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
+          .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
+          .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+          .overrides(bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService))
+          .build()
+
+        val noAvailableAccounts = CDSAccounts("GB123456789012", List.empty)
+
+        when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+          .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, Seq.empty, Seq.empty, Seq.empty, "GB9876543210000")))
         when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any())).thenReturn(Future.successful(noAvailableAccounts))
 
         running(application) {
@@ -166,6 +167,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
         .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+        .overrides(bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService))
         .build()
 
       running(application) {
@@ -200,7 +202,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
               bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
-              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
             )
             .build()
 
@@ -284,7 +287,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
       val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
         .overrides(
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
-          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
         ).build()
 
       running(application) {
@@ -308,7 +312,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
           ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
-  } */
+  }
+
   trait Setup {
 
     def onwardRoute = Call("GET", "/foo")
@@ -335,18 +340,17 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {/*
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
     ))
+    val authorisedAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100))))
+    val closedAccount = List(  CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100))))
 
-    val eoriList = Seq("EORI123456789", "EORI987654321")
     val mockAccountsCacheService = mock[AccountsCacheService]
     val mockAuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockAuthorisedAccountsService: AuthorisedAccountsService = mock[AuthorisedAccountsService]
+    val mockAuthorisedAccountService = mock[AuthorisedAccountsService]
     when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any())).thenReturn(Future.successful(accounts))
-    //when(mockAuthoritiesCacheService.retrieveAuthorities(any[InternalId], eoriList)(any())).thenReturn(Future.successful(AuthoritiesWithId(Seq.empty)))
-    when(mockAuthoritiesCacheService.retrieveAuthorities(any[InternalId], eqTo(Seq("GB1234567890")))(any()))
-      .thenReturn(Future.successful(AuthoritiesWithId(Seq.empty)))
-
+    when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+      .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")))
+    //    when(mockAuthoritiesCacheService.retrieveAuthorities(any[InternalId])(any())).thenReturn(Future.successful(AuthoritiesWithId(Seq.empty)))
     val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
   }
 }
-
 
