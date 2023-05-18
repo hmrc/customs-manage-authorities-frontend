@@ -42,9 +42,8 @@
 
         @errorSummary(form.errors)
 
-        @h1(AccountsFormProvider.accountsHeadingKey(accounts))
-
         @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+            @h1(AccountsFormProvider.accountsHeadingKey(accounts))
 
             <div class="govuk-inset-text">
                 @accounts.alreadyAuthorisedAccounts.map { account =>
