@@ -9,7 +9,7 @@ object AppDependencies {
      play.sbt.PlayImport.ws,
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapVersion,
     "uk.gov.hmrc" %% "play-frontend-hmrc" % "7.3.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.1.0",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.2.0",
     "org.typelevel" %% "cats-core" % "2.3.0"
   )
 
