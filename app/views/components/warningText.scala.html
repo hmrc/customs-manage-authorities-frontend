@@ -19,7 +19,7 @@
 @(msg: String)(implicit messages: Messages)
 
 @govukWarningText(WarningText(
-                              iconFallbackText = Text(messages(msg)),
+                              iconFallbackText = Some(messages(msg)),
                               classes = "",
                               attributes = Map.empty,
                               content = Text(messages(msg))
