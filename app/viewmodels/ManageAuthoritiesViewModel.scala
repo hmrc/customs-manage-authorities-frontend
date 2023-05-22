@@ -32,7 +32,7 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId, accounts: 
   def hasAccounts = authorities.accounts.nonEmpty
   def hasNoAccounts = authorities.accounts.isEmpty
   def sortedAccounts = ListMap(authorities.authorities.toSeq.sortBy(_._2):_*)
-  def niIndicator(acc: String) = accounts.accounts.filter(_.number == acc).map(_.isNiAccount).head
+  def niIndicator(acc: String) = accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
   //def apply(authorities: AuthoritiesWithId, accounts: CDSAccounts): ManageAuthoritiesViewModel
 
 }
