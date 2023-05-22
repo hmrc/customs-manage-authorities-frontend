@@ -21,7 +21,7 @@ import models.domain.AuthoritiesWithId
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
 import play.api.Configuration
-import play.api.libs.json.{Json, OFormat, Reads, Writes, __}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
