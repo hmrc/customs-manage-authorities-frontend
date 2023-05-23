@@ -76,8 +76,5 @@ class CustomsAccountSpec extends SpecBase {
 
     val dutyDefermentBalance: DutyDefermentBalance = DutyDefermentBalance(Some(periodGuaranteeLimit),
       Some(periodAccountLimit), Some(periodAvailableGuaranteeBalance), Some(periodAvailableAccountBalance))
-
   }
 }
-
-
