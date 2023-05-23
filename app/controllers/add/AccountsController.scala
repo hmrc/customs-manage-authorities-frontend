@@ -69,7 +69,7 @@ class AccountsController @Inject()(
                 )
               } else {
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                  authorisedAccounts.availableAccounts.filter(x => x.isNiAccount))
+                  authorisedAccounts.availableAccounts.filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
 
                 Ok(view(populateForm(authorisedAccounts.availableAccounts), accounts, mode,
                   navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
