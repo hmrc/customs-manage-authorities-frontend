@@ -21,7 +21,7 @@ import connectors.CustomsFinancialsConnector
 import models._
 import models.domain._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar._
 import repositories.AccountsRepository
 import uk.gov.hmrc.http.HeaderCarrier
