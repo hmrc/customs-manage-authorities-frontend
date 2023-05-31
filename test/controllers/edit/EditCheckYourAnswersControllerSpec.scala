@@ -191,7 +191,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     lazy val authorisedUserRoute = controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
 
     val mockConnector = mock[CustomsFinancialsConnector]
-    when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
+    when(mockConnector.grantAccountAuthorities(any(),any())(any())).thenReturn(Future.successful(true))
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 

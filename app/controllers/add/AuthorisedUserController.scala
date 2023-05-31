@@ -26,69 +26,67 @@ import pages.add.AuthorisedUserPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import repositories.SessionRepository
 import services.DateTimeService
 import services.add.{AddAuthorityValidationService, CheckYourAnswersValidationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
-
+import connectors.CustomsDataStoreConnector
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedUserController @Inject()(
-                                          override val messagesApi: MessagesApi,
-                                          sessionRepository: SessionRepository,
-                                          navigator: Navigator,
-                                          identify: IdentifierAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          connector: CustomsFinancialsConnector,
-                                          formProvider: AuthorisedUserFormProviderWithConsent,
-                                          cyaValidationService: CheckYourAnswersValidationService,
-                                          addAuthorityValidationService: AddAuthorityValidationService,
-                                          dateTimeService: DateTimeService,
-                                          verifyAccountNumbers: VerifyAccountNumbersAction,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          view: AuthorisedUserView
-                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
+                                         navigator: Navigator,
+                                         identify: IdentifierAction,
+                                         getData: DataRetrievalAction,
+                                         requireData: DataRequiredAction,
+                                         connector: CustomsFinancialsConnector,
+                                         formProvider: AuthorisedUserFormProviderWithConsent,
+                                         cyaValidationService: CheckYourAnswersValidationService,
+                                         addAuthorityValidationService: AddAuthorityValidationService,
+                                         dateTimeService: DateTimeService,
+                                         verifyAccountNumbers: VerifyAccountNumbersAction,
+                                         val controllerComponents: MessagesControllerComponents,
+                                         dataStore: CustomsDataStoreConnector,
+                                         view: AuthorisedUserView
+                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+                                        extends FrontendBaseController with I18nSupport with Logging {
 
   private val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers) {
     implicit request =>
       cyaValidationService.validate(request.userAnswers)
-        .fold(
-          errorPage("UserAnswers did not contain sufficient data for Check your answers")
-        ) {
-          _ =>  Ok(view(form, CheckYourAnswersHelper(request.userAnswers, dateTimeService)))
-        }
+        .fold(errorPage("UserAnswers did not contain sufficient data for Check your answers")) {
+          _ =>  Ok(view(form, CheckYourAnswersHelper(request.userAnswers, dateTimeService)))}
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData andThen verifyAccountNumbers).async {
     implicit request =>
-          for {
-            result <- doSubmission(request.userAnswers)
-          } yield result
-
+      for {
+        xiEori <- dataStore.getXiEori(request.eoriNumber)
+        result <- doSubmission(request.userAnswers, xiEori.getOrElse(""), request.eoriNumber)
+      } yield result
   }
 
-  def doSubmission(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Result] = {
+  def doSubmission(userAnswers: UserAnswers, xiEori: String, gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
     addAuthorityValidationService.validate(userAnswers)
       .fold(
         Future.successful(errorPage("UserAnswers did not contain sufficient data to construct add authority request"))
       ) { payload =>
-        connector.grantAccountAuthorities(payload).map {
+        val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
+        val ownerEori = if(enteredEori.startsWith("XI")) xiEori else gbEori
+        connector.grantAccountAuthorities(payload, ownerEori).map {
           case true => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
           case false => errorPage("Add authority request submission to backend failed", payload)
         }
       }
   }
 
+
   private def errorPage(msg:String) = {
     logger.error(msg)
     Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
-
 }

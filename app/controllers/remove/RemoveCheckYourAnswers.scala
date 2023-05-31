@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.RevokeAuthorityRequest
-import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
+import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError, UserAnswers}
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -31,6 +31,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
 import javax.inject.Inject
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
@@ -71,15 +72,21 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
         case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
         case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
         case Right(AccountAndAuthority(account, authority)) =>
-          request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map { authorisedUser =>
-            val revokeRequest = RevokeAuthorityRequest(account.accountNumber, account.accountType, authority.authorisedEori, authorisedUser)
-            doSubmission(revokeRequest, accountId, authorityId)
-          }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
+          for {
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
+            result <- request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map { authorisedUser =>
+              val revokeRequest = RevokeAuthorityRequest(account.accountNumber, account.accountType, authority.authorisedEori, authorisedUser)
+              doSubmission(revokeRequest, accountId, authorityId, xiEori.getOrElse(""), request.eoriNumber)
+            }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
+          } yield result
       }
   }
 
-  def doSubmission(revokeRequest: RevokeAuthorityRequest, accountId: String, authorityId: String)(implicit hc: HeaderCarrier): Future[Result] = {
-    customsFinancialsConnector.revokeAccountAuthorities(revokeRequest).map {
+  def doSubmission(revokeRequest: RevokeAuthorityRequest, accountId: String, authorityId: String,
+    xiEori: String, gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    val ownerEori = if(revokeRequest.authorisedEori.startsWith("XI")) xiEori else gbEori
+    customsFinancialsConnector.revokeAccountAuthorities(revokeRequest, ownerEori).map {
       case true => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
       case false => errorPage(SubmissionError)
     }
