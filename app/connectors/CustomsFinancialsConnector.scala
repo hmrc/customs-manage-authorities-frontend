@@ -37,39 +37,35 @@ class CustomsFinancialsConnector @Inject()(
   private val context = config.get[String]("microservice.services.customs-financials-api.context")
 
   def retrieveAccounts(eori: String)(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
-    val request = AccountsAndBalancesRequestContainer(
-      AccountsAndBalancesRequest(AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None))
-    )
-    httpClient.POST[AccountsAndBalancesRequestContainer, AccountsAndBalancesResponseContainer](baseUrl + context + "/eori/accounts/", request)
-      .map(_.toCdsAccounts(eori))
+    val request = AccountsAndBalancesRequestContainer(AccountsAndBalancesRequest(
+      AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None)))
+
+    httpClient.POST[AccountsAndBalancesRequestContainer,
+      AccountsAndBalancesResponseContainer](baseUrl + context + "/eori/accounts/", request).map(_.toCdsAccounts(eori))
   }
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
     httpClient.GET[Seq[AccountWithAuthorities]](baseUrl + context + s"/$eori/account-authorities")
   }
 
-  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[AddAuthorityRequest, HttpResponse](baseUrl + context + "/account-authorities/grant", addAuthorityRequest)
-      .map(_.status == Status.NO_CONTENT)
-      .recover { case _ => false }
+  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
+    httpClient.POST[AddAuthorityRequest, HttpResponse](baseUrl + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
+      .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
-  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[RevokeAuthorityRequest, HttpResponse](baseUrl + context + "/account-authorities/revoke", revokeAuthorityRequest)
-      .map(_.status == Status.NO_CONTENT)
-      .recover { case _ => false }
+  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
+    httpClient.POST[RevokeAuthorityRequest, HttpResponse](baseUrl + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
+      .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
     httpClient.GET[HttpResponse](baseUrl + context + s"/eori/$eori/validate")
-      .map(response => {
-        response.status match {
+      .map(response => { response.status match {
           case Status.OK => Right(true)
           case Status.NOT_FOUND => Right(false)
           case _ => Left(EORIValidationError)
         }
-      })
-      .recover {
+      }).recover {
         case _: NotFoundException => Right(false)
         case _ => Left(EORIValidationError)
       }

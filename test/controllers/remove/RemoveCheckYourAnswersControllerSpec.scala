@@ -168,7 +168,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(),any())(any()))
         .thenReturn(Future.successful(false))
 
       running(app) {
@@ -189,7 +189,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(),any())(any()))
         .thenReturn(Future.successful(true))
 
       running(app) {

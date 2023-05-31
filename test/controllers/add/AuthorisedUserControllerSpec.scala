@@ -44,7 +44,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad.url
 
   val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
-  when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
+  when(mockConnector.grantAccountAuthorities(any(),any())(any())).thenReturn(Future.successful(true))
 
   val accounts: Accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
   val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
