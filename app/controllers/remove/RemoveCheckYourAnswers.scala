@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.RevokeAuthorityRequest
-import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError, UserAnswers}
+import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
 import pages.remove.RemoveAuthorisedUserPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -52,15 +52,15 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
       case Right(AccountAndAuthority(account, authority)) =>
         request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
           case Some(authorisedUser) =>
-            Ok(view(new CheckYourAnswersRemoveHelper(
-              request.userAnswers,
-              accountId,
-              authorityId,
-              authorisedUser,
-              authority,
-              account,
-              dataStore
-            )))
+          Ok(view( new CheckYourAnswersRemoveHelper(
+            request.userAnswers,
+            accountId,
+            authorityId,
+            authorisedUser,
+            authority,
+            account,
+            dataStore
+        )))
           case None => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
         }
     }
