@@ -18,7 +18,7 @@ package viewmodels
 
 import base.SpecBase
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance, CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
@@ -33,7 +33,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
 
   "yourAccountRow" must {
     "produce correct rows" when {
-      "EORI of Northern Ireland and account is of type Duty deferment" in {
+      "EORI is of Northern Ireland and account is of type Duty deferment" in {
 
         implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
@@ -81,7 +81,109 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
-          Value(HtmlContent("manageAuthorities.table.heading.account.CdsDutyDefermentAccount manageAuthorities.table.heading.account.Northern-Ireland"))
+          Value(HtmlContent(
+            "manageAuthorities.table.heading.account.CdsDutyDefermentAccount manageAuthorities.table.heading.account.Northern-Ireland"))
+      }
+
+      "EORI is of Northern Ireland and account is not of type Duty deferment" in {
+
+        implicit val messages: Messages = messagesApi.preferred(fakeRequest())
+
+        val mockDateTimeService: DateTimeService = mock[DateTimeService]
+        when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+        val startDate = LocalDate.now()
+        val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+
+        val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+          CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+
+        val standAuthority = StandingAuthority(
+          "XI123456789012",
+          LocalDate.now(),
+          Option(LocalDate.now().plusDays(1)),
+          viewBalance = true
+        )
+
+        val cashAccount = CashAccount(
+          "67890",
+          "XI123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)),
+          isNiAccount = true)
+
+        val cdsAccounts = List(cashAccount)
+
+        val userAnswersWithNIEoriAndCashtAccount: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, cdsAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("XI123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+        val userAnswers = userAnswersWithNIEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
+        val helper = new CheckYourAnswersEditHelper(userAnswers,
+          "67890",
+          "67890",
+          mockDateTimeService,
+          standAuthority,
+          accountsWithAuthoritiesWithId,
+          Some(""))
+
+        helper.yourAccountRow.size mustBe 1
+        helper.yourAccountRow.head.value mustBe
+          Value(HtmlContent("manageAuthorities.table.heading.account.CdsCashAccount"))
+      }
+
+      "EORI is of GB and account is not of type Duty deferment" in {
+
+        implicit val messages: Messages = messagesApi.preferred(fakeRequest())
+
+        val mockDateTimeService: DateTimeService = mock[DateTimeService]
+        when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+        val startDate = LocalDate.now()
+        val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+
+        val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+          CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+
+        val standAuthority = StandingAuthority(
+          "GB123456789012",
+          LocalDate.now(),
+          Option(LocalDate.now().plusDays(1)),
+          viewBalance = true
+        )
+
+        val cashAccount = CashAccount(
+          "67890",
+          "GB123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)))
+
+        val cdsAccounts = List(cashAccount)
+
+        val userAnswersWithGBEoriAndCashtAccount: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, cdsAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+        val userAnswers = userAnswersWithGBEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
+        val helper = new CheckYourAnswersEditHelper(userAnswers,
+          "67890",
+          "67890",
+          mockDateTimeService,
+          standAuthority,
+          accountsWithAuthoritiesWithId,
+          Some(""))
+
+        helper.yourAccountRow.size mustBe 1
+        helper.yourAccountRow.head.value mustBe
+          Value(HtmlContent("manageAuthorities.table.heading.account.CdsCashAccount"))
       }
     }
   }
