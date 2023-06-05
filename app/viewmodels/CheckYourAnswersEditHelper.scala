@@ -16,15 +16,17 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, StandingAuthority}
+import models.domain.{AccountWithAuthoritiesWithId, AuthorisedUser, CdsDutyDefermentAccount, StandingAuthority}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.edit._
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.DateUtils
+import utils.StringUtils.singleSpace
 
 
 class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
@@ -36,9 +38,11 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
 
   def yourAccountRow: Seq[SummaryListRow] = {
-    Seq(
+    val accountNumberRowFromHelper = Seq(
       accountNumberRow(account)
     ).flatten
+
+    amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper)
   }
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
@@ -175,5 +179,26 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
         )))
       )
     )
+  }
+
+  /**
+   * Update the Value attribute of SummaryListRow to add (Northern Ireland) at the end
+   * if the EORI is XI and account is of type Deferment
+   *
+   * @param accountNumberRowFromHelper Seq[SummaryListRow]
+   * @return Updated Seq[SummaryListRow]
+   */
+  private def amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper: Seq[SummaryListRow]): Seq[SummaryListRow] = {
+    accountNumberRowFromHelper.map {
+      currentRow =>
+        if ((account.accountType == CdsDutyDefermentAccount) && standingAuthority.authorisedEori.startsWith("XI")) {
+          val currentRowValueContent = currentRow.value.content.asHtml.toString
+          val contentWithNIText = currentRowValueContent.concat(
+            singleSpace).concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
+          currentRow.copy(value = currentRow.value.copy(content = HtmlContent(contentWithNIText)))
+        } else {
+          currentRow
+        }
+    }
   }
 }

@@ -77,8 +77,8 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
     val list = selectedAccounts.map { account =>
       val cdsAccount = account
       s"${messages("accounts.type." + account.accountType)}: ${cdsAccount.number}${
-        if (
-          account.isNiAccount && account.accountType == "dutyDeferment") singleSpace.concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
+        if (account.isNiAccount && account.accountType == "dutyDeferment")
+          singleSpace.concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
         else emptyString.trim
       }"
     }
