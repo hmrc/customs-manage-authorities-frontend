@@ -19,5 +19,6 @@ package utils
 object StringUtils {
   val emptyString = ""
   val singleSpace = " "
+  val nIEORIPrefix = "XI"
   def removeSpacesFromString(value: String): String = value.replaceAll("\\s", "")
 }

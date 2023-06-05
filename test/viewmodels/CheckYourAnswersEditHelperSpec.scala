@@ -81,7 +81,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
-          Value(HtmlContent("manageAuthorities.table.heading.account.CdsDutyDefermentAccount: 67890 manageAuthorities.table.heading.account.Northern-Ireland"))
+          Value(HtmlContent("manageAuthorities.table.heading.account.CdsDutyDefermentAccount manageAuthorities.table.heading.account.Northern-Ireland"))
       }
     }
   }

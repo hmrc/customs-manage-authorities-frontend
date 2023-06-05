@@ -38,6 +38,12 @@ class StringUtilsSpec extends SpecBase {
     }
   }
 
+  "nIEORIPrefix" should {
+    "return the correct Prefix for NI EORI" in {
+      StringUtils.nIEORIPrefix mustBe "XI"
+    }
+  }
+
   "removeSpacesFromString" should {
     "remove the leading spaces from the input string" in {
       StringUtils.removeSpacesFromString(stringWithLeadingSpace) mustBe "LeadingSpaceStr"
