@@ -89,19 +89,19 @@ manageAuthorities.addAuthority=Ychwanegu awdurdod
 manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 
 manageAuthorities.table.heading.account.CdsCashAccount=Cyfrif arian parod: {0}
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount=Cyfrif gohirio tollau: {0}
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount=Gohirio tollau: {0}
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount=Cyfrif gwarant cyffredinol: {0}
 
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cyfrif arian parod: {0} (ar gau)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Cyfrif gohirio tollau: {0} (ar gau)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed =Gohirio tollau: {0} (ar gau)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = Cyfrif gwarant cyffredinol: {0} (ar gau)
 manageAuthorities.table.heading.account.Northern-Ireland = (Gogledd Iwerddon)
 
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cyfrif arian parod: {0} (wedi’i ohirio)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Cyfrif gohirio tollau: {0} (wedi’i ohirio)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Gohirio tollau: {0} (wedi’i ohirio)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = Cyfrif gwarant cyffredinol: {0} (wedi’i ohirio)
 
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Cyfrif gohirio tollau: {0} (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Gohirio tollau: {0} (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 
 manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
 manageAuthorities.table.heading.user= Cwmni awdurdodedig
@@ -153,7 +153,7 @@ accounts.checkYourAnswersLabel.singular=Cyfrif
 accounts.checkYourAnswersLabel.plural=Cyfrifon
 accounts.error.required=Dewiswch y cyfrifon yr ydych eisiau ychwanegu awdurdod atynt
 accounts.type.cash=Cyfrif arian parod
-accounts.type.dutyDeferment=Cyfrif gohirio tollau
+accounts.type.dutyDeferment=Gohirio tollau
 accounts.type.generalGuarantee=Cyfrif gwarant cyffredinol
 accounts.authorised = Mae {0} eisoes wedi’i awdurdodi i
 accounts.closed = Mae {0} ar gau.
@@ -292,7 +292,7 @@ editConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 remove.title=A ydych yn si?r eich bod am ddileu awdurdod y cyfrif hwn?
 remove.heading=A ydych yn si?r eich bod am dynnu mynediad ar gyfer defnyddiwr {0}?
 remove.heading.caption.CdsCashAccount=Cyfrif arian parod: {0}
-remove.heading.caption.CdsDutyDefermentAccount=Cyfrif gohirio tollau: {0}
+remove.heading.caption.CdsDutyDefermentAccount=Gohirio tollau: {0}
 remove.heading.caption.CdsGeneralGuaranteeAccount=Cyfrif gwarant cyffredinol: {0}
 remove.p1=Mae hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad mewnforio ar gyfer tollau.
 remove.yourDetails=Eich manylion
