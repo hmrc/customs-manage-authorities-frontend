@@ -95,14 +95,13 @@ manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount = General gua
 manageAuthorities.table.heading.account.Northern-Ireland = (Northern Ireland)
 
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cash account: {0} (closed)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment account: {0} (closed)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment: {0} (closed)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = General guarantee account: {0} (closed)
 
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cash account: {0} (suspended)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment account: {0} (suspended)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment: {0} (suspended)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = General guarantee account: {0} (suspended)
-
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment: {0} (pending opening on CDS)
 
 manageAuthorities.table.view-or-change = View or change
 manageAuthorities.table.heading.user = Authorised company
