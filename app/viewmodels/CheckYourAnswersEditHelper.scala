@@ -182,7 +182,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   }
 
   /**
-   * Update the Value attribute of SummaryListRow to add (Northern Ireland) at the end
+   * Updates the Value attribute of SummaryListRow to add (Northern Ireland) at the end
    * if the EORI is XI and account is of type Deferment
    *
    * @param accountNumberRowFromHelper Seq[SummaryListRow]

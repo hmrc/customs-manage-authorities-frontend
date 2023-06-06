@@ -156,9 +156,8 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
 
     userAnswers.get(AuthorityStartPage).flatMap {
-      case AuthorityStart.Today => {
+      case AuthorityStart.Today =>
         Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
-      }
       case AuthorityStart.Setdate => userAnswers.get(AuthorityStartDatePage).map(dateAsDayMonthAndYear)
     }.map(date =>
       summaryListRow(
