@@ -50,12 +50,12 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
       override val cashAccount: CashAccount = CashAccount(
         "12345",
-        "GB123456789012",
+        "XI123456789012",
         AccountStatusOpen,
         CDSCashBalance(Some(100.00)))
       override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
         "67890",
-        "GB210987654321",
+        "XI210987654321",
         AccountStatusOpen,
         DutyDefermentBalance(None, None, None, None),
         isNiAccount = true)
@@ -81,6 +81,76 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .get(0).text() mustBe
         "accounts.checkYourAnswersLabel.singular accounts.type.dutyDeferment:" +
           " 67890 manageAuthorities.table.heading.account.Northern-Ireland site.change checkYourAnswers.accounts.hidden"
+    }
+
+    "do not display (Northern Ireland) text next to Account Type:<Acc Number> if " +
+      "Account type is not Duty deferment" in new Setup {
+
+      override val cashAccount: CashAccount = CashAccount(
+        "12345",
+        "GB123456789012",
+        AccountStatusOpen,
+        CDSCashBalance(Some(100.00)))
+
+      override val selectedAccounts: List[CDSAccount] = List(cashAccount)
+
+      override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+        .set(AccountsPage, selectedAccounts).success.value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+        .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+      override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+      val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+        new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+      pageView.getElementsByClass("govuk-summary-list__row")
+        .get(0).text() mustBe
+        "accounts.checkYourAnswersLabel.singular accounts.type.cash:" +
+          " 12345 site.change checkYourAnswers.accounts.hidden"
+    }
+
+    "do not display (Northern Ireland) text next to Account type:<Acc Number> if " +
+      "EORI is of GB and account type is Duty deferment" in new Setup {
+
+      override val cashAccount: CashAccount = CashAccount(
+        "12345",
+        "GB123456789012",
+        AccountStatusOpen,
+        CDSCashBalance(Some(100.00)))
+
+      override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+        "67890",
+        "GB210987654321",
+        AccountStatusOpen,
+        DutyDefermentBalance(None, None, None, None))
+
+      override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+      override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+        .set(AccountsPage, selectedAccounts).success.value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+        .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+      override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+      override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+      val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+        new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+      pageView.getElementsByClass("govuk-summary-list__row")
+        .get(0).text() mustBe
+        "accounts.checkYourAnswersLabel.singular accounts.type.dutyDeferment:" +
+          " 67890 site.change checkYourAnswers.accounts.hidden"
     }
   }
 
