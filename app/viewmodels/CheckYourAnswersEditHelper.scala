@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.DateUtils
-import utils.StringUtils.singleSpace
+import utils.StringUtils.htmlSingleLineBreak
 
 
 class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
@@ -194,7 +194,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
         if ((account.accountType == CdsDutyDefermentAccount) && standingAuthority.authorisedEori.startsWith("XI")) {
           val currentRowValueContent = currentRow.value.content.asHtml.toString
           val contentWithNIText = currentRowValueContent.concat(
-            singleSpace).concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
+            htmlSingleLineBreak).concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
           currentRow.copy(value = currentRow.value.copy(content = HtmlContent(contentWithNIText)))
         } else {
           currentRow

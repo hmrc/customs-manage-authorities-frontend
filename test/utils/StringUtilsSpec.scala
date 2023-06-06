@@ -44,6 +44,12 @@ class StringUtilsSpec extends SpecBase {
     }
   }
 
+  "htmlSingleLineBreak" should {
+    "return the correct html line break string" in {
+      StringUtils.htmlSingleLineBreak mustBe "<br>"
+    }
+  }
+
   "removeSpacesFromString" should {
     "remove the leading spaces from the input string" in {
       StringUtils.removeSpacesFromString(stringWithLeadingSpace) mustBe "LeadingSpaceStr"
