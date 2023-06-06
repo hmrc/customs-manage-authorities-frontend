@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
+import utils.StringUtils.{emptyString, singleSpace}
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)
@@ -75,7 +76,11 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
     val list = selectedAccounts.map { account =>
       val cdsAccount = account
-      s"${messages("accounts.type." + account.accountType)}: ${cdsAccount.number}"
+      s"${messages("accounts.type." + account.accountType)}: ${cdsAccount.number}${
+        if (account.isNiAccount && account.accountType == "dutyDeferment")
+          singleSpace.concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
+        else emptyString.trim
+      }"
     }
 
     summaryListRow(
@@ -149,8 +154,10 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   }
 
   private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
+
     userAnswers.get(AuthorityStartPage).flatMap {
-      case AuthorityStart.Today => Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
+      case AuthorityStart.Today =>
+        Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
       case AuthorityStart.Setdate => userAnswers.get(AuthorityStartDatePage).map(dateAsDayMonthAndYear)
     }.map(date =>
       summaryListRow(

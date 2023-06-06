@@ -23,9 +23,12 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
 import play.api.i18n.Messages
+import play.twirl.api.Html
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Value
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 import java.time.{LocalDate, LocalDateTime}
@@ -62,7 +65,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   "CheckYourAnswersHelper" must {
-
     "produce correct rows" when {
 
       /*"a single account is selected (today to indefinite)" in {
@@ -392,6 +394,35 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
       "multiple accounts are selected" in {
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswersTodayToIndefinite, mockDateTimeService)
         helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.plural"
+      }
+    }
+
+    "produce correct text for EORI of Northern Ireland" when {
+      "account is of type Duty deferment" in {
+
+        val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None),
+          isNiAccount = true)
+
+        val cdsAccounts = List(dutyDeferment)
+
+        val userAnswersWithNIEoriAndDefermentAccount: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, cdsAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+        val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
+        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        helper.accountsRows.size mustBe 1
+        helper.accountsRows.head.value mustBe
+          Value(HtmlContent("accounts.type.dutyDeferment: 67890 manageAuthorities.table.heading.account.Northern-Ireland"))
       }
     }
   }
