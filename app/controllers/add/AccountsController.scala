@@ -24,6 +24,7 @@ import models.requests.DataRequest
 import models.{AuthorisedAccounts, EoriDetailsCorrect, Mode, NormalMode}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
+import play.api.Logger
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -51,7 +52,7 @@ class AccountsController @Inject()(
                                   )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   private val form = formProvider()
-
+  val log = Logger(this.getClass)
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(EoriNumberPage) match {
@@ -64,14 +65,14 @@ class AccountsController @Inject()(
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
                   authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
 
-                Ok(view(populateForm(authorisedAccounts.availableAccounts), accounts, mode,
+                Ok(view(populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)), accounts, mode,
                   navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               } else {
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
                   authorisedAccounts.availableAccounts.filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
-
-                Ok(view(populateForm(authorisedAccounts.availableAccounts), accounts, mode,
+                Ok(view(populateForm(authorisedAccounts.availableAccounts
+                  .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))), accounts, mode,
                   navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               }
@@ -100,7 +101,15 @@ class AccountsController @Inject()(
               formWithErrors =>
                 Future.successful(BadRequest(view(formWithErrors, authorisedAccounts, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),
               value => {
-                val selected = value.map(account => authorisedAccounts.availableAccounts(account.replace("account_", "").toInt))
+                val selected = {
+                  if(enteredEori.eori.startsWith("XI")){
+                    value.map(account => authorisedAccounts.availableAccounts.filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
+                    (account.replace("account_", "").toInt))
+                  } else {
+                    value.map(account => authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)
+                    (account.replace("account_", "").toInt))
+                  }
+                }
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(AccountsPage, selected))
                   _ <- sessionRepository.set(updatedAnswers)
