@@ -16,7 +16,7 @@
 
 package viewmodels
 
-import models.domain.AccountWithAuthoritiesWithId
+import models.domain.{AccountWithAuthoritiesWithId, CdsDutyDefermentAccount}
 import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
@@ -24,11 +24,10 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, Key, Val
 
 trait SummaryListRowHelper {
 
-  def summaryListRow(
-                      label: String,
-                      value: String,
-                      secondValue: Option[String],
-                      actions: Actions): SummaryListRow =
+  def summaryListRow(label: String,
+                     value: String,
+                     secondValue: Option[String],
+                     actions: Actions): SummaryListRow =
     SummaryListRow(
       key = Key(content = Text(label)),
       value = Value(content = HtmlContent(value)),
@@ -40,15 +39,19 @@ trait SummaryListRowHelper {
   protected def yesOrNo(value: Boolean)(implicit messages: Messages): String =
     if (value) messages("site.yes") else messages("site.no")
 
-  def span(contents: String): HtmlContent = HtmlContent(
-    Html(s"""$contents""")
-  )
+  def span(contents: String): HtmlContent = HtmlContent(Html(s"""$contents"""))
 
-  def accountNumberRow(account: AccountWithAuthoritiesWithId)(implicit messages: Messages): Option[SummaryListRow] = {
-    val accountType = messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+  def accountNumberRow(account: AccountWithAuthoritiesWithId, xiEori: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] = {
+
+    val displayText = if (xiEori && account.accountType == CdsDutyDefermentAccount) {
+      messages(s"manageAuthorities.table.heading.account.${account.accountType}.Ni", account.accountNumber)
+    } else {
+      messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+    }
+
     Some(summaryListRow(
       messages("edit-cya-account-number"),
-      value = HtmlFormat.escape(accountType).toString,
+      value = HtmlFormat.escape(displayText).toString,
       actions = Actions(items = Seq.empty),
       secondValue = None
     ))
