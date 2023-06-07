@@ -38,25 +38,24 @@ import javax.inject.Inject
 import scala.concurrent._
 import scala.concurrent.duration.Duration
 
-class EditCheckYourAnswersController @Inject()(
-                                                override val messagesApi: MessagesApi,
-                                                service: AuthoritiesCacheService,
-                                                connector: CustomsFinancialsConnector,
-                                                identify: IdentifierAction,
-                                                getData: DataRetrievalAction,
-                                                requireData: DataRequiredAction,
-                                                dateTimeService: DateTimeService,
-                                                editAuthorityValidationService: EditAuthorityValidationService,
-                                                view: EditCheckYourAnswersView,
-                                                navigator: Navigator,
-                                                implicit val controllerComponents: MessagesControllerComponents,
-                                                dataStore: CustomsDataStoreConnector
-                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+class EditCheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
+                                               service: AuthoritiesCacheService,
+                                               connector: CustomsFinancialsConnector,
+                                               identify: IdentifierAction,
+                                               getData: DataRetrievalAction,
+                                               requireData: DataRequiredAction,
+                                               dateTimeService: DateTimeService,
+                                               editAuthorityValidationService: EditAuthorityValidationService,
+                                               view: EditCheckYourAnswersView,
+                                               navigator: Navigator,
+                                               implicit val controllerComponents: MessagesControllerComponents,
+                                               dataStore: CustomsDataStoreConnector
+                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+                                              extends FrontendBaseController with I18nSupport with Logging {
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
-
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAuthority) => errorPage(MissingAuthorityError)
       case Left(NoAccount) => errorPage(MissingAccountError)
@@ -72,9 +71,12 @@ class EditCheckYourAnswersController @Inject()(
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
       case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
       case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
-      case Right(AccountAndAuthority(account, authority)) => doSubmission(
-        request.userAnswers, accountId, authorityId, authority.authorisedEori, account
-      )
+      case Right(AccountAndAuthority(account, authority)) =>
+        for {
+          xiEori <- dataStore.getXiEori(request.eoriNumber)
+          result <- doSubmission(request.userAnswers, accountId, authorityId,
+            authority.authorisedEori, account, xiEori.getOrElse(""), request.eoriNumber)
+        } yield result
     }
   }
 
@@ -82,10 +84,13 @@ class EditCheckYourAnswersController @Inject()(
                            accountId: String,
                            authorityId: String,
                            authorisedEori: String,
-                           account: AccountWithAuthoritiesWithId)(implicit hc: HeaderCarrier): Future[Result] = {
+                           account: AccountWithAuthoritiesWithId,
+                           xiEori: String, gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+
+    val ownerEori = if(authorisedEori.startsWith("XI")) xiEori else gbEori
 
     editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
-      case Right(payload) => connector.grantAccountAuthorities(payload).map {
+      case Right(payload) => connector.grantAccountAuthorities(payload, ownerEori).map {
         case true => Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
         case false =>
           logger.error("Edit authority request submission to backend failed")

@@ -26,6 +26,30 @@ class StringUtilsSpec extends SpecBase {
   val stringWithSpacesIncludingLeadingAndTrailing = "  Spaces inc leading and trailing spaces  "
   val stringWithNoSpace = "No_Spaces_Str_123"
 
+  "emptyString" should {
+    "return empty string with no space" in {
+      StringUtils.emptyString mustBe "".trim
+    }
+  }
+
+  "singleSpace" should {
+    "return string with single space" in {
+      StringUtils.singleSpace mustBe " "
+    }
+  }
+
+  "nIEORIPrefix" should {
+    "return the correct Prefix for NI EORI" in {
+      StringUtils.nIEORIPrefix mustBe "XI"
+    }
+  }
+
+  "htmlSingleLineBreak" should {
+    "return the correct html line break string" in {
+      StringUtils.htmlSingleLineBreak mustBe "<br>"
+    }
+  }
+
   "removeSpacesFromString" should {
     "remove the leading spaces from the input string" in {
       StringUtils.removeSpacesFromString(stringWithLeadingSpace) mustBe "LeadingSpaceStr"

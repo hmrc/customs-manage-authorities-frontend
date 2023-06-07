@@ -89,19 +89,19 @@ manageAuthorities.addAuthority = Add an authority
 manageAuthorities.error=Sorry, we can''t display these right now. Please try again later.
 
 manageAuthorities.table.heading.account.CdsCashAccount = Cash account: {0}
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment account: {0}
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment: {0}
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Duty deferment: {0} (Northern Ireland)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount = General guarantee account: {0}
 manageAuthorities.table.heading.account.Northern-Ireland = (Northern Ireland)
 
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cash account: {0} (closed)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment account: {0} (closed)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment: {0} (closed)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = General guarantee account: {0} (closed)
 
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cash account: {0} (suspended)
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment account: {0} (suspended)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment: {0} (suspended)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = General guarantee account: {0} (suspended)
-
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment account: {0} (pending opening on CDS)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment: {0} (pending opening on CDS)
 
 manageAuthorities.table.view-or-change = View or change
 manageAuthorities.table.heading.user = Authorised company
@@ -133,7 +133,7 @@ accounts.noAvailableAccounts.link = manage your account authorities
 
 eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
-eoriNumber.hint = EORI starts with GB or XI followed by 12 digits. <br> For example, GB345834921000 or XI345834921000.
+eoriNumber.hint = EORI starts with GB or XI followed by 12 digits or GBN followed by 11 digits. <br>For example, GB345834921000, XI345834921000 or GBN10537914000.
 eoriNumber.checkYourAnswersLabel = User EORI number
 eoriNumber.error.required = Enter an EORI number
 eoriNumber.error.format = Enter an EORI number in the correct format

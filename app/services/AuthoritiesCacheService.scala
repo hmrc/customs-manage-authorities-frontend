@@ -29,7 +29,7 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, conne
 
   def retrieveAuthorities(internalId: InternalId, eoriList: Seq[String]=Seq.empty)(implicit hc: HeaderCarrier): Future[AuthoritiesWithId] = {
     val authorities = for {
-      a <- Future.sequence(eoriList.map(eachEori=> connector.retrieveAccountAuthorities(eachEori)))
+      a <- Future.sequence(eoriList.map(eachEori => connector.retrieveAccountAuthorities(eachEori)))
     } yield {
       a.flatten
         .groupBy(_.accountNumber)

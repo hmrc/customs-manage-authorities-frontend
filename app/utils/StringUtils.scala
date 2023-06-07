@@ -17,5 +17,9 @@
 package utils
 
 object StringUtils {
+  val emptyString = ""
+  val singleSpace = " "
+  val nIEORIPrefix = "XI"
+  val htmlSingleLineBreak = "<br>"
   def removeSpacesFromString(value: String): String = value.replaceAll("\\s", "")
 }
