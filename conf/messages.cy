@@ -268,7 +268,7 @@ checkYourAnswers.cancelScreenReader = Canslo’r cyflwyniad a mynd yn ôl i’r 
 edit.changed = Wedi newid
 edit.notChanged = Heb newid
 
-addConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
+addConfirmation.title=Awdurdodiad wedi’i ychwanegu
 addConfirmation.heading=Awdurdodiad wedi’i ychwanegu
 addConfirmation.body.eori.number=Rhif EORI:
 addConfirmation.body.company.name = Enw’r cwmni
@@ -279,7 +279,7 @@ addConfirmation.p1.today=Gofynnwch i’r cwmni neu’r person wirio ei fod yn ga
 addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i’r cwmni neu’r person wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau.
 addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
-editConfirmation.title=Defnyddiwr wedi’i ychwanegu yn llwyddiannus
+editConfirmation.title=Awdurdod wedi newid
 editConfirmation.heading=Awdurdod wedi newid
 editConfirmation.body.company.name = Enw’r cwmni:
 editConfirmation.body.eori.number = Rhif EORI:
@@ -308,7 +308,7 @@ remove.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwy
 remove.declaration=Rwyf yn cadarnhau fy mod am dynnu mynediad y defnyddiwr hwn.
 remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynediad y defnyddiwr hwn.
 
-removeConfirmation.title=Defnyddiwr wedi’i dynnu yn llwyddiannus
+removeConfirmation.title=Awdurdod wedi dynnu
 removeConfirmation.heading={0} wedi’i dynnu yn llwyddiannus
 removeConfirmation.p1=Efallai y byddwch am roi gwybod i’r cwmni fod ei awdurdod wedi’i dynnu.
 removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
