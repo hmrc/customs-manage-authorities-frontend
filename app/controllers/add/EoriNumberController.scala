@@ -69,23 +69,28 @@ class EoriNumberController @Inject()(
         eoriNumber => {
           val eori = formatGBEori(eoriNumber)
           if (request.eoriNumber.equalsIgnoreCase(eori)) {
-            Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
+            Future.successful(BadRequest(view(form.withError("value",
+              "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
+              mode, navigator.backLinkRouteForEORINUmberPage(mode))))
           } else {
             (for {
               companyName <- dataStore.getCompanyName(eori)
               companyDetails = CompanyDetails(eori, companyName)
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
+              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(
+                request.internalId.value)).set(EoriNumberPage, companyDetails))
               _ <- sessionRepository.set(updatedAnswers)
               result <- doSubmission(updatedAnswers, eori, mode)
             } yield result).recover {
               case _: ValidationException =>
-                BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+                BadRequest(view(form.withError("value",
+                  "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
               case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
             }
           }
         }
       )
   }
+
   private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
