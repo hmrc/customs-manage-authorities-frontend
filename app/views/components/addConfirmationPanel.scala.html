@@ -20,22 +20,20 @@
 
 
 <div class="govuk-panel govuk-panel--confirmation @divClass">
-    <h1 class="govuk-panel__title @h1Class">@message</h1>
+    <h1 class="govuk-panel__title @h1Class">
+        @message
+    </h1>
     <div class="govuk-panel__body-s">
         @if(companyName.nonEmpty) {
         <p class="govuk-!-font-size-27">@messages("addConfirmation.body.company.name")<br>
             <strong>@companyName</strong>
-            </br>
         </p>
         }
         <p class="govuk-!-font-size-27">@messages("addConfirmation.body.eori.number") <br>
             <strong>@eori</strong>
-            <br>
         </p>
-
-        <p>@{if (startDate.nonEmpty) {
-            messages("addConfirmation.body.setDate", startDate.get)
-            }}
-        </p>
+        @if(startDate.nonEmpty) {
+            <p>@messages("addConfirmation.body.setDate", startDate.get)</p>
+        }
     </div>
 </div>

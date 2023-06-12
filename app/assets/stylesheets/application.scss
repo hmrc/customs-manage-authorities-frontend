@@ -2,7 +2,7 @@ $govuk-assets-path: "/customs/manage-authorities/assets/lib/govuk-frontend/govuk
 $hmrc-assets-path: "/customs/manage-authorities/assets/lib/hmrc-frontend/hmrc/";
 
 @import "lib/govuk-frontend/govuk/base";
-@import "lib/hmrc-frontend/hmrc/all";
+
 @import "components/table";
 @import "manage-authorities";
 @import "shame";
