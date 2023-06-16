@@ -37,5 +37,3 @@ class EditStateSpec extends SpecBase {
     implicit val messages: Messages = Helpers.stubMessages()
   }
 }
-
-
