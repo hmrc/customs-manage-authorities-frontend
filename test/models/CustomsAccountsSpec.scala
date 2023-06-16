@@ -16,8 +16,10 @@
 
 package models
 
-import models.domain.{AccountStatusOpen, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
+import models.domain.{AccountStatusOpen, CDSAccountStatus, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
 import org.scalatest._
+import models.domain.CDSAccountStatus._
+import play.api.libs.json._
 
 class CustomsAccountsSpec extends WordSpec with MustMatchers {
 
@@ -56,6 +58,13 @@ class CustomsAccountsSpec extends WordSpec with MustMatchers {
       guaranteeAccountZeroLimitZeroBalance.balances.get.usedPercentage  must be (expectedUsedPercentage)
     }
 
+  }
+
+  "CDSAccountStatusReads and CDSAccountStatusWrites" should {
+    "return the correct result" in {
+      Json.fromJson[CDSAccountStatus](Json.toJson(AccountStatusOpen)).get.mustEqual(AccountStatusOpen)
+      Json.toJson(AccountStatusOpen).validate.get mustBe AccountStatusOpen
+    }
   }
 
 }
