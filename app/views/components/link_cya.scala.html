@@ -27,11 +27,12 @@
     postLinkMessage: Option[String] = None,
     pId: Option[String] = None,
     ariaLabel: Option[String] = None,
+    ariaHidden: Boolean = false,
     pClass: String = "govuk-body")(implicit messages: Messages)
 
 @link = {
   <a @{linkId.fold("")(id => s"id=$id")} class="@linkClass @linkSpace" href="@location">
-    <span>@messages(linkMessage)</span>
+    <span @if(ariaHidden) { aria-hidden="true" }>@messages(linkMessage)</span>
     <span class="govuk-visually-hidden">@ariaLabel</span>
   </a>@if(linkSentence){.}
 }
