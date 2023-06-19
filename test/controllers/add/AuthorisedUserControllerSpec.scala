@@ -17,79 +17,51 @@
 package controllers.add
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
+import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
-import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
 import models.domain._
 import models.requests.Accounts
+import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
-import play.api.mvc.Call
+import pages.add._
+import play.api.data.Form
 import play.api.test.Helpers._
+import play.api.{Application, inject}
 import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
+import views.html.add.AuthorisedUserView
+
 import java.time.{LocalDate, LocalDateTime}
-import play.api.i18n.Messages
 import scala.concurrent.Future
 
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
-  implicit val messages: Messages = messagesApi.preferred(fakeRequest())
-
-  private val formProvider = new AuthorisedUserFormProviderWithConsent()
-  private val form = formProvider()
-  private def onwardRoute = Call("GET", "/foo")
-  private lazy val authorisedUserRoute = controllers.add.routes.AuthorisedUserController.onPageLoad.url
-
-  val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
-  when(mockConnector.grantAccountAuthorities(any(),any())(any())).thenReturn(Future.successful(true))
-
-  val accounts: Accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
-  val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
-  val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
-  val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
-  when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
-
-  val mockDateTimeService: DateTimeService = mock[DateTimeService]
-  when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-
-  val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
-  val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
-
-  val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
-
   "AuthorisedUser Controller" must {
 
-    /*"return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in new SetUp {
 
-      val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
 
-      val application = applicationBuilder(Some(userAnswers))
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+
+      val application: Application = applicationBuilder(Some(userAnswers))
         .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        )
-        .build()
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
+        ).build()
 
       running(application) {
 
         val request = fakeRequest(GET, authorisedUserRoute)
-
         val result = route(application, request).value
-
         val view = application.injector.instanceOf[AuthorisedUserView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
 
         status(result) mustEqual OK
 
@@ -97,10 +69,35 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           view(form, helper)(request, messages(application), appConfig).toString
       }
     }
-*/
-    "redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+    "return SEE_OTHER when CheckYourAnswersValidationService validate returns None on onPageLoad" in new SetUp {
+
+      val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(None)
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
+        ).build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[AuthorisedUserView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "redirect to Session Expired for a GET if no existing data is found" in new SetUp {
+
+      val application: Application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
 
@@ -114,9 +111,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
+    "redirect to Session Expired for a POST if no existing data is found" in new SetUp {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application: Application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
 
@@ -131,5 +128,48 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
+  }
+
+  trait SetUp {
+    protected val formProvider = new AuthorisedUserFormProviderWithConsent()
+    protected val form: Form[AuthorisedUser] = formProvider()
+
+
+    lazy val authorisedUserRoute: String = controllers.add.routes.AuthorisedUserController.onPageLoad().url
+
+    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val accounts: Accounts = Accounts(
+      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+
+    val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012",
+      LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
+
+    val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
+    val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
+    val mockDateTimeService: DateTimeService = mock[DateTimeService]
+
+    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+    val cashAccount: CashAccount =
+      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val dutyDeferment: DutyDefermentAccount =
+      DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val generalGuarantee: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+    val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+
+    val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+      .set(AccountsPage, selectedAccounts).success.value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+      .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockValidator.validate(userAnswersTodayToIndefinite)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
   }
 }
