@@ -109,5 +109,3 @@ class EditAuthorityEndControllerSpec extends SpecBase {
         controllers.edit.routes.EditAuthorityEndController.onSubmit("123", "12345").url)
   }
 }
-
-

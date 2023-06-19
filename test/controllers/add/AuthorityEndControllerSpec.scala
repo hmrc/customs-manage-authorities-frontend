@@ -28,8 +28,10 @@ import pages.add.AuthorityEndPage
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, contentAsString, defaultAwaitTimeout, redirectLocation, route, running, status,
-  writeableOf_AnyContentAsEmpty, writeableOf_AnyContentAsFormUrlEncoded}
+import play.api.test.Helpers.{
+  GET, POST, contentAsString, defaultAwaitTimeout, redirectLocation, route, running, status,
+  writeableOf_AnyContentAsEmpty, writeableOf_AnyContentAsFormUrlEncoded
+}
 import play.api.{Application, inject}
 import repositories.SessionRepository
 import views.html.add.AuthorityEndView
