@@ -22,9 +22,6 @@ import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.data.Forms._
-import play.api.data._
-import play.api.data.format.Formats._
 import play.api.i18n.Messages
 import play.api.libs.json.{JsError, JsString, Json}
 import play.api.test.Helpers
