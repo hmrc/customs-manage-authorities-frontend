@@ -90,6 +90,6 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       Option(AccountStatusOpen),
       Seq(standingAuthority1, standingAuthority2))
 
-    val authWithId = AuthoritiesWithId(Seq(accWithAuthorities1, accWithAuthorities2))
+    val authWithId: AuthoritiesWithId = AuthoritiesWithId(Seq(accWithAuthorities1, accWithAuthorities2))
   }
 }
