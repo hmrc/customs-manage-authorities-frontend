@@ -31,21 +31,22 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Call = {
     case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     case AccountsPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
-    case EoriDetailsCorrectPage => eoriDetailsCorrectRoutes
+    case EoriDetailsCorrectPage => eoriDetailsNormalModeRoutes
     case AuthorityStartPage => authorityStartRoutes
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     case AuthorityEndPage => authorityEndRoutes
     case AuthorityEndDatePage => _ => controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
     case ShowBalancePage => _ => controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode)
-    case AuthorityDetailsPage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
-    case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad
+    case AuthorityDetailsPage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
+    case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad()
     case EditAuthorityStartPage(accountId: String, authorityId: String) => editAuthorityStartRoutes(_, accountId, authorityId)
     case EditAuthorityEndPage(accountId: String, authorityId: String) => editAuthorityEndRoutes(_, accountId, authorityId)
     case EditAuthorityStartDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
     case EditAuthorityEndDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
     case EditShowBalancePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
     case EditAuthorisedUserPage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
-    case EditCheckYourAnswersPage(accountId: String, authorityId: String) => _ => controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
+    case EditCheckYourAnswersPage(accountId: String, authorityId: String) => _ =>
+      controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
     case _ => _ => routes.IndexController.onPageLoad
   }
 
@@ -72,18 +73,27 @@ class Navigator @Inject()() {
 
 
   private val checkRoutes: Page => UserAnswers => Call = {
-    case EoriNumberPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+    case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(CheckMode)
     case AuthorityStartPage => authorityStartCheckRoutes
     case AuthorityEndPage => authorityEndCheckRoutes
     case AuthorityStartDatePage => authorityStartDatePageCheckRoutes
-    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad
+    case AccountsPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
+    case EoriDetailsCorrectPage => eoriDetailsCheckModeRoutes
+    case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 
-  private def eoriDetailsCorrectRoutes(answers: UserAnswers): Call =
+  private def eoriDetailsNormalModeRoutes(answers: UserAnswers): Call =
     answers.get(EoriDetailsCorrectPage) match {
       case Some(EoriDetailsCorrect.Yes) => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
       case Some(EoriDetailsCorrect.No) => controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
       case _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    }
+
+  private def eoriDetailsCheckModeRoutes(answers: UserAnswers): Call =
+    answers.get(EoriDetailsCorrectPage) match {
+      case Some(EoriDetailsCorrect.Yes) => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
+      case Some(EoriDetailsCorrect.No) => controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
+      case _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
     }
 
   private def authorityStartRoutes(answers: UserAnswers): Call =
@@ -100,9 +110,10 @@ class Navigator @Inject()() {
       case _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     }
 
+  //TODO
   private def authorityStartCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {
-      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode)
       case Some(AuthorityStart.Setdate) => controllers.add.routes.AuthorityStartDateController.onPageLoad(CheckMode)
       case _ => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
     }
@@ -166,5 +177,22 @@ class Navigator @Inject()() {
       case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad
     }
   }
+
+  /**
+   * Returns the backLink route for AccountsView page (AccountsController)
+   *
+   * @param mode Mode
+   * @return Call
+   */
+  def backLinkRouteForAccountsPage(mode: Mode): Call = controllers.add.routes.EoriNumberController.onPageLoad(mode)
+
+  /**
+   * Returns the backLink route for EoriDetailsCorrectView page (EoriDetailsCorrectController)
+   *
+   * @param mode Mode
+   * @return Call
+   */
+  def backLinkRouteForEoriDetailsCorrectPage(mode: Mode): Call =
+    controllers.add.routes.AccountsController.onPageLoad(mode)
 }
 

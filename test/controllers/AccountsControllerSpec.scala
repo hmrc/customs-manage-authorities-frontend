@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
-import models.{AuthorisedAccounts, CompanyDetails, InternalId, NormalMode, UserAnswers}
+import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -188,6 +188,42 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "populate the view correctly on a GET in CheckMode when the question has previously been answered" in new Setup {
+
+      val userAnswers = UserAnswers(userAnswersId)
+        .set(AccountsPage, answerAccounts).success.value
+        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
+        .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+        .overrides(bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService))
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, accountsRouteInCheckMode)
+
+        val view = application.injector.instanceOf[AccountsView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+
+        contentAsString(result) mustEqual
+          view(
+            form.fill(answer),
+            AuthorisedAccounts(
+              Seq.empty,
+              answerAccounts,
+              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+              Seq.empty, "GB9876543210000"),
+            CheckMode,
+            backLinkRouteInCheckMode)(request, messages(application), appConfig).toString
+      }
+    }
+
     "redirect to the next page when valid data is submitted" when {
 
       "user answers exists" in new Setup {
@@ -218,6 +254,68 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      "user answers exists in NormalMode" in new Setup {
+
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(eoriDetailsNormalModeRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+            ).build()
+
+        running(application) {
+
+          val request =
+            fakeRequest(POST, accountsSubmitRouteInNormalMode)
+              .withFormUrlEncodedBody(("value[0]", answer.head))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+        }
+      }
+
+      "user answers exists in CheckMode" in new Setup {
+
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(eoriDetailsCheckModeRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+            ).build()
+
+        running(application) {
+
+          val request =
+            fakeRequest(POST, accountsSubmitRouteInCheckMode)
+              .withFormUrlEncodedBody(("value[0]", answer.head))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
         }
       }
 
@@ -318,7 +416,14 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     def onwardRoute = Call("GET", "/foo")
 
+    lazy val eoriDetailsNormalModeRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    lazy val eoriDetailsCheckModeRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
+
     lazy val accountsRoute = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+    lazy val accountsRouteInCheckMode = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
+
+    lazy val accountsSubmitRouteInNormalMode = controllers.add.routes.AccountsController.onSubmit(NormalMode).url
+    lazy val accountsSubmitRouteInCheckMode = controllers.add.routes.AccountsController.onSubmit(CheckMode).url
 
     val formProvider = new AccountsFormProvider()
     val form = formProvider()
@@ -351,6 +456,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")))
     //    when(mockAuthoritiesCacheService.retrieveAuthorities(any[InternalId])(any())).thenReturn(Future.successful(AuthoritiesWithId(Seq.empty)))
     val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+    val backLinkRouteInCheckMode: Call = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
   }
 }
 

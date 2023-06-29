@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.routes
 import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.{Setdate, Today}
+import models.EoriDetailsCorrect.{No, Yes}
 import models._
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AuthorisedUser, CdsCashAccount, StandingAuthority}
 import models.requests.Accounts
@@ -192,8 +193,32 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
         navigator.nextPage(AuthorityEndPage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
+      "go from EoriDetailsCorrectPage to AuthorityStart page when Yes is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers.set(EoriDetailsCorrectPage, Yes)(EoriDetailsCorrect.writes).success.value
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+      }
+
+      "go from EoriDetailsCorrectPage to EoriNumber page when No is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers.set(EoriDetailsCorrectPage, No)(EoriDetailsCorrect.writes).success.value
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      }
+
+      "go from EoriDetailsCorrectPage to EoriDetailsCorrect page when neither Yes nor No is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+      }
+
       "backLink on Accounts should navigate to EoriNumber" in {
-        navigator.backLinkRoute(NormalMode, controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)) mustBe controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+        navigator.backLinkRouteForAccountsPage(NormalMode) mustBe
+          controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      }
+
+      "backLink on EoriDetailsCorrectPage should navigate to Accounts Page" in {
+        navigator.backLinkRouteForEoriDetailsCorrectPage(NormalMode) mustBe
+          controllers.add.routes.AccountsController.onPageLoad(NormalMode)
       }
     }
 
@@ -205,12 +230,18 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
         navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
-      "go from Accounts to AuthorisedUser" in {
-        navigator.nextPage(AccountsPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+      "go from Accounts to EoriNumber" in {
+        navigator.nextPage(
+          AccountsPage,
+          CheckMode,
+          emptyUserAnswers) mustBe controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
       }
 
-      "go from EoriNumber to AuthorisedUser" in {
-        navigator.nextPage(EoriNumberPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+      "go from EoriNumber to Accounts page" in {
+        navigator.nextPage(
+          EoriNumberPage,
+          CheckMode,
+          emptyUserAnswers) mustBe controllers.add.routes.AccountsController.onPageLoad(CheckMode)
       }
 
       "go from AuthorityStart to AuthorityStartDate when 'set date' is chosen" in {
@@ -225,6 +256,24 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
 
       "go from ShowBalance to AuthorisedUser" in {
         navigator.nextPage(ShowBalancePage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+      }
+
+      "go from EoriDetailsCorrectPage to AuthorityStart page when Yes is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers.set(EoriDetailsCorrectPage, Yes)(EoriDetailsCorrect.writes).success.value
+        navigator.nextPage(EoriDetailsCorrectPage, CheckMode, userAnswers) mustBe
+          controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
+      }
+
+      "go from EoriDetailsCorrectPage to EoriNumber page when No is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers.set(EoriDetailsCorrectPage, No)(EoriDetailsCorrect.writes).success.value
+        navigator.nextPage(EoriDetailsCorrectPage, CheckMode, userAnswers) mustBe
+          controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
+      }
+
+      "go from EoriDetailsCorrectPage to EoriDetailsCorrect page when neither Yes nor No is present in UserAnswers" in {
+        val userAnswers = emptyUserAnswers
+        navigator.nextPage(EoriDetailsCorrectPage, CheckMode, userAnswers) mustBe
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
       }
 
       "backLink should navigate to AuthorisedUser when in check mode" in {
@@ -247,9 +296,14 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
       "backLink on Accounts should navigate to AuthorisedUser" in {
-        navigator.backLinkRoute(CheckMode, controllers.add.routes.AuthorisedUserController.onPageLoad) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
+        navigator.backLinkRouteForAccountsPage(
+          CheckMode) mustBe controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
       }
 
+      "backLink on EoriDetailsCorrectPage should navigate to Accounts Page" in {
+        navigator.backLinkRouteForEoriDetailsCorrectPage(CheckMode) mustBe
+          controllers.add.routes.AccountsController.onPageLoad(CheckMode)
+      }
     }
   }
 }
