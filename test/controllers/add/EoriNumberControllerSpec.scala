@@ -229,7 +229,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to accounts page when form data is valid and user in NormalMode" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
-      val mockSessionRepository = mock[SessionRepository]
+      private val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -240,8 +240,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
               controllers.add.routes.AccountsController.onPageLoad(NormalMode), mode = CheckMode)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
@@ -260,7 +259,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       "and user in CheckMode" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
-      val mockSessionRepository = mock[SessionRepository]
+      private val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -272,8 +271,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
               controllers.add.routes.AccountsController.onPageLoad(NormalMode), mode = CheckMode)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
