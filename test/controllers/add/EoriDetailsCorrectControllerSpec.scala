@@ -216,8 +216,6 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
     val form = formProvider()
     val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
 
-    //implicit val messages: Messages = messagesApi.preferred(fakeRequest())
-
     val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
     val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
     val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))

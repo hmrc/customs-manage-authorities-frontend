@@ -143,15 +143,6 @@ class Navigator @Inject()() {
     }
   }
 
-//  def backLinkRouteForShowBalancePage(mode: Mode, answers: UserAnswers): Call = {
-//    (mode, answers.get(AuthorityStartPage)) match {
-//      case (NormalMode, Some(AuthorityStart.Today)) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
-//      case (NormalMode, Some(AuthorityStart.Setdate)) => controllers.add.routes.AuthorityStartDateController.onPageLoad(mode)
-//      case (NormalMode, None) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
-//      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad
-//    }
-//  }
-
   def backLinkRouteForShowBalancePage(mode: Mode, answers: UserAnswers): Call = {
     (mode, answers.get(AuthorityEndPage)) match {
       case (NormalMode, Some(AuthorityEnd.Indefinite)) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
