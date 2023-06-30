@@ -74,7 +74,12 @@ class EoriNumberController @Inject()(
           val eori = formatGBEori(eoriNumber)
 
           if (request.eoriNumber.equalsIgnoreCase(eori)) {
-            Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
+            Future.successful(BadRequest(view(form.withError(
+              "value",
+              "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
+              mode,
+              navigator.backLinkRouteForEORINUmberPage(mode)))
+            )
           } else {
             (for {
               companyName <- dataStore.getCompanyName(eori)
@@ -86,7 +91,9 @@ class EoriNumberController @Inject()(
               result <- doSubmission(updatedAnswers, eori, mode)
             } yield result).recover {
               case _: ValidationException =>
-                BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+                BadRequest(view(form.withError(
+                  "value",
+                  "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
               case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
             }
           }

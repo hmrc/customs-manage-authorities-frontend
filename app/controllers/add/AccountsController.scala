@@ -127,17 +127,15 @@ class AccountsController @Inject()(
       }
   }
 
-  private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] = {
-
+  private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] =
     (request.userAnswers.get(AccountsPage), request.userAnswers.get(EoriDetailsCorrectPage)) match {
       case (None, _) => form
       case (Some(value), _) =>
-        val formValues: List[String] = availableAccounts
+        val formValues = availableAccounts
           .toList
           .zipWithIndex
           .filter { case (account, _) => value.contains(account) }
           .map { case (_, index) => s"account_$index" }
         form.fill(formValues)
     }
-  }
 }
