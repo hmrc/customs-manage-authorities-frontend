@@ -269,7 +269,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.AccountsController.onPageLoad(CheckMode), mode = CheckMode)),
+              controllers.add.routes.AccountsController.onPageLoad(NormalMode), mode = CheckMode)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
@@ -284,7 +284,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
+        redirectLocation(result).value mustEqual controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
       }
     }
 

@@ -454,9 +454,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any())).thenReturn(Future.successful(accounts))
     when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
       .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")))
-    //    when(mockAuthoritiesCacheService.retrieveAuthorities(any[InternalId])(any())).thenReturn(Future.successful(AuthoritiesWithId(Seq.empty)))
     val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
-    val backLinkRouteInCheckMode: Call = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
+    val backLinkRouteInCheckMode: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 }
 

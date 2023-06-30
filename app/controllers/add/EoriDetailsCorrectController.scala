@@ -58,7 +58,7 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
         case (Some(EoriDetailsCorrect.Yes),Some(value)) => form.fill(EoriDetailsCorrect.Yes)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRouteForEoriDetailsCorrectPage(mode),
+      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
         EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))
   }
 
@@ -67,7 +67,9 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEoriDetailsCorrectPage(mode),
+          Future.successful(BadRequest(view(
+            formWithErrors,
+            mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
             EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))),
         value =>
           for {

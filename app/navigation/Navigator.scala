@@ -31,7 +31,7 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Call = {
     case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     case AccountsPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
-    case EoriDetailsCorrectPage => eoriDetailsNormalModeRoutes
+    case EoriDetailsCorrectPage => eoriDetailsCorrectRoutes
     case AuthorityStartPage => authorityStartRoutes
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     case AuthorityEndPage => authorityEndRoutes
@@ -73,27 +73,18 @@ class Navigator @Inject()() {
 
 
   private val checkRoutes: Page => UserAnswers => Call = {
-    case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(CheckMode)
+    case EoriNumberPage => _ => controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     case AuthorityStartPage => authorityStartCheckRoutes
     case AuthorityEndPage => authorityEndCheckRoutes
     case AuthorityStartDatePage => authorityStartDatePageCheckRoutes
-    case AccountsPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
-    case EoriDetailsCorrectPage => eoriDetailsCheckModeRoutes
     case _ => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 
-  private def eoriDetailsNormalModeRoutes(answers: UserAnswers): Call =
+  private def eoriDetailsCorrectRoutes(answers: UserAnswers): Call =
     answers.get(EoriDetailsCorrectPage) match {
       case Some(EoriDetailsCorrect.Yes) => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
       case Some(EoriDetailsCorrect.No) => controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
       case _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
-    }
-
-  private def eoriDetailsCheckModeRoutes(answers: UserAnswers): Call =
-    answers.get(EoriDetailsCorrectPage) match {
-      case Some(EoriDetailsCorrect.Yes) => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
-      case Some(EoriDetailsCorrect.No) => controllers.add.routes.EoriNumberController.onPageLoad(CheckMode)
-      case _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
     }
 
   private def authorityStartRoutes(answers: UserAnswers): Call =
@@ -110,17 +101,16 @@ class Navigator @Inject()() {
       case _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     }
 
-  //TODO
   private def authorityStartCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityStartPage) match {
-      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode)
+      case Some(AuthorityStart.Today) => controllers.add.routes.AuthorisedUserController.onPageLoad()
       case Some(AuthorityStart.Setdate) => controllers.add.routes.AuthorityStartDateController.onPageLoad(CheckMode)
       case _ => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
     }
 
   private def authorityEndCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityEndPage) match {
-      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad()
       case Some(AuthorityEnd.Setdate) => controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
       case _ => controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode)
     }
@@ -128,7 +118,7 @@ class Navigator @Inject()() {
   private def authorityStartDatePageCheckRoutes(answers: UserAnswers): Call =
     answers.get(AuthorityEndPage) match {
       case Some(AuthorityEnd.Setdate) => controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
-      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case Some(AuthorityEnd.Indefinite) => controllers.add.routes.AuthorisedUserController.onPageLoad()
       case _ => controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
     }
 
@@ -141,7 +131,7 @@ class Navigator @Inject()() {
 
   def backLinkRoute(mode: Mode, call: Call): Call = mode match {
     case NormalMode => call
-    case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad
+    case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 
   def backLinkRouteForAuthorityEndPage(mode: Mode, answers: UserAnswers): Call = {
@@ -149,7 +139,7 @@ class Navigator @Inject()() {
       case (NormalMode, Some(AuthorityStart.Today)) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
       case (NormalMode, Some(AuthorityStart.Setdate)) => controllers.add.routes.AuthorityStartDateController.onPageLoad(mode)
       case (NormalMode, None) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
-      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
     }
   }
 
@@ -167,32 +157,15 @@ class Navigator @Inject()() {
       case (NormalMode, Some(AuthorityEnd.Indefinite)) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
       case (NormalMode, Some(AuthorityEnd.Setdate)) => controllers.add.routes.AuthorityEndDateController.onPageLoad(mode)
       case (NormalMode, None) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
-      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
     }
   }
 
   def backLinkRouteForEORINUmberPage(mode: Mode): Call = {
     mode match {
-      case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad
+      case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad()
       case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad
     }
   }
-
-  /**
-   * Returns the backLink route for AccountsView page (AccountsController)
-   *
-   * @param mode Mode
-   * @return Call
-   */
-  def backLinkRouteForAccountsPage(mode: Mode): Call = controllers.add.routes.EoriNumberController.onPageLoad(mode)
-
-  /**
-   * Returns the backLink route for EoriDetailsCorrectView page (EoriDetailsCorrectController)
-   *
-   * @param mode Mode
-   * @return Call
-   */
-  def backLinkRouteForEoriDetailsCorrectPage(mode: Mode): Call =
-    controllers.add.routes.AccountsController.onPageLoad(mode)
 }
 
