@@ -20,7 +20,7 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
 import forms.EoriNumberFormProvider
-import models.{CompanyDetails, NormalMode, UserAnswers}
+import models.{CheckMode, CompanyDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -36,18 +36,9 @@ import scala.concurrent.Future
 
 class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
-  private def onwardRoute = Call("GET", "/foo")
-
-  private val formProvider = new EoriNumberFormProvider()
-  private val form = formProvider()
-  val mockConnector = mock[CustomsFinancialsConnector]
-
-  private lazy val eoriNumberRoute = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-  val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
-
   "EoriNumber Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in new SetUp {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -68,7 +59,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in new SetUp {
 
       val userAnswers = UserAnswers(userAnswersId).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
 
@@ -90,7 +81,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository = mock[SessionRepository]
@@ -119,7 +110,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when valid eori with lowercase is submitted" in {
+    "redirect to the next page when valid eori with lowercase is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository = mock[SessionRepository]
@@ -148,7 +139,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when GBN EORI is submitted" in {
+    "redirect to the next page when GBN EORI is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository = mock[SessionRepository]
@@ -177,7 +168,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when valid eori with whitespace is submitted" in {
+    "redirect to the next page when valid eori with whitespace is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository = mock[SessionRepository]
@@ -206,7 +197,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when valid eori with whitespace and lowercase is submitted" in {
+    "redirect to the next page when valid eori with whitespace and lowercase is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository = mock[SessionRepository]
@@ -235,7 +226,101 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to accounts page when form data is valid and user in NormalMode" in new SetUp {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      private val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.AccountsController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "gb123456789011"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "redirect to accounts page when form data is valid, request eori is same as UserAnswers eori" +
+      "and user in CheckMode" in new SetUp {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      private val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.set(
+          EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.AccountsController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          ).build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberCheckModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "gb123456789011"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    //TODO: This should be revisited as need to find a way to reset the different eoriNumber value in OptionalDataRequest
+    "redirect to accounts page when form data is valid, request eori is different to UserAnswers eori" +
+      "and user in CheckMode" ignore new SetUp {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers.set(
+          EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.AccountsController.onPageLoad(CheckMode), mode = CheckMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberCheckModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "gb123456789012"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST //Should be SEE_OTHER
+        // Below would be uncommented once we find a way to set diff eoriNumber value in OptionalDataRequest
+        //redirectLocation(result).value mustEqual controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in new SetUp {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -260,7 +345,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return a Bad Request and errors when eori is same as the authorise eori is submitted" in {
+    "return a Bad Request and errors when eori is same as the authorise eori is submitted" in new SetUp {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -285,7 +370,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return a Bad Request and errors when invalid EORI is submitted" in {
+    "return a Bad Request and errors when invalid EORI is submitted" in new SetUp {
 
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(false)))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
@@ -311,5 +396,18 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+  }
+
+  trait SetUp {
+    def onwardRoute = Call("GET", "/foo")
+
+    val formProvider = new EoriNumberFormProvider()
+    val form = formProvider()
+    val mockConnector = mock[CustomsFinancialsConnector]
+
+    lazy val eoriNumberRoute = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+    lazy val eoriNumberNormalModeSubmitRoute = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
+    lazy val eoriNumberCheckModeSubmitRoute = controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+    val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
   }
 }

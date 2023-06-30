@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.AccountsFormProvider
 import models.domain.CDSAccount
 import models.requests.DataRequest
-import models.{AuthorisedAccounts, EoriDetailsCorrect, Mode, NormalMode}
+import models.{AuthorisedAccounts, Mode, NormalMode}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.Logger
@@ -32,8 +32,8 @@ import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccountsController @Inject()(
@@ -65,15 +65,22 @@ class AccountsController @Inject()(
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
                   authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
 
-                Ok(view(populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)), accounts, mode,
+                Ok(view(
+                  populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)),
+                  accounts,
+                  mode,
                   navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               } else {
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                  authorisedAccounts.availableAccounts.filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
-                Ok(view(populateForm(authorisedAccounts.availableAccounts
-                  .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))), accounts, mode,
-                  navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
+                  authorisedAccounts.availableAccounts.filter(
+                    x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
+                Ok(
+                  view(populateForm(authorisedAccounts.availableAccounts
+                  .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))),
+                    accounts,
+                    mode,
+                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               }
 
@@ -120,11 +127,9 @@ class AccountsController @Inject()(
       }
   }
 
-  private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] = {
+  private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] =
     (request.userAnswers.get(AccountsPage), request.userAnswers.get(EoriDetailsCorrectPage)) match {
       case (None, _) => form
-      case (Some(value), Some(EoriDetailsCorrect.No)) =>
-        form
       case (Some(value), _) =>
         val formValues = availableAccounts
           .toList
@@ -133,5 +138,4 @@ class AccountsController @Inject()(
           .map { case (_, index) => s"account_$index" }
         form.fill(formValues)
     }
-  }
 }

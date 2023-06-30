@@ -19,10 +19,12 @@ package controllers.add
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.EoriDetailsCorrectFormProvider
+import models.EoriDetailsCorrect.No
+
 import javax.inject.Inject
-import models.{EoriDetailsCorrect, Mode}
+import models.{EoriDetailsCorrect, Mode, UserAnswers}
 import navigation.Navigator
-import pages.add.{EoriDetailsCorrectPage, EoriNumberPage}
+import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -65,13 +67,40 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
+          Future.successful(BadRequest(view(
+            formWithErrors,
+            mode, navigator.backLinkRoute(mode,controllers.add.routes.AccountsController.onPageLoad(mode)),
             EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriDetailsCorrectPage, value)(EoriDetailsCorrect.writes))
-            _              <- sessionRepository.set(updatedAnswers)
+            updatedAnswersWithRefresheddAccounts <- refreshAccountsSelectionForNoEoriChange(value, updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswersWithRefresheddAccounts)
           } yield Redirect(navigator.nextPage(EoriDetailsCorrectPage, mode, updatedAnswers))
       )
+  }
+
+  /**
+   * Sets the AccountsPage value to List() in UserAnswers to refresh the
+   * Accounts selection when user selects the No option
+   *
+   * @param formValue Form value of EoriDetailsCorrectFormProvider
+   * @param userAnswers UserAnswers
+   * @return Future[UserAnswers]
+   */
+  private def refreshAccountsSelectionForNoEoriChange(formValue: EoriDetailsCorrect,
+                                                   userAnswers: UserAnswers): Future[UserAnswers] = {
+    import scala.util.Success
+
+    Future(
+      if (formValue == No) {
+        userAnswers.set(AccountsPage, List()) match {
+          case Success(value) => value
+          case _ => userAnswers
+        }
+      } else {
+        userAnswers
+      }
+    )
   }
 }

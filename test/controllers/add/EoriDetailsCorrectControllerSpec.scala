@@ -16,19 +16,16 @@
 
 package controllers.add
 
-import java.time.LocalDateTime
-
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.EoriDetailsCorrectFormProvider
 import models.domain.{AccountStatusOpen, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
-import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, NormalMode, UserAnswers}
+import models.{AuthorityStart, CheckMode, CompanyDetails, EoriDetailsCorrect, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage}
-import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -36,37 +33,15 @@ import repositories.SessionRepository
 import services.DateTimeService
 import viewmodels.EoriDetailsCorrectHelper
 import views.html.add.EoriDetailsCorrectView
+
+import java.time.LocalDateTime
 import scala.concurrent.Future
 
 class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
 
-  private def onwardRoute = Call("GET", "/foo")
-
-  private lazy val eoriDetailsCorrectRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
-
-  private val formProvider = new EoriDetailsCorrectFormProvider()
-  private val form = formProvider()
-  val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
-
-  implicit val messages: Messages = messagesApi.preferred(fakeRequest())
-
-  val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
-  val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
-
-  val userAnswer: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-
-  val mockDateTimeService: DateTimeService = mock[DateTimeService]
-  when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-
-
   "AuthorityDetails Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in new SetUp {
       val userAnswers = userAnswer.set(AccountsPage, List(cashAccount)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -87,7 +62,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in new SetUp {
 
       val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
         .set(AccountsPage, selectedAccounts).success.value
@@ -111,7 +86,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in new SetUp {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -139,7 +114,37 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return a Bad Request and errors when invalid data is submitted" in {
+    "redirect to the next page and clear the AccountsPage selection when No,change EORI is selected" +
+      " and form is submitted" in new SetUp {
+
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.EoriNumberController.onPageLoad(CheckMode), CheckMode)),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriDetailsCorrectCheckModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", EoriDetailsCorrect.No.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url
+      }
+    }
+
+    "return a Bad Request and errors when invalid data is submitted" in new SetUp {
 
       val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
         .set(AccountsPage, selectedAccounts).success.value
@@ -168,7 +173,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to Session Expired for a GET if no existing data is found" in {
+    "redirect to Session Expired for a GET if no existing data is found" in new SetUp {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -183,7 +188,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to Session Expired for a POST if no existing data is found" in {
+    "redirect to Session Expired for a POST if no existing data is found" in new SetUp {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -199,5 +204,29 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
+  }
+
+  trait SetUp {
+    def onwardRoute = Call("GET", "/foo")
+
+    lazy val eoriDetailsCorrectRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+    lazy val eoriDetailsCorrectCheckModeSubmitRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
+
+    val formProvider = new EoriDetailsCorrectFormProvider()
+    val form = formProvider()
+    val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+
+    val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+    val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+
+    val userAnswer: UserAnswers = UserAnswers("id")
+      .set(AccountsPage, selectedAccounts).success.value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+
+    val mockDateTimeService: DateTimeService = mock[DateTimeService]
+    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
   }
 }

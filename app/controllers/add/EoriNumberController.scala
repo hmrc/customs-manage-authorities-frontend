@@ -20,18 +20,22 @@ import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
 import forms.EoriNumberFormProvider
-import javax.inject.Inject
-import models.{CompanyDetails, Mode, UserAnswers}
+import models.requests.OptionalDataRequest
+import models.{CheckMode, CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
 import navigation.Navigator
-import pages.add.EoriNumberPage
+import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.StringUtils.emptyString
 import views.html.add.EoriNumberView
+
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Success, Try}
 import scala.xml.dtd.ValidationException
 
 class EoriNumberController @Inject()(
@@ -68,30 +72,80 @@ class EoriNumberController @Inject()(
 
         eoriNumber => {
           val eori = formatGBEori(eoriNumber)
+
           if (request.eoriNumber.equalsIgnoreCase(eori)) {
-            Future.successful(BadRequest(view(form.withError("value", "eoriNumber.error.authorise-own-eori").fill(eoriNumber), mode, navigator.backLinkRouteForEORINUmberPage(mode))))
+            Future.successful(BadRequest(view(form.withError(
+              "value",
+              "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
+              mode,
+              navigator.backLinkRouteForEORINUmberPage(mode)))
+            )
           } else {
             (for {
               companyName <- dataStore.getCompanyName(eori)
               companyDetails = CompanyDetails(eori, companyName)
               updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
-              _ <- sessionRepository.set(updatedAnswers)
+              updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
+                                                      mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
+              _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
               result <- doSubmission(updatedAnswers, eori, mode)
             } yield result).recover {
               case _: ValidationException =>
-                BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+                BadRequest(view(form.withError(
+                  "value",
+                  "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
               case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
             }
           }
         }
       )
   }
-  private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+
+  private def doSubmission(updatedAnswers: UserAnswers,
+                           eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
-      case _ => BadRequest(view(form.withError("value", "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+      case _ => BadRequest(view(
+        form.withError("value",
+          "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
     }
   }
 
   protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").toUpperCase
+
+  /**
+   * Gets the eori from UserAnswers in CheckMode otherwise
+   * empty string
+   */
+  private def eoriFromUserAnswers(mode: Mode,
+                                  request: OptionalDataRequest[AnyContent]): String =
+    if (mode == CheckMode) {
+      request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).get(
+        EoriNumberPage).getOrElse(CompanyDetails(emptyString, None)).eori
+    } else {
+      emptyString
+    }
+
+  /**
+   * Updates the AccountsPage value to empty list (in UserAnswers) to refresh the Accounts selection
+   * and EoriDetailsCorrectPage value to No in CheckMode
+   *
+   * Returns: UserAnswers updated with refreshed accounts
+   */
+  private def refreshAccountsInChangeMode(mode: Mode,
+                                          requestEori: String,
+                                          eoriFromUserAnswers: String,
+                                          userAnswers: UserAnswers): Future[UserAnswers] =
+    Future(
+      if (mode == CheckMode && !requestEori.equals(eoriFromUserAnswers)) {
+        userAnswers.set(AccountsPage, List()) match {
+          case Success(value) =>
+            val finalUpdatedUserAnswers: Try[UserAnswers] = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)
+            if(finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
+          case _ => userAnswers
+        }
+      } else {
+        userAnswers
+      }
+    )
 }

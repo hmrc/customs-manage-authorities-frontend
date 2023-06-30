@@ -28,7 +28,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import pages.add._
-import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndDatePage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
+import pages.edit._
 import services.add.CheckYourAnswersValidationService
 
 import java.time.LocalDate
@@ -202,15 +202,18 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       "go to AuthorisedUser from a page that doesn't exist in the edit route map" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "go from Accounts to AuthorisedUser" in {
-        navigator.nextPage(AccountsPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(AccountsPage, CheckMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "go from EoriNumber to AuthorisedUser" in {
-        navigator.nextPage(EoriNumberPage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+        navigator.nextPage(EoriNumberPage, CheckMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AccountsController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStart to AuthorityStartDate when 'set date' is chosen" in {
