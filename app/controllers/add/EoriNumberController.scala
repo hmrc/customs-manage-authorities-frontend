@@ -35,7 +35,7 @@ import views.html.add.EoriNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
+import scala.util.{Success, Try}
 import scala.xml.dtd.ValidationException
 
 class EoriNumberController @Inject()(
@@ -132,13 +132,9 @@ class EoriNumberController @Inject()(
     Future(
       if (mode == CheckMode && !requestEori.equals(eoriFromUserAnswers)) {
         userAnswers.set(AccountsPage, List()) match {
-          case Success(value) => {
-            val finalUpdatedUserAnswers = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No) match {
-              case Success(ua) => ua
-              case _ => value
-            }
-            finalUpdatedUserAnswers
-          }
+          case Success(value) =>
+            val finalUpdatedUserAnswers: Try[UserAnswers] = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)
+            if(finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
           case _ => userAnswers
         }
       } else {

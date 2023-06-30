@@ -92,13 +92,15 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
                                                    userAnswers: UserAnswers): Future[UserAnswers] = {
     import scala.util.Success
 
-    Future(if (formValue == No) {
-      userAnswers.set(AccountsPage, List()) match {
-        case Success(value) => value
-        case _ => userAnswers
+    Future(
+      if (formValue == No) {
+        userAnswers.set(AccountsPage, List()) match {
+          case Success(value) => value
+          case _ => userAnswers
+        }
+      } else {
+        userAnswers
       }
-    } else {
-      userAnswers
-    })
+    )
   }
 }
