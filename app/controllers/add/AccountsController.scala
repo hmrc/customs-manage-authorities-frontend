@@ -98,15 +98,10 @@ class AccountsController @Inject()(
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).flatMap { authorisedAccounts =>
             form.bindFromRequest().fold(
               formWithErrors =>
-                if(enteredEori.eori.startsWith("GB")) {
-                  Future.successful(BadRequest(view(formWithErrors, getGBAccounts(authorisedAccounts), mode,
-                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
-                } else {
-                  Future.successful(BadRequest(view(formWithErrors, getXIAccounts(authorisedAccounts), mode,
-                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
-                },
+                  Future.successful(BadRequest(view(formWithErrors, filterAccounts(authorisedAccounts, enteredEori.eori),
+                    mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),
               value => {
-                val selected = { filterAccounts(enteredEori, value, authorisedAccounts) }
+                val selected = { filterAccountsWithContext(enteredEori.eori, value, authorisedAccounts) }
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(AccountsPage, selected))
                   _ <- sessionRepository.set(updatedAnswers)
@@ -117,17 +112,21 @@ class AccountsController @Inject()(
       }
   }
 
+  private def filterAccounts(authorisedAccounts: AuthorisedAccounts, eori: String) = {
+    if(eori.startsWith("GB")) { getGBAccounts(authorisedAccounts) } else { getXIAccounts(authorisedAccounts) }
+  }
+
   private def getGBAccounts(authorisedAccounts: AuthorisedAccounts) = {
     getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
   }
 
   private def getXIAccounts(authorisedAccounts: AuthorisedAccounts) = {
     getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(
-        x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
+      x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
   }
 
-  private def filterAccounts(enteredEori: CompanyDetails, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
-      if(enteredEori.eori.startsWith("XI")){
+  private def filterAccountsWithContext(eori: String, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
+      if(eori.startsWith("XI")){
         value.map(account => authorisedAccounts.availableAccounts.filter(
           x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
         (account.replace("account_", "").toInt))
