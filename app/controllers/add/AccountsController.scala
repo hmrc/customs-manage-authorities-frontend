@@ -61,28 +61,21 @@ class AccountsController @Inject()(
             if (authorisedAccounts.availableAccounts.nonEmpty) {
 
               if(enteredEori.eori.contains("GB")) {
-                val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                  authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
-
                 Ok(view(
                   populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)),
-                  accounts,
+                  getGBAccounts(authorisedAccounts),
                   mode,
                   navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               } else {
-                val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                  authorisedAccounts.availableAccounts.filter(
-                    x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
                 Ok(
                   view(populateForm(authorisedAccounts.availableAccounts
                   .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))),
-                    accounts,
+                    getXIAccounts(authorisedAccounts),
                     mode,
                     navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
                 )
               }
-
             } else {
               Ok(noAvailableAccounts(authorisedAccounts.enteredEori))
             }
@@ -106,18 +99,10 @@ class AccountsController @Inject()(
             form.bindFromRequest().fold(
               formWithErrors =>
                 if(enteredEori.eori.startsWith("GB")) {
-                  val accountsGB: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                    authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
-
-                  Future.successful(BadRequest(view(formWithErrors, accountsGB, mode,
+                  Future.successful(BadRequest(view(formWithErrors, getGBAccounts(authorisedAccounts), mode,
                     navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
                 } else {
-
-                  val accountsNI: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
-                    authorisedAccounts.availableAccounts.filter(
-                      x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
-
-                  Future.successful(BadRequest(view(formWithErrors, accountsNI, mode,
+                  Future.successful(BadRequest(view(formWithErrors, getXIAccounts(authorisedAccounts), mode,
                     navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
                 },
               value => {
@@ -130,6 +115,15 @@ class AccountsController @Inject()(
             )
           }
       }
+  }
+
+  private def getGBAccounts(authorisedAccounts: AuthorisedAccounts) = {
+    getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
+  }
+
+  private def getXIAccounts(authorisedAccounts: AuthorisedAccounts) = {
+    getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(
+        x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
   }
 
   private def filterAccounts(enteredEori: CompanyDetails, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
