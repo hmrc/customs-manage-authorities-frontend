@@ -21,7 +21,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.AccountsFormProvider
 import models.domain.CDSAccount
 import models.requests.DataRequest
-import models.{AuthorisedAccounts, Mode, NormalMode}
+import models.{AuthorisedAccounts, CompanyDetails, Mode, NormalMode}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.Logger
@@ -32,7 +32,6 @@ import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
-
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -106,17 +105,23 @@ class AccountsController @Inject()(
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).flatMap { authorisedAccounts =>
             form.bindFromRequest().fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, authorisedAccounts, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),
+                if(enteredEori.eori.startsWith("GB")) {
+                  val accountsGB: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
+                    authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
+
+                  Future.successful(BadRequest(view(formWithErrors, accountsGB, mode,
+                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
+                } else {
+
+                  val accountsNI: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
+                    authorisedAccounts.availableAccounts.filter(
+                      x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
+
+                  Future.successful(BadRequest(view(formWithErrors, accountsNI, mode,
+                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))))
+                },
               value => {
-                val selected = {
-                  if(enteredEori.eori.startsWith("XI")){
-                    value.map(account => authorisedAccounts.availableAccounts.filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
-                    (account.replace("account_", "").toInt))
-                  } else {
-                    value.map(account => authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)
-                    (account.replace("account_", "").toInt))
-                  }
-                }
+                val selected = { filterAccounts(enteredEori, value, authorisedAccounts) }
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(AccountsPage, selected))
                   _ <- sessionRepository.set(updatedAnswers)
@@ -124,6 +129,17 @@ class AccountsController @Inject()(
               }
             )
           }
+      }
+  }
+
+  private def filterAccounts(enteredEori: CompanyDetails, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
+      if(enteredEori.eori.startsWith("XI")){
+        value.map(account => authorisedAccounts.availableAccounts.filter(
+          x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
+        (account.replace("account_", "").toInt))
+      } else {
+        value.map(account => authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)
+        (account.replace("account_", "").toInt))
       }
   }
 

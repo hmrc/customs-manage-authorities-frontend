@@ -66,5 +66,4 @@ object AccountsFormProvider {
         checked = form.data.values.contains(s"account_${index.toString}")
       )
   }
-
 }
