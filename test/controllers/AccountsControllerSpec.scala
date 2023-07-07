@@ -268,7 +268,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         val application =
           applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
             .overrides(
-              bind[Navigator].toInstance(new FakeNavigator(eoriDetailsNormalModeRoute)),
+              bind[Navigator].toInstance(new FakeNavigator(authStartNormalModeRoute)),
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
@@ -286,7 +286,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual
-            controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+            controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
         }
       }
 
@@ -299,7 +299,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         val application =
           applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
             .overrides(
-              bind[Navigator].toInstance(new FakeNavigator(eoriDetailsCheckModeRoute)),
+              bind[Navigator].toInstance(new FakeNavigator(authStartCheckModeRoute)),
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
@@ -317,7 +317,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual
-            controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
+            controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url
         }
       }
 
@@ -347,7 +347,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
 
-          redirectLocation(result).value mustEqual controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
         }
       }
 
@@ -425,6 +426,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     lazy val eoriDetailsNormalModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
     lazy val eoriDetailsCheckModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
+
+    lazy val authStartNormalModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+    lazy val authStartCheckModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
 
     lazy val accountsRoute: String = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
     lazy val accountsRouteInCheckMode: String = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
