@@ -87,11 +87,6 @@ class AccountsController @Inject()(
       }
   }
 
-  def getAuthorisedAccountsList(accounts: AuthorisedAccounts,
-    cdsAcc: Seq[CDSAccount]): AuthorisedAccounts = AuthorisedAccounts(
-    accounts.alreadyAuthorisedAccounts, cdsAcc,
-    accounts.closedAccounts, accounts.pendingAccounts, accounts.enteredEori)
-
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(EoriNumberPage) match {
@@ -113,6 +108,15 @@ class AccountsController @Inject()(
           }
       }
   }
+
+  private def getAuthorisedAccountsList(accounts: AuthorisedAccounts,
+                                cdsAcc: Seq[CDSAccount]): AuthorisedAccounts =
+    AuthorisedAccounts(
+      accounts.alreadyAuthorisedAccounts,
+      cdsAcc,
+      accounts.closedAccounts,
+      accounts.pendingAccounts,
+      accounts.enteredEori)
 
   private def filterAccounts(authorisedAccounts: AuthorisedAccounts, eori: String) = {
     if(eori.startsWith("GB")) { getGBAccounts(authorisedAccounts) } else { getXIAccounts(authorisedAccounts) }
