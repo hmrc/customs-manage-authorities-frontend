@@ -33,6 +33,8 @@ import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 import javax.inject.Inject
+import utils.StringUtils.emptyString
+
 import scala.concurrent.{ExecutionContext, Future}
 
 class AccountsController @Inject()(
@@ -126,13 +128,13 @@ class AccountsController @Inject()(
   }
 
   private def filterAccountsWithContext(eori: String, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
-      if(eori.startsWith("XI")){
+      if (eori.startsWith("XI")) {
         value.map(account => authorisedAccounts.availableAccounts.filter(
           x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
-        (account.replace("account_", "").toInt))
+        (account.replace("account_", emptyString).toInt))
       } else {
         value.map(account => authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)
-        (account.replace("account_", "").toInt))
+        (account.replace("account_", emptyString).toInt))
       }
   }
 
