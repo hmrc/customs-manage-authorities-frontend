@@ -136,7 +136,7 @@ class EoriNumberController @Inject()(
         userAnswers.set(AccountsPage, List()) match {
           case Success(value) =>
             val finalUpdatedUserAnswers: Try[UserAnswers] = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)
-            if(finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
+            if (finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
           case _ => userAnswers
         }
       } else {

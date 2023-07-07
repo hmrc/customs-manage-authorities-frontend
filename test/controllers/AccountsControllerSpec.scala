@@ -19,7 +19,8 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, CDSAccounts, CDSCashBalance,
+  CashAccount, CdsCashAccount, StandingAuthority}
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -261,11 +262,11 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
       "user answers exists in NormalMode" in new Setup {
 
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val application =
+        val application: Application =
           applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
             .overrides(
               bind[Navigator].toInstance(new FakeNavigator(authStartNormalModeRoute)),
@@ -423,9 +424,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
   trait Setup {
 
     def onwardRoute: Call = Call("GET", "/foo")
-
-    lazy val eoriDetailsNormalModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
-    lazy val eoriDetailsCheckModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
 
     lazy val authStartNormalModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
     lazy val authStartCheckModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
