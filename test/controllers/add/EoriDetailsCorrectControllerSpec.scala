@@ -26,6 +26,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage}
+import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -117,18 +119,17 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page and clear the AccountsPage selection when No,change EORI is selected" +
       " and form is submitted" in new SetUp {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(
               controllers.add.routes.EoriNumberController.onPageLoad(CheckMode), CheckMode)),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
@@ -214,7 +215,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
 
     val formProvider = new EoriDetailsCorrectFormProvider()
-    val form = formProvider()
+    val form: Form[EoriDetailsCorrect] = formProvider()
     val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
 
     val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))

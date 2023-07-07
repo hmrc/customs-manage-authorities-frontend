@@ -27,6 +27,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.EoriNumberPage
 import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -403,15 +404,15 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
   }
 
   trait SetUp {
-    def onwardRoute = Call("GET", "/foo")
+    def onwardRoute: Call = Call("GET", "/foo")
 
     val formProvider = new EoriNumberFormProvider()
-    val form = formProvider()
-    val mockConnector = mock[CustomsFinancialsConnector]
+    val form: Form[String] = formProvider()
+    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
 
-    lazy val eoriNumberRoute = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-    lazy val eoriNumberNormalModeSubmitRoute = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
-    lazy val eoriNumberCheckModeSubmitRoute = controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+    lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+    lazy val eoriNumberNormalModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
+    lazy val eoriNumberCheckModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
     val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
   }
 }
