@@ -56,7 +56,8 @@ class AccountsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       request.userAnswers.get(EoriNumberPage) match {
-        case None => Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
+        case None =>
+          Future.successful(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)))
         case Some(enteredEori) =>
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).map { authorisedAccounts =>
             if (authorisedAccounts.availableAccounts.nonEmpty) {
@@ -69,7 +70,7 @@ class AccountsController @Inject()(
                   populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)),
                   accounts,
                   mode,
-                  navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
+                  navigator.backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode)))
                 )
               } else {
                 val accounts: AuthorisedAccounts = getAuthorisedAccountsList(authorisedAccounts,
@@ -80,7 +81,7 @@ class AccountsController @Inject()(
                   .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))),
                     accounts,
                     mode,
-                    navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)))
+                    navigator.backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode)))
                 )
               }
 
@@ -106,7 +107,11 @@ class AccountsController @Inject()(
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).flatMap { authorisedAccounts =>
             form.bindFromRequest().fold(
               formWithErrors =>
-                Future.successful(BadRequest(view(formWithErrors, authorisedAccounts, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode))))),
+                Future.successful(BadRequest(view(
+                  formWithErrors,
+                  authorisedAccounts,
+                  mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))),
               value => {
                 val selected = {
                   if(enteredEori.eori.startsWith("XI")){

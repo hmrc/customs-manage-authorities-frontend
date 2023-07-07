@@ -41,11 +41,11 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
   private val formProvider = new AuthorityStartFormProvider()
   private val form = formProvider()
-  val backLinkRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+  val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
 
   "AuthorityStart Controller" must {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET in Normal mode" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -61,7 +61,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 

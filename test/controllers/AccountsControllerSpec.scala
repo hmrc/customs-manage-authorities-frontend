@@ -26,6 +26,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, EoriNumberPage}
+import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
@@ -351,7 +353,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
       "user answers doesn't exist" in new Setup {
 
-        val mockSessionRepository = mock[SessionRepository]
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
@@ -381,8 +383,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in new Setup {
-
-      val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetails))
         .overrides(
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
@@ -405,42 +406,51 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-            CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-          ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(
+            boundForm,
+            AuthorisedAccounts(Seq.empty,
+              answerAccounts,
+              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+              Seq.empty,
+              "GB9876543210000"),
+            NormalMode,
+            backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
   }
 
   trait Setup {
 
-    def onwardRoute = Call("GET", "/foo")
+    def onwardRoute: Call = Call("GET", "/foo")
 
-    lazy val eoriDetailsNormalModeRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
-    lazy val eoriDetailsCheckModeRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
+    lazy val eoriDetailsNormalModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    lazy val eoriDetailsCheckModeRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode)
 
-    lazy val accountsRoute = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
-    lazy val accountsRouteInCheckMode = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
+    lazy val accountsRoute: String = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+    lazy val accountsRouteInCheckMode: String = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
 
-    lazy val accountsSubmitRouteInNormalMode = controllers.add.routes.AccountsController.onSubmit(NormalMode).url
-    lazy val accountsSubmitRouteInCheckMode = controllers.add.routes.AccountsController.onSubmit(CheckMode).url
+    lazy val accountsSubmitRouteInNormalMode: String = controllers.add.routes.AccountsController.onSubmit(NormalMode).url
+    lazy val accountsSubmitRouteInCheckMode: String = controllers.add.routes.AccountsController.onSubmit(CheckMode).url
 
     val formProvider = new AccountsFormProvider()
-    val form = formProvider()
-    val userAnswersWithEori = emptyUserAnswers.copy(data = Json.obj("eoriNumber" -> "GB9876543210000"))
-    val userAnswersCompanyDetails = emptyUserAnswers.set(EoriNumberPage , CompanyDetails("GB9876543210000", Some("name"))).success.value
+    val form: Form[List[String]] = formProvider()
+    val userAnswersWithEori: UserAnswers = emptyUserAnswers.copy(data = Json.obj("eoriNumber" -> "GB9876543210000"))
+    val userAnswersCompanyDetails: UserAnswers = emptyUserAnswers.set(
+      EoriNumberPage , CompanyDetails("GB9876543210000", Some("name"))).success.value
 
-    val standingAuthority = StandingAuthority(
+    val standingAuthority: StandingAuthority = StandingAuthority(
       "EORI",
       LocalDate.parse("2020-03-01"),
       Some(LocalDate.parse("2020-04-01")),
       viewBalance = false
     )
 
-    val accountWithAuthorities = AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
+    val accountWithAuthorities: AccountWithAuthorities =
+      AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
 
-    val answer = List("account_0")
-    val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
+    val answer: List[String] = List("account_0")
+    val answerAccounts: List[CashAccount] =
+      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
     val accounts = CDSAccounts("GB123456789012", List(
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
@@ -448,13 +458,15 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val authorisedAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100))))
     val closedAccount = List(  CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100))))
 
-    val mockAccountsCacheService = mock[AccountsCacheService]
-    val mockAuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockAuthorisedAccountService = mock[AuthorisedAccountsService]
+    val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+    val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+    val mockAuthorisedAccountService: AuthorisedAccountsService = mock[AuthorisedAccountsService]
+
     when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any())).thenReturn(Future.successful(accounts))
     when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
       .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")))
-    val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+
+    val backLinkRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
     val backLinkRouteInCheckMode: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 }

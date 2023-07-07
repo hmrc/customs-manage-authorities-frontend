@@ -53,7 +53,7 @@ class AuthorityStartController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))
+      Ok(view(preparedForm, mode, navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -61,12 +61,16 @@ class AuthorityStartController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))))),
+          Future.successful(BadRequest(view(
+            formWithErrors,
+            mode,
+            navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))
+          ))),
 
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityStartPage, value)(AuthorityStart.writes))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AuthorityStartPage, mode, updatedAnswers))
       )
   }
