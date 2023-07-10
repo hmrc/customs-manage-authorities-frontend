@@ -38,11 +38,12 @@
     @h1(msg = "edit-cya-heading", classes = "govuk-heading-xl")
 
     @formHelper(controllers.edit.routes.EditCheckYourAnswersController.onSubmit(accountId, authorityId)) {
+
         @h2("edit-cya-h2.1")
-        @summaryList(viewmodels.SummaryList(model.yourAccountRow))
+        @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
 
         @h2("edit-cya-h2.2")
-        @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
+        @summaryList(viewmodels.SummaryList(model.yourAccountRow))
 
         @h2("edit-cya-h2.3")
         @summaryList(viewmodels.SummaryList(model.authorityDurationRows))
