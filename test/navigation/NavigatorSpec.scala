@@ -36,10 +36,12 @@ import java.time.LocalDate
 class NavigatorSpec extends SpecBase with MockitoSugar {
 
   val navigator = new Navigator()
-  val authorisedUser = AuthorisedUser("name", "role")
-  val accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
-  val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
-  val mockValidator = mock[CheckYourAnswersValidationService]
+  val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
+  val accounts: Accounts = Accounts(
+    Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+
+  val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+  val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
   when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
   "Navigator" when {
@@ -52,7 +54,8 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
       "go from AuthorisedUserPage to AddConfirmationPage" in {
-        navigator.nextPage(AuthorisedUserPage, NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AddConfirmationController.onPageLoad()
+        navigator.nextPage(AuthorisedUserPage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AddConfirmationController.onPageLoad()
       }
 
       "go from EditAuthorityStartDatePage to EditCheckYourAnswers when authorised user populated" in {
@@ -62,6 +65,7 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
         navigator.nextPage(EditAuthorityStartDatePage("a", "b"), NormalMode, userAnswers) mustBe
           controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b")
       }
+
       "go from EditAuthorityEndDatePage to EditCheckYourAnswers when authorised user populated" in {
         val userAnswers = emptyUserAnswers
           .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
@@ -139,61 +143,108 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
 
-      "go from EoriNumber to AuthorityStart" in {
-        navigator.nextPage(EoriNumberPage, NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+      "go from EoriNumber to EoriDetailsCorrect page" in {
+        navigator.nextPage(EoriNumberPage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+      }
+
+      "go from EoriDetailsCorrect to Accounts page when user selects Yes" in {
+        val userAnswers = emptyUserAnswers.set(
+          EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(AuthorityStart.writes).success.value
+
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+      }
+
+      "go from EoriDetailsCorrect to EoriNumber page when user selects No" in {
+        val userAnswers = emptyUserAnswers.set(
+          EoriDetailsCorrectPage, EoriDetailsCorrect.No)(AuthorityStart.writes).success.value
+
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      }
+
+      "go from Accounts to AuthorityStart page" in {
+        navigator.nextPage(AccountsPage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStart to AuthorityStartDate when 'set date' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        navigator.nextPage(AuthorityStartPage, NormalMode, userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityStartPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityEnd to ShowBalance when 'today' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        navigator.nextPage(AuthorityStartPage, NormalMode, userAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityStartPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStartDate to AuthorityEnd" in {
-        navigator.nextPage(AuthorityStartDatePage, NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityStartDatePage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityEnd to AuthorityEndDate when 'set date' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        navigator.nextPage(AuthorityEndPage, NormalMode, userAnswers) mustBe controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityEndPage, NormalMode, userAnswers) mustBe
+          controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityEnd to ShowBalance when 'further notice' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-        navigator.nextPage(AuthorityEndPage, NormalMode, userAnswers) mustBe controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityEndPage,
+          NormalMode, userAnswers) mustBe controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityEndDate to ShowBalance" in {
-        navigator.nextPage(AuthorityEndDatePage, NormalMode, emptyUserAnswers) mustBe controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
+        navigator.nextPage(AuthorityEndDatePage,
+          NormalMode, emptyUserAnswers) mustBe controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
       }
 
       "backLink on EndPage should navigate to AuthorityStartDate when setDate is selected" in {
         val userAnswers = emptyUserAnswers
           .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        navigator.backLinkRouteForAuthorityEndPage(NormalMode, userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode)
+
+        navigator.backLinkRouteForAuthorityEndPage(NormalMode,
+          userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStartDate to AuthorityEndDate when 'set date' is chosen for AuthorityEnd" in {
         val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        navigator.nextPage(AuthorityStartDatePage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
+        navigator.nextPage(AuthorityStartDatePage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
       }
 
       "go from AuthorityStartDate to AuthorisedUser when 'indefinite' is chosen for AuthorityEnd" in {
         val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-        navigator.nextPage(AuthorityStartDatePage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(AuthorityStartDatePage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "go from AuthorityEnd to AuthorisedUser when 'further notice' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-        navigator.nextPage(AuthorityEndPage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(AuthorityEndPage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
-      "backLink on Accounts should navigate to EoriNumber" in {
-        navigator.backLinkRoute(NormalMode, controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)) mustBe controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      "backLink on EoriDetailsCorrect page should navigate to EoriNumber" in {
+        navigator.backLinkRoute(NormalMode,
+          controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)) mustBe
+          controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+      }
+
+      "backLink on Accounts should navigate to EoriDetailsCorrect page" in {
+        navigator.backLinkRoute(NormalMode,
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)) mustBe
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+      }
+
+      "backLink on AuthorityStart page should navigate to Accounts page" in {
+        navigator.backLinkRoute(NormalMode,
+          controllers.add.routes.AccountsController.onPageLoad(NormalMode)) mustBe
+          controllers.add.routes.AccountsController.onPageLoad(NormalMode)
       }
     }
 
@@ -211,27 +262,32 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
           controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
-      "go from EoriNumber to AuthorisedUser" in {
+      "go from EoriNumber to EoriDetailsCorrect page" in {
         navigator.nextPage(EoriNumberPage, CheckMode, emptyUserAnswers) mustBe
-          controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStart to AuthorityStartDate when 'set date' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        navigator.nextPage(AuthorityStartPage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(CheckMode)
+
+        navigator.nextPage(AuthorityStartPage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(CheckMode)
       }
 
       "go from AuthorityStart to AuthorisedUser when 'today' is chosen" in {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        navigator.nextPage(AuthorityStartPage, CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(AuthorityStartPage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "go from ShowBalance to AuthorisedUser" in {
-        navigator.nextPage(ShowBalancePage, CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+        navigator.nextPage(ShowBalancePage,
+          CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "backLink should navigate to AuthorisedUser when in check mode" in {
-        navigator.backLinkRouteForEORINUmberPage(CheckMode) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
+        navigator.backLinkRouteForEORINUmberPage(CheckMode) mustBe
+          controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "backLink should navigate to manage authorities when in normal mode" in {
@@ -240,19 +296,22 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
 
       "backLink on showbalance should navigate to AuthorisedUser" in {
         val userAnswers = emptyUserAnswers
-        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
+        navigator.backLinkRouteForShowBalancePage(CheckMode,
+          userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "backLink on EndPage should navigate to AuthorisedUser" in {
         val userAnswers = emptyUserAnswers
           .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        navigator.backLinkRouteForShowBalancePage(CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
+
+        navigator.backLinkRouteForShowBalancePage(CheckMode,
+          userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "backLink on Accounts should navigate to AuthorisedUser" in {
-        navigator.backLinkRoute(CheckMode, controllers.add.routes.AuthorisedUserController.onPageLoad) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad
+        navigator.backLinkRoute(CheckMode, controllers.add.routes.AuthorisedUserController.onPageLoad()) mustBe
+          controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
-
     }
   }
 }

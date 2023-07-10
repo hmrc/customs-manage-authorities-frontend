@@ -26,6 +26,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage}
+import play.api.Application
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
@@ -117,18 +119,17 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page and clear the AccountsPage selection when No,change EORI is selected" +
       " and form is submitted" in new SetUp {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(
               controllers.add.routes.EoriNumberController.onPageLoad(CheckMode), CheckMode)),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
@@ -169,7 +170,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute, helper)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -207,18 +208,21 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
   }
 
   trait SetUp {
-    def onwardRoute = Call("GET", "/foo")
+    def onwardRoute: Call = Call("GET", "/foo")
 
-    lazy val eoriDetailsCorrectRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
-    lazy val eoriDetailsCorrectCheckModeSubmitRoute = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
+    lazy val eoriDetailsCorrectRoute: String = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+    lazy val eoriDetailsCorrectCheckModeSubmitRoute: String =
+      controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
 
     val formProvider = new EoriDetailsCorrectFormProvider()
-    val form = formProvider()
-    val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+    val form: Form[EoriDetailsCorrect] = formProvider()
+    val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
 
     val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-    val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+      "67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
+      "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
     val userAnswer: UserAnswers = UserAnswers("id")

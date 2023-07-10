@@ -21,7 +21,7 @@ import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
 import forms.EoriNumberFormProvider
 import models.requests.OptionalDataRequest
-import models.{CheckMode, CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
+import models.{CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
@@ -114,21 +114,16 @@ class EoriNumberController @Inject()(
   protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").toUpperCase
 
   /**
-   * Gets the eori from UserAnswers in CheckMode otherwise
-   * empty string
+   * Gets the eori from UserAnswers. Sets eori to emptyString if not found
    */
   private def eoriFromUserAnswers(mode: Mode,
                                   request: OptionalDataRequest[AnyContent]): String =
-    if (mode == CheckMode) {
-      request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).get(
-        EoriNumberPage).getOrElse(CompanyDetails(emptyString, None)).eori
-    } else {
-      emptyString
-    }
+        request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).get(
+          EoriNumberPage).getOrElse(CompanyDetails(emptyString, None)).eori
 
   /**
-   * Updates the AccountsPage value to empty list (in UserAnswers) to refresh the Accounts selection
-   * and EoriDetailsCorrectPage value to No in CheckMode
+   * Updates the AccountsPage value to empty list (in UserAnswers)(to refresh the Accounts selection)
+   * and EoriDetailsCorrectPage value to No
    *
    * Returns: UserAnswers updated with refreshed accounts
    */
@@ -137,11 +132,11 @@ class EoriNumberController @Inject()(
                                           eoriFromUserAnswers: String,
                                           userAnswers: UserAnswers): Future[UserAnswers] =
     Future(
-      if (mode == CheckMode && !requestEori.equals(eoriFromUserAnswers)) {
+      if (!requestEori.equals(eoriFromUserAnswers)) {
         userAnswers.set(AccountsPage, List()) match {
           case Success(value) =>
             val finalUpdatedUserAnswers: Try[UserAnswers] = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)
-            if(finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
+            if (finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
           case _ => userAnswers
         }
       } else {
