@@ -103,7 +103,7 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
         messages(app)(s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
     }
 
-    "Header displays Account authority" in new Setup {
+    "Header displays Account authority by Tag" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h1")
       elements.size() must be > 0
@@ -115,6 +115,36 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       val elements: Elements = doc.getElementsByTag("h2")
       elements.size() must be > 0
       elements.text() mustBe "Help make GOV.UK better Authorised company Account you have authorised Authority details Remove authority Support links"
+    }
+
+    "Header displays Account authority" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("view-authority-id")
+      elements.text() mustBe "Account authority"
+    }
+
+    "Label 1 displays Authorised company" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("view-authority-h2.1")
+      elements.text() mustBe "Authorised company"
+    }
+
+    "Label 2 displays Account you have authorised" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("view-authority-h2.2")
+      elements.text() mustBe "Account you have authorised"
+    }
+
+    "Label 3 displays Authorised company by Id" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("view-authority-h2.3")
+      elements.text() mustBe "Authority details"
+    }
+
+    "Label 4 displays Authorised company by Id" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("view-authority-h2.4")
+      elements.text() mustBe "Remove authority"
     }
   }
 

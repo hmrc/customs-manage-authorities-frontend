@@ -122,6 +122,36 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       elements.size() must be > 0
       elements.text() mustBe "Help make GOV.UK better Authorised company Account you have authorised Authority details Your details Support links"
     }
+
+    "Header displays Account authority" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("edit-cya-heading")
+      elements.text() mustBe "Check your answers"
+    }
+
+    "Label 1 displays Authorised company" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("edit-cya-h2.1")
+      elements.text() mustBe "Authorised company"
+    }
+
+    "Label 2 displays Account you have authorised" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("edit-cya-h2.2")
+      elements.text() mustBe "Account you have authorised"
+    }
+
+    "Label 3 displays Authorised company by Id" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("edit-cya-h2.3")
+      elements.text() mustBe "Authority details"
+    }
+
+    "Label 4 displays Authorised company by Id" in new Setup {
+      val doc: Document = Jsoup.parse(result.toString())
+      val elements: Element = doc.getElementById("edit-cya-h2.4")
+      elements.text() mustBe "Your details"
+    }
   }
 
   trait Setup {
