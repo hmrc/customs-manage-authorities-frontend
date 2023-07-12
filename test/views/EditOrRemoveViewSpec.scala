@@ -48,18 +48,22 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       // Order of the summary rows is also being tested
       companyDetailsRowEoriNumberElement.getElementsByClass(
         classSummaryListKey).html() mustBe messages(app)("checkYourAnswers.eoriNumber.label")
+
       companyDetailsRowEoriNumberElement.getElementsByClass(
         classSummaryListValue).html() mustBe eori
 
       companyDetailsRowCompanyNameElement.getElementsByClass(
         classSummaryListKey).html() mustBe messages(app)("view-authority-h2.5")
+
       companyDetailsRowCompanyNameElement.getElementsByClass(
         classSummaryListValue).html() mustBe companyName
 
       yourAccountRowElement.getElementsByClass(
         classSummaryListKey).html() mustBe messages(app)("edit-cya-account-number")
+
       yourAccountRowElement.getElementsByClass(
-        classSummaryListValue).html() mustBe messages(app)(s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+        classSummaryListValue).html() mustBe messages(app)(
+        s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
     }
 
     "Eori Number Label has correct Text" in new Setup {
@@ -135,13 +139,13 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       elements.text() mustBe "Account you have authorised"
     }
 
-    "Label 3 displays Authorised company by Id" in new Setup {
+    "Label 3 displays Authorised details by Id" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.3")
       elements.text() mustBe "Authority details"
     }
 
-    "Label 4 displays Authorised company by Id" in new Setup {
+    "Label 4 displays Remove Authority by Id" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.4")
       elements.text() mustBe "Remove authority"

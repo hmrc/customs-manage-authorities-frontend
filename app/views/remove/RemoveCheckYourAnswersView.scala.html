@@ -40,16 +40,16 @@
         pageTitle = Some(titleNoForm("remove-cya-heading", None, Seq())),
         backLink = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(model.accountId, model.authorityId).url)
     ) {
-        @h1(msg = "remove-cya-heading", classes = "govuk-heading-xl")
+        @h1(id = Some("remove-cya-heading"), msg = "remove-cya-heading", classes = "govuk-heading-xl")
 
         @formHelper(controllers.remove.routes.RemoveCheckYourAnswers.onSubmit(model.accountId, model.authorityId)) {
-            @h2("remove-cya-h2.1")
+            @h2(id = Some("remove-cya-h2.1"), msg = "remove-cya-h2.1")
             @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
 
-            @h2("remove-cya-h2.2")
+            @h2(id = Some("remove-cya-h2.2"), msg = "remove-cya-h2.3")
             @summaryList(viewmodels.SummaryList(model.accountNumberRows))
 
-            @h2("remove-cya-h2.3")
+            @h2(id = Some("remove-cya-h2.3"), msg = "remove-cya-h2.3")
             @summaryList(viewmodels.SummaryList(model.authorisedUserDetailsRows))
 
             @p(Html(messages("remove-cya-p")))

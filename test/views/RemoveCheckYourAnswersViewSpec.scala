@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-package views
+package views.remove
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.domain._
+import connectors.CustomsDataStoreConnector
+import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage
-import play.api.{Application, inject}
+import play.api.inject
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import services.DateTimeService
-import viewmodels.CheckYourAnswersEditHelper
-import views.html.edit.EditCheckYourAnswersView
+import uk.gov.hmrc.http.HeaderCarrier
+import viewmodels.CheckYourAnswersRemoveHelper
+import views.html.remove.RemoveCheckYourAnswersView
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
-  "view" should {
-    "show correct elements with right order" in new Setup {
-
+class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
+  "RemoveCheckYourAnswersView" should {
+    "display correct elements in right order" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
-      summaryElements.size() must be >= 2
+      summaryElements.size() must be > 2
 
       val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
@@ -66,7 +69,7 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
         s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
     }
 
-    "Eori Number Label is correct Text" in new Setup {
+    "Eori Number Label has correct Text" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
@@ -80,7 +83,7 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
         classSummaryListValue).html() mustBe eori
     }
 
-    "Company Name Row is correct Text" in new Setup {
+    "Company Name Row has correct Text" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
@@ -94,22 +97,20 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
         classSummaryListValue).html() mustBe companyName
     }
 
-    "Eori Numnber is correct Text" in new Setup {
+    "Eori Numnber has correct Text" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
 
       val yourAccountRowElement: Element = summaryElements.get(2)
 
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("edit-cya-account-number")
-
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListValue).html() mustBe messages(app)(
-        s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+      yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe
+        messages(app)("edit-cya-account-number")
+      yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe
+        messages(app)(s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
     }
 
-    "Header is Check your answers" in new Setup {
+    "Header displays Check your answers by Tag" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h1")
       elements.size() must be > 0
@@ -120,36 +121,30 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h2")
       elements.size() must be > 0
-      elements.text() mustBe "Help make GOV.UK better Authorised company Account you have authorised Authority details Your details Support links"
+      elements.text() mustBe "Help make GOV.UK better Remove authority for company Your details Your details Support links"
     }
 
-    "Header displays Check your Answers" in new Setup {
+    "Header displays Account authority" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
-      val elements: Element = doc.getElementById("edit-cya-heading")
+      val elements: Element = doc.getElementById("remove-cya-heading")
       elements.text() mustBe "Check your answers"
     }
 
-    "Label 1 displays Authorised company" in new Setup {
+    "Label 1 displays Remove authority for company" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
-      val elements: Element = doc.getElementById("edit-cya-h2.1")
-      elements.text() mustBe "Authorised company"
+      val elements: Element = doc.getElementById("remove-cya-h2.1")
+      elements.text() mustBe "Remove authority for company"
     }
 
-    "Label 2 displays Account you have authorised" in new Setup {
+    "Label 2 displays Your details" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
-      val elements: Element = doc.getElementById("edit-cya-h2.2")
-      elements.text() mustBe "Account you have authorised"
+      val elements: Element = doc.getElementById("remove-cya-h2.2")
+      elements.text() mustBe "Your details"
     }
 
-    "Label 3 displays Authorised details by Id" in new Setup {
+    "Label 3 displays Your Details by Id" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
-      val elements: Element = doc.getElementById("edit-cya-h2.3")
-      elements.text() mustBe "Authority details"
-    }
-
-    "Label 4 displays Your details by Id" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
-      val elements: Element = doc.getElementById("edit-cya-h2.4")
+      val elements: Element = doc.getElementById("remove-cya-h2.3")
       elements.text() mustBe "Your details"
     }
   }
@@ -168,27 +163,31 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-    val standingAuthority: StandingAuthority = StandingAuthority(eori, startDate, Some(endDate), viewBalance = false)
+    val standingAuthority: StandingAuthority = StandingAuthority(
+      eori, startDate, Some(endDate), viewBalance = false)
+
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, accNumber, Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(
       "GET", "/some/resource/path")
 
-    val mockDateTimeService: DateTimeService = mock[DateTimeService]
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-      inject.bind[DateTimeService].toInstance(mockDateTimeService)).build()
+    val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+      inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)).build()
 
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val hc = HeaderCarrier()
+    val view = app.injector.instanceOf[RemoveCheckYourAnswersView]
 
-    val checkAnswersEditHelper = new CheckYourAnswersEditHelper(userAnswers,
-      "123", "456", mockDateTimeService, standingAuthority,
-      accountsWithAuthoritiesWithId, Option(companyName))(messages(app))
+    when(mockDataStoreConnector.getCompanyName(any[String])(any[HeaderCarrier]))
+      .thenReturn(Future.successful(Some(companyName)))
 
-    val view: EditCheckYourAnswersView = app.injector.instanceOf[EditCheckYourAnswersView]
+    val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a",
+      "b", AuthorisedUser("test", "test"), standingAuthority,
+      accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc)
 
-    val result: HtmlFormat.Appendable = view(
-      checkAnswersEditHelper, "123", "456")(csrfRequest, messages(app), appConfig)
+    val result: HtmlFormat.Appendable = view(helper)(csrfRequest, messages(app), appConfig)
   }
 }
