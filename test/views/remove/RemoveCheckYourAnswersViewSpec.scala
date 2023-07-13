@@ -16,6 +16,8 @@
 
 package views.remove
 
+import java.time.LocalDate
+
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsDataStoreConnector
@@ -34,7 +36,6 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {

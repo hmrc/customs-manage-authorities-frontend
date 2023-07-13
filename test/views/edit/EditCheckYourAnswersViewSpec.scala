@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package views
+package views.edit
 
+import java.time.LocalDate
 import base.SpecBase
 import config.FrontendAppConfig
 import models.domain._
@@ -24,14 +25,13 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage
-import play.api.{Application, inject}
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import play.api.{Application, inject}
 import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
-import java.time.LocalDate
 
 class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
   "view" should {
