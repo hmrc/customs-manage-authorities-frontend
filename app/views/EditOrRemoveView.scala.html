@@ -31,18 +31,18 @@
 
 @layout(Some(titleNoForm("view-authority-heading", None, Seq())), backLink = Some(routes.ManageAuthoritiesController.onPageLoad.url)) {
 
-    @h1(msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
+    @h1(id = Some("view-authority-id"), msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 
-    @h2("view-authority-h2.1")
-    @summaryList(viewmodels.SummaryList(helper.yourAccountRow))
-
-    @h2("view-authority-h2.2")
+    @h2(id = Some("view-authority-h2.1"), msg = "view-authority-h2.1")
     @summaryList(viewmodels.SummaryList(helper.authorisedCompanyDetailsRows))
 
-    @h2("view-authority-h2.3")
+    @h2(id = Some("view-authority-h2.2"), msg = ("view-authority-h2.2"))
+    @summaryList(viewmodels.SummaryList(helper.yourAccountRow))
+
+    @h2(id = Some("view-authority-h2.3"), msg = "view-authority-h2.3")
     @summaryList(viewmodels.SummaryList(helper.authorityDurationRows))
 
-    @h2("view-authority-h2.4")
+    @h2(id = Some("view-authority-h2.4"), msg = "view-authority-h2.4")
     @p(Html(messages("view-authority-p")))
     @link(location = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, linkMessage = "view-authority-link")
 }

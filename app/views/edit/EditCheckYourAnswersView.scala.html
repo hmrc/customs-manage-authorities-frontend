@@ -35,19 +35,20 @@
     pageTitle = Some(titleNoForm("edit-cya-heading", None, Seq())),
     backLink = Some(controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url)
 ) {
-    @h1(msg = "edit-cya-heading", classes = "govuk-heading-xl")
+    @h1(id = Some("edit-cya-heading"), msg = "edit-cya-heading", classes = "govuk-heading-xl")
 
     @formHelper(controllers.edit.routes.EditCheckYourAnswersController.onSubmit(accountId, authorityId)) {
-        @h2("edit-cya-h2.1")
-        @summaryList(viewmodels.SummaryList(model.yourAccountRow))
 
-        @h2("edit-cya-h2.2")
+        @h2(id = Some("edit-cya-h2.1"), msg = "edit-cya-h2.1")
         @summaryList(viewmodels.SummaryList(model.authorisedCompanyDetailsRows))
 
-        @h2("edit-cya-h2.3")
+        @h2(id = Some("edit-cya-h2.2"), msg = "edit-cya-h2.2")
+        @summaryList(viewmodels.SummaryList(model.yourAccountRow))
+
+        @h2(id = Some("edit-cya-h2.3"), msg = "edit-cya-h2.3")
         @summaryList(viewmodels.SummaryList(model.authorityDurationRows))
 
-        @h2("edit-cya-h2.4")
+        @h2(id = Some("edit-cya-h2.4"), msg = "edit-cya-h2.4")
         @summaryList(viewmodels.SummaryList(model.authorisedUserRows))
 
         <div class="govuk-button-group">

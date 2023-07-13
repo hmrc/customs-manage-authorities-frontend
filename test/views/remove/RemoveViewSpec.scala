@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package views
+package views.remove
 
+import java.time.LocalDate
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AuthorisedUserFormProvider
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.jsoup.Jsoup
-import org.scalatest.Matchers._
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
 import viewmodels.RemoveViewModel
 import views.html.remove.RemoveAuthorisedUserView
-
-import java.time.LocalDate
 
 class RemoveViewSpec extends SpecBase {
 
