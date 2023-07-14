@@ -365,8 +365,8 @@ edit-cya-role = Eich swydd
 # Edit or remove view
 
 view-authority-heading = Awdurdod y cyfrif
-view-authority-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-view-authority-h2.2 = Cwmni awdurdodedig
+view-authority-h2.1 = Cwmni awdurdodedig
+view-authority-h2.2 = Y cyfrif rydych wedi’i awdurdodi
 view-authority-h2.3 = Manylion yr awdurdod
 view-authority-h2.4 = Dileu’r awdurdod
 view-authority-h2.5 = Enw’r cwmni
