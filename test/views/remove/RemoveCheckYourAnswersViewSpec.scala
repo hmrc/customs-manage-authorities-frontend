@@ -122,7 +122,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h2")
       elements.size() must be > 0
-      elements.text() mustBe "Help make GOV.UK better Remove authority for company Your details Your details Support links"
+      elements.text() mustBe "Help make GOV.UK better Remove authority for company Account you have authorised Your details Support links"
     }
 
     "Header displays Account authority" in new Setup {
@@ -140,7 +140,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
     "Label 2 displays Your details" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("remove-cya-h2.2")
-      elements.text() mustBe "Your details"
+      elements.text() mustBe "Account you have authorised"
     }
 
     "Label 3 displays Your Details by Id" in new Setup {
