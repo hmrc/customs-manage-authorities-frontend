@@ -140,7 +140,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
     "Label 2 displays Your details" in new Setup {
       val doc: Document = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("remove-cya-h2.2")
-      elements.text() mustBe "Your details"
+      elements.text() mustBe "Account you have authorised"
     }
 
     "Label 3 displays Your Details by Id" in new Setup {
