@@ -332,8 +332,8 @@ authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes genny
 # Remove Check Your Answers
 
 remove-cya-heading = Gwiriwch eich atebion
-remove-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-remove-cya-h2.2 = Tynnu’r awdurdod ar gyfer y cwmni
+remove-cya-h2.1 = Tynnu’r awdurdod ar gyfer y cwmni
+remove-cya-h2.2 = Y cyfrif rydych wedi’i awdurdodi
 remove-cya-h2.3 = Your details
 remove-cya-h2.4 = Enw’r cwmni
 remove-cya-h2.5 = Nid yw’r busnes hwn wedi caniatáu i’w enw gael ei rannu.
