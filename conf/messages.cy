@@ -349,8 +349,8 @@ remove-cya-visually-hidden-role = eich swydd
 # Edit Check Your Answers
 
 edit-cya-heading = Gwiriwch eich atebion
-edit-cya-h2.1 = Y cyfrif rydych wedi’i awdurdodi
-edit-cya-h2.2 = Cwmni awdurdodedig
+edit-cya-h2.1 = Cwmni awdurdodedig
+edit-cya-h2.2 = Y cyfrif rydych wedi’i awdurdodi
 edit-cya-h2.3 = Manylion yr awdurdod
 edit-cya-h2.4 = Eich manylion
 edit-cya-button = Cadarnhau a chyflwyno
