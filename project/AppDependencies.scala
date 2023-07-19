@@ -3,19 +3,19 @@ import play.core.PlayVersion
 
 object AppDependencies {
 
-  private val bootstrapVersion = "7.15.0"
+  private val bootstrapVersion = "7.19.0"
 
-  val compile = Seq(
-     play.sbt.PlayImport.ws,
+  val compile: Seq[ModuleID] = Seq(
+    play.sbt.PlayImport.ws,
     "uk.gov.hmrc" %% "bootstrap-frontend-play-28" % bootstrapVersion,
-    "uk.gov.hmrc" %% "play-frontend-hmrc" % "7.7.0-play-28",
-    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.2.0",
+    "uk.gov.hmrc" %% "play-frontend-hmrc" % "7.14.0-play-28",
+    "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28" % "1.3.0",
     "org.typelevel" %% "cats-core" % "2.3.0"
   )
 
-  val test = Seq(
+  val test: Seq[ModuleID] = Seq(
     "org.scalatest" %% "scalatest" % "3.0.8",
-    "uk.gov.hmrc" %% "bootstrap-test-play-28" % "7.15.0",
+    "uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapVersion,
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0",
     "org.scalatestplus" %% "mockito-3-4" % "3.2.9.0",
     "org.scalatestplus" %% "scalacheck-1-15" % "3.2.9.0",
