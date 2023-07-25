@@ -21,7 +21,6 @@ import org.scalacheck.Gen
 import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
-import base.SpecBase
 
 import java.time.LocalDate
 
