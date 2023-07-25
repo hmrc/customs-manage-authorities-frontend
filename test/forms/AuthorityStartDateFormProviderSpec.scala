@@ -36,6 +36,6 @@ class AuthorityStartDateFormProviderSpec extends DateBehaviours {
     )
 
     behave like dateField(form, "value", validData)
-    behave like mandatoryDateField(form, "value", "authorityStartDate.error.required.all")
+    behave like mandatoryDateField(form, "value.day", "authorityStartDate.error.required.all")
   }
 }
