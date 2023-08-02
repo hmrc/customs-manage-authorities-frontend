@@ -25,12 +25,12 @@ import models.{CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.emptyString
+import utils.StringUtils.{emptyString, removeSpaceAndConvertToUpperCase}
 import views.html.add.EoriNumberView
 
 import javax.inject.Inject
@@ -71,34 +71,43 @@ class EoriNumberController @Inject()(
         },
 
         eoriNumber => {
-          val eori = formatGBEori(eoriNumber)
-
-          if (request.eoriNumber.equalsIgnoreCase(eori)) {
-            Future.successful(BadRequest(view(form.withError(
-              "value",
-              "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
-              mode,
-              navigator.backLinkRouteForEORINUmberPage(mode)))
-            )
-          } else {
-            (for {
-              companyName <- dataStore.getCompanyName(eori)
-              companyDetails = CompanyDetails(eori, companyName)
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
-              updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
-                                                      mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
-              _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
-              result <- doSubmission(updatedAnswers, eori, mode)
-            } yield result).recover {
-              case _: ValidationException =>
-                BadRequest(view(form.withError(
-                  "value",
-                  "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
-              case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
-            }
-          }
+          processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
         }
       )
+  }
+
+  private def processValidInput(mode: Mode,
+                                request: OptionalDataRequest[AnyContent],
+                                eoriNumber: String)(implicit appConfig: FrontendAppConfig,
+                                                    hc: HeaderCarrier, msgs: Messages): Future[Result] = {
+    val eori = removeSpaceAndConvertToUpperCase(eoriNumber)
+
+    if (request.eoriNumber.equalsIgnoreCase(eori)) {
+      Future.successful(BadRequest(view(form.withError(
+        "value",
+        "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
+        mode,
+        navigator.backLinkRouteForEORINUmberPage(mode))(request,msgs, appConfig))
+      )
+    } else {
+      (for {
+        companyName <- dataStore.getCompanyName(eori)
+        companyDetails = CompanyDetails(eori, companyName)
+        updatedAnswers <- Future.fromTry(
+          request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
+        updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
+          mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
+        _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
+        result <- doSubmission(updatedAnswers, eori, mode)(hc, request)
+      } yield result).recover {
+        case _: ValidationException =>
+          BadRequest(view(form.withError(
+            "value",
+            "eoriNumber.error.invalid").fill(eori),
+            mode, navigator.backLinkRouteForEORINUmberPage(mode))(request,msgs, appConfig))
+        case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+      }
+    }
   }
 
   private def doSubmission(updatedAnswers: UserAnswers,

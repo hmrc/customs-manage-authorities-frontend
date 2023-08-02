@@ -18,7 +18,7 @@ package controllers.add
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import forms.EoriNumberFormProvider
 import models.{CheckMode, CompanyDetails, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -32,6 +32,7 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.add.EoriNumberView
 
 import scala.concurrent.Future
@@ -401,6 +402,38 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "return a Bad Request and correct error msg when form data is valid, a XI EORI but trader is not registered for " +
+      "his own XI EORI" in new SetUp {
+
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockDataStoreConnector.getXiEori("")(hc)).thenReturn(Future.successful(None))
+
+      val application: Application =
+        applicationBuilder()
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = NormalMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+          )
+          .build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "XI123456789012"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+
+        contentAsString(result) must contain(messages(application)("eoriNumber.error.register-xi-eori"))
+      }
+    }
   }
 
   trait SetUp {
@@ -409,6 +442,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     val formProvider = new EoriNumberFormProvider()
     val form: Form[String] = formProvider()
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
     lazy val eoriNumberNormalModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url

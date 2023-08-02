@@ -21,5 +21,10 @@ object StringUtils {
   val singleSpace = " "
   val nIEORIPrefix = "XI"
   val htmlSingleLineBreak = "<br>"
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", "")
+
+  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
+
+  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
+
+  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
 }
