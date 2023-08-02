@@ -33,6 +33,13 @@
 
     @formHelper(action = controllers.add.routes.EoriNumberController.onSubmit(mode)) {
 
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text"> @messages("eoriNumber.details.label") </span>
+            </summary>
+            <div class="govuk-details__text"> @messages("eoriNumber.details.text") </div>
+        </details>
+
         @errorSummary(form.errors)
 
         @inputText(
@@ -45,13 +52,6 @@
             classes = Some("govuk-!-width-two-thirds"),
             labelClasses = Some("govuk-!-margin-bottom-7")
         )
-
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text"> @messages("eoriNumber.details.label") </span>
-            </summary>
-            <div class="govuk-details__text"> @messages("eoriNumber.details.text") </div>
-        </details>
 
         @button("site.saveAndContinue")
     }
