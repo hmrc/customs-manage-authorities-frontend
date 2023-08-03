@@ -17,6 +17,7 @@
 @import domain.{AccountStatusClosed, AccountStatusPending, AccountWithAuthoritiesWithId}
 @import viewmodels.ManageAuthoritiesViewModel._
 @import models.domain.AccountStatusSuspended
+@import models.domain.CdsDutyDefermentAccount
 
 @(accountId: String, account: AccountWithAuthoritiesWithId, isNiAccount: Boolean)(implicit messages: Messages)
 
@@ -30,13 +31,16 @@
                         case AccountStatusClosed => messages(s"manageAuthorities.table.heading.account.${account.accountType}.closed", account.accountNumber)
                         case AccountStatusPending => messages(s"manageAuthorities.table.heading.account.${account.accountType}.pending", account.accountNumber)
                         case AccountStatusSuspended => messages(s"manageAuthorities.table.heading.account.${account.accountType}.suspended", account.accountNumber)
-                        case _ => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+                        case _ => if(isNiAccount && account.accountType == CdsDutyDefermentAccount ) {
+                                    messages("manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", account.accountNumber)
+                                  } else {
+                                    messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+                                  }
                     }
                 }
                 case None => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
             }
             }
-            @if(isNiAccount) { @messages("manageAuthorities.table.heading.account.Northern-Ireland") }
         </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
