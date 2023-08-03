@@ -47,7 +47,7 @@ class InputTextSpec extends SpecBase {
       }
     }
 
-    "display the hint correctly" in new Setup {
+    "display the correct hint" in new Setup {
       val view: Document = Jsoup.parse(app.injector.instanceOf[inputText].apply(
         form = validForm,
         id = "value",
