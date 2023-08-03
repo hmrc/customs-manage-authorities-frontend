@@ -90,7 +90,7 @@ manageAuthorities.error=Sorry, we can''t display these right now. Please try aga
 
 manageAuthorities.table.heading.account.CdsCashAccount = Cash account: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment: {0}
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Duty deferment: {0} (Northern Ireland)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Duty deferment (Northern Ireland): {0}
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount = General guarantee account: {0}
 manageAuthorities.table.heading.account.Northern-Ireland = (Northern Ireland)
 
