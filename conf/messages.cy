@@ -90,7 +90,7 @@ manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn 
 
 manageAuthorities.table.heading.account.CdsCashAccount=Cyfrif arian parod: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount=Gohirio tollau: {0}
-manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni =Gohirio tollau: {0} (Gogledd Iwerddon)
+manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Gohirio tollau (Gogledd Iwerddon): {0}
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount=Cyfrif gwarant cyffredinol: {0}
 
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cyfrif arian parod: {0} (ar gau)
