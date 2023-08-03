@@ -46,7 +46,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/xieori-information"
     httpClient.GET[XiEoriInformationResponse](dataStoreEndpoint).map(
-      response => Some(response.xiEori)
+      response => if (response.xiEori.isEmpty) None else Some(response.xiEori)
     ).recover { case e =>
       log.error(s"Call to data stored failed for getXiEori exception=$e")
       None

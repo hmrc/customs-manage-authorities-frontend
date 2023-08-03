@@ -175,6 +175,37 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       }
     }
 
+    "return None when empty XI EORI value is returned from data store" in {
+      val response =
+        """
+          |{
+          |   "xiEori":"",
+          |   "consent":"1",
+          |   "address":{
+          |      "streetNumber1":"86 street",
+          |      "city":"London",
+          |      "countryCode":"GB"
+          |   }
+          |}
+          |""".stripMargin
+
+      val expected = None
+
+      val app = application
+
+      running(app) {
+
+        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
+
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
+            .willReturn(ok(response))
+        )
+        val result = connector.getXiEori("GB123456789012").futureValue
+        result mustBe expected
+      }
+    }
+
     "return None when error response is returned" in {
 
       val expected = None

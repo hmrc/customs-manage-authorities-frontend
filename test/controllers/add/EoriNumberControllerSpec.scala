@@ -404,11 +404,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and correct error msg when form data is valid, a XI EORI but trader is not registered for " +
       "his own XI EORI" in new SetUp {
-
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockDataStoreConnector.getXiEori("")(hc)).thenReturn(Future.successful(None))
+      when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
       val application: Application =
         applicationBuilder()
@@ -418,8 +417,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
@@ -431,7 +429,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
 
-        contentAsString(result) must contain(messages(application)("eoriNumber.error.register-xi-eori"))
+        contentAsString(result).contains(messages(application)("eoriNumber.error.register-xi-eori"))
       }
     }
   }
