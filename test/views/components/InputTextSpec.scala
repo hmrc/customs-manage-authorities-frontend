@@ -48,14 +48,14 @@ class InputTextSpec extends SpecBase {
     }
 
     "display the hint correctly" in new Setup {
-
       val view: Document = Jsoup.parse(app.injector.instanceOf[inputText].apply(
         form = validForm,
         id = "value",
         name = "value",
         label = "eoriNumber.heading",
         isPageHeading = false,
-        hint = Option(InputTextHint(Option(DetailsHint(detailsSummaryText, detailsText)), Option(LabelHint(labelText))))
+        hint = Option(InputTextHint(
+          Option(DetailsHint(detailsSummaryText, detailsText)), Option(LabelHint(labelText))))
       ).body)
 
       val detailsHintElement: Element = view.getElementById("value-hint-details")

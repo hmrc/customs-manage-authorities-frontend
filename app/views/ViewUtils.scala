@@ -38,8 +38,7 @@ object ViewUtils {
                          text: String,
                          classes: String = emptyString,
                          attributes: Map[String, String] = Map.empty,
-                         open: Boolean = false,
-                        )
+                         open: Boolean = false)
 
   case class LabelHint(labelText: String, classes: String = emptyString)
 

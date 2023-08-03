@@ -80,24 +80,15 @@ class EoriNumberController @Inject()(
                                 inputEoriNumber: String)(implicit appConfig: FrontendAppConfig,
                                                          hc: HeaderCarrier, msgs: Messages): Future[Result] = {
     val eori = removeSpaceAndConvertToUpperCase(inputEoriNumber)
+
     if (request.eoriNumber.equalsIgnoreCase(eori)) {
-      Future.successful(BadRequest(view(form.withError(
-        "value",
-        "eoriNumber.error.authorise-own-eori").fill(inputEoriNumber),
-        mode,
-        navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
-      )
+      errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
     } else {
       val result = for {
         xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
       } yield {
-        if ((xiEori.isEmpty) && isXIEori(eori)) {
-          Future.successful(BadRequest(view(form.withError(
-            "value",
-            "eoriNumber.error.register-xi-eori").fill(inputEoriNumber),
-            mode,
-            navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
-          )
+        if (xiEori.isEmpty && isXIEori(eori)) {
+          errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
         } else {
           processValidEoriAndSubmit(mode, request, hc, msgs, eori)
         }
@@ -106,6 +97,9 @@ class EoriNumberController @Inject()(
     }
   }
 
+  /**
+   * Processes valid EORI
+   */
   private def processValidEoriAndSubmit(mode: Mode,
                                         request: OptionalDataRequest[AnyContent],
                                         hc: HeaderCarrier,
@@ -131,7 +125,8 @@ class EoriNumberController @Inject()(
   }
 
   private def doSubmission(updatedAnswers: UserAnswers,
-                           eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                           eori: String,
+                           mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(
@@ -140,7 +135,17 @@ class EoriNumberController @Inject()(
     }
   }
 
-  protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").toUpperCase
+  private def errorView(mode: Mode,
+                        inputEoriNumber: String,
+                        errorMsgKey: String)(implicit request: Request[_],
+                                             msgs: Messages,
+                                             appConfig: FrontendAppConfig): Future[Result] =
+    Future.successful(BadRequest(view(form.withError(
+      "value",
+      errorMsgKey).fill(inputEoriNumber),
+      mode,
+      navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
+    )
 
   /**
    * Gets the eori from UserAnswers. Sets eori to emptyString if not found
