@@ -139,8 +139,9 @@ eoriNumber.error.required = Enter an EORI number
 eoriNumber.error.format = Enter an EORI number in the correct format
 eoriNumber.error.invalid = Enter an EORI that has been registered with HMRC
 eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI number
-eoriNumber.details.label = Using your Northern Ireland duty deferment account?
-eoriNumber.details.text = if you wish to give authority to a company or person to use your Northern Ireland duty deferement account you need to use their XI EORI number.
+eoriNumber.error.register-xi-eori = You must be registered for an XI EORI to set up this authority.
+eoriNumber.details.label = Authorising your account for Northern Ireland?
+eoriNumber.details.text = To give authority to a company or person to use your duty deferment, cash or general guarantee account for Northern Ireland, you need to use their EORI number starting with XI.
 
 
 # Which accounts to add an authority to view

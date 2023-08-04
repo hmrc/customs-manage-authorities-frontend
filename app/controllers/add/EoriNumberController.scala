@@ -25,12 +25,12 @@ import models.{CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
 import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.emptyString
+import utils.StringUtils.{emptyString, isXIEori, removeSpaceAndConvertToUpperCase}
 import views.html.add.EoriNumberView
 
 import javax.inject.Inject
@@ -66,43 +66,67 @@ class EoriNumberController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        formWithErrors =>{
+        formWithErrors => {
             Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode))))
         },
-
         eoriNumber => {
-          val eori = formatGBEori(eoriNumber)
-
-          if (request.eoriNumber.equalsIgnoreCase(eori)) {
-            Future.successful(BadRequest(view(form.withError(
-              "value",
-              "eoriNumber.error.authorise-own-eori").fill(eoriNumber),
-              mode,
-              navigator.backLinkRouteForEORINUmberPage(mode)))
-            )
-          } else {
-            (for {
-              companyName <- dataStore.getCompanyName(eori)
-              companyDetails = CompanyDetails(eori, companyName)
-              updatedAnswers <- Future.fromTry(request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
-              updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
-                                                      mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
-              _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
-              result <- doSubmission(updatedAnswers, eori, mode)
-            } yield result).recover {
-              case _: ValidationException =>
-                BadRequest(view(form.withError(
-                  "value",
-                  "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
-              case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
-            }
-          }
+          processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
         }
       )
   }
 
+  private def processValidInput(mode: Mode,
+                                request: OptionalDataRequest[AnyContent],
+                                inputEoriNumber: String)(implicit appConfig: FrontendAppConfig,
+                                                         hc: HeaderCarrier, msgs: Messages): Future[Result] = {
+    val eori = removeSpaceAndConvertToUpperCase(inputEoriNumber)
+
+    if (request.eoriNumber.equalsIgnoreCase(eori)) {
+      errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
+    } else {
+      val result = for {
+        xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
+      } yield {
+        if (xiEori.isEmpty && isXIEori(eori)) {
+          errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
+        } else {
+          processValidEoriAndSubmit(mode, request, hc, msgs, eori)
+        }
+      }
+      result.flatten
+    }
+  }
+
+  /**
+   * Processes valid EORI
+   */
+  private def processValidEoriAndSubmit(mode: Mode,
+                                        request: OptionalDataRequest[AnyContent],
+                                        hc: HeaderCarrier,
+                                        msgs: Messages,
+                                        eori: String): Future[Result] = {
+    (for {
+      companyName <- dataStore.getCompanyName(eori)(hc)
+      companyDetails = CompanyDetails(eori, companyName)
+      updatedAnswers <- Future.fromTry(
+        request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
+      updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
+        mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
+      _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
+      result <- doSubmission(updatedAnswers, eori, mode)(hc, request)
+    } yield result).recover {
+      case _: ValidationException =>
+        BadRequest(view(form.withError(
+          "value",
+          "eoriNumber.error.invalid").fill(eori),
+          mode, navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
+      case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+    }
+  }
+
   private def doSubmission(updatedAnswers: UserAnswers,
-                           eori: String, mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
+                           eori: String,
+                           mode: Mode)(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(
@@ -111,7 +135,17 @@ class EoriNumberController @Inject()(
     }
   }
 
-  protected def formatGBEori(str: String): String = str.replaceAll("\\s", "").toUpperCase
+  private def errorView(mode: Mode,
+                        inputEoriNumber: String,
+                        errorMsgKey: String)(implicit request: Request[_],
+                                             msgs: Messages,
+                                             appConfig: FrontendAppConfig): Future[Result] =
+    Future.successful(BadRequest(view(form.withError(
+      "value",
+      errorMsgKey).fill(inputEoriNumber),
+      mode,
+      navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
+    )
 
   /**
    * Gets the eori from UserAnswers. Sets eori to emptyString if not found

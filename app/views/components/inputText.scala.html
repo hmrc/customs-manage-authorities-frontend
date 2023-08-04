@@ -14,7 +14,10 @@
  * limitations under the License.
  *@
 
-@this(govukInput: GovukInput)
+@import views.ViewUtils.InputTextHint
+
+@this(govukInput: GovukInput,
+      inTextHint: input_text_hint)
 
 @(
         form: Form[_],
@@ -23,7 +26,7 @@
         label: String,
         isPageHeading: Boolean,
         headingMessageArgs: Seq[String] = Seq(),
-        hint: Option[String] = None,
+        hint: Option[InputTextHint] = None,
         classes: Option[String] = None,
         stripWhitespace: Boolean = false,
         autocomplete: Option[String] = None,
@@ -43,13 +46,17 @@
             classes = if(isPageHeading) "govuk-label--xl " + labelClasses.getOrElse("") else labelClasses.getOrElse("")
         ),
         hint = hint.map(hintKey => Hint(
-        content = HtmlContent(messages(hintKey))
+        content = HtmlContent(inTextHint(hintKey.detailsHint, hintKey.labelHint, id))
         )),
         value = form(name).value,
-        errorMessage = form(name).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*)),classes="govuk-!-width-two-thirds", visuallyHiddenText = Some(messages("site.error")))),
+        errorMessage = form(name).error.map(
+                            err => ErrorMessage(
+                                    content = Text(messages(err.message, err.args:_*)),
+                                    classes="govuk-!-width-two-thirds",
+                                    visuallyHiddenText = Some(messages("site.error")))
+        ),
         autocomplete = autocomplete,
         inputmode = inputmode,
         pattern = pattern,
         inputType = inputType
     ))
-

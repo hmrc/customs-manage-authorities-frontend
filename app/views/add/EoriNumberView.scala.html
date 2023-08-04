@@ -18,6 +18,7 @@
 @import models.Mode
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
+@import views.ViewUtils.{InputTextHint,DetailsHint,LabelHint}
 
 @this(
     layout: Layout,
@@ -40,18 +41,19 @@
             id = "value",
             name = "value",
             label = "eoriNumber.heading",
-            hint = Some(messages("eoriNumber.hint")),
+            hint = Some(InputTextHint(
+                            Some(
+                                DetailsHint("eoriNumber.details.label", "eoriNumber.details.text")
+                                ),
+                            Some(
+                                LabelHint("eoriNumber.hint", "govuk-hint govuk-hint govuk-!-margin-top-6")
+                            )
+                    )
+                ),
             isPageHeading = true,
             classes = Some("govuk-!-width-two-thirds"),
             labelClasses = Some("govuk-!-margin-bottom-7")
         )
-
-        <details class="govuk-details" data-module="govuk-details">
-            <summary class="govuk-details__summary">
-                <span class="govuk-details__summary-text"> @messages("eoriNumber.details.label") </span>
-            </summary>
-            <div class="govuk-details__text"> @messages("eoriNumber.details.text") </div>
-        </details>
 
         @button("site.saveAndContinue")
     }

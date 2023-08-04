@@ -18,6 +18,7 @@ package views
 
 import play.api.data.Form
 import play.api.i18n.Messages
+import utils.StringUtils.emptyString
 
 object ViewUtils {
 
@@ -32,4 +33,14 @@ object ViewUtils {
   def errorPrefix(form: Form[_])(implicit messages: Messages): String = {
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
   }
+
+  case class DetailsHint(summaryText: String,
+                         text: String,
+                         classes: String = emptyString,
+                         attributes: Map[String, String] = Map.empty,
+                         open: Boolean = false)
+
+  case class LabelHint(labelText: String, classes: String = emptyString)
+
+  case class InputTextHint(detailsHint: Option[DetailsHint] = None, labelHint: Option[LabelHint] = None)
 }
