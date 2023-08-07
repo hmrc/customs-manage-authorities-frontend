@@ -52,7 +52,7 @@ object AccountsFormProvider {
           s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
         case _ =>
           if (account.isNiAccount) {
-            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.ni")}"
+            s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
           } else {
             s"${messages("accounts.type." + account.accountType)}: ${account.number}"
           }
