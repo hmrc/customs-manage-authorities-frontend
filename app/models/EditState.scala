@@ -19,7 +19,7 @@ package models
 import play.api.i18n.Messages
 
 sealed trait EditState {
-  def getMessage()(implicit messages: Messages)
+  def getMessage()(implicit messages: Messages): Unit
 }
 
 case object Changed extends EditState {

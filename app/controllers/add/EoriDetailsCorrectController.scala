@@ -54,8 +54,8 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
 
       val preparedForm = (request.userAnswers.get(EoriDetailsCorrectPage), request.userAnswers.get(EoriNumberPage)) match {
         case (None, _) => form
-        case (Some(EoriDetailsCorrect.No), Some(value)) => form
-        case (Some(EoriDetailsCorrect.Yes),Some(value)) => form.fill(EoriDetailsCorrect.Yes)
+        case (Some(EoriDetailsCorrect.No), _) => form
+        case (Some(EoriDetailsCorrect.Yes), _) => form.fill(EoriDetailsCorrect.Yes)
       }
 
       Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.EoriNumberController.onPageLoad(mode)),

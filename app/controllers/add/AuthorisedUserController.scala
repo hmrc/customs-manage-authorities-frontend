@@ -79,7 +79,7 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
         val ownerEori = if(enteredEori.startsWith("XI")) xiEori else gbEori
         connector.grantAccountAuthorities(payload, ownerEori).map {
           case true => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
-          case false => errorPage("Add authority request submission to backend failed", payload)
+          case false => errorPage(("Add authority request submission to backend failed", payload))
         }
       }
   }
