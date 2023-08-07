@@ -50,14 +50,13 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage)),
         companyNameRow(userAnswers.get(EoriNumberPage))
-
       ).flatten
     }
   }
 
   def accountsRows: Seq[SummaryListRow] = {
     Seq(
-      Some(accountsRow(selectedAccounts)),
+      Some(accountsRow(selectedAccounts))
     ).flatten
   }
 
@@ -76,11 +75,20 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: Dat
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
     val list = selectedAccounts.map { account =>
       val cdsAccount = account
+      /*
       s"${messages("accounts.type." + account.accountType)}: ${cdsAccount.number}${
         if (account.isNiAccount && account.accountType == "dutyDeferment")
           singleSpace.concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
         else emptyString.trim
       }"
+      */
+
+      if (account.isNiAccount && account.accountType == "dutyDeferment") {
+        s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
+      } else {
+        s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+      }
+
     }
 
     summaryListRow(
