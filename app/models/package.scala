@@ -135,6 +135,8 @@ package object models {
                     JsSuccess(Json.arr())
                   case _: RecursiveSearch =>
                     JsError("recursive search is not supported")
+                  case _ =>
+                    JsError(s"cannot remove a key on $jsValue")
                 }
               }.flatMap {
                 _.remove(JsPath(second :: rest)).flatMap {

@@ -41,25 +41,25 @@ class CustomsFinancialsConnector @Inject()(
       AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None)))
 
     httpClient.POST[AccountsAndBalancesRequestContainer,
-      AccountsAndBalancesResponseContainer](baseUrl.toString + context.toString + "/eori/accounts/", request).map(_.toCdsAccounts(eori))
+      AccountsAndBalancesResponseContainer](baseUrl.toString + context + "/eori/accounts/", request).map(_.toCdsAccounts(eori))
   }
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
-    httpClient.GET[Seq[AccountWithAuthorities]](baseUrl.toString + context.toString + s"/$eori/account-authorities")
+    httpClient.GET[Seq[AccountWithAuthorities]](baseUrl.toString + context + s"/$eori/account-authorities")
   }
 
   def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[AddAuthorityRequest, HttpResponse](baseUrl.toString + context.toString + s"/$eori/account-authorities/grant", addAuthorityRequest)
+    httpClient.POST[AddAuthorityRequest, HttpResponse](baseUrl.toString + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
   def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[RevokeAuthorityRequest, HttpResponse](baseUrl.toString + context.toString + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
+    httpClient.POST[RevokeAuthorityRequest, HttpResponse](baseUrl.toString + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
-    httpClient.GET[HttpResponse](baseUrl.toString + context.toString + s"/eori/$eori/validate")
+    httpClient.GET[HttpResponse](baseUrl.toString + context + s"/eori/$eori/validate")
       .map(response => { response.status match {
           case Status.OK => Right(true)
           case Status.NOT_FOUND => Right(false)
@@ -72,6 +72,6 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
-    httpClient.GET[CompanyName](baseUrl.toString + context.toString + "/subscriptions/company-name")
+    httpClient.GET[CompanyName](baseUrl.toString + context + "/subscriptions/company-name")
   }
 }
