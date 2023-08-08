@@ -49,6 +49,7 @@ class AuthenticatedIdentifierAction @Inject()(
           case Some(eori) => block(IdentifierRequest(request, InternalId(internalId), credentials, affinityGroup, name, email, eori.value))
           case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
           }
+      case _ => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue_url" -> Seq(config.loginContinueUrl)))

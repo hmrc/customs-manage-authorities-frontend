@@ -35,6 +35,6 @@ class AuthorisedUserFormProviderWithConsent @Inject() extends Mappings {
         .verifying(maxLength(255, "authorisedUser.error.jobRole.length"))
         .verifying(regexp(textFieldRegex, "authorisedUser.error.jobRole.malicious")),
         "confirmation" -> checked("authorisedUser.error.confirmation.required")
-      )((name, role, _) => AuthorisedUser.apply(name, role))(user => Some(user.userName, user.userRole, false))
+      )((name, role, _) => AuthorisedUser.apply(name, role))(user => Some((user.userName, user.userRole, false)))
     )
 }
