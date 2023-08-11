@@ -181,8 +181,8 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   }
 
   /**
-   * Updates the Value attribute of SummaryListRow to add Northern Ireland msg
-   * if the EORI is XI and account is of type Deferment
+   * Updates the Value attribute of SummaryListRow to add Northern Ireland label
+   * if the EORI is XI and account is of type Duty Deferment
    *
    * @param accountNumberRowFromHelper Seq[SummaryListRow]
    * @return Updated Seq[SummaryListRow]
