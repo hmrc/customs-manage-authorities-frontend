@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.DateUtils
-import utils.StringUtils.htmlSingleLineBreak
+import utils.StringUtils.nIEORIPrefix
 
 
 class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
@@ -41,8 +41,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     val accountNumberRowFromHelper = Seq(
       accountNumberRow(account)
     ).flatten
-
-    amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper)
+    amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper, account.accountNumber)
   }
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
@@ -182,23 +181,22 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   }
 
   /**
-   * Updates the Value attribute of SummaryListRow to add (Northern Ireland) at the end
-   * if the EORI is XI and account is of type Deferment
+   * Updates the Value attribute of SummaryListRow to add Northern Ireland label
+   * if the EORI is XI and account is of type Duty Deferment
    *
    * @param accountNumberRowFromHelper Seq[SummaryListRow]
    * @return Updated Seq[SummaryListRow]
    */
-  private def amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper: Seq[SummaryListRow]): Seq[SummaryListRow] = {
+  private def amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper: Seq[SummaryListRow],
+                                                              accNumber: String): Seq[SummaryListRow] =
     accountNumberRowFromHelper.map {
       currentRow =>
-        if ((account.accountType == CdsDutyDefermentAccount) && standingAuthority.authorisedEori.startsWith("XI")) {
-          val currentRowValueContent = currentRow.value.content.asHtml.toString
-          val contentWithNIText = currentRowValueContent.concat(
-            htmlSingleLineBreak).concat(messages("manageAuthorities.table.heading.account.Northern-Ireland"))
-          currentRow.copy(value = currentRow.value.copy(content = HtmlContent(contentWithNIText)))
+        if ((account.accountType == CdsDutyDefermentAccount) &&
+          standingAuthority.authorisedEori.startsWith(nIEORIPrefix)) {
+          currentRow.copy(value = currentRow.value.copy(content = HtmlContent(
+            messages("manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", accNumber))))
         } else {
           currentRow
         }
     }
-  }
 }
