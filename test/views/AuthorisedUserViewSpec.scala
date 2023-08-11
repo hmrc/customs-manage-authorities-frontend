@@ -187,6 +187,191 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         "accounts.checkYourAnswersLabel.singular accounts.type.dutyDeferment:" +
           " 67890 site.change checkYourAnswers.accounts.hidden"
     }
+
+    "Display Company Name Label" in new Setup {
+
+      override val cashAccount: CashAccount = CashAccount(
+        "12345",
+        "GB123456789012",
+        AccountStatusOpen,
+        CDSCashBalance(Some(100.00)))
+
+      override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+        "67890",
+        "GB210987654321",
+        AccountStatusOpen,
+        DutyDefermentBalance(None, None, None, None))
+
+      override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+      override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+        .set(AccountsPage, selectedAccounts).success.value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+        .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+      override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+      override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+      val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+        new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+      pageView.getElementsByClass("govuk-summary-list__row")
+        .get(1).text() mustBe "checkYourAnswers.companyName.label companyName"
+    }
+
+    "AithorisedUserView Get Elements by Id" should {
+      "Display companyName by ID" in new Setup {
+
+        override val cashAccount: CashAccount = CashAccount(
+          "12345",
+          "GB123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)))
+
+        override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None))
+
+        override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+        override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, selectedAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+        override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+        override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+          new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+        val compare = "<h2 id=\"companyDetails\" class=\"govuk-heading-m\">checkYourAnswers.companyDetails.h2</h2>"
+        val result = pageView.getElementById("companyDetails").`val`()
+
+        compare.contains(result) mustBe true
+      }
+
+      "Display accountTitle by ID" in new Setup {
+
+        override val cashAccount: CashAccount = CashAccount(
+          "12345",
+          "GB123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)))
+
+        override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None))
+
+        override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+        override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, selectedAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+        override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+        override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+          new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+        val compare = "<h2 id=\"accountTitle\" class=\"govuk-heading-m\">checkYourAnswers.accounts.h2.singular</h2>"
+        val result = pageView.getElementById("accountTitle").`val`()
+
+        compare.contains(result) mustBe true
+      }
+
+      "Display authHeader by ID" in new Setup {
+
+        override val cashAccount: CashAccount = CashAccount(
+          "12345",
+          "GB123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)))
+
+        override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None))
+
+        override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+        override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, selectedAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+        override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+        override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+          new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+        val compare = "<h2 id=\"authHeader\" class=\"govuk-heading-m\">checkYourAnswers.authorityDetails.h2</h2>"
+        val result = pageView.getElementById("authHeader").`val`()
+
+        compare.contains(result) mustBe true
+      }
+
+      "Display userDetails by ID" in new Setup {
+
+        override val cashAccount: CashAccount = CashAccount(
+          "12345",
+          "GB123456789012",
+          AccountStatusOpen,
+          CDSCashBalance(Some(100.00)))
+
+        override val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None))
+
+        override val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment)
+
+        override val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, selectedAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+
+        override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
+        override val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        val pageView: Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(
+          new AuthorisedUserFormProviderWithConsent().apply(), helper).body)
+
+        val compare = "<h2 id=\"userDetails\" class=\"govuk-heading-m\">checkYourAnswers.userDetails.h2</h2>"
+        val result = pageView.getElementById("userDetails").`val`()
+
+        compare.contains(result) mustBe true
+      }
+    }
   }
 
   trait Setup {
@@ -225,5 +410,4 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
     def view(): Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(form, helper).body)
   }
-
 }
