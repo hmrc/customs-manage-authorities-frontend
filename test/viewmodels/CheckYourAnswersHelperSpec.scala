@@ -422,8 +422,9 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
 
         helper.accountsRows.size mustBe 1
         helper.accountsRows.head.value mustBe
-          Value(HtmlContent("accounts.type.dutyDeferment: 67890 manageAuthorities.table.heading.account.Northern-Ireland"))
-      }
+          Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
+
+     }
     }
   }
 }

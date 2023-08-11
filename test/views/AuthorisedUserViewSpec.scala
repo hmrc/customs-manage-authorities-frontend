@@ -114,8 +114,8 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
       pageView.getElementsByClass("govuk-summary-list__row")
         .get(2).text() mustBe
-        "accounts.checkYourAnswersLabel.singular accounts.type.dutyDeferment:" +
-          " 67890 manageAuthorities.table.heading.account.Northern-Ireland site.change checkYourAnswers.accounts.hidden"
+        "accounts.checkYourAnswersLabel.singular accounts.type.dutyDeferment accounts.ni: 67890" +
+          " site.change checkYourAnswers.accounts.hidden"
     }
 
     "do not display (Northern Ireland) text next to Account Type:<Acc Number> if " +
