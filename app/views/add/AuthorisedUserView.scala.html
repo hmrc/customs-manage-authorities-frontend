@@ -45,19 +45,19 @@
 
         @h1("checkYourAnswers.heading")
 
-        @h2("checkYourAnswers.companyDetails.h2")
+        @h2("checkYourAnswers.companyDetails.h2", Some("companyDetails"))
 
         @summaryList(SummaryList(helper.companyDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2(Html(helper.accountsTitle))
+        @h2(Html(helper.accountsTitle), Some("accountTitle"))
 
         @summaryList(SummaryList(helper.accountsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2("checkYourAnswers.authorityDuration.h2")
+        @h2("checkYourAnswers.authorityDetails.h2", Some("authHeader"))
 
         @summaryList(SummaryList(helper.authorityDurationRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
-        @h2("checkYourAnswers.userDetails.h2")
+        @h2("checkYourAnswers.userDetails.h2", Some("userDetails"))
 
         @summaryList(SummaryList(helper.authorityDetailsRows, "govuk-!-margin-bottom-9 govuk-summary-list--wide "))
 
