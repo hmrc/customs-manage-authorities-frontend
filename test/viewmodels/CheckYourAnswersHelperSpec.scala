@@ -426,5 +426,35 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
 
      }
     }
+
+    "produce correct text for EORI" when {
+      "account is of type Duty deferment" in {
+
+        val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
+          "67890",
+          "GB210987654321",
+          AccountStatusOpen,
+          DutyDefermentBalance(None, None, None, None),
+          isNiAccount = false)
+
+        val cdsAccounts = List(dutyDeferment)
+
+        val userAnswersWithNIEoriAndDefermentAccount: UserAnswers = UserAnswers("id")
+          .set(AccountsPage, cdsAccounts).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+        val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
+        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
+        helper.accountsRows.size mustBe 1
+        helper.accountsRows.head.value mustBe
+          Value(HtmlContent("accounts.type.dutyDeferment: 67890"))
+
+      }
+    }
   }
 }
