@@ -87,19 +87,19 @@ class AccountsAndBalancesSpec extends SpecBase
       val expectedResult = domain.DutyDefermentAccount("number", "owner", AccountStatusClosed, DutyDefermentBalance(Some(BigDecimal(1)), Some(BigDecimal(2)), Some(BigDecimal(3)), Some(BigDecimal(4))), true)
 
       val dutyDefermentAccount =
-        DutyDefermentAccount(account = accountWithStatus, limits = Some(Limits("1", "2")), balances = Some(DefermentBalances("3","4")))
+        DutyDefermentAccount(account = accountWithStatus, isNiAccount = true, isIomAccount = false, limits = Some(Limits("1", "2")), balances = Some(DefermentBalances("3","4")))
 
-      dutyDefermentAccount.toDomain(true) mustBe expectedResult
+      dutyDefermentAccount.toDomain() mustBe expectedResult
     }
 
     "correctly generate a domain model when limit and balance are not available" in {
 
-      val expectedResult = domain.DutyDefermentAccount("number", "owner", AccountStatusClosed, DutyDefermentBalance(None, None, None, None))
+      val expectedResult = domain.DutyDefermentAccount("number", "owner", AccountStatusClosed, DutyDefermentBalance(None, None, None, None), false)
 
       val dutyDefermentAccount =
-        DutyDefermentAccount(account = accountWithStatus, limits = None, balances = None)
+        DutyDefermentAccount(account = accountWithStatus, isNiAccount = false, isIomAccount = false, limits = None, balances = None)
 
-      dutyDefermentAccount.toDomain(false) mustBe expectedResult
+      dutyDefermentAccount.toDomain() mustBe expectedResult
     }
   }
 }
