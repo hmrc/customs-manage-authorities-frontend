@@ -133,7 +133,8 @@ accounts.noAvailableAccounts.link = manage your account authorities
 
 eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
-eoriNumber.hint = EORI starts with GB or XI followed by 12 digits or GBN followed by 11 digits. <br>For example, GB345834921000, XI345834921000 or GBN10537914000.
+eoriNumber.hint = An EORI number starts GB or GBN. <br> For example, GB345834921000 or GBN10537914000.
+eoriNumber.hint.xi = EORI starts with GB or XI followed by 12 digits or GBN followed by 11 digits. <br>For example, GB345834921000, XI345834921000 or GBN10537914000.
 eoriNumber.checkYourAnswersLabel = User EORI number
 eoriNumber.error.required = Enter an EORI number
 eoriNumber.error.format = Enter an EORI number in the correct format

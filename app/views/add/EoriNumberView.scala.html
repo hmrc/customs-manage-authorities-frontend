@@ -28,7 +28,7 @@
     inputText: components.inputText
 )
 
-@(form: Form[_], mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(form: Form[_], mode: Mode, call: Call, xiEoriEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLink = Some(call)) {
 
@@ -36,24 +36,45 @@
 
         @errorSummary(form.errors)
 
-        @inputText(
-            form,
-            id = "value",
-            name = "value",
-            label = "eoriNumber.heading",
-            hint = Some(InputTextHint(
-                            Some(
-                                DetailsHint("eoriNumber.details.label", "eoriNumber.details.text")
-                                ),
-                            Some(
-                                LabelHint("eoriNumber.hint", "govuk-hint govuk-!-margin-top-6")
-                            )
-                    )
-                ),
-            isPageHeading = true,
-            classes = Some("govuk-!-width-two-thirds"),
-            labelClasses = Some("govuk-!-margin-bottom-7")
-        )
+        @if(xiEoriEnabled) {
+            @inputText(
+                form,
+                id = "value",
+                name = "value",
+                label = "eoriNumber.heading",
+                hint = Some(InputTextHint(
+                                Some(
+                                    DetailsHint("eoriNumber.details.label", "eoriNumber.details.text")
+                                    ),
+                                Some(
+                                    LabelHint("eoriNumber.hint.xi", "govuk-hint govuk-!-margin-top-6")
+                                )
+                        )
+                    ),
+                isPageHeading = true,
+                classes = Some("govuk-!-width-two-thirds"),
+                labelClasses = Some("govuk-!-margin-bottom-7")
+            )
+        }else{
+            @inputText(
+                form,
+                id = "value",
+                name = "value",
+                label = "eoriNumber.heading",
+                hint = Some(InputTextHint(
+                                Some(
+                                    DetailsHint("eoriNumber.details.label", "eoriNumber.details.text")
+                                    ),
+                                Some(
+                                    LabelHint("eoriNumber.hint", "govuk-hint govuk-!-margin-top-6")
+                                )
+                        )
+                    ),
+                isPageHeading = true,
+                classes = Some("govuk-!-width-two-thirds"),
+                labelClasses = Some("govuk-!-margin-bottom-7")
+            )
+        }
 
         @button("site.saveAndContinue")
     }
