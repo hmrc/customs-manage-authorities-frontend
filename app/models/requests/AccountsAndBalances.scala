@@ -74,8 +74,9 @@ case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvai
 
 case class ReturnParameters(paramName: String, paramValue: String)
 
-case class DutyDefermentAccount(account: AccountWithStatus, limits: Option[Limits], balances: Option[DefermentBalances]) {
-  def toDomain(isNiAccount: Boolean = false): domain.DutyDefermentAccount = {
+case class DutyDefermentAccount(account: AccountWithStatus, isNiAccount: Boolean, isIomAccount: Boolean = false,
+                                limits: Option[Limits], balances: Option[DefermentBalances]) {
+  def toDomain(): domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
       limits.map(limit => BigDecimal(limit.periodGuaranteeLimit)),
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
@@ -104,7 +105,6 @@ case class CdsCashAccount(account: AccountWithStatus, availableAccountBalance: O
 
 case class AccountResponseDetail(EORINo: Option[String],
                                  referenceDate: Option[String],
-                                 isNiAccount: Option[Boolean] = Some(false),
                                  dutyDefermentAccount: Option[Seq[DutyDefermentAccount]],
                                  generalGuaranteeAccount: Option[Seq[GeneralGuaranteeAccount]],
                                  cdsCashAccount: Option[Seq[CdsCashAccount]]) {
@@ -119,7 +119,7 @@ case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: Acc
   def toCdsAccounts(eori: String): domain.CDSAccounts = {
     val details = this.accountsAndBalancesResponse.responseDetail
     val accounts: List[CDSAccount] = List(
-      details.dutyDefermentAccount.map(_.map(_.toDomain(isNiAccount = details.isNiAccount.getOrElse(false)))),
+      details.dutyDefermentAccount.map(_.map(_.toDomain())),
       details.generalGuaranteeAccount.map(_.map(_.toDomain)),
       details.cdsCashAccount.map(_.map(_.toDomain))
     ).flatten.flatten.filter(_.owner == eori)
