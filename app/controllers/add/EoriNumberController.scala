@@ -60,14 +60,15 @@ class EoriNumberController @Inject()(
         case Some(value) => form.fill(value.eori)
       }
 
-      Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+      val isXiEoriEnabled = appConfig.xiEoriEnabled
+      Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-            Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode))))
+            Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)))
         },
         eoriNumber => {
           processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
@@ -119,7 +120,7 @@ class EoriNumberController @Inject()(
         BadRequest(view(form.withError(
           "value",
           "eoriNumber.error.invalid").fill(eori),
-          mode, navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
+          mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)(request, msgs, appConfig))
       case _ => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
     }
   }
@@ -131,7 +132,7 @@ class EoriNumberController @Inject()(
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(
         form.withError("value",
-          "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode)))
+          "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled))
     }
   }
 
@@ -144,7 +145,7 @@ class EoriNumberController @Inject()(
       "value",
       errorMsgKey).fill(inputEoriNumber),
       mode,
-      navigator.backLinkRouteForEORINUmberPage(mode))(request, msgs, appConfig))
+      navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)(request, msgs, appConfig))
     )
 
   /**
