@@ -14,8 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcNewTabLink
-@import uk.gov.hmrc.hmrcfrontend.views.Aliases.NewTabLink
 @import views.html.templates.Layout
 
 @this(
@@ -23,7 +21,7 @@
     h1: components.h1,
     h2: components.h2,
     p: components.p,
-    hmrcNewTabLink: HmrcNewTabLink
+    link: components.link,
 )
 
 @()(implicit request: Request[_], messages: Messages, appConfig: config.FrontendAppConfig)
@@ -31,33 +29,13 @@
 @layout(Some(titleNoForm("unauthorised.title", None, Seq())), backLink = None) {
 
     @h1("unauthorised.heading")
-    @h2("unauthorised.how-to-get-access-info")
-
-    <p class="govuk-body">
-        @messages("unauthorised.eori-info")
-        @hmrcNewTabLink(
-            NewTabLink(
-                language = Some(messages.lang.toString),
-                classList = Some("govuk-link"),
-                href=Some(appConfig.registerCdsUrl),
-                text=messages("unauthorised.eori-link")
-            )
-        )
-        .
-    </p>
-
-    <p class="govuk-body">
-        @messages("unauthorised.get-access-info")
-        @hmrcNewTabLink(
-            NewTabLink(
-                language = Some(messages.lang.toString),
-                classList = Some("govuk-link"),
-                href=Some(appConfig.subscribeCdsUrl),
-                text=messages("unauthorised.get-access-link")
-            )
-        )
-        .
-    </p>
-
-    @p(Html(messages("unauthorised.process-application-info")))
+    @h2("unauthorised.already-subscribed-to-cds")
+    @p(Html(messages("unauthorised.already-subscribed-to-cds-guidance-text")))
+    @h2("unauthorised.subscribe-cds.title")
+    @link(
+        location = appConfig.subscribeCdsUrl,
+        linkMessage = "unauthorised.subscribe-cds.link",
+        linkId = Some("subscribe-cds-link"),
+        pClass = "govuk-body govuk-!-margin-bottom-7"
+    )
 }
