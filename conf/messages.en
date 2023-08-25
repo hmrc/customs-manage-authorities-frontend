@@ -68,8 +68,8 @@ unauthorised.eori-info=You''ll need an
 unauthorised.eori-link=Economic Operator and Registration Identification (EORI) number (opens in a new window or tab)
 unauthorised.get-access-info=If you already have an EORI number, you can
 unauthorised.get-access-link=get access to CDS (opens in a new window or tab)
-unauthorised.how-to-get-access-info=If you are already subscribed to CDS
-unauthorised.process-application-info=Check that you signed in with the Government Gateway user ID that is linked to your Economic Operator and Registration Identification (EORI) number and CDS account.
+unauthorised.already-subscribed-to-cds=If you are already subscribed to CDS
+unauthorised.already-subscribed-to-cds-guidance-text=Check that you signed in with the Government Gateway user ID that is linked to your Economic Operator and Registration Identification (EORI) number and CDS account.
 unauthorised.subscribe-cds.title=Subscribe to CDS
 unauthorised.subscribe-cds.link=Subscribe to the Customs Declaration Service.
 

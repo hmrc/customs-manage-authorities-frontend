@@ -29,10 +29,8 @@
 @layout(Some(titleNoForm("unauthorised.title", None, Seq())), backLink = None) {
 
     @h1("unauthorised.heading")
-    @h2("unauthorised.how-to-get-access-info")
-
-    @p(Html(messages("unauthorised.process-application-info")))
-
+    @h2("unauthorised.already-subscribed-to-cds")
+    @p(Html(messages("unauthorised.already-subscribed-to-cds-guidance-text")))
     @h2("unauthorised.subscribe-cds.title")
     @link(
         location = appConfig.subscribeCdsUrl,
@@ -41,4 +39,3 @@
         pClass = "govuk-body govuk-!-margin-bottom-7"
     )
 }
-
