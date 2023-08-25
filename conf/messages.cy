@@ -63,13 +63,15 @@ session_expired.guidance=Mae’r manylion a roddwyd gennych wedi’u dileu gan n
 session_expired.action=Dechrau eto
 
 unauthorised.title=Heb gofrestru â’r Gwasanaeth Datgan Tollau (CDS)
-unauthorised.heading=Er mwyn bwrw golwg dros eich cyfrifon ariannol ar gyfer y tollau, mae angen i chi gael mynediad at y Gwasanaeth Datgan Tollau (CDS)
+unauthorised.heading=I fynd yn eich blaen, mae angen i chi danysgrifio i’r Gwasanaeth Datganiadau Tollau (CDS)
 unauthorised.eori-info=I gael mynediad at CDS, bydd angen
 unauthorised.eori-link=Rhif Cofrestru ac Adnabod Gweithredwyr Economaidd (EORI) arnoch
 unauthorised.get-access-info=Os oes gennych rif EORI eisoes, mae modd
 unauthorised.get-access-link=cael mynediad at CDS yma
-unauthorised.how-to-get-access-info=Sut i gael mynediad at CDS
-unauthorised.process-application-info=Gall gymryd hyd at ddwy awr i CThEM brosesu’ch cais.
+unauthorised.how-to-get-access-info=Os ydych eisoes wedi tanysgrifio i’r CDS
+unauthorised.process-application-info=Gwiriwch eich bod wedi mewngofnodi gyda’r Dynodydd Defnyddiwr (ID) ar gyfer Porth y Llywodraeth sy’n gysylltiedig â’ch Rhif Cofrestru ac Adnabod Gweithredwyr Economaidd (EORI) a’ch cyfrif CDS.
+unauthorised.subscribe-cds.title=Tanysgrifio i’r CDS
+unauthorised.subscribe-cds.link=Tanysgrifio i’r Gwasanaeth Datganiadau Tollau.
 
 # Needs Welsh translation
 service-unavailable.title=Mae’n ddrwg gennym – ni allwn ychwanegu awdurdod ar hyn o bryd
