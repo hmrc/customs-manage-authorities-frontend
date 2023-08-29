@@ -22,11 +22,19 @@ import utils.StringUtils.emptyString
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], eoriNumber: String = emptyString) extends DataRetrievalAction {
+class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], eoriNumber: String = emptyString)
+  extends DataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-    Future.successful(OptionalDataRequest(request.request, request.internalId, request.credentials, request.affinityGroup,
-      request.name, request.email, if (eoriNumber.isEmpty) request.eoriNumber else eoriNumber, dataToReturn))
+    Future.successful(
+      OptionalDataRequest(request.request,
+        request.internalId,
+        request.credentials,
+        request.affinityGroup,
+        request.name,
+        request.email,
+        if (eoriNumber.isEmpty) request.eoriNumber else eoriNumber,
+        dataToReturn))
   }
 
   override protected implicit val executionContext: ExecutionContext =
