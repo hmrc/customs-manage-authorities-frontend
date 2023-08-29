@@ -118,7 +118,7 @@ class EoriNumberController @Inject()(
     (xiEoriNumber, inputEoriNumber) match {
       case (xiEori, inputEori) if xiEori.isEmpty && isXIEori(inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
-      case (xiEori, inputEori) if isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString)) =>
+      case (xiEori, inputEori) if xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString)) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
       case _ =>
         processValidEoriAndSubmit(mode, request, hc, msgs, eoriAfterConversionToUpperCase)
