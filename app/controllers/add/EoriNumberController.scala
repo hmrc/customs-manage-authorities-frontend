@@ -103,9 +103,9 @@ class EoriNumberController @Inject()(
 
   /**
    * Performs below checks
-   * Empty XI EORI and its Registration
-   * Authorisation of own XI EORI
-   * if above checks fail, apt error is raised
+   * 1.Whether associated XI EORI is empty and input EORI is XI EORI
+   * 2.Whether input XI EORI is user's own XI EORI
+   * if above checks match, error is raised with relevant msg
    * else proceed to submission
    */
   private def performXiEoriChecks(xiEoriNumber: Option[String],
