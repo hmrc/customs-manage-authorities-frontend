@@ -109,12 +109,12 @@ class EoriNumberController @Inject()(
    * else proceed to submission
    */
   private def performXiEoriChecks(xiEoriNumber: Option[String],
-                                 inputEoriNumber: String,
-                                 eoriAfterConversionToUpperCase: String,
-                                 mode: Mode,
-                                 request: OptionalDataRequest[AnyContent],
-                                 hc: HeaderCarrier,
-                                 msgs: Messages): Future[Result] =
+                                  inputEoriNumber: String,
+                                  eoriAfterConversionToUpperCase: String,
+                                  mode: Mode,
+                                  request: OptionalDataRequest[AnyContent],
+                                  hc: HeaderCarrier,
+                                  msgs: Messages): Future[Result] =
     (xiEoriNumber, inputEoriNumber) match {
       case (xiEori, inputEori) if xiEori.isEmpty && isXIEori(inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
