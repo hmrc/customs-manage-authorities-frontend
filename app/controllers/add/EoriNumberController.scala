@@ -116,7 +116,7 @@ class EoriNumberController @Inject()(
                                   hc: HeaderCarrier,
                                   msgs: Messages): Future[Result] =
     (xiEoriNumber, eoriInUpperCase) match {
-      case (xiEori, inputEori) if xiEori.isEmpty && isXIEori(inputEori) =>
+      case (xiEori, inputEori) if isNotRegisteredForXiEori(xiEori, inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
       case (xiEori, inputEori) if isOwnXiEori(xiEori, inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
@@ -204,6 +204,12 @@ class EoriNumberController @Inject()(
         userAnswers
       }
     )
+
+  /**
+   * Checks whether user is registered for XI EORI
+   */
+  private def isNotRegisteredForXiEori(xiEori: Option[String],
+                                    inputEori: String) = xiEori.isEmpty && isXIEori(inputEori)
 
   /**
    * Checks whether the provided XI EORI is user's own XI EORI
