@@ -88,15 +88,41 @@ class EoriNumberController @Inject()(
       val result = for {
         xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
       } yield {
-        if (xiEori.isEmpty && isXIEori(eori)) {
-          errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
-        } else {
-          processValidEoriAndSubmit(mode, request, hc, msgs, eori)
-        }
+        performXiEoriChecks(xiEori,
+          inputEoriNumber,
+          eori,
+          mode,
+          request,
+          hc,
+          msgs)
       }
+
       result.flatten
     }
   }
+
+  /**
+   * Performs below checks
+   * Empty XI EORI and its Registration
+   * Authorisation of own XI EORI
+   * if above checks fail, apt error is raised
+   * else proceed to submission
+   */
+  private def performXiEoriChecks(xiEoriNumber: Option[String],
+                                 inputEoriNumber: String,
+                                 eoriAfterConversionToUpperCase: String,
+                                 mode: Mode,
+                                 request: OptionalDataRequest[AnyContent],
+                                 hc: HeaderCarrier,
+                                 msgs: Messages): Future[Result] =
+    (xiEoriNumber, inputEoriNumber) match {
+      case (xiEori, inputEori) if xiEori.isEmpty && isXIEori(inputEori) =>
+        errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
+      case (xiEori, inputEori) if isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString)) =>
+        errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
+      case _ =>
+        processValidEoriAndSubmit(mode, request, hc, msgs, eoriAfterConversionToUpperCase)
+    }
 
   /**
    * Processes valid EORI

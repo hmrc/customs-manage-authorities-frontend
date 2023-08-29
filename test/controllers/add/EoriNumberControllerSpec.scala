@@ -440,6 +440,38 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result).contains(messages(application)("eoriNumber.error.register-xi-eori"))
       }
     }
+
+    "return a Bad Request and correct error msg when form data is valid and user " +
+      "provides his own XI EORI" in new SetUp {
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(
+        Future.successful(Some("XI123456789012")))
+
+      val application: Application =
+        applicationBuilder(Some(emptyUserAnswers), "GB123456789011")
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = NormalMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+          ).build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "XI123456789012"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+
+        contentAsString(result).contains(messages(application)("eoriNumber.error.authorise-own-eori"))
+      }
+    }
   }
 
   trait SetUp {
