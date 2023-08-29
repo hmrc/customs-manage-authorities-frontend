@@ -110,18 +110,18 @@ class EoriNumberController @Inject()(
    */
   private def performXiEoriChecks(xiEoriNumber: Option[String],
                                   inputEoriNumber: String,
-                                  eoriAfterConversionToUpperCase: String,
+                                  eoriInUpperCase: String,
                                   mode: Mode,
                                   request: OptionalDataRequest[AnyContent],
                                   hc: HeaderCarrier,
                                   msgs: Messages): Future[Result] =
-    (xiEoriNumber, inputEoriNumber) match {
+    (xiEoriNumber, eoriInUpperCase) match {
       case (xiEori, inputEori) if xiEori.isEmpty && isXIEori(inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
-      case (xiEori, inputEori) if xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString)) =>
+      case (xiEori, inputEori) if isOwnXiEori(xiEori, inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
       case _ =>
-        processValidEoriAndSubmit(mode, request, hc, msgs, eoriAfterConversionToUpperCase)
+        processValidEoriAndSubmit(mode, request, hc, msgs, eoriInUpperCase)
     }
 
   /**
@@ -204,4 +204,11 @@ class EoriNumberController @Inject()(
         userAnswers
       }
     )
+
+  /**
+   * Checks whether the provided XI EORI is user's own XI EORI
+   */
+  private def isOwnXiEori(xiEori: Option[String],
+                          inputEori: String): Boolean =
+    xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString))
 }
