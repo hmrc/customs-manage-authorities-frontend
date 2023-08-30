@@ -31,6 +31,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.CSRFTokenHelper._
 import play.api.test.FakeRequest
+import utils.StringUtils.emptyString
 
 class FakeMetrics extends Metrics {
   override val defaultRegistry: MetricRegistry = new MetricRegistry
@@ -50,12 +51,13 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
   def fakeRequest(method: String = "", path: String = ""): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(method, path).withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
+                                   requestEoriNUmber: String = emptyString): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, requestEoriNUmber)),
         bind[Metrics].toInstance(new FakeMetrics)
       ).configure(
       "play.filters.csp.nonce.enabled" -> false

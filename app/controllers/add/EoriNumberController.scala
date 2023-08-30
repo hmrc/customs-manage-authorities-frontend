@@ -88,15 +88,41 @@ class EoriNumberController @Inject()(
       val result = for {
         xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
       } yield {
-        if (xiEori.isEmpty && isXIEori(eori)) {
-          errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
-        } else {
-          processValidEoriAndSubmit(mode, request, hc, msgs, eori)
-        }
+        performXiEoriChecks(xiEori,
+          inputEoriNumber,
+          eori,
+          mode,
+          request,
+          hc,
+          msgs)
       }
+
       result.flatten
     }
   }
+
+  /**
+   * Performs below checks
+   * 1.Whether associated XI EORI is empty and input EORI is XI EORI
+   * 2.Whether input XI EORI is user's own XI EORI
+   * if above checks match, error is raised with relevant msg
+   * else proceed to submission
+   */
+  private def performXiEoriChecks(xiEoriNumber: Option[String],
+                                  inputEoriNumber: String,
+                                  eoriInUpperCase: String,
+                                  mode: Mode,
+                                  request: OptionalDataRequest[AnyContent],
+                                  hc: HeaderCarrier,
+                                  msgs: Messages): Future[Result] =
+    (xiEoriNumber, eoriInUpperCase) match {
+      case (xiEori, inputEori) if isNotRegisteredForXiEori(xiEori, inputEori) =>
+        errorView(mode, inputEoriNumber, "eoriNumber.error.register-xi-eori")(request, msgs, appConfig)
+      case (xiEori, inputEori) if isOwnXiEori(xiEori, inputEori) =>
+        errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
+      case _ =>
+        processValidEoriAndSubmit(mode, request, hc, msgs, eoriInUpperCase)
+    }
 
   /**
    * Processes valid EORI
@@ -178,4 +204,17 @@ class EoriNumberController @Inject()(
         userAnswers
       }
     )
+
+  /**
+   * Checks whether user is registered for XI EORI
+   */
+  private def isNotRegisteredForXiEori(xiEori: Option[String],
+                                    inputEori: String) = xiEori.isEmpty && isXIEori(inputEori)
+
+  /**
+   * Checks whether the provided XI EORI is user's own XI EORI
+   */
+  private def isOwnXiEori(xiEori: Option[String],
+                          inputEori: String): Boolean =
+    xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString))
 }

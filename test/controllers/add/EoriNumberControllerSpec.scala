@@ -294,9 +294,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    //TODO: This should be revisited as need to find a way to reset the different eoriNumber value in OptionalDataRequest
     "redirect to EoriDetailsCorrect page when form data is valid, request eori is different to UserAnswers eori" +
-      "and user in CheckMode" ignore new SetUp {
+      "and user in CheckMode" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
@@ -305,14 +304,14 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.set(
-          EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value))
+          EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value),
+          requestEoriNUmber = "gb123456789033")
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(
               controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode), mode = CheckMode)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
+          ).build()
 
       running(application) {
 
@@ -322,10 +321,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST //Should be SEE_OTHER
-        // Below would be uncommented once we find a way to set diff eoriNumber value in OptionalDataRequest
-        //redirectLocation(result).value mustEqual
-        // controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
       }
     }
 
@@ -438,6 +436,38 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result).contains(messages(application)("eoriNumber.error.register-xi-eori"))
+      }
+    }
+
+    "return a Bad Request and correct error msg when form data is valid and user " +
+      "provides his own XI EORI" in new SetUp {
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(
+        Future.successful(Some("XI123456789012")))
+
+      val application: Application =
+        applicationBuilder(Some(emptyUserAnswers), "GB123456789011")
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = NormalMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+          ).build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "XI123456789012"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+
+        contentAsString(result).contains(messages(application)("eoriNumber.error.authorise-own-eori"))
       }
     }
   }
