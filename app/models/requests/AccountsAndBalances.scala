@@ -74,7 +74,7 @@ case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvai
 
 case class ReturnParameters(paramName: String, paramValue: String)
 
-case class DutyDefermentAccount(account: AccountWithStatus, isNiAccount: Boolean, isIomAccount: Boolean = false,
+case class DutyDefermentAccount(account: AccountWithStatus, isNiAccount: Option[Boolean] = Some(false), isIomAccount: Option[Boolean] = Some(false),
                                 limits: Option[Limits], balances: Option[DefermentBalances]) {
   def toDomain(): domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
@@ -82,7 +82,7 @@ case class DutyDefermentAccount(account: AccountWithStatus, isNiAccount: Boolean
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
       balances.map(balance => BigDecimal(balance.periodAvailableGuaranteeBalance)),
       balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance)))
-    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance, isNiAccount)
+    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance, isNiAccount.getOrElse(false), isIomAccount.getOrElse(false))
   }
 }
 
