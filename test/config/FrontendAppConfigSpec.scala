@@ -28,6 +28,12 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.appName mustBe ("customs-manage-authorities-frontend")
       }
     }
+
+    "return true for xiEoriEnabled" in new Setup {
+      running(app) {
+        appConfig.xiEoriEnabled mustBe true
+      }
+    }
   }
 
   trait Setup {

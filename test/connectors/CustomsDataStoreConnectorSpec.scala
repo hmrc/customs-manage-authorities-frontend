@@ -151,9 +151,9 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |   "xiEori":"XI1234567",
           |   "consent":"1",
           |   "address":{
-          |      "streetNumber1":"86 street",
-          |      "city":"London",
-          |      "countryCode":"GB"
+          |      "pbeAddressLine1":"86 street",
+          |      "pbeAddressLine2":"London",
+          |      "pbeAddressLine3":"GB"
           |   }
           |}
           |""".stripMargin
@@ -182,9 +182,9 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |   "xiEori":"",
           |   "consent":"1",
           |   "address":{
-          |      "streetNumber1":"86 street",
-          |      "city":"London",
-          |      "countryCode":"GB"
+          |      "pbeAddressLine1":"86 street",
+          |      "pbeAddressLine2":"London",
+          |      "pbeAddressLine3":"GB"
           |   }
           |}
           |""".stripMargin
