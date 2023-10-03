@@ -26,6 +26,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
+import org.mockito.Mockito.when
+import config.FrontendAppConfig
 
 class CustomsDataStoreConnectorSpec extends SpecBase
   with WireMockHelper
@@ -39,13 +41,8 @@ class CustomsDataStoreConnectorSpec extends SpecBase
   implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  private def application: Application =
-    new GuiceApplicationBuilder()
-      .configure("microservice.services.customs-data-store.port" -> server.port)
-      .build()
-
   ".getCompanyName" must {
-    "return companyName when consent is defined as 1(True)" in {
+    "return companyName when consent is defined as 1(True)" in new Setup {
       val response =
         """
           |{
@@ -60,25 +57,20 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expected = Some("Tony Stark")
-
-      val app = application
+      val expectedResult = Some("Tony Stark")
 
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
-
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
         )
         val result = connector.getCompanyName("GB123456789012").futureValue
-        result mustBe expected
+        result mustBe expectedResult
       }
     }
 
 
-    "return None when consent is defined as 0(False)" in {
+    "return None when consent is defined as 0(False)" in new Setup {
       val response =
         """
           |{
@@ -93,14 +85,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expected = None
-
-      val app = application
-
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
-
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
@@ -110,7 +95,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       }
     }
 
-    "return None when consent is empty" in {
+    "return None when consent is empty" in new Setup {
       val response =
         """
           |{
@@ -125,14 +110,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expected = None
-
-      val app = application
-
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
-
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
@@ -144,7 +122,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
   }
 
   ".get XiEori" must {
-    "return xi eori when it is returned from data store" in {
+    "return xi eori when it is returned from data store" in new Setup {
       val response =
         """
           |{
@@ -158,24 +136,20 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expected = Some("XI1234567")
-
-      val app = application
+      val expectedResult = Some("XI1234567")
 
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
 
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
         )
         val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe expected
+        result mustBe expectedResult
       }
     }
 
-    "return None when empty XI EORI value is returned from data store" in {
+    "return None when empty XI EORI value is returned from data store" in new Setup {
       val response =
         """
           |{
@@ -189,13 +163,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expected = None
-
-      val app = application
-
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
 
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
@@ -206,15 +174,9 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       }
     }
 
-    "return None when error response is returned" in {
-
-      val expected = None
-
-      val app = application
+    "return None when error response is returned" in new Setup {
 
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsDataStoreConnector]
 
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
@@ -224,5 +186,28 @@ class CustomsDataStoreConnectorSpec extends SpecBase
         result mustBe expected
       }
     }
+
+    "return None when feature flag is false" in new Setup {
+      val mockAppConfig = mock[FrontendAppConfig]
+      when(mockAppConfig.xiEoriEnabled).thenReturn(false)
+
+      running(app) {
+        val result = connector.getXiEori("GB123456789012").futureValue
+        result mustBe expected
+      }
+    }
+  }
+
+  trait Setup {
+
+    private def application: Application =
+      new GuiceApplicationBuilder()
+        .configure("microservice.services.customs-data-store.port" -> server.port)
+        .build()
+
+    val expected = None
+    val app = application
+    val connector = app.injector.instanceOf[CustomsDataStoreConnector]
   }
 }
+

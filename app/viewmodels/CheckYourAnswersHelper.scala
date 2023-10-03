@@ -24,7 +24,6 @@ import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
-import utils.StringUtils.{emptyString, singleSpace}
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)
