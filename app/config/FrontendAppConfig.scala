@@ -31,7 +31,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
   lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
-  lazy val xiEoriEnabled: Boolean = configuration.get[Boolean]("features.xi-eori-enabaled")
+  lazy val xiEoriEnabled: Boolean = configuration.get[Boolean]("features.xi-eori-enabled")
   lazy val timeout: Int = configuration.get[Int]("timeout.timeout")
 
   lazy val countdown: Int = configuration.get[Int]("timeout.countdown")
