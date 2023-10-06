@@ -16,13 +16,16 @@
 
 package models
 
+import models.ShowBalance.{No, Yes}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class ShowBalanceSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class ShowBalanceSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "ShowBalance" must {
 
@@ -57,6 +60,13 @@ class ShowBalanceSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
           Json.toJson(showBalance)(ShowBalance.writes) mustEqual JsString(showBalance.toString)
       }
+    }
+  }
+
+  "fromBoolean" should {
+    "return correct output" in {
+      ShowBalance.fromBoolean(true) mustBe Yes
+      ShowBalance.fromBoolean(false) mustBe No
     }
   }
 }
