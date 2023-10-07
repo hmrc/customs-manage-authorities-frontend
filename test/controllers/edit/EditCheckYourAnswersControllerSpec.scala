@@ -16,7 +16,6 @@
 
 package controllers.edit
 
-import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
@@ -25,31 +24,25 @@ import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.Today
 import models.ShowBalance.Yes
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
-import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
+import pages.edit._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import repositories.{AuthoritiesRepository, SessionRepository}
-import services.DateTimeService
+import play.api.{Application, inject}
+import repositories.AuthoritiesRepository
 import services.add.CheckYourAnswersValidationService
-import services.edit.EditAuthorityValidationService
+import services.{AccountAndAuthority, AuthoritiesCacheService, DateTimeService, NoAccount}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
-  "EditCheckYourAnswers Controller" must {/*
-
+  "onPageLoad" must {
     "return OK and the correct view for a GET" in new Setup {
 
       val userAnswers = emptyUserAnswers
@@ -61,11 +54,11 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(Some(userAnswers))
         .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
         ).configure(Map("features.edit-journey" -> true))
         .build()
 
@@ -73,6 +66,14 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(application) {
 
@@ -84,10 +85,58 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(helper(userAnswers, application, standingAuthority),"a", "b")(request, messages(application), appConfig).toString
+          view(helper(userAnswers, application, standingAuthority),"a", "b")(
+            request, messages(application), appConfig).toString
       }
     }
 
+    "return Redirect when NoAccount is return for AuthoritiesCacheService.getAccountAndAuthority" +
+      " call " ignore new Setup {
+      val userAnswers = emptyUserAnswers
+        .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
+        .set(EditAuthorityStartPage("a", "b"), Today).get
+        .set(EditAuthorityEndPage("a", "b"), Indefinite).get
+        .set(EditShowBalancePage("a", "b"), Yes).get
+        .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+
+      val application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId.copy(authorities = Map()))
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Left(NoAccount)))
+
+      running(application) {
+
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[EditCheckYourAnswersView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        status(result) mustEqual SEE_OTHER
+
+        contentAsString(result) mustEqual
+          view(helper(userAnswers, application, standingAuthority), "a", "b")(
+            request, messages(application), appConfig).toString
+      }
+    }
+/*
     "redirect to the next page when valid data is submitted" in new Setup {
 
       val mockSessionRepository = mock[SessionRepository]
@@ -188,12 +237,14 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   trait Setup {
     def onwardRoute = Call("GET", "/foo")
 
-    lazy val authorisedUserRoute = controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
+    lazy val authorisedUserRoute =
+      controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
 
     val mockConnector = mock[CustomsFinancialsConnector]
     when(mockConnector.grantAccountAuthorities(any(),any())(any())).thenReturn(Future.successful(true))
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+    val mockAuthCacheService = mock[AuthoritiesCacheService]
 
     def populatedUserAnswers(userAnswers: UserAnswers) = {
       userAnswers.set(EditShowBalancePage("a", "b"), ShowBalance.Yes)(ShowBalance.writes).success.value
@@ -203,19 +254,45 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
 
-    val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+    val accountsWithAuthoritiesWithId =
+      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
       ("a" -> accountsWithAuthoritiesWithId)
     ))
 
-    val standingAuthorityPast = StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
+    val standingAuthorityPast =
+      StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
 
-    val accountsWithAuthoritiesWithIdPast = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
+    val accountsWithAuthoritiesWithIdPast =
+      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
     val authoritiesWithIdPast: AuthoritiesWithId = AuthoritiesWithId(Map(
       ("a" -> accountsWithAuthoritiesWithIdPast)
     ))
 
-    def helper(userAnswers: UserAnswers, application: Application, authority: StandingAuthority = standingAuthority) = new CheckYourAnswersEditHelper(
+    val standingAuthority1: StandingAuthority = StandingAuthority(
+      "GB123456789012",
+      LocalDate.now(),
+      Option(LocalDate.now().plusDays(1)),
+      viewBalance = true)
+
+    val standingAuthority2: StandingAuthority = StandingAuthority(
+      "GB123456789012",
+      LocalDate.now(),
+      Option(LocalDate.now().plusDays(1)),
+      viewBalance = true)
+
+    val accWithAuthorities1: AccountWithAuthorities = AccountWithAuthorities(CdsCashAccount,
+      "123",
+      Option(AccountStatusOpen),
+      Seq(standingAuthority1, standingAuthority2))
+
+    val mockValidator = mock[CheckYourAnswersValidationService]
+    val mockAuthoritiesRepo = mock[AuthoritiesRepository]
+    val mockDateTimeService = mock[DateTimeService]
+
+    def helper(userAnswers: UserAnswers,
+               application: Application,
+               authority: StandingAuthority = standingAuthority) = new CheckYourAnswersEditHelper(
       populatedUserAnswers(userAnswers),
       "a",
       "b",
@@ -223,9 +300,6 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       authority,
       accountsWithAuthoritiesWithId, None)(messages(application))
 
-    val mockValidator = mock[CheckYourAnswersValidationService]
-    val mockAuthoritiesRepo = mock[AuthoritiesRepository]
-    val mockDateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
   }

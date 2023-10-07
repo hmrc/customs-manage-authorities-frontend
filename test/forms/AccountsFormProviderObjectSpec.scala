@@ -17,10 +17,11 @@
 package forms
 
 import base.SpecBase
-import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSCashBalance, CashAccount}
 import play.api.test.Helpers.running
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
+import models.AuthorisedAccounts
 
 class AccountsFormProviderObjectSpec extends SpecBase {
 
@@ -62,4 +63,35 @@ class AccountsFormProviderObjectSpec extends SpecBase {
 
   }
 
+  "accountsHeadingKey" must {
+    val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
+
+    val authAccounts = AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
+      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+    ), Seq.empty, "GB9876543210000")
+
+    "return accounts.heading.singleAccount when only one available account " in {
+      AccountsFormProvider.accountsHeadingKey(authAccounts) mustBe "accounts.heading.singleAccount"
+    }
+
+    "return accounts.heading when there is no available account" in {
+      AccountsFormProvider.accountsHeadingKey(authAccounts.copy(availableAccounts = Seq())) mustBe "accounts.heading"
+    }
+  }
+
+  "accountsTitleKey" must {
+    val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
+
+    val authAccounts = AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
+      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+    ), Seq.empty, "GB9876543210000")
+
+    "return accounts.title.singleAccount when only one available account " in {
+      AccountsFormProvider.accountsTitleKey(authAccounts) mustBe "accounts.title.singleAccount"
+    }
+
+    "return accounts.title when there is no available account" in {
+      AccountsFormProvider.accountsTitleKey(authAccounts.copy(availableAccounts = Seq())) mustBe "accounts.title"
+    }
+  }
 }
