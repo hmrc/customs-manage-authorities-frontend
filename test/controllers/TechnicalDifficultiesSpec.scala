@@ -20,8 +20,10 @@ import base.SpecBase
 import config.FrontendAppConfig
 import play.api.Application
 import play.api.http.Status.OK
+import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, running, status,
+  writeableOf_AnyContentAsEmpty}
 import views.html.ErrorTemplate
 
 class TechnicalDifficultiesSpec extends SpecBase {
@@ -33,27 +35,20 @@ class TechnicalDifficultiesSpec extends SpecBase {
 
         val result = route(app, request).value
 
-
         status(result) mustBe OK
         val contentAsStringResult = contentAsString(result)
 
         contentAsStringResult contains "service-technical-difficulties.title"
         contentAsStringResult contains "service.technical-difficulties.heading"
         contentAsStringResult contains "service.technical-difficulties.p"
-
-
-        /*contentAsString(result) mustBe view("service-technical-difficulties.title",
-          "service.technical-difficulties.heading",
-          "service.technical-difficulties.p")(fakeRequest(), msgs, config)
-*/
       }
     }
   }
 
   trait Setup {
     val app: Application = applicationBuilder().build()
-    implicit val config = app.injector.instanceOf[FrontendAppConfig]
-    implicit val msgs = messages(app)
-    val view = app.injector.instanceOf[ErrorTemplate]
+    implicit val config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val msgs: Messages = messages(app)
+    val view: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
   }
 }
