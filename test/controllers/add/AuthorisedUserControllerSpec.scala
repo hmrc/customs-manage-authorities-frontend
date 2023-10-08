@@ -18,7 +18,7 @@ package controllers.add
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
 import models.domain._
@@ -40,7 +40,7 @@ import scala.concurrent.Future
 
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
-  "AuthorisedUser Controller" must {
+  "onPageLoad" must {
 
     "return OK and the correct view for a GET" in new SetUp {
 
@@ -128,6 +128,60 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
+
+  }
+
+  "onSubmit" must {
+    "redirect to next page for valid data" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+        val view = application.injector.instanceOf[AuthorisedUserView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "redirect to TechnicalDifficulties page for invalid data" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
   }
 
   trait SetUp {
@@ -136,8 +190,11 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
 
     lazy val authorisedUserRoute: String = controllers.add.routes.AuthorisedUserController.onPageLoad().url
+    lazy val onSubmitRoute: String = controllers.add.routes.AuthorisedUserController.onSubmit().url
 
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
     val accounts: Accounts = Accounts(
       Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
 
