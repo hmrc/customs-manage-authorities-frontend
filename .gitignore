@@ -24,3 +24,4 @@ yarn-error.log
 .metals/
 .vscode/
 project/.bloop/
+.DS_Store

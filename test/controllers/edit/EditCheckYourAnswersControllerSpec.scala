@@ -16,7 +16,6 @@
 
 package controllers.edit
 
-import java.time.{LocalDate, LocalDateTime}
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
@@ -26,46 +25,35 @@ import models.AuthorityStart.Today
 import models.ShowBalance.Yes
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import models.requests.{Accounts, AddAuthorityRequest}
-import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain}
+import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.edit.{EditAuthorisedUserPage, EditAuthorityEndPage, EditAuthorityStartDatePage, EditAuthorityStartPage, EditShowBalancePage}
-import play.api.Application
-import play.api.inject.bind
-import play.api.inject.guice.GuiceApplicationBuilder
+import pages.edit._
 import play.api.mvc.Call
 import play.api.test.Helpers._
-import repositories.{AuthoritiesRepository, SessionRepository}
-import services.DateTimeService
+import play.api.{Application, inject}
+import repositories.AuthoritiesRepository
+import services._
 import services.add.CheckYourAnswersValidationService
 import services.edit.EditAuthorityValidationService
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
-  "EditCheckYourAnswers Controller" must {/*
-
+  "onPageLoad" must {
     "return OK and the correct view for a GET" in new Setup {
 
-      val userAnswers = emptyUserAnswers
-        .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
-        .set(EditAuthorityStartPage("a", "b"), Today).get
-        .set(EditAuthorityEndPage("a", "b"), Indefinite).get
-        .set(EditShowBalancePage("a", "b"), Yes).get
-        .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
-
-      val application = applicationBuilder(Some(userAnswers))
+      val application: Application = applicationBuilder(Some(userAnswers))
         .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-          bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
         ).configure(Map("features.edit-journey" -> true))
         .build()
 
@@ -73,9 +61,16 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(application) {
-
         val request = fakeRequest(GET, authorisedUserRoute)
         val result = route(application, request).value
         val view = application.injector.instanceOf[EditCheckYourAnswersView]
@@ -84,138 +79,431 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(helper(userAnswers, application, standingAuthority),"a", "b")(request, messages(application), appConfig).toString
-      }
-    }
-
-    "redirect to the next page when valid data is submitted" in new Setup {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockEditAuthorityValidationService = mock[EditAuthorityValidationService]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = populatedUserAnswers(emptyUserAnswers)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
-            bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-            bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
-          ).configure(Map("features.edit-journey" -> true))
-          .build()
-
-      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-      when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
-      val accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
-      when(mockEditAuthorityValidationService.validate(any(), any(), any(), any(), any()))
-        .thenReturn(Right(AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"),true)))
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "role"), ("confirmation", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
-    "redirect to the check your answers page when submitting an edited start date when the date has already been passed" in new Setup {
-      val mockSessionRepository = mock[SessionRepository]
-      val mockEditAuthorityValidationService = mock[EditAuthorityValidationService]
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-      val userAnswers = populatedUserAnswers(emptyUserAnswers)
-
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
-            bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-            bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
-          ).configure(Map("features.edit-journey" -> true))
-          .build()
-
-      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithIdPast)))
-      when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
-      val accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
-      when(mockEditAuthorityValidationService.validate(any(), any(), any(), any(), any()))
-        .thenReturn(Right(AddAuthorityRequest(accounts, standingAuthorityPast, AuthorisedUser("someName", "someRole"),true)))
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("fullName", "name"), ("jobRole", "role"), ("confirmation", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url
+          view(helper(userAnswers, application, standingAuthority), "a", "b")(
+            request, messages(application), appConfig).toString
       }
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in new Setup {
-
-      val application = applicationBuilder(userAnswers = None).configure(Map("features.edit-journey" -> true)).build()
+      val application: Application =
+        applicationBuilder(userAnswers = None).configure(Map("features.edit-journey" -> true)).build()
 
       running(application) {
-
         val request =
           fakeRequest(POST, authorisedUserRoute)
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
-    }*/
+    }
+
+    "Redirect to TechnicalDifficulties page when NoAccount is return for " +
+      "AuthoritiesCacheService.getAccountAndAuthority call" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId.copy(authorities = Map()))))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId.copy(authorities = Map.empty))
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Left(NoAccount)))
+
+      running(application) {
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
+
+    "Redirect to TechnicalDifficulties when NoAuthority is return for " +
+      "AuthoritiesCacheService.getAccountAndAuthority call" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      val optAccountWithAuthoritiesWithId: Option[AccountWithAuthoritiesWithId] = authoritiesWithId.authorities.get("a")
+      val updatedAccountWithAuthoritiesWithId = optAccountWithAuthoritiesWithId.get.copy(authorities = Map())
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(
+        authoritiesWithId.copy(authorities = Map("a" -> updatedAccountWithAuthoritiesWithId)))))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId.copy(authorities = Map("a" -> updatedAccountWithAuthoritiesWithId)))
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Left(NoAuthority)))
+
+      running(application) {
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
+  }
+
+  "onSubmit" must {
+    "Redirect to next page when valid data is submitted " in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "Redirect to next page when valid data is submitted for AccountAuthority with XI Eori " +
+      "as authorised EORI " in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      val accounts: Accounts = Accounts(Some(
+        AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(
+          Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI))
+        ))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "Redirect to TechnicalDifficulties when EditAuthorityValidationService.validate " +
+      "returns positive response but account authorities are not granted" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(Some(
+        AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
+
+    "Redirect to TechnicalDifficulties when EditAuthorityValidationService.validate" +
+      "return error response" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(Left(UnknownAccountType)
+      )
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
+
+    "Redirect to TechnicalDifficulties when when NoAuthority is return for " +
+      "AuthoritiesCacheService.getAccountAndAuthority call" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      val optAccountWithAuthoritiesWithId: Option[AccountWithAuthoritiesWithId] =
+        authoritiesWithId.authorities.get("a")
+      val updatedAccountWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
+        optAccountWithAuthoritiesWithId.get.copy(authorities = Map())
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(
+        authoritiesWithId.copy(authorities = Map("a" -> updatedAccountWithAuthoritiesWithId)))))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId.copy(authorities = Map("a" -> updatedAccountWithAuthoritiesWithId)))
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Left(NoAuthority)))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
+
+    "Redirect to TechnicalDifficulties page when NoAccount is return for " +
+      "AuthoritiesCacheService.getAccountAndAuthority call" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(
+        authoritiesWithId.copy(authorities = Map()))))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId.copy(authorities = Map.empty))
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Left(NoAccount)))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+      }
+    }
   }
 
   trait Setup {
-    def onwardRoute = Call("GET", "/foo")
+    def onwardRoute: Call = Call("GET", "/foo")
 
-    lazy val authorisedUserRoute = controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
+    lazy val authorisedUserRoute: String =
+      controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
 
-    val mockConnector = mock[CustomsFinancialsConnector]
-    when(mockConnector.grantAccountAuthorities(any(),any())(any())).thenReturn(Future.successful(true))
+    lazy val onSubmitRoute: String =
+      controllers.edit.routes.EditCheckYourAnswersController.onSubmit("a", "b").url
 
+    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+    val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+    val mockEditAuthorityValidationService: EditAuthorityValidationService = mock[EditAuthorityValidationService]
+    val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
+    val mockAuthoritiesRepo: AuthoritiesRepository = mock[AuthoritiesRepository]
+    val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
-    def populatedUserAnswers(userAnswers: UserAnswers) = {
+    val userAnswers: UserAnswers = emptyUserAnswers
+      .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
+      .set(EditAuthorityStartPage("a", "b"), Today).get
+      .set(EditAuthorityEndPage("a", "b"), Indefinite).get
+      .set(EditShowBalancePage("a", "b"), Yes).get
+      .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+
+    def populatedUserAnswers(userAnswers: UserAnswers): UserAnswers = {
       userAnswers.set(EditShowBalancePage("a", "b"), ShowBalance.Yes)(ShowBalance.writes).success.value
         .set(EditAuthorityStartPage("a", "b"), AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EditAuthorityEndPage("a", "b"), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     }
 
-    val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+    val standingAuthority: StandingAuthority =
+      domain.StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
 
-    val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+    val standingAuthorityForXI: StandingAuthority =
+      domain.StandingAuthority("XI123456789012", LocalDate.now(), None, viewBalance = true)
+
+    val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
+      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
       ("a" -> accountsWithAuthoritiesWithId)
     ))
 
-    val standingAuthorityPast = StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
+    val standingAuthorityPast: StandingAuthority =
+      StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
 
-    val accountsWithAuthoritiesWithIdPast = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
+    val accountsWithAuthoritiesWithIdPast: AccountWithAuthoritiesWithId =
+      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
     val authoritiesWithIdPast: AuthoritiesWithId = AuthoritiesWithId(Map(
       ("a" -> accountsWithAuthoritiesWithIdPast)
     ))
 
-    def helper(userAnswers: UserAnswers, application: Application, authority: StandingAuthority = standingAuthority) = new CheckYourAnswersEditHelper(
+    val standingAuthority1: StandingAuthority = StandingAuthority(
+      "GB123456789012",
+      LocalDate.now(),
+      Option(LocalDate.now().plusDays(1)),
+      viewBalance = true)
+
+    val standingAuthority2: StandingAuthority = StandingAuthority(
+      "GB123456789012",
+      LocalDate.now(),
+      Option(LocalDate.now().plusDays(1)),
+      viewBalance = true)
+
+    val accWithAuthorities1: AccountWithAuthorities = AccountWithAuthorities(CdsCashAccount,
+      "123",
+      Option(AccountStatusOpen),
+      Seq(standingAuthority1, standingAuthority2))
+
+    def helper(userAnswers: UserAnswers,
+               application: Application,
+               authority: StandingAuthority = standingAuthority) = new CheckYourAnswersEditHelper(
       populatedUserAnswers(userAnswers),
       "a",
       "b",
@@ -223,11 +511,8 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       authority,
       accountsWithAuthoritiesWithId, None)(messages(application))
 
-    val mockValidator = mock[CheckYourAnswersValidationService]
-    val mockAuthoritiesRepo = mock[AuthoritiesRepository]
-    val mockDateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
+    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
   }
-
 }

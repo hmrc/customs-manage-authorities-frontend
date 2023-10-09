@@ -16,47 +16,51 @@
 
 package models
 
+import models.ShowBalance.{No, Yes}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class ShowBalanceSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class ShowBalanceSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
   "ShowBalance" must {
 
     "deserialise valid values" in {
-
-      val gen = Gen.oneOf(ShowBalance.values.toSeq)
+      val gen = Gen.oneOf(ShowBalance.values)
 
       forAll(gen) {
         showBalance =>
-
           JsString(showBalance.toString).validate[ShowBalance].asOpt.value mustEqual showBalance
       }
     }
 
     "fail to deserialise invalid values" in {
-
       val gen = arbitrary[String] suchThat (!ShowBalance.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[ShowBalance] mustEqual JsError("error.invalid")
       }
     }
 
     "serialise" in {
-
-      val gen = Gen.oneOf(ShowBalance.values.toSeq)
+      val gen = Gen.oneOf(ShowBalance.values)
 
       forAll(gen) {
         showBalance =>
-
           Json.toJson(showBalance)(ShowBalance.writes) mustEqual JsString(showBalance.toString)
       }
+    }
+  }
+
+  "fromBoolean" should {
+    "return correct output" in {
+      ShowBalance.fromBoolean(true) mustBe Yes
+      ShowBalance.fromBoolean(false) mustBe No
     }
   }
 }

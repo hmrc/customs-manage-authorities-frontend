@@ -17,17 +17,6 @@
 package services
 
 import base.SpecBase
-import connectors.CustomsFinancialsConnector
-import models._
-import models.domain._
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
-import org.scalatestplus.mockito.MockitoSugar._
-import repositories.AuthoritiesRepository
-import uk.gov.hmrc.http.HeaderCarrier
-
-import java.time.LocalDate
-import scala.concurrent.Future
 
 class AuthoritiesCacheServiceSpec extends SpecBase {
 
