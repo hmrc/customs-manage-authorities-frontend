@@ -18,6 +18,7 @@ package controllers.remove
 
 import base.SpecBase
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
+import models.UserAnswers
 import models.domain._
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{verify, when}
@@ -204,7 +205,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsCashAccount" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      val userAnswers: UserAnswers =
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
       val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
         inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
@@ -235,7 +237,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsGeneralGuaranteeAccount" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      val userAnswers: UserAnswers =
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
       val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
         inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
@@ -266,7 +269,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to confirmation page and use XI Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsDutyDefermentAccount" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      val userAnswers: UserAnswers =
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
       val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
         inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
