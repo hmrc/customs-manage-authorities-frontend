@@ -165,7 +165,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
 
       when(mockConnector.grantAccountAuthorities(
@@ -186,7 +187,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        //redirectLocation(result) mustBe
         verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
       }
     }
@@ -196,7 +196,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
 
       when(mockConnector.grantAccountAuthorities(
@@ -228,7 +229,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
 
       when(mockConnector.grantAccountAuthorities(
@@ -260,7 +262,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
       when(mockConnector.grantAccountAuthorities(
         any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
@@ -321,6 +324,11 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val accounts: Accounts = Accounts(
       Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+
+    val accountsWithDDCashAndGuarantee: Accounts = Accounts(
+      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+      Seq("123456"),
+      Some("123456"))
 
     val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012",
       LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)

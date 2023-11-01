@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import models.requests.AddAuthorityRequest
+import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
 
 /*
  * Copyright 2023 HM Revenue & Customs
@@ -34,16 +34,20 @@ import models.requests.AddAuthorityRequest
 
 package object controllers {
 
-  def addAuthRequestList(payload: AddAuthorityRequest): List[AddAuthorityRequest] = {
+  def grantAccountAuthRequestList(payload: AddAuthorityRequest,
+                                  xiEori: String,
+                                  gbEori: String): List[GrantAccountAuthorityRequest] = {
     val accounts = payload.accounts
 
-    if (accounts.hasOnlyDutyDefermentsAccount) {
-      List(payload)
-    } else {
-      val ddAccountAuthReq = payload.copy(accounts = accounts.copy(cash = None, guarantee = None))
-      val cashAndGuaranteeAccountAuthRequest = payload.copy(accounts = accounts.copy(dutyDeferments = Seq()))
+    accounts match {
+      case accn if accn.hasOnlyDutyDefermentsAccount => List(GrantAccountAuthorityRequest(payload, xiEori))
+      case accn if accn.isDutyDefermentsAccountEmpty => List(GrantAccountAuthorityRequest(payload, gbEori))
+      case _ =>
+        val ddAccountAuthReq = payload.copy(accounts = accounts.copy(cash = None, guarantee = None))
+        val cashAndGuaranteeAccountAuthRequest = payload.copy(accounts = accounts.copy(dutyDeferments = Seq()))
 
-      List(ddAccountAuthReq, cashAndGuaranteeAccountAuthRequest)
+        List(GrantAccountAuthorityRequest(ddAccountAuthReq, xiEori),
+          GrantAccountAuthorityRequest(cashAndGuaranteeAccountAuthRequest, gbEori))
     }
   }
 }

@@ -18,28 +18,35 @@ package controllers
 
 import base.SpecBase
 import models.domain.{AuthorisedUser, StandingAuthority}
-import models.requests.{Accounts, AddAuthorityRequest}
+import models.requests.{Accounts, AddAuthorityRequest, GrantAccountAuthorityRequest}
 
 import java.time.LocalDate
 
 class PackageSpec extends SpecBase {
-  "addAuthRequestList" should {
-    "return correct output" in new Setup {
-      addAuthRequestList(authReq) mustBe List(authReqForDDAccount, authReqForCashAndGuaranteeAccount)
+  "grantAccountAuthRequestList" should {
+    "return list of two request when accounts has both DD and Cash/Guarantee accounts" in new Setup {
+      grantAccountAuthRequestList(authReq, xiEori, gbEori) mustBe
+        List(GrantAccountAuthorityRequest(authReqForDDAccount, xiEori),
+          GrantAccountAuthorityRequest(authReqForCashAndGuaranteeAccount, gbEori))
     }
 
-    "request list with only one request when accounts has only duty deferments account" in new Setup {
-      addAuthRequestList(authReqWithDDAccountsOnly) mustBe List(authReqWithDDAccountsOnly)
+    "return request list with only one request when accounts has only duty deferments account" in new Setup {
+      grantAccountAuthRequestList(authReqWithDDAccountsOnly,xiEori, gbEori) mustBe
+        List(GrantAccountAuthorityRequest(authReqWithDDAccountsOnly, xiEori))
     }
 
-    "request list with only one request when accounts has no duty deferments account" in new Setup {
-      addAuthRequestList(authReqWithDDAccountsOnly) mustBe List(authReqWithDDAccountsOnly)
+    "return request list with only one request when accounts has no duty deferments account" in new Setup {
+      grantAccountAuthRequestList(authReqWithNoDDAccounts,xiEori, gbEori) mustBe
+        List(GrantAccountAuthorityRequest(authReqWithNoDDAccounts, gbEori))
     }
   }
 
   trait Setup {
     val localDate: LocalDate = LocalDate.now()
     val toLocalDate: LocalDate = LocalDate.now().plusDays(1)
+
+    val xiEori = "XI123456789012"
+    val gbEori = "GB123456789012"
 
     val authReq: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(Some("12345"), Seq("67890"), Some("12345678")),
@@ -49,6 +56,12 @@ class PackageSpec extends SpecBase {
 
     val authReqWithDDAccountsOnly: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(None, Seq("67890"), None),
+      StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
+      AuthorisedUser("name", "job")
+    )
+
+    val authReqWithNoDDAccounts: AddAuthorityRequest = AddAuthorityRequest(
+      Accounts(Some("12345"), Seq(), None),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
       AuthorisedUser("name", "job")
     )

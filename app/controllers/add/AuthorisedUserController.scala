@@ -19,7 +19,7 @@ package controllers.add
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
-import controllers.{GrantAccountAuthorityRequest, addAuthRequestList}
+import controllers.grantAccountAuthRequestList
 import forms.AuthorisedUserFormProviderWithConsent
 import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
 import models.{NormalMode, UserAnswers}
@@ -101,14 +101,7 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
                                       xiEori: String,
                                       gbEori: String,
                                       payload: AddAuthorityRequest)(implicit hc: HeaderCarrier): Future[Result] = {
-    val addAuthRequests = addAuthRequestList(payload)
-    val ownerEoriList = List(xiEori, gbEori)
-
-    val ownerEoriAndRequestMapping: Seq[(String, AddAuthorityRequest)] = ownerEoriList.zip(addAuthRequests)
-
-    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] = ownerEoriAndRequestMapping.map {
-      eoriAndRequest => GrantAccountAuthorityRequest(eoriAndRequest._2, eoriAndRequest._1)
-    }
+    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] =  grantAccountAuthRequestList(payload, xiEori, gbEori)
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map {
