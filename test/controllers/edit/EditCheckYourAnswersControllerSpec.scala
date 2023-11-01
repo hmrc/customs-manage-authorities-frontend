@@ -27,7 +27,8 @@ import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuth
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain}
 import org.mockito.ArgumentMatchers.{any, anyString}
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit._
 import play.api.mvc.Call
@@ -216,6 +217,222 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
+      }
+    }
+
+    "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
+      "and authorised EORI is XI EORI" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(
+        Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+        Seq("123456"),
+        Some("123456"))
+
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
+      "and authorised EORI is XI EORI but grant authority calls fail" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(
+        Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+        Seq("123456"),
+        Some("123456"))
+
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(false))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
+      "and authorised EORI is XI EORI but one of grant authority call fails" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(
+        Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+        Seq("123456"),
+        Some("123456"))
+
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
+      "and authorised EORI is GB EORI" in new Setup {
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+          inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        ).configure(Map("features.edit-journey" -> true))
+        .build()
+
+      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+      when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+        Future.successful(Seq(accWithAuthorities1))
+      )
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+        Future.successful(authoritiesWithId)
+      )
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+
+      val accounts: Accounts = Accounts(
+        Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+        Seq("123456"),
+        Some("123456"))
+
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        Right(AddAuthorityRequest(
+          accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true))
+      )
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
       }
     }
 
