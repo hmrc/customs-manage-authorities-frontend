@@ -101,7 +101,7 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
                                       xiEori: String,
                                       gbEori: String,
                                       payload: AddAuthorityRequest)(implicit hc: HeaderCarrier): Future[Result] = {
-    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] =  grantAccountAuthRequestList(payload, xiEori, gbEori)
+    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] = grantAccountAuthRequestList(payload, xiEori, gbEori)
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map {

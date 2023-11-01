@@ -24,19 +24,19 @@ import java.time.LocalDate
 
 class PackageSpec extends SpecBase {
   "grantAccountAuthRequestList" should {
-    "return list of two request when accounts has both DD and Cash/Guarantee accounts" in new Setup {
+    "return list of two requests when accounts has both DD and Cash/Guarantee accounts" in new Setup {
       grantAccountAuthRequestList(authReq, xiEori, gbEori) mustBe
         List(GrantAccountAuthorityRequest(authReqForDDAccount, xiEori),
           GrantAccountAuthorityRequest(authReqForCashAndGuaranteeAccount, gbEori))
     }
 
     "return request list with only one request when accounts has only duty deferments account" in new Setup {
-      grantAccountAuthRequestList(authReqWithDDAccountsOnly,xiEori, gbEori) mustBe
+      grantAccountAuthRequestList(authReqWithDDAccountsOnly, xiEori, gbEori) mustBe
         List(GrantAccountAuthorityRequest(authReqWithDDAccountsOnly, xiEori))
     }
 
     "return request list with only one request when accounts has no duty deferments account" in new Setup {
-      grantAccountAuthRequestList(authReqWithNoDDAccounts,xiEori, gbEori) mustBe
+      grantAccountAuthRequestList(authReqWithNoDDAccounts, xiEori, gbEori) mustBe
         List(GrantAccountAuthorityRequest(authReqWithNoDDAccounts, gbEori))
     }
   }

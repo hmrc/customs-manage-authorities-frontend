@@ -21,6 +21,7 @@ import play.api.libs.json.{Format, Json, OFormat}
 
 case class Accounts(cash: Option[String], dutyDeferments: Seq[String], guarantee: Option[String]) {
   def hasOnlyDutyDefermentsAccount: Boolean = cash.isEmpty && guarantee.isEmpty
+
   def isDutyDefermentsAccountEmpty: Boolean = dutyDeferments.isEmpty
 }
 
@@ -52,4 +53,4 @@ object RevokeAuthorityRequest {
   implicit val revokeAuthorityRequestFormat: OFormat[RevokeAuthorityRequest] = Json.format[RevokeAuthorityRequest]
 }
 
-case class GrantAccountAuthorityRequest(payload: AddAuthorityRequest , ownerEori: String)
+case class GrantAccountAuthorityRequest(payload: AddAuthorityRequest, ownerEori: String)
