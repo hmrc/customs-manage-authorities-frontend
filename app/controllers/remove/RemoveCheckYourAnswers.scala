@@ -19,6 +19,7 @@ package controllers.remove
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.domain.{AccountType, CdsCashAccount, CdsGeneralGuaranteeAccount}
 import models.requests.RevokeAuthorityRequest
 import models.{ErrorResponse, MissingAccountError, MissingAuthorisedUser, MissingAuthorityError, SubmissionError}
 import pages.remove.RemoveAuthorisedUserPage
@@ -28,10 +29,11 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
+import utils.StringUtils.nIEORIPrefix
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
@@ -82,13 +84,35 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
       }
   }
 
-  def doSubmission(revokeRequest: RevokeAuthorityRequest, accountId: String, authorityId: String,
-    xiEori: String, gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  def doSubmission(revokeRequest: RevokeAuthorityRequest,
+                   accountId: String,
+                   authorityId: String,
+                   xiEori: String,
+                   gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = if(revokeRequest.authorisedEori.startsWith("XI")) xiEori else gbEori
+    val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, gbEori)
+
     customsFinancialsConnector.revokeAccountAuthorities(revokeRequest, ownerEori).map {
       case true => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
       case false => errorPage(SubmissionError)
+    }
+  }
+
+  /**
+   * Assigns XIEori for CdsDutyDefermentAccount and
+   * assigns Gb Eori for CdsCashAccount and CdsGeneralGuaranteeAccount
+   */
+  private def ownerEoriForAccountType(account: AccountType,
+                                      authorisedEori: String,
+                                      xiEori: String,
+                                      gbEori: String): String = {
+    if (authorisedEori.startsWith(nIEORIPrefix)) {
+      account match {
+        case accn if accn == CdsCashAccount || accn == CdsGeneralGuaranteeAccount => gbEori
+        case _ => xiEori
+      }
+    } else {
+      gbEori
     }
   }
 

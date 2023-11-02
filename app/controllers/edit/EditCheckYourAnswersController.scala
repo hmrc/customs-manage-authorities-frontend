@@ -19,8 +19,9 @@ package controllers.edit
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
+import controllers.grantAccountAuthRequestList
 import models.domain.AccountWithAuthoritiesWithId
-import models.requests.DataRequest
+import models.requests.{AddAuthorityRequest, DataRequest, GrantAccountAuthorityRequest}
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.edit._
@@ -31,6 +32,7 @@ import services._
 import services.edit.EditAuthorityValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.StringUtils.nIEORIPrefix
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
@@ -85,22 +87,58 @@ class EditCheckYourAnswersController @Inject()(override val messagesApi: Message
                            authorityId: String,
                            authorisedEori: String,
                            account: AccountWithAuthoritiesWithId,
-                           xiEori: String, gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+                           xiEori: String,
+                           gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = if(authorisedEori.startsWith("XI")) xiEori else gbEori
+    val ownerEori = if(authorisedEori.startsWith(nIEORIPrefix)) xiEori else gbEori
 
     editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
-      case Right(payload) => connector.grantAccountAuthorities(payload, ownerEori).map {
-        case true => Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
-        case false =>
-          logger.error("Edit authority request submission to backend failed")
-          Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
-      }
+      case Right(payload) =>
+        if(authorisedEori.startsWith(nIEORIPrefix)) {
+          processPayloadForXIEori(userAnswers, xiEori, gbEori, payload, accountId, authorityId)
+        } else {
+          connector.grantAccountAuthorities(payload, ownerEori).map {
+            case true =>
+              Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
+            case false =>
+              logger.error("Edit authority request submission to backend failed")
+              Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+          }
+        }
+
       case _ =>
         logger.error("UserAnswers did not contain sufficient data to construct add authority request")
         Future.successful(Redirect(controllers.routes.TechnicalDifficulties.onPageLoad))
     }
   }
+
+  /**
+   * Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI )
+   * and Cash/Guarantee accounts (with GB EORI as ownerEORI)
+   * Sends only one call if Accounts has only DD account
+   */
+  private def processPayloadForXIEori(userAnswers: UserAnswers,
+                                      xiEori: String,
+                                      gbEori: String,
+                                      payload: AddAuthorityRequest,
+                                      accountId: String,
+                                      authorityId: String)(implicit hc: HeaderCarrier): Future[Result] = {
+    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] = grantAccountAuthRequestList(payload, xiEori, gbEori)
+
+    for {
+      result <- Future.sequence(grantAccAuthRequests.map {
+        req => connector.grantAccountAuthorities(req.payload, req.ownerEori)
+      })
+    } yield {
+      if (result.contains(false)) {
+        logger.error("Edit authority request submission to backend failed")
+        Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+      } else {
+        Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
+      }
+    }
+  }
+
 
   private def errorPage(error: ErrorResponse): Result = {
     logger.error(error.msg)

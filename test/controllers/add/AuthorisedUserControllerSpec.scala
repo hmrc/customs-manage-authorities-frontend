@@ -24,8 +24,9 @@ import forms.AuthorisedUserFormProviderWithConsent
 import models.domain._
 import models.requests.Accounts
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add._
 import play.api.data.Form
@@ -159,6 +160,132 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "redirect to next page for valid data when user has selected cash,guarantee and DD accounts " +
+      "and input EORI is XI EORI" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
+        AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "redirect to error page for valid data when user has selected cash,guarantee and DD accounts " +
+      "and input EORI is XI EORI but grant authority calls fail" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
+        AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(false))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "redirect to error page for valid data when user has selected cash,guarantee and DD accounts " +
+      "and input EORI is XI EORI but one of grant authority call fails" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
+        AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+
+      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+
+        verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
+    "redirect to next page for valid data when user has selected cash,guarantee and DD accounts " +
+      "and input EORI is GB EORI" in new SetUp {
+      val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(
+        AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
+
+      when(mockValidator.validate(userAnswers)).thenReturn(
+        Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockConnector.grantAccountAuthorities(
+        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+
+      val application: Application = applicationBuilder(Some(userAnswers))
+        .overrides(
+          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, onSubmitRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+      }
+    }
+
     "redirect to TechnicalDifficulties page for invalid data" in new SetUp {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
 
@@ -198,6 +325,11 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val accounts: Accounts = Accounts(
       Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
 
+    val accountsWithDDCashAndGuarantee: Accounts = Accounts(
+      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+      Seq("123456"),
+      Some("123456"))
+
     val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012",
       LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
 
@@ -220,6 +352,14 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
       .set(AccountsPage, selectedAccounts).success.value
       .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+      .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+    val userAnswersTodayToIndefiniteWithXIEori: UserAnswers = UserAnswers("id")
+      .set(AccountsPage, selectedAccounts).success.value
+      .set(EoriNumberPage, CompanyDetails("XI9876543210000", Some("companyName"))).success.value
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value

@@ -17,9 +17,11 @@
 package controllers.add
 
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions._
+import controllers.grantAccountAuthRequestList
 import forms.AuthorisedUserFormProviderWithConsent
+import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
 import models.{NormalMode, UserAnswers}
 import navigation.Navigator
 import pages.add.AuthorisedUserPage
@@ -30,9 +32,10 @@ import services.DateTimeService
 import services.add.{AddAuthorityValidationService, CheckYourAnswersValidationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.StringUtils.nIEORIPrefix
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
-import connectors.CustomsDataStoreConnector
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -76,16 +79,44 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
         Future.successful(errorPage("UserAnswers did not contain sufficient data to construct add authority request"))
       ) { payload =>
         val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
-        val ownerEori = if(enteredEori.startsWith("XI")) xiEori else gbEori
-        connector.grantAccountAuthorities(payload, ownerEori).map {
-          case true => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
-          case false => errorPage(("Add authority request submission to backend failed", payload))
+        val ownerEori = if (enteredEori.startsWith(nIEORIPrefix)) xiEori else gbEori
+
+        if (enteredEori.startsWith(nIEORIPrefix)) {
+          processPayloadForXIEori(userAnswers, xiEori, gbEori, payload)
+        } else {
+          connector.grantAccountAuthorities(payload, ownerEori).map {
+            case true => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
+            case false => errorPage(("Add authority request submission to backend failed", payload))
+          }
         }
       }
   }
 
+  /**
+   * Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI )
+   *   and Cash/Guarantee accounts (with GB EORI as ownerEORI)
+   * Sends only one call if Accounts has only DD account
+   */
+  private def processPayloadForXIEori(userAnswers: UserAnswers,
+                                      xiEori: String,
+                                      gbEori: String,
+                                      payload: AddAuthorityRequest)(implicit hc: HeaderCarrier): Future[Result] = {
+    val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] = grantAccountAuthRequestList(payload, xiEori, gbEori)
 
-  private def errorPage(msg:String) = {
+    for {
+      result <- Future.sequence(grantAccAuthRequests.map {
+        req => connector.grantAccountAuthorities(req.payload, req.ownerEori)
+      })
+    } yield {
+      if (result.contains(false)) {
+        errorPage(("Add authority request submission to backend failed", payload))
+      } else {
+        Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
+      }
+    }
+  }
+
+  private def errorPage(msg:String): Result = {
     logger.error(msg)
     Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
