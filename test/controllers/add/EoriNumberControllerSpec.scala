@@ -327,6 +327,39 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "redirect to EoriDetailsCorrect page when form data is valid, a XI EORI but trader is not registered for " +
+      "his own XI EORI" in new SetUp {
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
+      when(mockDataStoreConnector.getCompanyName(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
+
+      val application: Application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigator(
+              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+          ).build()
+
+      running(application) {
+
+        val request =
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
+            .withFormUrlEncodedBody(("value", "XI123456789012"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+      }
+    }
+
     "return a Bad Request and errors when invalid data is submitted" in new SetUp {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
@@ -405,37 +438,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         contentAsString(result) mustEqual
           view(boundForm, NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
-      }
-    }
-
-    "return a Bad Request and correct error msg when form data is valid, a XI EORI but trader is not registered for " +
-      "his own XI EORI" in new SetUp {
-      val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
-
-      val application: Application =
-        applicationBuilder()
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = NormalMode)),
-            bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-          ).build()
-
-      running(application) {
-
-        val request =
-          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
-            .withFormUrlEncodedBody(("value", "XI123456789012"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-
-        contentAsString(result).contains(messages(application)("eoriNumber.error.register-xi-eori"))
       }
     }
 
