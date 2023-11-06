@@ -26,6 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar._
 import repositories.AccountsRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.Future
+import utils.StringUtils.emptyString
 
 class AccountsCacheServiceSpec extends SpecBase {
 
@@ -33,19 +34,10 @@ class AccountsCacheServiceSpec extends SpecBase {
     "use cached values on cache hit" in new Setup {
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
-
       result.futureValue mustBe cachedAccounts
     }
 
-   /* "update cache on cache miss" in new Setup {
-      val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
-      val result = service.retrieveAccounts(InternalId("notCachedId"), Seq("GB123456789012"))(hc)
-      result.futureValue mustBe notCachedAccounts
-      verify(mockRepository, times(1)).set("notCachedId", notCachedAccounts)
-    }*/
-
     "closed Account is valid" in new Setup {
-      mockRepository = mock[AccountsRepository]
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(closedAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
@@ -53,7 +45,6 @@ class AccountsCacheServiceSpec extends SpecBase {
     }
 
     "suspended Account is valid" in new Setup {
-      mockRepository = mock[AccountsRepository]
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(suspendedAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
@@ -61,11 +52,21 @@ class AccountsCacheServiceSpec extends SpecBase {
     }
 
     "pending Account is valid" in new Setup {
-      mockRepository = mock[AccountsRepository]
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(pendingAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
       result.futureValue mustBe pendingAccount
+    }
+
+    "merging account cache service must return flat account in merged list" in new Setup {
+      val cashAccount = CashAccount(
+        "12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+
+      val compare = CDSAccounts(emptyString,List(cashAccount))
+
+      val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+      val res = service.merge(Seq(notCachedAccounts))
+      res mustBe compare
     }
   }
 }
