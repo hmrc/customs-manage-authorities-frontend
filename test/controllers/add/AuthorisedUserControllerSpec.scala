@@ -332,6 +332,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
             inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get)
           )
         }
+
       applicationBuilder(Some(userAnswer), requestEori).overrides(moduleList: _*).build()
     }
   }
