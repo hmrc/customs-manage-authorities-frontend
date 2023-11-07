@@ -24,16 +24,18 @@ import forms.AuthorisedUserFormProviderWithConsent
 import models.domain._
 import models.requests.Accounts
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import org.mockito.{ArgumentMatchers, Mockito}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
+import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add._
 import play.api.data.Form
+import play.api.inject.guice.GuiceableModule
 import play.api.test.Helpers._
 import play.api.{Application, inject}
 import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
+import utils.StringUtils.emptyString
 import views.html.add.AuthorisedUserView
 
 import java.time.{LocalDate, LocalDateTime}
@@ -46,51 +48,34 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     "return OK and the correct view for a GET" in new SetUp {
 
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers)
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
-      val application: Application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        ).build()
-
-      running(application) {
-
+      running(app) {
         val request = fakeRequest(GET, authorisedUserRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+        val result = route(app, request).value
+        val view = app.injector.instanceOf[AuthorisedUserView]
+        val appConfig = app.injector.instanceOf[FrontendAppConfig]
+        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(app))
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, helper)(request, messages(application), appConfig).toString
+          view(form, helper)(request, messages(app), appConfig).toString
       }
     }
 
     "return SEE_OTHER when CheckYourAnswersValidationService validate returns None on onPageLoad" in new SetUp {
 
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers)
 
       when(mockValidator.validate(userAnswers)).thenReturn(None)
 
-      val application: Application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers))
-        ).build()
-
-      running(application) {
-
+      running(app) {
         val request = fakeRequest(GET, authorisedUserRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
       }
@@ -98,35 +83,29 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a GET if no existing data is found" in new SetUp {
 
-      val application: Application = applicationBuilder(userAnswers = None).build()
+      val app: Application = applicationBuilder(userAnswers = None).build()
 
-      running(application) {
-
+      running(app) {
         val request = fakeRequest(GET, authorisedUserRoute)
-
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+        redirectLocation(result).value mustEqual sessionExpiredPage
       }
     }
 
     "redirect to Session Expired for a POST if no existing data is found" in new SetUp {
 
-      val application: Application = applicationBuilder(userAnswers = None).build()
+      val app: Application = applicationBuilder(userAnswers = None).build()
 
-      running(application) {
-
-        val request =
-          fakeRequest(POST, authorisedUserRoute)
-            .withFormUrlEncodedBody(("value", "answer"))
-
-        val result = route(application, request).value
+      running(app) {
+        val request = fakeRequest(POST, authorisedUserRoute).withFormUrlEncodedBody(("value", "answer"))
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+        redirectLocation(result).value mustEqual sessionExpiredPage
       }
     }
 
@@ -135,26 +114,16 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   "onSubmit" must {
     "redirect to next page for valid data" in new SetUp {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
 
-      val application: Application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
-
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
       }
@@ -165,26 +134,20 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers, gbEori, Some(mockDataStoreConnector))
+
       when(mockValidator.validate(userAnswers)).thenReturn(
         Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(xiEori))(any)).thenReturn(Future.successful(true))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(true))
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
         verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
@@ -196,29 +159,23 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers, gbEori, Some(mockDataStoreConnector))
+
       when(mockValidator.validate(userAnswers)).thenReturn(
         Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(false))
+        any, ArgumentMatchers.eq(xiEori))(any)).thenReturn(Future.successful(false))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(false))
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+        redirectLocation(result) mustBe Some(technicalDifficultiesPage)
 
         verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
       }
@@ -229,29 +186,23 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers, gbEori, Some(mockDataStoreConnector))
+
       when(mockValidator.validate(userAnswers)).thenReturn(
         Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("XI9876543210000"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(xiEori))(any)).thenReturn(Future.successful(true))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(false))
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+        redirectLocation(result) mustBe Some(technicalDifficultiesPage)
 
         verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
       }
@@ -262,23 +213,18 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(
         AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment)).success.value
 
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
+
       when(mockValidator.validate(userAnswers)).thenReturn(
         Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(true))
 
-      val application: Application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
 
@@ -288,25 +234,19 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to TechnicalDifficulties page for invalid data" in new SetUp {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI9876543210000")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
 
-      val application: Application = applicationBuilder(Some(userAnswers))
-        .overrides(
-          inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-          inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-          inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
-          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-        ).build()
-
-      running(application) {
+      running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
-        val result = route(application, request).value
+        val result = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
+        redirectLocation(result) mustBe Some(technicalDifficultiesPage)
       }
     }
   }
@@ -315,13 +255,14 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     protected val formProvider = new AuthorisedUserFormProviderWithConsent()
     protected val form: Form[AuthorisedUser] = formProvider()
 
-
     lazy val authorisedUserRoute: String = controllers.add.routes.AuthorisedUserController.onPageLoad().url
     lazy val onSubmitRoute: String = controllers.add.routes.AuthorisedUserController.onSubmit().url
 
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
+    val gbEori = "GB123456789012"
+    val xiEori = "XI9876543210000"
     val accounts: Accounts = Accounts(
       Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
 
@@ -330,19 +271,15 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       Seq("123456"),
       Some("123456"))
 
-    val standingAuthority: StandingAuthority = StandingAuthority("GB123456789012",
+    val standingAuthority: StandingAuthority = StandingAuthority(gbEori,
       LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
 
     val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
     val mockValidator: CheckYourAnswersValidationService = mock[CheckYourAnswersValidationService]
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
-    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
-    when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
-    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-
     val cashAccount: CashAccount =
-      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+      CashAccount("12345", gbEori, AccountStatusOpen, CDSCashBalance(Some(100.00)))
     val dutyDeferment: DutyDefermentAccount =
       DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
     val generalGuarantee: GeneralGuaranteeAccount =
@@ -351,7 +288,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
       .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+      .set(EoriNumberPage, CompanyDetails(gbEori, Some("companyName"))).success.value
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
@@ -359,14 +296,44 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val userAnswersTodayToIndefiniteWithXIEori: UserAnswers = UserAnswers("id")
       .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("XI9876543210000", Some("companyName"))).success.value
+      .set(EoriNumberPage, CompanyDetails(xiEori, Some("companyName"))).success.value
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
       .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
 
+    val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
+    val sessionExpiredPage: String = controllers.routes.SessionExpiredController.onPageLoad.url
+
     when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
-    when(mockValidator.validate(userAnswersTodayToIndefinite)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+    when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockValidator.validate(userAnswersTodayToIndefinite)).thenReturn(
+      Some((accounts, standingAuthority, authorisedUser)))
+    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+
+    def applicationWithUserAnswersAndEori(userAnswer: UserAnswers = emptyUserAnswers,
+                                          requestEori: String = emptyString,
+                                          dataStoreConnector: Option[CustomsDataStoreConnector] = None): Application = {
+      val moduleList: Seq[GuiceableModule] =
+        if (dataStoreConnector.isEmpty) {
+          Seq(
+            inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer)),
+          )
+        } else {
+          Seq(
+            inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer)),
+            inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get)
+          )
+        }
+
+      applicationBuilder(Some(userAnswer), requestEori).overrides(moduleList: _*).build()
+    }
   }
 }
