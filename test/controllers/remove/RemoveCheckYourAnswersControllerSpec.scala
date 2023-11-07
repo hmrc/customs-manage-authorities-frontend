@@ -254,8 +254,11 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers =
         emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(
-        userAnswers, gbEori, Some(mockCustomsFinancialsConnector), Some(mockDataStoreConnector))
+      val app: Application = applicationBuilder(Some(userAnswers), gbEori).overrides(
+        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
+        inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+      ).build()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(
