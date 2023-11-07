@@ -25,13 +25,13 @@ import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.remove.RemoveAuthorisedUserPage
+import play.api.inject.guice.GuiceableModule
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, inject}
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
-import uk.gov.hmrc.http.HeaderCarrier
-import viewmodels.CheckYourAnswersRemoveHelper
+import utils.StringUtils.emptyString
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -42,65 +42,56 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   "onPageLoad" should {
 
     "redirect to error page if no account present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAccount)))
 
       running(app) {
         val result = route(app, getRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to page if no authority present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAuthority)))
 
       running(app) {
         val result = route(app, getRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to view authority if authorised user not present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(app) {
         val result = route(app, getRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.ViewAuthorityController.onPageLoad("a", "b").url
+        redirectLocation(result).value mustBe
+          controllers.routes.ViewAuthorityController.onPageLoad("a", "b").url
       }
     }
 
     "return OK on successful request" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      private val userAnswers =
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
-
-      //val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
-      //val appConfig = app.injector.instanceOf[FrontendAppConfig]
-      implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
+      val app: Application = applicationWithUserAnswersAndEori(userAnswers)
 
       when(mockDataStoreConnector.getCompanyName(anyString())(any()))
         .thenReturn(Future.successful(Some("Tony Stark")))
-
-      val helper = new CheckYourAnswersRemoveHelper(userAnswers, "a", "b", AuthorisedUser("test", "test"), standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc)
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -108,7 +99,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        //TODO find why this comparison is running successfully in local environment but not in Jenkins build - Temporarily commenting this
+        //TODO find why this comparison is running successfully in local environment
+        // but not in Jenkins build - Temporarily commenting this
         //contentAsString(result) mustBe view(helper)(getRequest, messages(app), appConfig).toString()
       }
     }
@@ -116,57 +108,52 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
   "onSubmit" should {
     "redirect to error page when no account present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAccount)))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to error page when no authority present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAuthority)))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to error page if no authorised user present" in new Setup {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori()
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to error page if revoke failed" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -177,17 +164,15 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, postRequest).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.TechnicalDifficulties.onPageLoad.url
+        redirectLocation(result).value mustBe technicalDifficultiesPage
       }
     }
 
     "redirect to confirmation page when successful" in new Setup {
-      val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -197,6 +182,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe
           controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
@@ -206,13 +192,10 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsCashAccount" in new Setup {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
-        inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, gbEori, Some(mockCustomsFinancialsConnector), Some(mockDataStoreConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(
@@ -220,12 +203,13 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq("GB123456789012"))(any())).thenReturn(Future.successful(true))
+        any(), ArgumentMatchers.eq(gbEori))(any())).thenReturn(Future.successful(true))
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option("XI123456789012")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe
           controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
@@ -238,13 +222,10 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsGeneralGuaranteeAccount" in new Setup {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
-        inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-      ).build()
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers, gbEori, Some(mockCustomsFinancialsConnector), Some(mockDataStoreConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(
@@ -252,12 +233,13 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq("GB123456789012"))(any())).thenReturn(Future.successful(true))
+        any(), ArgumentMatchers.eq(gbEori))(any())).thenReturn(Future.successful(true))
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option("XI123456789012")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe
           controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
@@ -270,9 +252,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to confirmation page and use XI Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsDutyDefermentAccount" in new Setup {
       val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers), "GB123456789012").overrides(
+      val app: Application = applicationBuilder(Some(userAnswers), gbEori).overrides(
         inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
         inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
         inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
@@ -284,12 +266,13 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq("XI123456789012"))(any())).thenReturn(Future.successful(true))
+        any(), ArgumentMatchers.eq(xiEori))(any())).thenReturn(Future.successful(true))
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option("XI123456789012")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
       running(app) {
         val result = route(app, postRequest).value
+
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe
           controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
@@ -308,9 +291,13 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
+    val gbEori = "GB123456789012"
+    val xiEori = "XI123456789012"
+    val authUser: AuthorisedUser = AuthorisedUser("test", "test")
+
     val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val standingAuthorityWithXIEori: StandingAuthority =
-      StandingAuthority("XI123456789012", startDate, Some(endDate), viewBalance = false)
+      StandingAuthority(xiEori, startDate, Some(endDate), viewBalance = false)
 
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
@@ -323,9 +310,33 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       AccountWithAuthoritiesWithId(CdsDutyDefermentAccount,
         "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
+    val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
+
     val getRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(GET, controllers.remove.routes.RemoveCheckYourAnswers.onPageLoad("a", "b").url)
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(POST, controllers.remove.routes.RemoveCheckYourAnswers.onSubmit("a", "b").url)
+
+    def applicationWithUserAnswersAndEori(userAnswer: UserAnswers = emptyUserAnswers,
+                                          requestEori: String = emptyString,
+                                          financialConnector: Option[CustomsFinancialsConnector] = None,
+                                          dataStoreConnector: Option[CustomsDataStoreConnector] = None): Application = {
+      val moduleList: Seq[GuiceableModule] =
+        (financialConnector, dataStoreConnector) match {
+          case (None, None) => Seq(inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+
+          case (Some(finConn), _) =>
+            Seq(inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              inject.bind[CustomsFinancialsConnector].toInstance(finConn))
+
+          case _ =>
+            Seq(
+              inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              inject.bind[CustomsFinancialsConnector].toInstance(financialConnector.get),
+              inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get))
+        }
+
+      applicationBuilder(Some(userAnswer), requestEori).overrides(moduleList: _*).build()
+    }
   }
 }
