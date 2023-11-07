@@ -85,13 +85,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         ).build()
 
       running(application) {
-
         val request = fakeRequest(GET, authorisedUserRoute)
         val result = route(application, request).value
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
-
         status(result) mustEqual SEE_OTHER
       }
     }
@@ -101,13 +96,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val application: Application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-
         val request = fakeRequest(GET, authorisedUserRoute)
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
@@ -123,9 +114,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
@@ -149,13 +138,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         ).build()
 
       running(application) {
-
         val request = fakeRequest(POST, onSubmitRoute)
         val result = route(application, request).value
-        val view = application.injector.instanceOf[AuthorisedUserView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(application))
-
         status(result) mustEqual SEE_OTHER
       }
     }
