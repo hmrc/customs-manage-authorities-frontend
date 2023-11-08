@@ -17,18 +17,15 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import models.domain._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, EoriNumberPage}
-import pages.{ConfirmationDetails, ConfirmationPage}
 import play.api.inject
 import play.api.test.Helpers._
 import repositories.{AccountsRepository, AuthoritiesRepository, SessionRepository}
 import services.ConfirmationService
-import views.html.edit.EditConfirmationView
 import java.time.LocalDate
 import models.CompanyDetails
 import scala.concurrent.Future
@@ -96,8 +93,6 @@ class EditConfirmationControllerSpec extends SpecBase {
               "a", "b").url)
 
           val result = route(application, request).value
-          val view = application.injector.instanceOf[EditConfirmationView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 

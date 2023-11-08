@@ -38,7 +38,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val manageAuthoritiesRoute = routes.ManageAuthoritiesController.onPageLoad.url
   private lazy val manageAuthoritiesUnavailableRoute = routes.ManageAuthoritiesController.unavailable.url
-  private lazy val manageAuthoritiesGBNValidationRoute = routes.ManageAuthoritiesController.validationFailure.url
+  private lazy val manageAuthoritiesGBNValidationRoute = routes.ManageAuthoritiesController.validationFailure().url
 
   val startDate = LocalDate.parse("2020-03-01")
   val endDate = LocalDate.parse("2020-04-01")

@@ -153,17 +153,17 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     "format authority start dates" in {
       import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
 
-      standingAuthorityWithView.formattedFromDate mustBe "1 Mar 2020"
+      standingAuthorityWithView.formattedFromDate() mustBe "1 Mar 2020"
     }
     "format authority end dates" when {
       import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
 
       "when present" in {
-        standingAuthorityWithView.formattedToDate mustBe Some("1 Apr 2020")
+        standingAuthorityWithView.formattedToDate() mustBe Some("1 Apr 2020")
       }
 
       "when missing" in {
-        standingAuthorityWithoutView.formattedToDate mustBe None
+        standingAuthorityWithoutView.formattedToDate() mustBe None
       }
     }
   }
