@@ -17,6 +17,8 @@ GET        /manage-account-authorities/account-unavailable        controllers.Ma
 
 GET        /view-authority/:accountId/:authorityId                controllers.ViewAuthorityController.onPageLoad(accountId, authorityId)
 
+GET        /verify-your-email                                     controllers.EmailController.showUnverified()
+
 GET        /logout-survey                                         controllers.LogoutController.logout
 GET        /logout                                                controllers.LogoutController.logoutNoSurvey
 

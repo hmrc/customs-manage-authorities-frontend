@@ -34,6 +34,12 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.xiEoriEnabled mustBe true
       }
     }
+
+    "return emailFrontendUrl" in new Setup {
+      running(app) {
+        appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
+      }
+    }
   }
 
   trait Setup {

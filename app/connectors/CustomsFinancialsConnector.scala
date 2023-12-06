@@ -17,15 +17,15 @@
 package connectors
 
 import config.Service
-import models.{CompanyName, EORIValidationError, ErrorResponse}
 import models.domain.{AccountWithAuthorities, CDSAccounts}
 import models.requests._
+import models.{CompanyName, EORIValidationError, EmailUnverifiedResponse, ErrorResponse}
 import play.api.Configuration
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse, NotFoundException}
-import javax.inject.Inject
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsFinancialsConnector @Inject()(
@@ -73,5 +73,10 @@ class CustomsFinancialsConnector @Inject()(
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
     httpClient.GET[CompanyName](baseUrl.toString + context + "/subscriptions/company-name")
+  }
+
+  def isEmailUnverified(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    httpClient.GET[EmailUnverifiedResponse](baseUrl.toString + context + "/subscriptions/unverified-email-display")
+      .map( res => res.unVerifiedEmail)
   }
 }
