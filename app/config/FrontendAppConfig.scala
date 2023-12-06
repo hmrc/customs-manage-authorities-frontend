@@ -59,4 +59,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val customsDataStore: String = servicesConfig.baseUrl("customs-data-store") +
     configuration.get[String]("microservice.services.customs-data-store.context")
+
+  val emailFrontendUrl: String = servicesConfig.baseUrl("customs-email-frontend") +
+    configuration.get[String]("microservice.services.customs-email-frontend.context") +
+    configuration.get[String]("microservice.services.customs-email-frontend.url")
 }

@@ -308,4 +308,18 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
   }
+
+  "retrieve unverified email" must {
+    "return success response" in {
+      val app = application
+      running(app) {
+        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/subscriptions/unverified-email-display"))
+            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
+        val result = connector.isEmailUnverified(hc).futureValue
+        result mustBe Some("unverified@email.com")
+      }
+    }
+  }
 }

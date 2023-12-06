@@ -18,16 +18,18 @@ package connectors
 
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
+import config.FrontendAppConfig
+import models.{UndeliverableEmail, UnverifiedEmail}
+import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, MustMatchers, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
+import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
-import org.mockito.Mockito.when
-import config.FrontendAppConfig
 
 class CustomsDataStoreConnectorSpec extends SpecBase
   with WireMockHelper
@@ -194,6 +196,73 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       running(app) {
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe expected
+      }
+    }
+  }
+
+  "getEmail" should {
+    "return an email address when the request is successful and undeliverable is not present in the response" in new Setup {
+      val emailResponse =
+        """{
+          |"address": "some@email.com"
+          |}""".stripMargin
+
+      running(app) {
+
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+            .willReturn(ok(emailResponse))
+        )
+        val result = connector.getEmail("GB123456789012").futureValue
+        result mustBe Right(Email("some@email.com"))
+      }
+    }
+
+    "return no email address when the request is successful and undeliverable is present in the response" in new Setup {
+      val emailResponse =
+        """{
+          |"address": "some@email.com",
+          |"timestamp": "2022-10-10T11:22:22Z",
+          |"undeliverableInformation": {
+          |"subject": "someSubject"
+          |}
+          |}""".stripMargin
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+            .willReturn(ok(emailResponse))
+        )
+
+        val result = connector.getEmail("GB123456789012").futureValue
+        result mustBe Left(UndeliverableEmail("some@email.com"))
+      }
+    }
+
+    "return unverifiedEmail when the request is successful and email address is not present in the response" in new Setup {
+      val emailResponse = """{}"""
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+            .willReturn(ok(emailResponse))
+        )
+
+        val result = connector.getEmail("GB123456789012").futureValue
+        result mustBe Left(UnverifiedEmail)
+      }
+    }
+
+    "return no email when a NOT_FOUND response is returned" in new Setup {
+
+      running(app) {
+
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+            .willReturn(notFound)
+        )
+        val result = connector.getEmail("GB123456789012").futureValue
+        result mustBe Left(UnverifiedEmail)
       }
     }
   }

@@ -17,11 +17,14 @@
 package connectors
 
 import config.FrontendAppConfig
-import javax.inject.Inject
+import models.{CompanyInformation, EmailResponse, EmailResponses, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse}
 import play.api.Logger
-import models.{CompanyInformation, XiEoriInformationResponse}
+import play.api.http.Status.NOT_FOUND
+import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, UpstreamErrorResponse}
+
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
@@ -56,6 +59,17 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       }
     } else {
       Future.successful(None)
+    }
+  }
+
+  def getEmail(eori: String)(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
+    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/verified-email"
+    httpClient.GET[EmailResponse](dataStoreEndpoint).map {
+      case EmailResponse(Some(address), _, None) => Right(Email(address))
+      case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
+      case _ => Left(UnverifiedEmail)
+    }.recover {
+      case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
     }
   }
 }

@@ -377,6 +377,13 @@ view-authority-h2.6 = Nid yw’r busnes hwn wedi caniatáu i’w enw gael ei ran
 view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn.
 view-authority-link = Dileu’r awdurdod
 
+# Verify Your Email Address
+cf.verify.your.email.title=Cadarnhau’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
+cf.verify.your.email.heading=Cadarnhau’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
+cf.verify.your.email.p1=Mae angen i chi gadarnhau’r cyfeiriad e-bost rydych yn ei ddefnyddio ar gyfer y Gwasanaeth Datganiadau Tollau.
+cf.verify.your.email.p2=Eich e-bost cofrestredig yw <strong class="bold">{0}</strong>.
+cf.verify.your.email.p3=Os nad dyma’r cyfeiriad e-bost rydych chi am ei ddefnyddio, gallwch ei newid hefyd gan ddefnyddio’r gwasanaeth hwn.
+cf.verify.your.email.change.button=Dilysu neu newid y cyfeiriad e-bost
 
 # Date Format
 # ----------------------------------------------------------
