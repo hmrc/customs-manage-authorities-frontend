@@ -77,6 +77,6 @@ class CustomsFinancialsConnector @Inject()(
 
   def isEmailUnverified(implicit hc: HeaderCarrier): Future[Option[String]] = {
     httpClient.GET[EmailUnverifiedResponse](baseUrl.toString + context + "/subscriptions/unverified-email-display")
-      .map( res => res.unVerifiedEmail)
+      .map(_.unVerifiedEmail)
   }
 }

@@ -37,7 +37,7 @@ import scala.util.control.NonFatal
 class ManageAuthoritiesController @Inject()(
                                              override val messagesApi: MessagesApi,
                                              identify: IdentifierAction,
-                                             checkEmailIsVerified: EmailAction,
+                                             verifyEmailAddress: EmailAction,
                                              service: AuthoritiesCacheService,
                                              accountsCacheService: AccountsCacheService,
                                              dataStoreConnector: CustomsDataStoreConnector,
@@ -48,7 +48,7 @@ class ManageAuthoritiesController @Inject()(
                                              invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen verifyEmailAddress).async {
     implicit request =>
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)

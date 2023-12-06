@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import connectors.CustomsFinancialsConnector
 import models.EmailUnverifiedResponse
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -25,24 +24,16 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.OK
 import play.api.inject
-import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.Future
 
 class EmailControllerSpec extends SpecBase {
 
-  "EmailController" must {
-    "return unverified email" in new Setup {
-      running(application) {
-        val connector = application.injector.instanceOf[CustomsFinancialsConnector]
+  "showUnverified" must {
 
-        val result: Future[Option[String]] = connector.isEmailUnverified(hc)
-        await(result) mustBe expectedResult
-      }
-    }
-
-    "return unverified email response" in new Setup {
+    "display unverified email view" in new Setup {
       running(application) {
         val request = fakeRequest(GET, routes.EmailController.showUnverified().url)
         val result = route(application, request).value

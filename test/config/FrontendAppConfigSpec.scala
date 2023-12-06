@@ -35,9 +35,33 @@ class FrontendAppConfigSpec extends SpecBase {
       }
     }
 
-    "return emailFrontendUrl" in new Setup {
+    "return false for fixedDateTime" in new Setup {
+      running(app) {
+        appConfig.fixedDateTime mustBe false
+      }
+    }
+
+    "return email frontend url" in new Setup {
       running(app) {
         appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
+      }
+    }
+
+    "return contact frontend url" in new Setup {
+      running(app) {
+        appConfig.contactFrontendUrl mustBe "http://localhost:9250/contact/report-technical-problem"
+      }
+    }
+
+    "return customs data store base url and context" in new Setup {
+      running(app) {
+        appConfig.customsDataStore mustBe "http://localhost:9893/customs-data-store"
+      }
+    }
+
+    "return customs financials frontend homepage url" in new Setup {
+      running(app) {
+        appConfig.customsFinancialsFrontendHomepageUrl mustBe "http://localhost:9876/customs/payment-records/"
       }
     }
   }
