@@ -1,0 +1,57 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.partials._
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
+
+@this(
+        layout: Layout,
+        h1: components.h1,
+        h2: components.h2,
+        p: components.p,
+        button: components.button
+)
+
+@(
+    nextPage:String, 
+    emailAddress: Option[String]
+)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@layout(pageTitle = Some(titleNoForm("cf.verify.your.email.title", None, Seq()))
+) {
+    @h1(msg = "cf.undeliverable.email.heading",
+        id = Some("email-heading-h1"),
+        classes = "govuk-heading-xl"
+    )
+
+    @p(Html(messages("cf.undeliverable.email.p1")))
+
+    @emailAddress.map(mailId => p(Html(messages("cf.undeliverable.email.p2", mailId))))
+
+    @h2(msg = "cf.undeliverable.email.verify.heading", id = Some("email-verify-heading-h2"))
+
+    @p(Html(messages("cf.undeliverable.email.verify.text.p1")))
+
+    @h2(msg = "cf.undeliverable.email.change.heading", id = Some("email-change-heading-h2"))
+
+    @p(Html(messages("cf.undeliverable.email.change.text.p1")))
+    @p(Html(messages("cf.undeliverable.email.change.text.p2")))
+
+    <p class="govuk-body">
+        @button("cf.undeliverable.email.link-text", Some(nextPage))
+    </p>
+}

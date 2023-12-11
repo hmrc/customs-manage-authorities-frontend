@@ -385,6 +385,20 @@ cf.verify.your.email.p2=Eich e-bost cofrestredig yw <strong class="bold">{0}</st
 cf.verify.your.email.p3=Os nad dyma’r cyfeiriad e-bost rydych chi am ei ddefnyddio, gallwch ei newid hefyd gan ddefnyddio’r gwasanaeth hwn.
 cf.verify.your.email.change.button=Dilysu neu newid y cyfeiriad e-bost
 
+# Undeliverable Email Address
+
+cf.undeliverable.email.title=Mae problem gyda’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
+cf.undeliverable.email.heading=Mae problem gyda’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
+cf.undeliverable.email.p1=Gwnaethom geisio anfon e-bost atoch ond nid oedd modd ei ddosbarthu.
+cf.undeliverable.email.p2=Eich e-bost cofrestredig yw <strong class="bold">{0}</strong>.
+
+cf.undeliverable.email.verify.heading=Cadarnhau’ch cyfeiriad e-bost
+cf.undeliverable.email.verify.text.p1=Os mae’r cyfeiriad e-bost hwn yn gywir, bydd angen i chi ei gadarnhau er mwyn parhau i ddefnyddio Gwasanaeth Datganiadau Tollau.
+cf.undeliverable.email.change.heading=Newidiwch eich cyfeiriad e-bost
+cf.undeliverable.email.change.text.p1=Os nad yw’r cyfeiriad e-bost yn gywir, gallwch ei newid yma.
+cf.undeliverable.email.change.text.p2=Mae’r Gwasanaeth Datganiadau Tollau yn defnyddio un cyfeiriad e-bost ar gyfer nifer o wasanaethau sy’n gysylltiedig â thollau. Os ydych yn newid y cyfeiriad e-bost hwn, sicrhewch fod modd i bobl eraill yn eich cwmni gael y negeseuon sydd eu hangen arnynt.
+cf.undeliverable.email.link-text=Dilysu neu newid y cyfeiriad e-bost
+
 # Date Format
 # ----------------------------------------------------------
 
