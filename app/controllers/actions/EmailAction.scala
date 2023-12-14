@@ -18,7 +18,7 @@ package controllers.actions
 
 import connectors.CustomsDataStoreConnector
 import controllers.routes
-import models.UnverifiedEmail
+import models.{UnverifiedEmail, UndeliverableEmail}
 import models.requests.IdentifierRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
@@ -38,7 +38,8 @@ class EmailAction @Inject()(dataStoreConnector: CustomsDataStoreConnector)(impli
     dataStoreConnector.getEmail(request.eoriNumber).map {
       case Left(value) =>
         value match {
-          case UnverifiedEmail => Some(Redirect(routes.EmailController.showUnverified()))
+          case UnverifiedEmail => Some(Redirect(routes.EmailController.showUndeliverable()))
+          case UndeliverableEmail(_) => Some(Redirect(routes.EmailController.showUnverified()))
         }
       case Right(_) => None
     }.recover { case _ => None }
