@@ -293,8 +293,24 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     }
   }
 
+  "verifiedEmail" must {
+    "return correct email" in new Setup {
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/subscriptions/email-display"))
+            .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
+        val result = connector.verifiedEmail(hc).futureValue
+        result mustBe emailVerifiedRes
+      }
+    }
+  }
+
   trait Setup {
     val app = application
     val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+
+    val emailValue = "test@test.com"
+    val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
   }
 }
