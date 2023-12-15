@@ -36,26 +36,8 @@ import scala.concurrent.Future
 
 class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-  val mockDataStoreConnector: CustomsDataStoreConnector =
-    mock[CustomsDataStoreConnector]
-
-  def identifierRequest() = IdentifierRequest(
-    fakeRequest(),
-    InternalId("id"),
-    Credentials("", ""),
-    Organisation,
-    None,
-    None,
-    "GB123456789012"
-  )
-
-  class Harness extends EmailAction(mockDataStoreConnector)(global, any()) {
-    def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
-      filter(request)
-  }
-
   "Email Action" should {
-    "allow requests with valida email" in {
+    "allow requests with valida email" in new Setup {
       val action = new Harness()
 
       when(
@@ -68,7 +50,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       }
     }
 
-    "allow requests, when getEmail throws service unavailable exception" in {
+    "allow requests, when getEmail throws service unavailable exception" in new Setup {
       val action = new Harness()
 
       when(
@@ -81,7 +63,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       }
     }
 
-    "Redirect users with unverified emails" in {
+    "Redirect users with unverified emails" in new Setup {
       val action = new Harness()
 
       when(
@@ -95,7 +77,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       }
     }
 
-    "redirect the requests to undeliverable email page when dataStoreService returns undeliverable email" in {
+    "redirect the requests to undeliverable email page when dataStoreService returns undeliverable email" in new Setup {
       val action = new Harness()
       val emailId = "test@test.com"
 
@@ -109,5 +91,26 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
         result.get.header.headers(LOCATION) must include("/undeliverable-email")
       }
     }
+  }
+
+  trait Setup {
+    val mockDataStoreConnector: CustomsDataStoreConnector =
+    mock[CustomsDataStoreConnector]
+
+    def identifierRequest() = IdentifierRequest(
+      fakeRequest(),
+      InternalId("id"),
+      Credentials("", ""),
+      Organisation,
+      None,
+      None,
+      "GB123456789012"
+    )
+
+    class Harness extends EmailAction(mockDataStoreConnector)(global, any()) {
+      def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
+        filter(request)
+    }
+
   }
 }
