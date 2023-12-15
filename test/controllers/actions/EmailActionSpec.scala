@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import connectors.CustomsDataStoreConnector
 import models.requests.IdentifierRequest
-import models.{InternalId, UnverifiedEmail}
+import models.{InternalId, UnverifiedEmail, UndeliverableEmail}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
@@ -36,27 +36,31 @@ import scala.concurrent.Future
 
 class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
-    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+  val mockDataStoreConnector: CustomsDataStoreConnector =
+    mock[CustomsDataStoreConnector]
 
-    def identifierRequest() = IdentifierRequest(
-      fakeRequest(),
-      InternalId("id"),
-      Credentials("", ""),
-      Organisation,
-      None,
-      None,
-      "GB123456789012"
-    )
+  def identifierRequest() = IdentifierRequest(
+    fakeRequest(),
+    InternalId("id"),
+    Credentials("", ""),
+    Organisation,
+    None,
+    None,
+    "GB123456789012"
+  )
 
-  class Harness extends EmailAction(mockDataStoreConnector)(global,any()) {
-    def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] = filter(request)
+  class Harness extends EmailAction(mockDataStoreConnector)(global, any()) {
+    def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
+      filter(request)
   }
 
   "Email Action" should {
     "allow requests with valida email" in {
       val action = new Harness()
 
-      when(mockDataStoreConnector.getEmail("GB123456789012")(any())) thenReturn Future.successful(Right(Email("some@email.com")))
+      when(
+        mockDataStoreConnector.getEmail("GB123456789012")(any())
+      ) thenReturn Future.successful(Right(Email("some@email.com")))
 
       val futureResult = action.filter(identifierRequest())
       whenReady(futureResult) { result =>
@@ -67,7 +71,9 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
     "allow requests, when getEmail throws service unavailable exception" in {
       val action = new Harness()
 
-      when(mockDataStoreConnector.getEmail("GB123456789012")(any())) thenReturn Future.failed(new ServiceUnavailableException(""))
+      when(
+        mockDataStoreConnector.getEmail("GB123456789012")(any())
+      ) thenReturn Future.failed(new ServiceUnavailableException(""))
 
       val futureResult = action.filter(identifierRequest())
       whenReady(futureResult) { result =>
@@ -78,12 +84,29 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
     "Redirect users with unverified emails" in {
       val action = new Harness()
 
-      when(mockDataStoreConnector.getEmail("GB123456789012")(any())) thenReturn Future.successful(Left(UnverifiedEmail))
+      when(
+        mockDataStoreConnector.getEmail("GB123456789012")(any())
+      ) thenReturn Future.successful(Left(UnverifiedEmail))
 
       val futureResult = action.filter(identifierRequest())
       whenReady(futureResult) { result =>
         result.get.header.status mustBe SEE_OTHER
         result.get.header.headers(LOCATION) must include("/verify-your-email")
+      }
+    }
+
+    "redirect the requests to undeliverable email page when dataStoreService returns undeliverable email" in {
+      val action = new Harness()
+      val emailId = "test@test.com"
+
+      when(
+        mockDataStoreConnector.getEmail("GB123456789012")(any())
+      ) thenReturn Future.successful(Left(UndeliverableEmail(emailId)))
+
+      val futureResult = action.filter(identifierRequest())
+      whenReady(futureResult) { result =>
+        result.get.header.status mustBe SEE_OTHER
+        result.get.header.headers(LOCATION) must include("/undeliverable-email")
       }
     }
   }
