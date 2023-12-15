@@ -81,5 +81,5 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =
-    httpClient.GET[EmailVerifiedResponse](baseUrl.toString + context +  "/subscriptions/email-display")
+    httpClient.GET[EmailVerifiedResponse](s"${baseUrl.toString}$context/subscriptions/email-display")
 }
