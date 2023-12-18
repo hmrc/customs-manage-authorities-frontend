@@ -19,7 +19,7 @@ package connectors
 import config.Service
 import models.domain.{AccountWithAuthorities, CDSAccounts}
 import models.requests._
-import models.{CompanyName, EORIValidationError, EmailUnverifiedResponse, ErrorResponse}
+import models.{CompanyName, EORIValidationError, EmailUnverifiedResponse, ErrorResponse, EmailVerifiedResponse}
 import play.api.Configuration
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
@@ -79,4 +79,7 @@ class CustomsFinancialsConnector @Inject()(
     httpClient.GET[EmailUnverifiedResponse](baseUrl.toString + context + "/subscriptions/unverified-email-display")
       .map( res => res.unVerifiedEmail)
   }
+
+  def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =
+    httpClient.GET[EmailVerifiedResponse](s"${baseUrl.toString}$context/subscriptions/email-display")
 }

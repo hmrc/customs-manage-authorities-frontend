@@ -18,7 +18,7 @@ package controllers.actions
 
 import connectors.CustomsDataStoreConnector
 import controllers.routes
-import models.UnverifiedEmail
+import models.{UnverifiedEmail, UndeliverableEmail, EmailResponses}
 import models.requests.IdentifierRequest
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
@@ -35,12 +35,17 @@ class EmailAction @Inject()(dataStoreConnector: CustomsDataStoreConnector)(impli
 
   def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    
     dataStoreConnector.getEmail(request.eoriNumber).map {
-      case Left(value) =>
-        value match {
-          case UnverifiedEmail => Some(Redirect(routes.EmailController.showUnverified()))
-        }
+      case Left(value) => checkEmailResponseAndRedirect(value)
       case Right(_) => None
     }.recover { case _ => None }
+  }
+
+  private def checkEmailResponseAndRedirect(value: EmailResponses): Option[Result] = {
+    value match {
+      case UnverifiedEmail => Some(Redirect(controllers.routes.EmailController.showUnverified()))
+      case UndeliverableEmail(_) => Some(Redirect(controllers.routes.EmailController.showUndeliverable()))
+    }
   }
 }

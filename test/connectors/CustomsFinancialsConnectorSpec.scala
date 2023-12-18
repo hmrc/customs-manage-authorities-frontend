@@ -50,7 +50,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       .build()
 
   ".retrieveAccounts" must {
-    "return accounts" in {
+    "return accounts" in new Setup {
       val response =
         """
           |{
@@ -87,11 +87,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
       )
 
-      val app = application
-
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
 
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/eori/accounts/"))
@@ -104,12 +100,10 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   ".retrieveAccountAuthorities" must {
-    "return account authorities" in {
+    "return account authorities" in new Setup {
       val accountAuthorities = Seq(AccountWithAuthorities(
         domain.CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty
       ))
-
-      val app = application
 
       val response =
         """
@@ -125,9 +119,6 @@ class CustomsFinancialsConnectorSpec extends SpecBase
 
 
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
-
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/()/account-authorities"))
             .willReturn(ok(response))
@@ -155,11 +146,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       AuthorisedUser("name", "job")
     )
 
-    "return success response" in {
-      val app = application
-
+    "return success response" in new Setup {
+  
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(noContent()))
@@ -168,11 +157,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
 
-    "return failure response" in {
-      val app = application
+    "return failure response" in new Setup {
 
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(serverError()))
@@ -181,11 +168,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
 
-    "handle errors" in {
-      val app = application
-
+    "handle errors" in new Setup {
+  
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)))
@@ -204,11 +189,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       AuthorisedUser("name", "job")
     )
 
-    "return success response" in {
-      val app = application
-
+    "return success response" in new Setup {
+      
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(noContent()))
@@ -217,13 +200,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
 
-    "return failure response" in {
-      val app = application
+    "return failure response" in new Setup {
 
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
-
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(serverError())
@@ -233,13 +212,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
 
-    "handle errors" in {
-      val app = application
-
+    "handle errors" in new Setup {
+    
       running(app) {
-
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
-
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
@@ -251,11 +226,10 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   ".validateEori" must {
-    "return true for valid eori" in {
-      val app = application
+    "return true for valid eori" in new Setup {
 
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+      
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(ok())
@@ -264,11 +238,10 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         result mustBe Right(true)
       }
     }
-    "return false for not found" in {
-      val app = application
+    "return false for not found" in new Setup {
 
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+      
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(notFound())
@@ -278,11 +251,10 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       }
     }
 
-    "return validation error for internal server error" in {
-      val app = application
+    "return validation error for internal server error" in new Setup {
 
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+      
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(serverError())
@@ -294,11 +266,10 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   ".retrieve eori company name" must {
-    "return success response" in {
-      val app = application
+    "return success response" in new Setup {
 
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+      
         val json = """{"name" : "ABCD", "consent":"1"}"""
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/subscriptions/company-name"))
@@ -310,10 +281,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   "retrieve unverified email" must {
-    "return success response" in {
-      val app = application
+    "return success response" in new Setup {
+
       running(app) {
-        val connector = app.injector.instanceOf[CustomsFinancialsConnector]
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/subscriptions/unverified-email-display"))
             .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
@@ -321,5 +291,26 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         result mustBe Some("unverified@email.com")
       }
     }
+  }
+
+  "verifiedEmail" must {
+    "return correct email" in new Setup {
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-financials-api/subscriptions/email-display"))
+            .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
+        val result = connector.verifiedEmail(hc).futureValue
+        result mustBe emailVerifiedRes
+      }
+    }
+  }
+
+  trait Setup {
+    val app = application
+    val connector = app.injector.instanceOf[CustomsFinancialsConnector]
+
+    val emailValue = "test@test.com"
+    val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
   }
 }
