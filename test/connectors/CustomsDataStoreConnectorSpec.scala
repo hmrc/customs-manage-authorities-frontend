@@ -223,7 +223,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
         """{
           |"address": "some@email.com",
           |"timestamp": "2022-10-10T11:22:22Z",
-          |"undeliverableInformation": {
+          |"undeliverable": {
           |"subject": "someSubject"
           |}
           |}""".stripMargin
