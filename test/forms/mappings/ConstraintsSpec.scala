@@ -24,7 +24,7 @@ import play.api.data.validation.{Invalid, Valid}
 
 import java.time.LocalDate
 
-class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with Generators  with Constraints {
+class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
 
 
   "firstError" must {
@@ -90,13 +90,13 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
   "InRange" must {
 
     "return Valid for a number within range" in {
-      val result = inRange(1,10, "error.invalid").apply(2)
+      val result = inRange(1, 10, "error.invalid").apply(2)
       result mustEqual Valid
     }
 
-     "return InValid for a number outside range" in {
-      val result = inRange(1,10, "error.invalid").apply(12)
-      result mustEqual Invalid("error.invalid", 1,10)
+    "return InValid for a number outside range" in {
+      val result = inRange(1, 10, "error.invalid").apply(12)
+      result mustEqual Invalid("error.invalid", 1, 10)
     }
 
   }
@@ -142,7 +142,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Valid for a date before or equal to the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(LocalDate.of(2000, 1, 1), max)
       } yield (max, date)
 
@@ -157,7 +157,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Invalid for a date after the maximum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
       } yield (max, date)
 
@@ -175,7 +175,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Valid for a date after or equal to the minimum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min  <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        min <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
         date <- datesBetween(min, LocalDate.of(3000, 1, 1))
       } yield (min, date)
 
@@ -190,33 +190,33 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Invalid for a date before the minimum" in {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min  <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
+        min <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
         date <- datesBetween(LocalDate.of(2000, 1, 1), min.minusDays(1))
       } yield (min, date)
 
       forAll(gen) {
         case (min, date) =>
           val result = minDate(min, "authorityStartDate.error.minimum",
-            "authorityStartDate.error.year.length","foo")(date)
+            "authorityStartDate.error.year.length", "foo")(date)
           result mustEqual Invalid("authorityStartDate.error.minimum", "foo")
       }
     }
 
     "return Invalid for a date below the minimum length" in {
 
-      val date = LocalDate.of(200,1,2)
-      val min = LocalDate.of(200,1,1)
-      val result = minDate(min,"authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length","foo")(date)
+      val date = LocalDate.of(200, 1, 2)
+      val min = LocalDate.of(200, 1, 1)
+      val result = minDate(min, "authorityStartDate.error.minimum",
+        "authorityStartDate.error.year.length", "foo")(date)
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
 
     "return Invalid for a date above the max length" in {
 
-      val date = LocalDate.of(20000,1,2)
-      val max = LocalDate.of(20000,1,1)
-      val result = minDate(max,"authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length","foo")(date)
+      val date = LocalDate.of(20000, 1, 2)
+      val max = LocalDate.of(20000, 1, 1)
+      val result = minDate(max, "authorityStartDate.error.minimum",
+        "authorityStartDate.error.year.length", "foo")(date)
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
   }

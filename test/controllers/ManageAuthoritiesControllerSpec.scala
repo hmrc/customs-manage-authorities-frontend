@@ -49,8 +49,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
   ))
 
-   val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
-   val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+  val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+  val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
 
   "ManageAuthorities Controller" when {
 
@@ -143,9 +143,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesRoute)
-
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -169,7 +167,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
 
         //when(failingConnector.retrieveAccountAuthorities("eori")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
-       // when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
+        //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(

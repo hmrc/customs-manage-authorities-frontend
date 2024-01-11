@@ -40,10 +40,12 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       val startDate = LocalDate.now()
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
+        Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers,
+          standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
         val userAnswers = result.userAnswers
         userAnswers.get(EditAuthorityStartDatePage("a", "b")) mustBe None
         userAnswers.get(EditAuthorityStartPage("a", "b")).get mustBe AuthorityStart.Today
@@ -56,10 +58,12 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       val startDate = LocalDate.of(1, 1, 20)
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
+        Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers,
+          standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate

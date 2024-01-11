@@ -62,10 +62,11 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
           LocalDateTime.of(2023, 6, 12, 10, 12))
 
         val tempUserAnswers = userAnswers
-            .remove(EditAuthorityStartPage("123", "1234567")).success.value
-            .set(EditAuthorityStartPage("123", "1234567"), AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-            .remove(EditAuthorityEndDatePage("123", "1234567")).success.value
-            .set(EditAuthorityStartDatePage("123", "1234567"), LocalDate.of(2023, 6, 12)).success.value
+          .remove(EditAuthorityStartPage("123", "1234567")).success.value
+          .set(EditAuthorityStartPage("123", "1234567"), AuthorityStart.Setdate)(AuthorityStart.writes).success.value
+          .remove(EditAuthorityEndDatePage("123", "1234567")).success.value
+          .set(EditAuthorityStartDatePage("123", "1234567"),
+            LocalDate.of(2023, 6, 12)).success.value
 
         val application: Application = applicationBuilder().overrides(
           inject.bind[DateTimeService].toInstance(mockDateTimeService)
@@ -75,7 +76,8 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
 
         running(application) {
-          service.validate(tempUserAnswers,"123", "1234567", "GB123456789012") mustBe None
+          service.validate(tempUserAnswers, "123", "1234567",
+            "GB123456789012") mustBe None
         }
       }
 

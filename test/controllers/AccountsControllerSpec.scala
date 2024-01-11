@@ -111,7 +111,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           contentAsString(result) mustEqual
             view(form, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
               CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-            ), Seq.empty, "GB9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+            ), Seq.empty, "GB9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
         }
       }
 
@@ -135,9 +135,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
           contentAsString(result) mustEqual view(form, AuthorisedAccounts(
             Seq.empty, answerAccounts, Seq(DutyDefermentAccount(
-              "123","XI9876543210000", AccountStatusOpen, DutyDefermentBalance(
-                Some(100.00),Some(100.00),Some(100.00),Some(100.00)),true)),
-            Seq.empty, "XI9876543210000"), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+              "123", "XI9876543210000", AccountStatusOpen, DutyDefermentBalance(
+                Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true)),
+            Seq.empty, "XI9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
         }
       }
     }
@@ -258,7 +258,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(POST, accountsRoute)
-              .withFormUrlEncodedBody(("value[0]", answer.head))
+            .withFormUrlEncodedBody(("value[0]", answer.head))
 
           val result = route(application, request).value
 
@@ -286,7 +286,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
-              .withFormUrlEncodedBody(("value[0]", answer.head))
+            .withFormUrlEncodedBody(("value[0]", answer.head))
 
           val result = route(application, request).value
 
@@ -371,7 +371,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInCheckMode)
-              .withFormUrlEncodedBody(("value[0]", answer.head))
+            .withFormUrlEncodedBody(("value[0]", answer.head))
 
           val result = route(application, request).value
 
@@ -400,7 +400,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(POST, accountsRoute)
-              .withFormUrlEncodedBody(("value[0]", answer.head))
+            .withFormUrlEncodedBody(("value[0]", answer.head))
 
           val result = route(application, request).value
 
@@ -428,7 +428,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(POST, accountsRoute)
-              .withFormUrlEncodedBody(("value[0]", answer.head))
+            .withFormUrlEncodedBody(("value[0]", answer.head))
 
           val result = route(application, request).value
 
@@ -451,7 +451,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(POST, accountsRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -496,10 +496,10 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "eoriNumber" -> "GB9876543210000"))
 
     val userAnswersCompanyDetails = emptyUserAnswers.set(
-      EoriNumberPage , CompanyDetails("GB9876543210000", Some("name"))).success.value
+      EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
     val userAnswersCompanyDetailsXI = emptyUserAnswers.set(
-      EoriNumberPage , CompanyDetails("XI9876543210000", Some("name"))).success.value
+      EoriNumberPage, CompanyDetails("XI9876543210000", Some("name"))).success.value
 
     val standingAuthority: StandingAuthority = StandingAuthority(
       "EORI",
@@ -512,8 +512,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val answer = List("account_0")
     val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
     val accounts = CDSAccounts("GB123456789012", List(
-      DutyDefermentAccount("123","XI9876543210000",AccountStatusOpen,
-        DutyDefermentBalance(Some(100.00),Some(100.00),Some(100.00),Some(100.00)),true),
+      DutyDefermentAccount("123", "XI9876543210000", AccountStatusOpen,
+        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true),
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
     ))
@@ -521,11 +521,11 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val authorisedAccounts = List(CashAccount("12345", "GB123456789012",
       AccountStatusOpen, CDSCashBalance(Some(100))))
 
-    val closedAccount = List(  CashAccount("23456", "GB123456789012",
+    val closedAccount = List(CashAccount("23456", "GB123456789012",
       AccountStatusClosed, CDSCashBalance(Some(100))))
 
-    val closedAccountXI = List ( DutyDefermentAccount("123","XI9876543210000",AccountStatusOpen,
-      DutyDefermentBalance(Some(100.00),Some(100.00),Some(100.00),Some(100.00)),true) )
+    val closedAccountXI = List(DutyDefermentAccount("123", "XI9876543210000", AccountStatusOpen,
+      DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true))
 
     val mockAccountsCacheService = mock[AccountsCacheService]
     val mockAuthoritiesCacheService = mock[AuthoritiesCacheService]

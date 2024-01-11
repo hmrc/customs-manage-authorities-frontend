@@ -53,7 +53,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
           None,
           viewBalance = false)
 
-      service.validate(userAnswers).value mustEqual (accounts, standingAuthority, AuthorisedUser("", ""))
+      service.validate(userAnswers).value mustEqual(accounts, standingAuthority, AuthorisedUser("", ""))
     }
 
     "validate should return None when authorityEndDateLage is null and AuthorityEnd is Setdate" in new Setup {
@@ -65,7 +65,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        .set(AuthorityStartDatePage, currentDate).success.value  
+        .set(AuthorityStartDatePage, currentDate).success.value
         .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
 
       service.validate(userAnswers) mustBe None
@@ -92,10 +92,10 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
           Option(currentDate.plusDays(1)),
           viewBalance = false)
 
-      service.validate(userAnswers).value mustEqual (accounts, standingAuthority, AuthorisedUser("", ""))
+      service.validate(userAnswers).value mustEqual(accounts, standingAuthority, AuthorisedUser("", ""))
     }
 
-   "reject submission missing Accounts" in new Setup {
+    "reject submission missing Accounts" in new Setup {
       val userAnswers = completeUserAnswers
         .remove(AccountsPage).success.value
       service.validate(userAnswers) mustBe None

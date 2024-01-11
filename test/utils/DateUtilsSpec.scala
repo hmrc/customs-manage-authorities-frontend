@@ -62,10 +62,10 @@ class DateUtilsSpec extends SpecBase {
 }
 
 trait Setup {
-  val olderDate: LocalDate = LocalDate.of(2023,5, 15)
-  val newerDate: LocalDate = LocalDate.of(2023,5, 20)
-  val newestDate: LocalDate = LocalDate.of(2023,5, 22)
-  val date: LocalDate = LocalDate.of(2023,5,15)
+  val olderDate: LocalDate = LocalDate.of(2023, 5, 15)
+  val newerDate: LocalDate = LocalDate.of(2023, 5, 20)
+  val newestDate: LocalDate = LocalDate.of(2023, 5, 22)
+  val date: LocalDate = LocalDate.of(2023, 5, 15)
 
   implicit val messages: Messages = Helpers.stubMessages()
 }
