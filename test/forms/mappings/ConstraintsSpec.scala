@@ -86,6 +86,21 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     }
   }
 
+
+  "InRange" must {
+
+    "return Valid for a number within range" in {
+      val result = inRange(1,10, "error.invalid").apply(2)
+      result mustEqual Valid
+    }
+
+     "return InValid for a number outside range" in {
+      val result = inRange(1,10, "error.invalid").apply(12)
+      result mustEqual Invalid("error.invalid", 1,10)
+    }
+
+  }
+
   "regexp" must {
 
     "return Valid for an input that matches the expression" in {

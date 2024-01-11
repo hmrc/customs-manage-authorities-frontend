@@ -28,6 +28,7 @@ class DateUtilsSpec extends SpecBase {
     "return the correct latest date" in new Setup {
       new DateUtils {}.latestOf(olderDate, newerDate) mustBe newerDate
       new DateUtils {}.latestOf(olderDate, newerDate, newestDate) mustBe newestDate
+      new DateUtils {}.latestOf(olderDate, newestDate, newerDate) mustBe newestDate
     }
 
     "return the input date as latest if only one date is passed" in new Setup {
@@ -39,6 +40,7 @@ class DateUtilsSpec extends SpecBase {
     "return the correct earliest date" in new Setup {
       new DateUtils {}.earliestOf(olderDate, newerDate) mustBe olderDate
       new DateUtils {}.earliestOf(olderDate, newerDate, newestDate) mustBe olderDate
+      new DateUtils {}.earliestOf(newerDate, olderDate, newestDate) mustBe olderDate
     }
 
     "return the input date as earliest if only one date is passed" in new Setup {

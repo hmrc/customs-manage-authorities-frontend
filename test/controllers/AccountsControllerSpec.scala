@@ -297,6 +297,62 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+      "Incorrect user answers exists in NormalMode" in new Setup {
+
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application: Application =
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetailsXI))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(authStartNormalModeRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+            ).build()
+
+        running(application) {
+          val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
+            .withFormUrlEncodedBody(("value[0]", ""))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+
+        }
+      }
+
+      "user answers exists in NormalMode with XI" in new Setup {
+
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application: Application =
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetailsXI))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(authStartNormalModeRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+            ).build()
+
+        running(application) {
+          val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
+            .withFormUrlEncodedBody(("value[0]", answer.head))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
+
+        }
+      }
+
       "user answers exists in CheckMode" in new Setup {
 
         val mockSessionRepository: SessionRepository = mock[SessionRepository]

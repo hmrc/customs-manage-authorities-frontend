@@ -31,6 +31,46 @@ import java.time.{LocalDate, LocalDateTime}
 class CheckYourAnswersValidationServiceSpec extends SpecBase {
 
   "validate" must {
+
+    "validate complete submission when authorityStart is today and authorityEnd is indefinite" in new Setup {
+      implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
+
+      val currentDate = LocalDate.now()
+
+      val userAnswers = completeUserAnswers
+        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
+        .set(AuthorityStartDatePage, currentDate).success.value
+        .set(AuthorityEndDatePage, currentDate.plusDays(1)).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+      val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
+      val standingAuthority =
+        StandingAuthority(
+          "GB123456789012",
+          LocalDate.now(),
+          None,
+          viewBalance = false)
+
+      service.validate(userAnswers).value mustEqual (accounts, standingAuthority, AuthorisedUser("", ""))
+    }
+
+    "validate should return None when authorityEndDateLage is null and AuthorityEnd is Setdate" in new Setup {
+      implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
+
+      val currentDate = LocalDate.now()
+
+      val userAnswers = completeUserAnswers
+        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
+        .set(AuthorityStartDatePage, currentDate).success.value  
+        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+
+      service.validate(userAnswers) mustBe None
+    }
+
     "validate complete submission from today to set date and show balance no" in new Setup {
       implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
 

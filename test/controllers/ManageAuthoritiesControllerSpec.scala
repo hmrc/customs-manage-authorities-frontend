@@ -49,6 +49,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
   ))
 
+   val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+   val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
   "ManageAuthorities Controller" when {
 
     "API call succeeds" must {
@@ -117,6 +120,42 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
             view(ManageAuthoritiesViewModel(authoritiesWithId, accounts))(request, messages(application), appConfig).toString
         }
       }
+
+
+      "return OK and the correct view when no authority accounts are found" in {
+        val accounts = CDSAccounts("GB123456789012", List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        ))
+
+        val mockRepository = mock[AuthoritiesRepository]
+        val mockAccountsCacheService = mock[AccountsCacheService]
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId02)))
+        when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AuthoritiesRepository].toInstance(mockRepository),
+            bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+          ).configure("features.edit-journey" -> true)
+          .build()
+
+        running(application) {
+
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[ManageAuthoritiesView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual
+            view(ManageAuthoritiesViewModel(authoritiesWithId02, accounts))(request, messages(application), appConfig).toString
+        }
+      }
+
     }
 
     "API call fails" must {

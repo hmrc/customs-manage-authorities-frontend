@@ -35,18 +35,28 @@ import scala.concurrent.Future
 
 class EditSessionServiceSpec extends SpecBase with MockitoSugar {
   "populateUserAnswers" should {
+
+    "update the session with the user's answers for standingAuthority date set to today" in new Setup {
+      val startDate = LocalDate.now()
+      val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+
+      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+
+      running(app) {
+        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+        val userAnswers = result.userAnswers
+        userAnswers.get(EditAuthorityStartDatePage("a", "b")) mustBe None
+        userAnswers.get(EditAuthorityStartPage("a", "b")).get mustBe AuthorityStart.Today
+        userAnswers.get(EditAuthorityEndDatePage("a", "b")) mustBe None
+        userAnswers.get(EditAuthorityEndPage("a", "b")).get mustBe AuthorityEnd.Indefinite
+      }
+    }
+
     "update the session with the user's answers from the api if no answers present in the session" in new Setup {
       val startDate = LocalDate.of(1, 1, 20)
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
       val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
-      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
-        .thenReturn(Future.successful(None))
-
-      implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
-
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
         val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers, standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
@@ -65,10 +75,19 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+
     val app: Application = applicationBuilder().overrides(
       inject.bind[SessionRepository].toInstance(mockSessionRepository),
       inject.bind[DateTimeService].toInstance(mockDateTimeService)
     ).build()
+
+    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+    when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+      .thenReturn(Future.successful(None))
+
+    when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+    when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
 
     val service: EditSessionService = app.injector.instanceOf[EditSessionService]
   }

@@ -37,6 +37,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val cashAccount02: CashAccount = CashAccount("12346", "GB123456789013", AccountStatusOpen, CDSCashBalance(Some(101.00)))
   val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
   val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
     "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
@@ -150,6 +151,25 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           )
         )
       }*/
+
+      "Plural specific title is set when more than one cashAccount is passed" in {
+        val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount,cashAccount02)).success.value
+        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.plural")
+        helper.accountsRows.size mustBe 1
+      }
+
+      "summaryListRowHelper should give correct values for yesOrNo" in {
+        yesOrNo(true) mustEqual("site.yes")
+        yesOrNo(false) mustEqual("site.no")
+      }
+
+      "accountNumberRow should return valid message if xiEori is true" in {
+        val cdsAccount: AccountWithAuthoritiesWithId =AccountWithAuthoritiesWithId(CdsDutyDefermentAccount,
+           "12345", Some(AccountStatusOpen), Map("b" -> StandingAuthority("EORI", LocalDate.now().plusMonths(1), 
+           Some(LocalDate.parse("2020-04-01")), viewBalance = false)))
+        accountNumberRow(cdsAccount,true).get mustBe a[SummaryListRow]
+      }
 
       "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
