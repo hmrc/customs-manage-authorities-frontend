@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 
 import java.time.temporal.ChronoUnit
 import java.time._
+import java.time.format.DateTimeFormatter
 
 class DateTimeServiceSpec() extends SpecBase {
 
@@ -31,7 +32,14 @@ class DateTimeServiceSpec() extends SpecBase {
       result.until(LocalDateTime.now(), ChronoUnit.SECONDS) mustBe <(1L)
     }
 
-    "return local date when fixed-systemdate-for-tests feature is disabled" in  new Setup {
+    "return iso local datetime" in new Setup {
+      val service = new DateTimeService(appConfig)
+      LocalDateTime.parse(
+        service.isoLocalDateTime,
+        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")) mustBe a[LocalDateTime]
+    }
+
+    "return local date when fixed-systemdate-for-tests feature is disabled" in new Setup {
       val service = new DateTimeService(appConfig)
       val result = service.localTime()
       result.until(LocalDateTime.now(ZoneId.of("Europe/London")), ChronoUnit.SECONDS) mustBe <(1L)
@@ -45,7 +53,7 @@ class DateTimeServiceSpec() extends SpecBase {
 
       val service = new DateTimeService(appConfig)
       val result = service.systemTime()
-      result mustBe LocalDateTime.of(LocalDate.of(2027,12,20), LocalTime.of(12,30))
+      result mustBe LocalDateTime.of(LocalDate.of(2027, 12, 20), LocalTime.of(12, 30))
     }
   }
 

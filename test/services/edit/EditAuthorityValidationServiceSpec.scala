@@ -20,7 +20,8 @@ import base.SpecBase
 import models.domain.{
   AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSAccount, CDSCashBalance,
   CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount,
-  GeneralGuaranteeBalance, StandingAuthority
+  GeneralGuaranteeBalance, StandingAuthority, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount,
+  UnknownAccount
 }
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityStart, CompanyDetails, ShowBalance, UnknownAccountType, UserAnswers}
@@ -49,16 +50,20 @@ class EditAuthorityValidationServiceSpec extends SpecBase {
         val service = application.injector.instanceOf[EditAuthorityValidationService]
 
         running(application) {
-          service.validate(
-            userAnswers,
-            "123",
-            "1234567",
-            "GB098765432109",
-            accAuthority) mustBe Right(AddAuthorityRequest(
-            Accounts(Some("12345"), Seq.empty, None),
-            standingAuthority,
-            authUser,
-            true))
+          service.validate(userAnswers, "123", "1234567", "GB098765432109", accAuthority) mustBe
+            Right(AddAuthorityRequest(Accounts(Some("12345"), Seq.empty, None),
+              standingAuthority, authUser, true))
+
+          service.validate(userAnswers, "123", "1234567", "GB098765432109", accAuthority02) mustBe
+            Right(AddAuthorityRequest(Accounts(None, Seq("12345"), None),
+              standingAuthority, authUser, true))
+
+          service.validate(userAnswers, "123", "1234567", "GB098765432109", accAuthority03) mustBe
+            Right(AddAuthorityRequest(Accounts(None, Seq.empty, Some("12345")),
+              standingAuthority, authUser, true))
+
+          service.validate(userAnswers, "123", "1234567", "GB098765432109", accAuthority04) mustBe
+            Left(UnknownAccountType)
         }
       }
     }
@@ -98,6 +103,17 @@ trait SetUp {
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
   val accAuthority = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen),
     Map("b" -> standingAuthority))
+
+  val accAuthority02 = AccountWithAuthoritiesWithId(CdsDutyDefermentAccount, "12345", Some(AccountStatusOpen),
+    Map("b" -> standingAuthority))
+
+  val accAuthority03 = AccountWithAuthoritiesWithId(CdsGeneralGuaranteeAccount, "12345", Some(AccountStatusOpen),
+    Map("b" -> standingAuthority))
+
+  val accAuthority04 = AccountWithAuthoritiesWithId(UnknownAccount, "12345", Some(AccountStatusOpen),
+    Map("b" -> standingAuthority))
+
+
   val authUser = AuthorisedUser("test", "test2")
 
   val userAnswers = UserAnswers("id")
