@@ -80,8 +80,6 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
             "GB123456789012") mustBe None
         }
       }
-
-
     }
 
     "return None" when {

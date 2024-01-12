@@ -113,7 +113,6 @@ trait SetUp {
   val accAuthority04 = AccountWithAuthoritiesWithId(UnknownAccount, "12345", Some(AccountStatusOpen),
     Map("b" -> standingAuthority))
 
-
   val authUser = AuthorisedUser("test", "test2")
 
   val userAnswers = UserAnswers("id")

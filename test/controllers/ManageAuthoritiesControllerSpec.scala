@@ -121,7 +121,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-
       "return OK and the correct view when no authority accounts are found" in {
         val accounts = CDSAccounts("GB123456789012", List(
           CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
@@ -164,10 +163,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 
         val failingConnector = mock[CustomsFinancialsConnector]
-        //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
-
-        //when(failingConnector.retrieveAccountAuthorities("eori")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
-        //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
