@@ -239,12 +239,12 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       result mustEqual Valid
     }
   }
-}
 
-trait Setup {
+  trait Setup {
 
-  val maxVal = 10
-  val minVal = 1
-  val errLengthKey = "error.length"
-  val errRegexKey = "error.regexp"
+    val maxVal = 10
+    val minVal = 1
+    val errLengthKey = "error.length"
+    val errRegexKey = "error.regexp"
+  }
 }
