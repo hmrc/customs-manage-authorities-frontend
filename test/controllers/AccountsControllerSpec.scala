@@ -109,9 +109,14 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(form, AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-              CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-            ), Seq.empty, "GB9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+            view(form,
+              AuthorisedAccounts(
+                Seq.empty,
+                answerAccounts,
+                Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+                Seq.empty, "GB9876543210000"),
+              NormalMode,
+              backLinkRoute)(request, messages(application), appConfig).toString
         }
       }
 
@@ -133,11 +138,17 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val view = application.injector.instanceOf[AccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          contentAsString(result) mustEqual view(form, AuthorisedAccounts(
-            Seq.empty, answerAccounts, Seq(DutyDefermentAccount(
-              "123", "XI9876543210000", AccountStatusOpen, DutyDefermentBalance(
-                Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true)),
-            Seq.empty, "XI9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          contentAsString(result) mustEqual view(form,
+            AuthorisedAccounts(
+              Seq.empty, answerAccounts, Seq(DutyDefermentAccount(
+                "123",
+                "XI9876543210000",
+                AccountStatusOpen,
+                DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)),
+                true)),
+              Seq.empty, "XI9876543210000"),
+            NormalMode,
+            backLinkRoute)(request, messages(application), appConfig).toString
         }
       }
     }

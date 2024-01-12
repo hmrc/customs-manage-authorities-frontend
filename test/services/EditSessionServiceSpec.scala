@@ -41,35 +41,41 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
       val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
-        Some(AccountStatusOpen), Map("b" -> standingAuthority))
+        Some(AccountStatusOpen), Map(authorityId -> standingAuthority))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers,
+
+        val result = await(service.resetUserAnswers(accountId, authorityId, emptyUserAnswers,
           standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+
         val userAnswers = result.userAnswers
-        userAnswers.get(EditAuthorityStartDatePage("a", "b")) mustBe None
-        userAnswers.get(EditAuthorityStartPage("a", "b")).get mustBe AuthorityStart.Today
-        userAnswers.get(EditAuthorityEndDatePage("a", "b")) mustBe None
-        userAnswers.get(EditAuthorityEndPage("a", "b")).get mustBe AuthorityEnd.Indefinite
+
+        userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)) mustBe None
+        userAnswers.get(EditAuthorityStartPage(accountId, authorityId)).get mustBe AuthorityStart.Today
+        userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)) mustBe None
+        userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).get mustBe AuthorityEnd.Indefinite
       }
     }
 
     "update the session with the user's answers from the api if no answers present in the session" in new Setup {
-      val startDate = LocalDate.of(1, 1, 20)
+      val wrongYear = 1
+      val wrongMonth = 1
+      val wrongDayOfMonth = 20
+      val startDate = LocalDate.of(wrongYear, wrongMonth, wrongDayOfMonth)
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
       val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
-        Some(AccountStatusOpen), Map("b" -> standingAuthority))
+        Some(AccountStatusOpen), Map(authorityId -> standingAuthority))
 
       running(app) {
-        val result = await(service.resetUserAnswers("a", "b", emptyUserAnswers,
+        val result = await(service.resetUserAnswers(accountId, authorityId, emptyUserAnswers,
           standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
         val userAnswers = result.userAnswers
 
-        userAnswers.get(EditAuthorityStartDatePage("a", "b")).get mustBe startDate
-        userAnswers.get(EditAuthorityStartPage("a", "b")).get mustBe AuthorityStart.Setdate
-        userAnswers.get(EditAuthorityEndDatePage("a", "b")) mustBe None
-        userAnswers.get(EditAuthorityEndPage("a", "b")).get mustBe AuthorityEnd.Indefinite
+        userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).get mustBe startDate
+        userAnswers.get(EditAuthorityStartPage(accountId, authorityId)).get mustBe AuthorityStart.Setdate
+        userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)) mustBe None
+        userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).get mustBe AuthorityEnd.Indefinite
       }
     }
   }
@@ -78,6 +84,8 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
   trait Setup {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
+    val accountId = "123"
+    val authorityId = "12345"
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -87,6 +95,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
     ).build()
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
     when(mockDataStoreConnector.getCompanyName(anyString())(any()))
       .thenReturn(Future.successful(None))
 

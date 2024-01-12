@@ -38,7 +38,7 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
     "return StandingAuthority" when {
       "EditAuthorityEndPage has Setdate" in new SetUp {
         when(mockDateTimeService.localTime()).thenReturn(
-          LocalDateTime.of(2023, 6, 12, 10, 12))
+          LocalDateTime.of(yearVal, monthVal, dayOfMonthVal, hourVal, minuteVal))
 
         val application: Application = applicationBuilder().overrides(
           inject.bind[DateTimeService].toInstance(mockDateTimeService)
@@ -49,24 +49,24 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
 
         running(application) {
           service.validate(userAnswers,
-            "123", "1234567", "GB123456789012") mustBe Option(StandingAuthority(
-            "GB123456789012",
-            LocalDate.of(2023, 6, 12),
-            Option(LocalDate.of(2023, 6, 12)),
+            accountIdVal, authorityIdVal, eoriVal) mustBe Option(StandingAuthority(
+            eoriVal,
+            LocalDate.of(yearVal, monthVal, dayOfMonthVal),
+            Option(LocalDate.of(yearVal, monthVal, dayOfMonthVal)),
             viewBalance = true))
         }
       }
 
       "EditAuthorityStartPage has Setdate" in new SetUp {
         when(mockDateTimeService.localTime()).thenReturn(
-          LocalDateTime.of(2023, 6, 12, 10, 12))
+          LocalDateTime.of(yearVal, monthVal, dayOfMonthVal, hourVal, minuteVal))
 
         val tempUserAnswers = userAnswers
-          .remove(EditAuthorityStartPage("123", "1234567")).success.value
-          .set(EditAuthorityStartPage("123", "1234567"), AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-          .remove(EditAuthorityEndDatePage("123", "1234567")).success.value
-          .set(EditAuthorityStartDatePage("123", "1234567"),
-            LocalDate.of(2023, 6, 12)).success.value
+          .remove(EditAuthorityStartPage(accountIdVal, authorityIdVal)).success.value
+          .set(EditAuthorityStartPage(accountIdVal, authorityIdVal), AuthorityStart.Setdate)(AuthorityStart.writes).success.value
+          .remove(EditAuthorityEndDatePage(accountIdVal, authorityIdVal)).success.value
+          .set(EditAuthorityStartDatePage(accountIdVal, authorityIdVal),
+            LocalDate.of(yearVal, monthVal, dayOfMonthVal)).success.value
 
         val application: Application = applicationBuilder().overrides(
           inject.bind[DateTimeService].toInstance(mockDateTimeService)
@@ -76,8 +76,8 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
 
         running(application) {
-          service.validate(tempUserAnswers, "123", "1234567",
-            "GB123456789012") mustBe None
+          service.validate(tempUserAnswers, accountIdVal, authorityIdVal,
+            eoriVal) mustBe None
         }
       }
     }
@@ -85,7 +85,7 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
     "return None" when {
       "EditAuthorityEndPage is set to Indefinite and ShowBalance is not set in UserAnswers" in new SetUp {
         when(mockDateTimeService.localTime()).thenReturn(
-          LocalDateTime.of(2023, 6, 12, 10, 12))
+          LocalDateTime.of(yearVal, monthVal, dayOfMonthVal, hourVal, minuteVal))
 
         val application: Application = applicationBuilder().overrides(
           inject.bind[DateTimeService].toInstance(mockDateTimeService)
@@ -96,7 +96,7 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
 
         running(application) {
           service.validate(userAnswersWithAuthorityEndIndefinite,
-            "123", "1234567", "GB123456789012") mustBe empty
+            accountIdVal, authorityIdVal, eoriVal) mustBe empty
         }
       }
     }
@@ -114,21 +114,31 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
 
         running(application) {
           service.validate(userAnswersWithAuthorityEndIndefinite,
-            "123", "1234567", "GB123456789012") mustBe empty
+            accountIdVal, authorityIdVal, eoriVal) mustBe empty
         }
       }
     }
   }
 
   trait SetUp {
+
+    val accountIdVal = "123"
+    val authorityIdVal = "1234567"
+    val eoriVal = "GB123456789012"
+    val yearVal = 2023
+    val monthVal = 6
+    val dayOfMonthVal = 12
+    val hourVal = 10
+    val minuteVal = 12
+
     val mockDateTimeService = mock[DateTimeService]
-    val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val cashAccount = CashAccount("12345", eoriVal, AccountStatusOpen, CDSCashBalance(Some(100.00)))
     val dutyDefermentBalance = DutyDefermentBalance(None, None, None, None)
     val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, dutyDefermentBalance)
     val genGuaranteeBal = GeneralGuaranteeBalance(50.00, 50.00)
     val generalGuarantee = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(genGuaranteeBal))
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
-    val startDate = LocalDate.of(2023, 6, 12)
+    val startDate = LocalDate.of(yearVal, monthVal, dayOfMonthVal)
     val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
     val accAuthority = AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen),
@@ -137,19 +147,19 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
 
     val userAnswers: UserAnswers = UserAnswers("id")
       .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-      .set(EditAuthorityStartPage("123", "1234567"), AuthorityStart.Today)(AuthorityStart.writes).success.value
-      .set(EditAuthorityEndPage("123", "1234567"), AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-      .set(EditAuthorityEndDatePage("123", "1234567"), LocalDate.of(2023, 6, 12)).success.value
-      .set(EditShowBalancePage("123", "1234567"), ShowBalance.Yes)(ShowBalance.writes).success.value
-      .set(EditAuthorisedUserPage("123", "1234567"), authUser).success.value
+      .set(EoriNumberPage, CompanyDetails(eoriVal, Some("companyName"))).success.value
+      .set(EditAuthorityStartPage(accountIdVal, authorityIdVal), AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(EditAuthorityEndPage(accountIdVal, authorityIdVal), AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
+      .set(EditAuthorityEndDatePage(accountIdVal, authorityIdVal), LocalDate.of(yearVal, monthVal, dayOfMonthVal)).success.value
+      .set(EditShowBalancePage(accountIdVal, authorityIdVal), ShowBalance.Yes)(ShowBalance.writes).success.value
+      .set(EditAuthorisedUserPage(accountIdVal, authorityIdVal), authUser).success.value
 
     val userAnswersWithAuthorityEndIndefinite: UserAnswers = UserAnswers("id")
       .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-      .set(EditAuthorityStartPage("123", "1234567"), AuthorityStart.Today)(AuthorityStart.writes).success.value
-      .set(EditAuthorityEndPage("123", "1234567"), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-      .set(EditAuthorityEndDatePage("123", "1234567"), LocalDate.of(2023, 6, 12)).success.value
-      .set(EditAuthorisedUserPage("123", "1234567"), authUser).success.value
+      .set(EoriNumberPage, CompanyDetails(eoriVal, Some("companyName"))).success.value
+      .set(EditAuthorityStartPage(accountIdVal, authorityIdVal), AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(EditAuthorityEndPage(accountIdVal, authorityIdVal), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
+      .set(EditAuthorityEndDatePage(accountIdVal, authorityIdVal), LocalDate.of(yearVal, monthVal, dayOfMonthVal)).success.value
+      .set(EditAuthorisedUserPage(accountIdVal, authorityIdVal), authUser).success.value
   }
 }

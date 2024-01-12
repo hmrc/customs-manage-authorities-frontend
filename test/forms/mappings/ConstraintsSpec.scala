@@ -29,58 +29,58 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
   "firstError" must {
 
-    "return Valid when all constraints pass" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("foo")
+    "return Valid when all constraints pass" in new Setup {
+      val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("foo")
       result mustEqual Valid
     }
 
-    "return Invalid when the first constraint fails" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("a" * 11)
-      result mustEqual Invalid("error.length", 10)
+    "return Invalid when the first constraint fails" in new Setup {
+      val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("a" * 11)
+      result mustEqual Invalid(errLengthKey, maxVal)
     }
 
-    "return Invalid when the second constraint fails" in {
-      val result = firstError(maxLength(10, "error.length"), regexp("""^\w+$""", "error.regexp"))("")
-      result mustEqual Invalid("error.regexp", """^\w+$""")
+    "return Invalid when the second constraint fails" in new Setup {
+      val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("")
+      result mustEqual Invalid(errRegexKey, """^\w+$""")
     }
 
-    "return Invalid for the first error when both constraints fail" in {
-      val result = firstError(maxLength(-1, "error.length"), regexp("""^\w+$""", "error.regexp"))("")
-      result mustEqual Invalid("error.length", -1)
+    "return Invalid for the first error when both constraints fail" in new Setup {
+      val result = firstError(maxLength(-1, errLengthKey), regexp("""^\w+$""", errRegexKey))("")
+      result mustEqual Invalid(errLengthKey, -1)
     }
   }
 
   "minimumValue" must {
 
-    "return Valid for a number greater than the threshold" in {
-      val result = minimumValue(1, "error.min").apply(2)
+    "return Valid for a number greater than the threshold" in new Setup {
+      val result = minimumValue(minVal, "error.min").apply(2)
       result mustEqual Valid
     }
 
-    "return Valid for a number equal to the threshold" in {
-      val result = minimumValue(1, "error.min").apply(1)
+    "return Valid for a number equal to the threshold" in new Setup {
+      val result = minimumValue(minVal, "error.min").apply(1)
       result mustEqual Valid
     }
 
-    "return Invalid for a number below the threshold" in {
-      val result = minimumValue(1, "error.min").apply(0)
+    "return Invalid for a number below the threshold" in new Setup {
+      val result = minimumValue(minVal, "error.min").apply(0)
       result mustEqual Invalid("error.min", 1)
     }
   }
 
   "maximumValue" must {
 
-    "return Valid for a number less than the threshold" in {
+    "return Valid for a number less than the threshold" in new Setup {
       val result = maximumValue(1, "error.max").apply(0)
       result mustEqual Valid
     }
 
-    "return Valid for a number equal to the threshold" in {
+    "return Valid for a number equal to the threshold" in new Setup {
       val result = maximumValue(1, "error.max").apply(1)
       result mustEqual Valid
     }
 
-    "return Invalid for a number above the threshold" in {
+    "return Invalid for a number above the threshold" in new Setup {
       val result = maximumValue(1, "error.max").apply(2)
       result mustEqual Invalid("error.max", 1)
     }
@@ -89,14 +89,14 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
   "InRange" must {
 
-    "return Valid for a number within range" in {
-      val result = inRange(1, 10, "error.invalid").apply(2)
+    "return Valid for a number within range" in new Setup {
+      val result = inRange(minVal, maxVal, "error.invalid").apply(2)
       result mustEqual Valid
     }
 
-    "return InValid for a number outside range" in {
-      val result = inRange(1, 10, "error.invalid").apply(12)
-      result mustEqual Invalid("error.invalid", 1, 10)
+    "return InValid for a number outside range" in new Setup {
+      val result = inRange(minVal, maxVal, "error.invalid").apply(12)
+      result mustEqual Invalid("error.invalid", 1, maxVal)
     }
 
   }
@@ -116,30 +116,30 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
   "maxLength" must {
 
-    "return Valid for a string shorter than the allowed length" in {
-      val result = maxLength(10, "error.length")("a" * 9)
+    "return Valid for a string shorter than the allowed length" in new Setup {
+      val result = maxLength(maxVal, errLengthKey)("a" * 9)
       result mustEqual Valid
     }
 
-    "return Valid for an empty string" in {
-      val result = maxLength(10, "error.length")("")
+    "return Valid for an empty string" in new Setup {
+      val result = maxLength(maxVal, errLengthKey)("")
       result mustEqual Valid
     }
 
-    "return Valid for a string equal to the allowed length" in {
-      val result = maxLength(10, "error.length")("a" * 10)
+    "return Valid for a string equal to the allowed length" in new Setup {
+      val result = maxLength(maxVal, errLengthKey)("a" * 10)
       result mustEqual Valid
     }
 
-    "return Invalid for a string longer than the allowed length" in {
-      val result = maxLength(10, "error.length")("a" * 11)
-      result mustEqual Invalid("error.length", 10)
+    "return Invalid for a string longer than the allowed length" in new Setup {
+      val result = maxLength(maxVal, errLengthKey)("a" * 11)
+      result mustEqual Invalid(errLengthKey, maxVal)
     }
   }
 
   "maxDate" must {
 
-    "return Valid for a date before or equal to the maximum" in {
+    "return Valid for a date before or equal to the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
         max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
@@ -154,7 +154,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       }
     }
 
-    "return Invalid for a date after the maximum" in {
+    "return Invalid for a date after the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
         max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
@@ -172,7 +172,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
   "minDate" must {
 
-    "return Valid for a date after or equal to the minimum" in {
+    "return Valid for a date after or equal to the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
         min <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
@@ -187,7 +187,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       }
     }
 
-    "return Invalid for a date before the minimum" in {
+    "return Invalid for a date before the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
         min <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
@@ -202,7 +202,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       }
     }
 
-    "return Invalid for a date below the minimum length" in {
+    "return Invalid for a date below the minimum length" in new Setup {
 
       val date = LocalDate.of(200, 1, 2)
       val min = LocalDate.of(200, 1, 1)
@@ -211,7 +211,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
 
-    "return Invalid for a date above the max length" in {
+    "return Invalid for a date above the max length" in new Setup {
 
       val date = LocalDate.of(20000, 1, 2)
       val max = LocalDate.of(20000, 1, 1)
@@ -239,4 +239,12 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
       result mustEqual Valid
     }
   }
+}
+
+trait Setup {
+
+  val maxVal = 10
+  val minVal = 1
+  val errLengthKey = "error.length"
+  val errRegexKey = "error.regexp"
 }

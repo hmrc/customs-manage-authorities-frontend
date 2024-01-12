@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
 import play.api.libs.json.{JsString, Writes}
 import services.add.CheckYourAnswersValidationService
+import utils.StringUtils.emptyString
 
 import java.time.{LocalDate, LocalDateTime}
 
@@ -43,7 +44,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
         .set(AuthorityStartDatePage, currentDate).success.value
         .set(AuthorityEndDatePage, currentDate.plusDays(1)).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
       val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority =
@@ -66,7 +67,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
         .set(AuthorityStartDatePage, currentDate).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
       service.validate(userAnswers) mustBe None
     }

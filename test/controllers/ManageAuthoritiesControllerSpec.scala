@@ -49,9 +49,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
   ))
 
-  val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
-  val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
-
   "ManageAuthorities Controller" when {
 
     "API call succeeds" must {
@@ -129,7 +126,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         val mockRepository = mock[AuthoritiesRepository]
         val mockAccountsCacheService = mock[AccountsCacheService]
-        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId02)))
+        val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+        val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -149,7 +149,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId02, accounts))(request, messages(application), appConfig).toString
+            view(ManageAuthoritiesViewModel(emptyAuthoritiesWithId, accounts))(
+              request, messages(application), appConfig).toString
         }
       }
 

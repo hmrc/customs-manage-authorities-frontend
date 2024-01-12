@@ -190,6 +190,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
     }
 
     "return None when feature flag is false" in {
+
       val mockAppConfig = mock[FrontendAppConfig]
       when(mockAppConfig.xiEoriEnabled).thenReturn(false)
       when(mockAppConfig.customsDataStore).thenReturn("some/string")
@@ -207,16 +208,16 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      def application: Application =
+      val application: Application =
         new GuiceApplicationBuilder()
           .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
           .configure("microservice.services.customs-data-store.port" -> server.port)
           .build()
 
-      val app = application
-      val connector = app.injector.instanceOf[CustomsDataStoreConnector]
+      val connector = application.injector.instanceOf[CustomsDataStoreConnector]
 
-      running(app) {
+      running(application) {
+
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))

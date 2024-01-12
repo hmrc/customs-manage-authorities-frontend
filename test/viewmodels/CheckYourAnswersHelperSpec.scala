@@ -37,7 +37,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val cashAccount02: CashAccount = CashAccount("12346", "GB123456789013", AccountStatusOpen, CDSCashBalance(Some(101.00)))
   val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen,
     DutyDefermentBalance(None, None, None, None))
   val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
@@ -69,8 +68,11 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     "produce correct rows" when {
 
       "Plural specific title is set when more than one cashAccount is passed" in {
+        val cashAccount02: CashAccount = CashAccount("12346", "GB123456789013",
+          AccountStatusOpen, CDSCashBalance(Some(101.00)))
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount, cashAccount02)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
         helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.plural")
         helper.accountsRows.size mustBe 1
       }
@@ -81,9 +83,14 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
       }
 
       "accountNumberRow should return valid message if xiEori is true" in {
-        val cdsAccount: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsDutyDefermentAccount,
-          "12345", Some(AccountStatusOpen), Map("b" -> StandingAuthority("EORI", LocalDate.now().plusMonths(1),
-            Some(LocalDate.parse("2020-04-01")), viewBalance = false)))
+        val cdsAccount: AccountWithAuthoritiesWithId =
+          AccountWithAuthoritiesWithId(
+            CdsDutyDefermentAccount,
+            "12345",
+            Some(AccountStatusOpen),
+            Map("b" -> StandingAuthority("EORI", LocalDate.now().plusMonths(1),
+              Some(LocalDate.parse("2020-04-01")), viewBalance = false)))
+
         accountNumberRow(cdsAccount, true).get mustBe a[SummaryListRow]
       }
 
