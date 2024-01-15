@@ -95,7 +95,7 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     }
 
     "return InValid for a number outside range" in new Setup {
-      val result = inRange(minVal, maxVal, "error.invalid").apply(12)
+      val result = inRange(minVal, maxVal, "error.invalid").apply(tdVal12)
       result mustEqual Invalid("error.invalid", 1, maxVal)
     }
 
@@ -246,5 +246,6 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     val minVal = 1
     val errLengthKey = "error.length"
     val errRegexKey = "error.regexp"
+    val tdVal12 = 12;
   }
 }

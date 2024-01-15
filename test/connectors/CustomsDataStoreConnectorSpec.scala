@@ -222,6 +222,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
         )
+        
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe None
       }
