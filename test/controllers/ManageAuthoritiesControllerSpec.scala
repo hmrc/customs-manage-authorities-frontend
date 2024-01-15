@@ -117,6 +117,43 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
             view(ManageAuthoritiesViewModel(authoritiesWithId, accounts))(request, messages(application), appConfig).toString
         }
       }
+
+      "return OK and the correct view when no authority accounts are found" in {
+        val accounts = CDSAccounts("GB123456789012", List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        ))
+
+        val mockRepository = mock[AuthoritiesRepository]
+        val mockAccountsCacheService = mock[AccountsCacheService]
+        val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+        val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+        when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AuthoritiesRepository].toInstance(mockRepository),
+            bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+          ).configure("features.edit-journey" -> true)
+          .build()
+
+        running(application) {
+
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          val result = route(application, request).value
+          val view = application.injector.instanceOf[ManageAuthoritiesView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual
+            view(ManageAuthoritiesViewModel(emptyAuthoritiesWithId, accounts))(
+              request, messages(application), appConfig).toString
+        }
+      }
+
     }
 
     "API call fails" must {
@@ -127,10 +164,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 
         val failingConnector = mock[CustomsFinancialsConnector]
-        //when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
-
-        //when(failingConnector.retrieveAccountAuthorities("eori")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
-       // when(failingConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.failed(UpstreamErrorResponse("upstream 502", 502)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(

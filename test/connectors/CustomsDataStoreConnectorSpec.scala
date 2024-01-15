@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, MustMatchers, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
+import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.auth.core.retrieve.Email
@@ -189,13 +189,42 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       }
     }
 
-    "return None when feature flag is false" in new Setup {
+    "return None when feature flag is false" in {
+
       val mockAppConfig = mock[FrontendAppConfig]
       when(mockAppConfig.xiEoriEnabled).thenReturn(false)
+      when(mockAppConfig.customsDataStore).thenReturn("some/string")
 
-      running(app) {
+      val response =
+        """
+          |{
+          |   "xiEori":"",
+          |   "consent":"1",
+          |   "address":{
+          |      "pbeAddressLine1":"86 street",
+          |      "pbeAddressLine2":"London",
+          |      "pbeAddressLine3":"GB"
+          |   }
+          |}
+          |""".stripMargin
+
+      val application: Application =
+        new GuiceApplicationBuilder()
+          .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
+          .configure("microservice.services.customs-data-store.port" -> server.port)
+          .build()
+
+      val connector = application.injector.instanceOf[CustomsDataStoreConnector]
+
+      running(application) {
+
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
+            .willReturn(ok(response))
+        )
+        
         val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe expected
+        result mustBe None
       }
     }
   }

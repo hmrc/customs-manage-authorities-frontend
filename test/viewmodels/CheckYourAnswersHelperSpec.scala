@@ -37,7 +37,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen,
+    DutyDefermentBalance(None, None, None, None))
   val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
     "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
 
@@ -66,90 +67,32 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
   "CheckYourAnswersHelper" must {
     "produce correct rows" when {
 
-      /*"a single account is selected (today to indefinite)" in {
-        val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+      "Plural specific title is set when more than one cashAccount is passed" in {
+        val cashAccount02: CashAccount = CashAccount("12346", "GB123456789013",
+          AccountStatusOpen, CDSCashBalance(Some(101.00)))
+        val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount, cashAccount02)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.accountsRows mustBe Seq(   summaryListRow(
-          "accounts.checkYourAnswersLabel.singular",
-          "accounts.type.cash: 12345",
-          None,
-          Actions(items = Seq(ActionItem(
-            href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-            content = span("site.change"),
-            visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
-          )))
-        ),
-          summaryListRow(
-            "eoriNumber.checkYourAnswersLabel",
-            "GB123456789012",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            s"authorityStart.checkYourAnswersLabel.today ${dateAsDayMonthAndYear(LocalDate.now())}",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.yes",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
-          )
-        )
-        helper.companyDetailsRows mustBe Seq(
-          summaryListRow(
-            "checkYourAnswers.eoriNumber.label",
-            "GB123456789012",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "checkYourAnswers.companyName.label",
-            "companyName",
-            None,
-            actions = Actions(items = Seq()
-          )))
-        helper.authorityDurationRows mustBe Seq(
-          summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            s"authorityStart.checkYourAnswersLabel.today ${dateAsDayMonthAndYear(LocalDate.now())}",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.yes",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
-          )
-        )
-      }*/
+
+        helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.plural")
+        helper.accountsRows.size mustBe 1
+      }
+
+      "summaryListRowHelper should give correct values for yesOrNo" in {
+        yesOrNo(true) mustEqual ("site.yes")
+        yesOrNo(false) mustEqual ("site.no")
+      }
+
+      "accountNumberRow should return valid message if xiEori is true" in {
+        val cdsAccount: AccountWithAuthoritiesWithId =
+          AccountWithAuthoritiesWithId(
+            CdsDutyDefermentAccount,
+            "12345",
+            Some(AccountStatusOpen),
+            Map("b" -> StandingAuthority("EORI", LocalDate.now().plusMonths(1),
+              Some(LocalDate.parse("2020-04-01")), viewBalance = false)))
+
+        accountNumberRow(cdsAccount, true).get mustBe a[SummaryListRow]
+      }
 
       "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
@@ -181,7 +124,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "view-authority-h2.6",
             None,
             actions = Actions(items = Seq()))
-          )
+        )
         helper.authorityDurationRows mustBe Seq(
           summaryListRow(
             "authorityStart.checkYourAnswersLabel",
@@ -205,181 +148,6 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           )
         )
       }
-
-     /* "a single account is selected (set date to set date)" in {
-        implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
-
-        val userAnswers = userAnswersTodayToIndefinite
-          .set(AccountsPage, List(cashAccount)).success.value
-          .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-          .set(AuthorityStartDatePage, LocalDate.now().plusDays(1)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.accountsRows mustBe Seq(
-          summaryListRow(
-            "accounts.checkYourAnswersLabel.singular",
-            "accounts.type.cash: 12345",
-            None,
-            Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-              content = span("site.change"),
-              visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
-            )))
-          ))
-        helper.companyDetailsRows mustBe Seq(
-          summaryListRow(
-            "checkYourAnswers.eoriNumber.label",
-            "GB123456789012",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "checkYourAnswers.companyName.label",
-            "companyName",
-            None,
-            actions = Actions(items = Seq())
-          ))
-
-        helper.authorityDurationRows mustBe Seq(
-          summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            dateAsDayMonthAndYear(LocalDate.now().plusDays(1)),
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.yes",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
-          )
-        )
-      }*/
-
-      /*"multiple accounts are selected (today to indefinite)" in {
-        val userAnswers = userAnswersTodayToIndefinite.set(ShowBalancePage, ShowBalance.No).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.accountsRows mustBe Seq(
-          summaryListRow(
-            "accounts.checkYourAnswersLabel.plural",
-            "accounts.type.cash: 12345<br>accounts.type.dutyDeferment: 67890<br>accounts.type.generalGuarantee: 54321",
-            None,
-            Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-              content = span("site.change"),
-              visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
-            )))
-          ))
-        helper.companyDetailsRows mustBe Seq(
-          summaryListRow(
-            "checkYourAnswers.eoriNumber.label",
-            "GB123456789012",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "checkYourAnswers.companyName.label",
-            "companyName",
-            None,
-            actions = Actions(items = Seq())
-          ))
-        helper.authorityDurationRows mustBe Seq(
-          summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            s"authorityStart.checkYourAnswersLabel.today ${dateAsDayMonthAndYear(LocalDate.now())}",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.no",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
-          )
-        )
-      }
-
-      "multiple accounts are selected (set date to set date)" in {
-        implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
-
-        val userAnswers = userAnswersTodayToIndefinite
-          .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
-          .set(AuthorityStartDatePage, LocalDate.now().plusDays(1)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.accountsRows mustBe Seq(
-          summaryListRow(
-            "accounts.checkYourAnswersLabel.plural",
-            "accounts.type.cash: 12345<br>accounts.type.dutyDeferment: 67890<br>accounts.type.generalGuarantee: 54321",
-            None,
-            Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-              content = span("site.change"),
-              visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
-            )))
-          ))
-        helper.companyDetailsRows mustBe Seq(
-          summaryListRow(
-            "checkYourAnswers.eoriNumber.label",
-            "GB123456789012",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "checkYourAnswers.companyName.label",
-            "companyName",
-            None,
-            actions = Actions(items = Seq())
-          ))
-        helper.authorityDurationRows mustBe Seq(
-          summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            dateAsDayMonthAndYear(LocalDate.now().plusDays(1)),
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
-          ),
-          summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.yes",
-            None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
-          )
-        )
-      }*/
     }
 
     "produce correct authorisation declaration message" when {
@@ -423,7 +191,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         helper.accountsRows.head.value mustBe
           Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
 
-     }
+      }
     }
 
     "produce correct text for EORI" when {
