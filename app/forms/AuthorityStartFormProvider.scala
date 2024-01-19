@@ -26,6 +26,6 @@ class AuthorityStartFormProvider @Inject() extends Mappings {
 
   def apply(): Form[AuthorityStart] =
     Form(
-      "value" -> enumerable[AuthorityStart]("authorityStart.error.required")
+      "value" -> enumerable[AuthorityStart](requiredKey = "authorityStart.error.required")
     )
 }

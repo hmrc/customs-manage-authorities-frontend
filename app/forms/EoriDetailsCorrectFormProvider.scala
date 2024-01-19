@@ -25,6 +25,6 @@ class EoriDetailsCorrectFormProvider @Inject() extends Mappings {
 
   def apply(): Form[EoriDetailsCorrect] =
     Form(
-      "value" -> enumerable[EoriDetailsCorrect]("eoriDetails.error.required")
+      "value" -> enumerable[EoriDetailsCorrect](requiredKey = "eoriDetails.error.required")
     )
 }

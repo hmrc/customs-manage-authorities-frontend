@@ -35,7 +35,8 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  dateTimeService: DateTimeService,
                                  val standingAuthority: StandingAuthority,
                                  account: AccountWithAuthoritiesWithId,
-                                 companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
+                                 companyName: Option[String])(implicit val messages: Messages)
+  extends SummaryListRowHelper with DateUtils {
 
   def yourAccountRow: Seq[SummaryListRow] = {
     val accountNumberRowFromHelper = Seq(
@@ -126,8 +127,13 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
 
   private def authorityStartRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityStartPage(accountId, authorityId)).flatMap {
-      case AuthorityStart.Today => Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
-      case AuthorityStart.Setdate => userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+      case AuthorityStart.Today =>
+        Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${
+          dateAsDayMonthAndYear(
+            dateTimeService.localTime().toLocalDate)
+        }")
+      case AuthorityStart.Setdate =>
+        userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
     }.map { date =>
       summaryListRow(
         messages("authorityStart.checkYourAnswersLabel"),
@@ -150,7 +156,8 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   private def authorityEndRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).flatMap {
       case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
-      case AuthorityEnd.Setdate => userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+      case AuthorityEnd.Setdate =>
+        userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
     }.map(value =>
       summaryListRow(
         messages("authorityEnd.checkYourAnswersLabel"),
@@ -180,13 +187,6 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     )
   }
 
-  /**
-   * Updates the Value attribute of SummaryListRow to add Northern Ireland label
-   * if the EORI is XI and account is of type Duty Deferment
-   *
-   * @param accountNumberRowFromHelper Seq[SummaryListRow]
-   * @return Updated Seq[SummaryListRow]
-   */
   private def amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper: Seq[SummaryListRow],
                                                               accNumber: String): Seq[SummaryListRow] =
     accountNumberRowFromHelper.map {

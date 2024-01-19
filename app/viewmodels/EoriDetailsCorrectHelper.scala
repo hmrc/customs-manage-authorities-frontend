@@ -23,16 +23,16 @@ import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 
-case class EoriDetailsCorrectHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)
+case class EoriDetailsCorrectHelper(userAnswers: UserAnswers,
+                                    dateTimeService: DateTimeService)
                                    (implicit val messages: Messages) extends SummaryListRowHelper {
 
   val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
 
   val companyNameWithConsent: String = companyName match {
-    case Some(value)=> messages("authorisedUser.declaration.singular")
+    case Some(_) => messages("authorisedUser.declaration.singular")
     case _ => messages("authorisedUser.declaration.plural")
   }
-
 
   def companyDetailsRows: Seq[SummaryListRow] = {
     if (companyName.isEmpty) {
@@ -41,11 +41,11 @@ case class EoriDetailsCorrectHelper(userAnswers: UserAnswers, dateTimeService: D
       ).flatten
     }
     else {
-        Seq(
-          eoriNumberRow(userAnswers.get(EoriNumberPage)),
-          companyNameRow(userAnswers.get(EoriNumberPage))
+      Seq(
+        eoriNumberRow(userAnswers.get(EoriNumberPage)),
+        companyNameRow(userAnswers.get(EoriNumberPage))
 
-        ).flatten
+      ).flatten
     }
   }
 

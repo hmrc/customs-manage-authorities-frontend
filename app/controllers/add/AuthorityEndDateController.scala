@@ -33,17 +33,19 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorityEndDateController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: AuthorityEndDateFormProvider,
-                                        dateTimeService: DateTimeService,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: AuthorityEndDateView
-                                      )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                            override val messagesApi: MessagesApi,
+                                            sessionRepository: SessionRepository,
+                                            navigator: Navigator,
+                                            identify: IdentifierAction,
+                                            getData: DataRetrievalAction,
+                                            requireData: DataRequiredAction,
+                                            formProvider: AuthorityEndDateFormProvider,
+                                            dateTimeService: DateTimeService,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: AuthorityEndDateView
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -56,7 +58,12 @@ class AuthorityEndDateController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.AuthorityEndController.onPageLoad(mode))))
+      Ok(
+        view(
+          preparedForm,
+          mode,
+          navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode)))
+      )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -67,11 +74,17 @@ class AuthorityEndDateController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode,navigator.backLinkRoute(mode,controllers.add.routes.AuthorityEndController.onPageLoad(mode))))),
+          Future.successful(
+            BadRequest(view(
+              formWithErrors,
+              mode,
+              navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode)))
+            )
+          ),
         date =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityEndDatePage, date))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(AuthorityEndDatePage, mode, updatedAnswers))
       )
   }

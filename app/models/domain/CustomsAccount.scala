@@ -62,11 +62,15 @@ case class DutyDefermentBalance(periodGuaranteeLimit: Option[BigDecimal],
   val (usedFunds, usedPercentage) = (periodAccountLimit, periodAvailableAccountBalance) match {
     case (Some(limit), Some(balance)) if limit <= BigDecimal(0) =>
       val fundsUsed = limit - balance
-      (fundsUsed, BigDecimal(100))
+
+      (fundsUsed, BigDecimal(maxUsedPercentage))
+
     case (Some(limit), Some(balance)) =>
       val fundsUsed = limit - balance
-      val percentage = fundsUsed / limit * BigDecimal(100)
+      val percentage = fundsUsed / limit * BigDecimal(maxUsedPercentage)
+
       (fundsUsed, percentage)
+
     case _ => (BigDecimal(0), BigDecimal(0))
   }
 
@@ -77,7 +81,8 @@ case class GeneralGuaranteeBalance(GuaranteeLimit: BigDecimal,
                                    AvailableGuaranteeBalance: BigDecimal) extends Balances {
 
   val usedFunds: BigDecimal = GuaranteeLimit - AvailableGuaranteeBalance
-  val usedPercentage: BigDecimal = if (GuaranteeLimit.compare(zero) == 0) zero else usedFunds / GuaranteeLimit * 100
+  val usedPercentage: BigDecimal =
+    if (GuaranteeLimit.compare(zero) == 0) zero else usedFunds / GuaranteeLimit * maxUsedPercentage
 
 }
 

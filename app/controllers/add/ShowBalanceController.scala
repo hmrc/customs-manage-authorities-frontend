@@ -43,7 +43,10 @@ class ShowBalanceController @Inject()(
                                        formProvider: ShowBalanceFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ShowBalanceView
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   private val form = formProvider()
 
@@ -56,9 +59,17 @@ class ShowBalanceController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
+
       accountsLength match {
-        case Right(noOfAccounts) => Ok(view(preparedForm, noOfAccounts, mode,navigator.backLinkRouteForShowBalancePage(mode,request.userAnswers)))
-        case Left(emptyError) => errorPage(emptyError.msg)//logger.error(emptyError.msg); Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+        case Right(noOfAccounts) =>
+          Ok(view(
+            preparedForm,
+            noOfAccounts,
+            mode,
+            navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers))
+          )
+
+        case Left(emptyError) => errorPage(emptyError.msg)
       }
   }
 
@@ -68,15 +79,21 @@ class ShowBalanceController @Inject()(
         formWithErrors => {
           getAccountsLength(request.userAnswers.get(AccountsPage)) match {
             case Right(noOfAccounts) => Future.successful(
-              BadRequest(view(formWithErrors, noOfAccounts, mode,navigator.backLinkRouteForShowBalancePage(mode,request.userAnswers)))
+              BadRequest(
+                view(
+                  formWithErrors,
+                  noOfAccounts,
+                  mode, navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers))
+              )
             )
-            case Left(emptyError) =>  Future.successful(errorPage(emptyError.msg))
+
+            case Left(emptyError) => Future.successful(errorPage(emptyError.msg))
           }
         },
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(ShowBalancePage, value)(ShowBalance.writes))
-            _              <- sessionRepository.set(updatedAnswers)
+            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(ShowBalancePage, mode, updatedAnswers))
       )
   }
@@ -88,7 +105,7 @@ class ShowBalanceController @Inject()(
     }
   }
 
-  private def errorPage(msg:String) = {
+  private def errorPage(msg: String): Result = {
     logger.error(msg)
     Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }

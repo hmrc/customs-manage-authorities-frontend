@@ -28,10 +28,10 @@ class AuthorityDetailsFormProvider @Inject() extends Mappings {
     Form(
       mapping(
       "fullName" -> text("remove.error.fullName.required")
-        .verifying(maxLength(255, "remove.error.fullName.length"))
+        .verifying(maxLength(fullNameMaxLength, "remove.error.fullName.length"))
         .verifying(regexp(textFieldRegex, "remove.error.fullName.malicious")),
       "jobRole" -> text("remove.error.jobRole.required")
-        .verifying(maxLength(255, "remove.error.jobRole.length"))
+        .verifying(maxLength(jobRoleMaxLength, "remove.error.jobRole.length"))
         .verifying(regexp(textFieldRegex, "remove.error.jobRole.malicious"))
       )(AuthorisedUser.apply)(AuthorisedUser.unapply)
     )

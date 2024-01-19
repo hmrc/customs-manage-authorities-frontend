@@ -29,10 +29,12 @@ import javax.inject.{Inject, Singleton}
 class ErrorHandler @Inject()(
                               val messagesApi: MessagesApi,
                               view: ErrorTemplate,
-                              notFound: NotFound,
-                            )(implicit appConfig: FrontendAppConfig) extends FrontendErrorHandler with I18nSupport {
+                              notFound: NotFound)(implicit appConfig: FrontendAppConfig)
+  extends FrontendErrorHandler with I18nSupport {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: Request[_]): Html =
+  override def standardErrorTemplate(pageTitle: String,
+                                     heading: String,
+                                     message: String)(implicit rh: Request[_]): Html =
     view(pageTitle, heading, message)
 
   override def notFoundTemplate(implicit request: Request[_]): Html =

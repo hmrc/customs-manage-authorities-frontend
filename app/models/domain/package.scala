@@ -26,6 +26,7 @@ package object domain {
   type CAN = String
 
   val lengthToReveal = 4
+  val maxUsedPercentage = 100
 
   implicit def optionBindable: PathBindable[Option[LinkId]] = new PathBindable[Option[LinkId]] {
     def bind(key: String, value: String): Either[String, Option[LinkId]] =

@@ -25,7 +25,7 @@ import play.api.libs.json.{Json, OFormat, Reads, Writes}
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{LocalDateTime}
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

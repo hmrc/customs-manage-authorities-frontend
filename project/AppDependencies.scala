@@ -1,4 +1,4 @@
-import sbt._
+import sbt.*
 import play.core.PlayVersion
 
 object AppDependencies {

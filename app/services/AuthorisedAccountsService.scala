@@ -26,8 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorisedAccountsService @Inject()(
                                     authoritiesCache: AuthoritiesCacheService,
-                                    accountsService: AccountsCacheService,
-                                  )(implicit executionContext: ExecutionContext) {
+                                    accountsService: AccountsCacheService)(implicit executionContext: ExecutionContext) {
 
   def getAuthorisedAccounts(enteredEori: EORI)(implicit request: DataRequest[_], hc: HeaderCarrier): Future[AuthorisedAccounts] = for {
     authorities <- authoritiesCache.retrieveAuthorities(request.internalId)

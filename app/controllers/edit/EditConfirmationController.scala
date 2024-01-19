@@ -48,13 +48,18 @@ class EditConfirmationController @Inject()(
                                             implicit val controllerComponents: MessagesControllerComponents,
                                             view: EditConfirmationView,
                                             dataStore: CustomsDataStoreConnector
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with DateUtils {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with DateUtils {
 
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData).async {
+
     implicit request =>
+
       val startDate: Option[String] =
           request.userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
 
@@ -67,7 +72,8 @@ class EditConfirmationController @Inject()(
         _                       <- liftF(sessionRepository.clear(request.userAnswers.id))
         _                       <- liftF(accountsRepository.clear(request.internalId.value))
         _                       <- liftF(authoritiesRepository.clear(request.internalId.value))
-        _                       <- liftF(confirmationService.populateConfirmation(request.internalId.value, eori, startDate))
+        _                       <- liftF(confirmationService.populateConfirmation(request.internalId.value,
+                                                                                  eori, startDate))
       } yield Ok(view(eori, startDate, companyName))
 
       maybeResult.value.flatMap {
