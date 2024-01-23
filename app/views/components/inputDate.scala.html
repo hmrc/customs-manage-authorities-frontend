@@ -22,9 +22,11 @@
   legendClasses: String = "govuk-fieldset__legend--xl govuk-!-margin-bottom-7",
   id: String = "value",
   hintText: Option[String] = None,
-  legendAsPageHeading: Boolean = true)(implicit messages: Messages)
+  legendAsPageHeading: Boolean = true
+)(
+  implicit messages: Messages
+)
 
-  
 @dayError = @{
     if(form(s"$id.day").value.contains("")){ "govuk-input--error"} else {""}
 }

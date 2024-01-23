@@ -27,9 +27,18 @@
         summaryList: components.summaryList
 )
 
-@(helper: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        helper: CheckYourAnswersEditHelper,
+        accountId: String,
+        authorityId: String
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
-@layout(Some(titleNoForm("view-authority-heading", None, Seq())), backLink = Some(routes.ManageAuthoritiesController.onPageLoad.url)) {
+@layout(Some(titleNoForm("view-authority-heading", None, Seq())),
+        backLink = Some(routes.ManageAuthoritiesController.onPageLoad.url)) {
 
     @h1(id = Some("view-authority-id"), msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 
@@ -44,7 +53,6 @@
 
     @h2(id = Some("view-authority-h2.4"), msg = "view-authority-h2.4")
     @p(Html(messages("view-authority-p")))
-    @link(location = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url, linkMessage = "view-authority-link")
+    @link(location = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+            linkMessage = "view-authority-link")
 }
-
-    

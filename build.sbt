@@ -76,7 +76,8 @@ lazy val root = (project in file("."))
           "javascripts/app.js"
         ))
     ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
+    Test / uglifyCompressOptions:= Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat,uglify),
     uglify / includeFilter := GlobFilter("application.js")

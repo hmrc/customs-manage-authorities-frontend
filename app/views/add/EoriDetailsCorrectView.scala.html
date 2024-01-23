@@ -35,7 +35,16 @@
         fieldset: components.fieldset
 )
 
-@(form: Form[_], mode: Mode, call: Call, helper: EoriDetailsCorrectHelper)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        form: Form[_],
+        mode: Mode,
+        call: Call,
+        helper: EoriDetailsCorrectHelper
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
 @layout(pageTitle = Some(title(form, "eoriDetails.title", None, Seq())), backLink = Some(call)) {
 

@@ -34,9 +34,19 @@
         fieldset: components.fieldset
     )
 
-@(form: Form[List[String]], accounts: AuthorisedAccounts, mode: Mode, call: Call)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        form: Form[List[String]],
+        accounts: AuthorisedAccounts,
+        mode: Mode,
+        call: Call
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
-@layout(pageTitle = Some(title(form, AccountsFormProvider.accountsHeadingKey(accounts), None, Seq())), backLink = Some(call)) {
+@layout(pageTitle = Some(title(form, AccountsFormProvider.accountsHeadingKey(accounts), None, Seq())),
+        backLink = Some(call)) {
 
     @formHelper(action = controllers.add.routes.AccountsController.onSubmit(mode)) {
 
@@ -83,4 +93,3 @@
         @button("site.saveAndContinue")
     }
 }
-

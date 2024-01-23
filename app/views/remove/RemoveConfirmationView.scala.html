@@ -27,13 +27,23 @@
     link: components.link
 )
 
-@(eori: String, companyName: Option[String])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+    eori: String,
+    companyName: Option[String]
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    appConfig: FrontendAppConfig
+)
 
 @layout(pageTitle = Some(titleNoForm("removeConfirmation.title", None, Seq())), backLink = None) {
 
-    @confirmPanel(message = Some(messages("removeConfirmation.authorityRemoved")), eori = Some(eori), companyName = companyName)
+    @confirmPanel(message = Some(messages("removeConfirmation.authorityRemoved")),
+                    eori = Some(eori),
+                    companyName = companyName)
 
     @p(Html(messages("removeConfirmation.p1")))
 
-    @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "removeConfirmation.returnLink"))
+    @p(link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url,
+        linkMessage = "removeConfirmation.returnLink"))
 }

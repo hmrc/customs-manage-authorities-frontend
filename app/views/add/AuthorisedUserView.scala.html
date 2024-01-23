@@ -44,7 +44,9 @@
         appConfig: FrontendAppConfig
 )
 
-@layout(pageTitle = Some(title(form, "checkYourAnswers.title", None, Seq())), backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))) {
+@layout(pageTitle = Some(title(form, "checkYourAnswers.title", None, Seq())),
+        backLink = Some(controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode))
+) {
 
     @formHelper(action = controllers.add.routes.AuthorisedUserController.onSubmit()) {
 

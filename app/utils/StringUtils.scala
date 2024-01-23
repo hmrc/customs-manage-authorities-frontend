@@ -23,6 +23,7 @@ object StringUtils {
   val gbEORIPrefix = "GB"
   val htmlSingleLineBreak = "<br>"
   val comma = ","
+  val hyphenWithSpaces = " - "
 
   def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
 

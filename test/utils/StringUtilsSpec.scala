@@ -103,9 +103,27 @@ class StringUtilsSpec extends SpecBase {
     }
   }
 
+  "gbEORIPrefix" should {
+    "return correct value" in {
+      gbEORIPrefix mustBe "GB"
+    }
+  }
+
   "comma" should {
     "return correct value" in {
       comma mustBe ","
+    }
+  }
+
+  "hyphenWithSpaces" should {
+    "return correct value" in {
+      hyphenWithSpaces mustBe " - "
+    }
+  }
+
+  "htmlSingleLineBreak" should {
+    "return correct value" in {
+      htmlSingleLineBreak mustBe "<br>"
     }
   }
 }

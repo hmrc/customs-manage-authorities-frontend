@@ -37,7 +37,10 @@
 
 @layout(pageTitle = Some(titleNoForm("addConfirmation.title", None, Seq())), backLink = None) {
 
-    @confirmPanel(message = Some(messages("addConfirmation.heading")), companyName = companyName, eori = Some(eori), startDate = startDate)
+    @confirmPanel(message = Some(messages("addConfirmation.heading")),
+                    companyName = companyName,
+                    eori = Some(eori),
+                    startDate = startDate)
 
     @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
 
