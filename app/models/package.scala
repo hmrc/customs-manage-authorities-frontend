@@ -114,12 +114,15 @@ package object models {
       }
     }
 
+    //scalastyle:off
     def remove(path: JsPath): JsResult[JsValue] = {
 
       (path.path, jsValue) match {
         case (Nil, _) => JsError("path cannot be empty")
         case ((n: KeyPathNode) :: Nil, value: JsObject) if value.keys.contains(n.key) => JsSuccess(value - n.key)
-        case ((n: KeyPathNode) :: Nil, value: JsObject) if !value.keys.contains(n.key) => JsError("cannot find value at path")
+        case ((n: KeyPathNode) :: Nil, value: JsObject) if !value.keys.contains(n.key) =>
+          JsError("cannot find value at path")
+
         case ((n: IdxPathNode) :: Nil, value: JsArray) => removeIndexNode(n, value)
         case ((_: KeyPathNode) :: Nil, _) => JsError(s"cannot remove a key on $jsValue")
         case (first :: second :: rest, oldValue) =>
@@ -147,6 +150,6 @@ package object models {
         case _ =>
           JsError(s"cannot remove a key on $jsValue")
       }
-    }
+    }  //scalastyle:on
   }
 }

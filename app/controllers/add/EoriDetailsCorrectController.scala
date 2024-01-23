@@ -35,17 +35,19 @@ import views.html.add.EoriDetailsCorrectView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriDetailsCorrectController @Inject()( override val messagesApi: MessagesApi,
-                                              sessionRepository: SessionRepository,
-                                              navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: EoriDetailsCorrectFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: EoriDetailsCorrectView,
-                                              dateTimeService: DateTimeService
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class EoriDetailsCorrectController @Inject()(override val messagesApi: MessagesApi,
+                                             sessionRepository: SessionRepository,
+                                             navigator: Navigator,
+                                             identify: IdentifierAction,
+                                             getData: DataRetrievalAction,
+                                             requireData: DataRequiredAction,
+                                             formProvider: EoriDetailsCorrectFormProvider,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             view: EoriDetailsCorrectView,
+                                             dateTimeService: DateTimeService
+                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 
@@ -58,7 +60,7 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
         case (Some(EoriDetailsCorrect.Yes), _) => form.fill(EoriDetailsCorrect.Yes)
       }
 
-      Ok(view(preparedForm, mode,navigator.backLinkRoute(mode,controllers.add.routes.EoriNumberController.onPageLoad(mode)),
+      Ok(view(preparedForm, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
         EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))
   }
 
@@ -69,7 +71,7 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
         formWithErrors =>
           Future.successful(BadRequest(view(
             formWithErrors,
-            mode, navigator.backLinkRoute(mode,controllers.add.routes.EoriNumberController.onPageLoad(mode)),
+            mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
             EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))),
         value =>
           for {
@@ -80,16 +82,8 @@ class EoriDetailsCorrectController @Inject()( override val messagesApi: Messages
       )
   }
 
-  /**
-   * Sets the AccountsPage value to List() in UserAnswers to refresh the
-   * Accounts selection when user selects the No option
-   *
-   * @param formValue Form value of EoriDetailsCorrectFormProvider
-   * @param userAnswers UserAnswers
-   * @return Future[UserAnswers]
-   */
   private def refreshAccountsSelectionForNoEoriChange(formValue: EoriDetailsCorrect,
-                                                   userAnswers: UserAnswers): Future[UserAnswers] = {
+                                                      userAnswers: UserAnswers): Future[UserAnswers] = {
     import scala.util.Success
 
     Future(

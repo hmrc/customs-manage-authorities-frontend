@@ -14,16 +14,21 @@
  * limitations under the License.
  */
 
-import utils.Constants.RANDOM_GENERATION_INT_LENGTH
+package utils
 
-import scala.util.Random
+object Constants {
+  val MDG_ACK_REF_LENGTH = 32
+  val RANDOM_GENERATION_INT_LENGTH = 10
 
-package object connectors {
+  val CASH_ACCOUNT_TYPE = "cash"
+  val GENERAL_GUARANTEE_ACCOUNT_TYPE = "generalGuarantee"
+  val DUTY_DEFERMENT_ACCOUNT_TYPE = "dutyDeferment"
 
-  def generateStringOfRandomDigits(length: Int): String = {
+  val FIXED_DATE_TIME_YEAR = 2027
+  val FIXED_DATE_TIME_MONTH_OF_YEAR = 12
+  val FIXED_DATE_TIME_DAY_OF_MONTH = 20
+  val FIXED_DATE_TIME_HOUR_OF_DAY = 12
+  val FIXED_DATE_TIME_MIN_OF_HOUR = 30
 
-    (1 to length).map(_ => Random.nextInt(RANDOM_GENERATION_INT_LENGTH)).mkString
-  }
-
-  def acknowledgmentRef(length: Int): String = generateStringOfRandomDigits(length)
+  val HTML_LINE_BREAK = "<br>"
 }

@@ -53,23 +53,29 @@ class EditCheckYourAnswersController @Inject()(override val messagesApi: Message
                                                implicit val controllerComponents: MessagesControllerComponents,
                                                dataStore: CustomsDataStoreConnector
                                               )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-                                              extends FrontendBaseController with I18nSupport with Logging {
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
+
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAuthority) => errorPage(MissingAuthorityError)
       case Left(NoAccount) => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
+
         val companyName = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
         val helper = new CheckYourAnswersEditHelper(
           request.userAnswers, accountId, authorityId, dateTimeService, authority, account, companyName)
+
         Ok(view(helper, accountId, authorityId))
     }
   }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
+
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
       case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
       case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))

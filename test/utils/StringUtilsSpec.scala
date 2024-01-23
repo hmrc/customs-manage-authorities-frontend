@@ -102,4 +102,10 @@ class StringUtilsSpec extends SpecBase {
       isXIEori("xi") mustBe false
     }
   }
+
+  "comma" should {
+    "return correct value" in {
+      comma mustBe ","
+    }
+  }
 }

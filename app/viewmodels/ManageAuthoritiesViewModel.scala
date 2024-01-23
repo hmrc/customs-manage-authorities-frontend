@@ -25,7 +25,6 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import scala.collection.immutable.ListMap
 
-
 case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId, accounts: CDSAccounts) {
 
 
@@ -43,7 +42,7 @@ object ManageAuthoritiesViewModel extends DateUtils {
 
   implicit class AccountWithAuthoritiesViewModel(account: AccountWithAuthoritiesWithId) {
     def id: String = s"${account.accountType}-${account.accountNumber}"
-    def sortedAuthorities =
+    def sortedAuthorities: ListMap[String, StandingAuthority] =
       ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate):_*)
   }
 

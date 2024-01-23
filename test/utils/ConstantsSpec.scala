@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-import utils.Constants.RANDOM_GENERATION_INT_LENGTH
+package utils
 
-import scala.util.Random
+import base.SpecBase
+import utils.Constants.{MDG_ACK_REF_LENGTH, RANDOM_GENERATION_INT_LENGTH}
 
-package object connectors {
+class ConstantsSpec extends SpecBase {
 
-  def generateStringOfRandomDigits(length: Int): String = {
+  "MDG_ACK_REF_LENGTH" should {
 
-    (1 to length).map(_ => Random.nextInt(RANDOM_GENERATION_INT_LENGTH)).mkString
+    "return correct value" in {
+      MDG_ACK_REF_LENGTH mustBe 32
+    }
   }
 
-  def acknowledgmentRef(length: Int): String = generateStringOfRandomDigits(length)
+  "RANDOM_GENERATION_INT_LENGTH" should {
+
+    "return correct value" in {
+      RANDOM_GENERATION_INT_LENGTH mustBe 10
+    }
+  }
+
 }

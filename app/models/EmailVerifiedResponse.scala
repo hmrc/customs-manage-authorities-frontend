@@ -35,4 +35,3 @@ sealed trait EmailResponses
 case object UnverifiedEmail extends EmailResponses
 
 case class UndeliverableEmail(email: String) extends EmailResponses
-

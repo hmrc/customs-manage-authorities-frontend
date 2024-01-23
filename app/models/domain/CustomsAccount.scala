@@ -113,6 +113,7 @@ case class DutyDefermentAccount(number: String,
                                 isIomAccount: Boolean = false
                                ) extends Ordered[DutyDefermentAccount] with CDSAccount {
   override def compare(that: DutyDefermentAccount): Int = number.compareTo(that.number)
+
   override val accountType: String = "dutyDeferment"
 }
 
@@ -156,12 +157,14 @@ object CDSAccount {
 
 case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   lazy val myAccounts = accounts
+
   lazy val closedAccounts: Seq[CDSAccount] = myAccounts.flatMap {
     case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case value@CashAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case value@DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusClosed => Some(value)
     case _ => None
   }
+
   lazy val pendingAccounts: Seq[CDSAccount] = myAccounts.flatMap {
     case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
     case value@CashAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
@@ -170,8 +173,12 @@ case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   }
 
   lazy val openAccounts: Seq[CDSAccount] = myAccounts.diff(closedAccounts).diff(pendingAccounts)
-  def alreadyAuthorised(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.filter(accountNumbers contains _.number)
-  def canAuthoriseAccounts(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.diff(alreadyAuthorised(accountNumbers))
+
+  def alreadyAuthorised(accountNumbers: Seq[String]): Seq[CDSAccount] =
+    openAccounts.filter(accountNumbers contains _.number)
+
+  def canAuthoriseAccounts(accountNumbers: Seq[String]): Seq[CDSAccount] =
+    openAccounts.diff(alreadyAuthorised(accountNumbers))
 }
 
 object CDSAccounts {

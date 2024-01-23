@@ -20,13 +20,18 @@ package models.requests
 import models.domain
 import models.domain.{AccountStatusOpen, CDSAccount, CDSAccountStatus, GeneralGuaranteeBalance}
 import play.api.libs.json.{Json, OFormat, Reads}
+import utils.Constants
+import utils.Constants.MDG_ACK_REF_LENGTH
 
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import scala.util.Random
 
-case class AccountsRequestDetail(EORINo: String, accountType: Option[String], accountNumber: Option[String], referenceDate: Option[String])
+case class AccountsRequestDetail(EORINo: String,
+                                 accountType: Option[String],
+                                 accountNumber: Option[String],
+                                 referenceDate: Option[String])
 
 case class AccountsAndBalancesRequest(requestCommon: AccountsRequestCommon, requestDetail: AccountsRequestDetail)
 
@@ -36,15 +41,22 @@ object AccountsAndBalancesRequestContainer {
 
   implicit val accountsRequestCommonFormat: OFormat[AccountsRequestCommon] = Json.format[AccountsRequestCommon]
   implicit val accountsRequestDetailFormat: OFormat[AccountsRequestDetail] = Json.format[AccountsRequestDetail]
-  implicit val accountsAndBalancesRequestFormat: OFormat[AccountsAndBalancesRequest] = Json.format[AccountsAndBalancesRequest]
-  implicit val accountsAndBalancesRequestContainerFormat: OFormat[AccountsAndBalancesRequestContainer] = Json.format[AccountsAndBalancesRequestContainer]
+
+  implicit val accountsAndBalancesRequestFormat: OFormat[AccountsAndBalancesRequest] =
+    Json.format[AccountsAndBalancesRequest]
+
+  implicit val accountsAndBalancesRequestContainerFormat: OFormat[AccountsAndBalancesRequestContainer] =
+    Json.format[AccountsAndBalancesRequestContainer]
 
 }
 
-case class AccountsRequestCommon(PID: Option[String], originatingSystem: Option[String], receiptDate: String, acknowledgementReference: String, regime: String)
+case class AccountsRequestCommon(PID: Option[String],
+                                 originatingSystem: Option[String],
+                                 receiptDate: String,
+                                 acknowledgementReference: String,
+                                 regime: String)
 
 object AccountsRequestCommon {
-  private val MDG_ACK_REF_LENGTH = 32
 
   def generate: AccountsRequestCommon = {
     val (pid, originatingSystem) = (None, None)
@@ -56,8 +68,8 @@ object AccountsRequestCommon {
     AccountsRequestCommon(pid, originatingSystem, isoLocalDateTime, acknowledgmentRef, regime)
   }
 
-  private def generateStringOfRandomDigits(length: Int) = {
-    (1 to length).map(_ => Random.nextInt(10)).mkString // scalastyle:ignore magic.number
+  private def generateStringOfRandomDigits(length: Int): String = {
+    (1 to length).map(_ => Random.nextInt(Constants.RANDOM_GENERATION_INT_LENGTH)).mkString
   }
 }
 
@@ -74,24 +86,38 @@ case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvai
 
 case class ReturnParameters(paramName: String, paramValue: String)
 
-case class DutyDefermentAccount(account: AccountWithStatus, isNiAccount: Option[Boolean] = Some(false), isIomAccount: Option[Boolean] = Some(false),
-                                limits: Option[Limits], balances: Option[DefermentBalances]) {
+case class DutyDefermentAccount(account: AccountWithStatus,
+                                isNiAccount: Option[Boolean] = Some(false),
+                                isIomAccount: Option[Boolean] = Some(false),
+                                limits: Option[Limits],
+                                balances: Option[DefermentBalances]) {
   def toDomain(): domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
       limits.map(limit => BigDecimal(limit.periodGuaranteeLimit)),
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
       balances.map(balance => BigDecimal(balance.periodAvailableGuaranteeBalance)),
       balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance)))
-    domain.DutyDefermentAccount(account.number, account.owner, account.accountStatus, balance, isNiAccount.getOrElse(false), isIomAccount.getOrElse(false))
+
+    domain.DutyDefermentAccount(
+      account.number,
+      account.owner,
+      account.accountStatus,
+      balance,
+      isNiAccount.getOrElse(false),
+      isIomAccount.getOrElse(false)
+    )
   }
 }
 
-case class GeneralGuaranteeAccount(account: AccountWithStatus, guaranteeLimit: Option[String], availableGuaranteeBalance: Option[String]) {
+case class GeneralGuaranteeAccount(account: AccountWithStatus,
+                                   guaranteeLimit: Option[String],
+                                   availableGuaranteeBalance: Option[String]) {
   def toDomain: domain.GeneralGuaranteeAccount = {
     val balance = (guaranteeLimit, availableGuaranteeBalance) match {
       case (Some(limit), Some(balance)) => Some(GeneralGuaranteeBalance(BigDecimal(limit), BigDecimal(balance)))
       case _ => None
     }
+
     domain.GeneralGuaranteeAccount(account.number, account.owner, account.accountStatus, balance)
   }
 }
@@ -99,6 +125,7 @@ case class GeneralGuaranteeAccount(account: AccountWithStatus, guaranteeLimit: O
 case class CdsCashAccount(account: AccountWithStatus, availableAccountBalance: Option[String]) {
   def toDomain: domain.CashAccount = {
     val balance = domain.CDSCashBalance(availableAccountBalance.map(BigDecimal(_)))
+
     domain.CashAccount(account.number, account.owner, account.accountStatus, balance)
   }
 }
@@ -120,11 +147,13 @@ case class AccountsAndBalancesResponse(responseCommon: Option[AccountResponseCom
 case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: AccountsAndBalancesResponse) {
   def toCdsAccounts(eori: String): domain.CDSAccounts = {
     val details = this.accountsAndBalancesResponse.responseDetail
+
     val accounts: List[CDSAccount] = List(
       details.dutyDefermentAccount.map(_.map(_.toDomain())),
       details.generalGuaranteeAccount.map(_.map(_.toDomain)),
       details.cdsCashAccount.map(_.map(_.toDomain))
     ).flatten.flatten.filter(_.owner == eori)
+
     domain.CDSAccounts(eori, accounts)
   }
 }
@@ -143,7 +172,10 @@ object AccountsAndBalancesResponseContainer {
 
   implicit val accountResponseDetailReads: Reads[AccountResponseDetail] = Json.reads[AccountResponseDetail]
   implicit val accountResponseCommonReads: Reads[AccountResponseCommon] = Json.reads[AccountResponseCommon]
-  implicit val accountsAndBalancesResponseReads: Reads[AccountsAndBalancesResponse] = Json.reads[AccountsAndBalancesResponse]
-  implicit val accountsAndBalancesResponseContainerReads: Reads[AccountsAndBalancesResponseContainer] = Json.reads[AccountsAndBalancesResponseContainer]
 
+  implicit val accountsAndBalancesResponseReads: Reads[AccountsAndBalancesResponse] =
+    Json.reads[AccountsAndBalancesResponse]
+
+  implicit val accountsAndBalancesResponseContainerReads: Reads[AccountsAndBalancesResponseContainer] =
+    Json.reads[AccountsAndBalancesResponseContainer]
 }

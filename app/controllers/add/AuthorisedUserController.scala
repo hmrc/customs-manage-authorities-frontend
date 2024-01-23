@@ -92,11 +92,6 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
       }
   }
 
-  /**
-   * Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI )
-   *   and Cash/Guarantee accounts (with GB EORI as ownerEORI)
-   * Sends only one call if Accounts has only DD account
-   */
   private def processPayloadForXIEori(userAnswers: UserAnswers,
                                       xiEori: String,
                                       gbEori: String,

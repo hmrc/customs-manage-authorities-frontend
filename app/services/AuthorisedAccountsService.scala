@@ -20,31 +20,36 @@ import models.AuthorisedAccounts
 import models.domain.{CDSAccount, EORI}
 import models.requests.DataRequest
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.gbEORIPrefix
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorisedAccountsService @Inject()(
-                                    authoritiesCache: AuthoritiesCacheService,
-                                    accountsService: AccountsCacheService)(implicit executionContext: ExecutionContext) {
+                                           authoritiesCache: AuthoritiesCacheService,
+                                           accountsService: AccountsCacheService)(implicit executionContext: ExecutionContext) {
 
-  def getAuthorisedAccounts(enteredEori: EORI)(implicit request: DataRequest[_], hc: HeaderCarrier): Future[AuthorisedAccounts] = for {
-    authorities <- authoritiesCache.retrieveAuthorities(request.internalId)
-    accounts <- accountsService.retrieveAccounts(request.internalId, Seq(request.eoriNumber))
-  } yield {
-    val availableAccountNumbers = authorities.authorisedWithEori(enteredEori).map(_.accountNumber)
-    AuthorisedAccounts(
-      accounts.alreadyAuthorised(availableAccountNumbers),
-      accounts.canAuthoriseAccounts(availableAccountNumbers),
-      filterAccounts(enteredEori,accounts.closedAccounts),
-      filterAccounts(enteredEori,accounts.pendingAccounts),
-      enteredEori
-    )
-  }
+  def getAuthorisedAccounts(enteredEori: EORI)(implicit request: DataRequest[_],
+                                               hc: HeaderCarrier): Future[AuthorisedAccounts] =
+    for {
+      authorities <- authoritiesCache.retrieveAuthorities(request.internalId)
+      accounts <- accountsService.retrieveAccounts(request.internalId, Seq(request.eoriNumber))
+    } yield {
+      val availableAccountNumbers = authorities.authorisedWithEori(enteredEori).map(_.accountNumber)
+      AuthorisedAccounts(
+        accounts.alreadyAuthorised(availableAccountNumbers),
+        accounts.canAuthoriseAccounts(availableAccountNumbers),
+        filterAccounts(enteredEori, accounts.closedAccounts),
+        filterAccounts(enteredEori, accounts.pendingAccounts),
+        enteredEori
+      )
+    }
 
   def filterAccounts(enteredEori: EORI, accounts: Seq[CDSAccount]): Seq[CDSAccount] =
-    if(enteredEori.startsWith("GB")) {
+    if (enteredEori.startsWith(gbEORIPrefix)) {
       accounts.filter(!_.isNiAccount)
-    } else { accounts.filter(_.isNiAccount)}
+    } else {
+      accounts.filter(_.isNiAccount)
+    }
 
 }

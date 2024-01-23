@@ -71,7 +71,9 @@ class AuthoritiesRepository @Inject()(
       .map(_.wasAcknowledged())
 }
 
-case class AuthoritiesWithIdCacheEntry(_id: String, data: AuthoritiesWithId, lastUpdated: LocalDateTime)
+case class AuthoritiesWithIdCacheEntry(_id: String,
+                                       data: AuthoritiesWithId,
+                                       lastUpdated: LocalDateTime)
 
 object AuthoritiesWithIdCacheEntry {
   implicit val lastUpdatedReads: Reads[LocalDateTime] = MongoJavatimeFormats.localDateTimeReads

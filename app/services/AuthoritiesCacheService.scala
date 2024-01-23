@@ -21,13 +21,16 @@ import models.InternalId
 import models.domain.{AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
 import repositories.AuthoritiesRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
+class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository,
+                                        connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
 
-  def retrieveAuthorities(internalId: InternalId, eoriList: Seq[String]=Seq.empty)(implicit hc: HeaderCarrier): Future[AuthoritiesWithId] = {
+  def retrieveAuthorities(internalId: InternalId,
+                          eoriList: Seq[String] = Seq.empty)(implicit hc: HeaderCarrier): Future[AuthoritiesWithId] = {
     val authorities = for {
       a <- Future.sequence(eoriList.map(eachEori => connector.retrieveAccountAuthorities(eachEori)))
     } yield {
@@ -41,6 +44,7 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, conne
         }
         .toSeq
     }
+
     repository.get(internalId.value).flatMap {
       case Some(value) => Future.successful(value)
       case None =>
@@ -52,14 +56,18 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository, conne
     }
   }
 
-  def getAccountAndAuthority(internalId: InternalId, authorityId: String, accountId: String)
+  def getAccountAndAuthority(internalId: InternalId,
+                             authorityId: String,
+                             accountId: String)
                             (implicit hc: HeaderCarrier): Future[Either[AuthoritiesCacheErrorResponse, AccountAndAuthority]] = {
-    retrieveAuthorities(internalId, Seq("")).map { accountsWithAuthorities =>
-      accountsWithAuthorities.authorities.get(accountId).map { account =>
-        account.authorities.get(authorityId).map { authority =>
-          Right(AccountAndAuthority(account, authority))
-        }.getOrElse(Left(NoAuthority))
-      }.getOrElse(Left(NoAccount))
+    retrieveAuthorities(internalId, Seq(emptyString)).map {
+      accountsWithAuthorities =>
+        accountsWithAuthorities.authorities.get(accountId).map {
+          account =>
+            account.authorities.get(authorityId).map { authority =>
+              Right(AccountAndAuthority(account, authority))
+            }.getOrElse(Left(NoAuthority))
+        }.getOrElse(Left(NoAccount))
     }
   }
 }

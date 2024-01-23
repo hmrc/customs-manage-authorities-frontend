@@ -78,6 +78,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
         actions = Actions(items = Seq()),
         secondValue = None
       ))
+      
       case _ => Some(summaryListRow(
         messages("remove-cya-h2.4"),
         value = messages("remove-cya-h2.5"),

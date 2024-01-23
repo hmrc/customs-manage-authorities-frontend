@@ -18,6 +18,8 @@ package forms.mappings
 
 import models.AuthorityStart
 import play.api.data.validation.{Constraint, Invalid, Valid}
+import utils.StringUtils.emptyString
+
 import java.time.LocalDate
 
 trait Constraints {
@@ -61,7 +63,9 @@ trait Constraints {
         }
     }
 
-  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def inRange[A](minimum: A,
+                           maximum: A,
+                           errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>
 
@@ -90,7 +94,9 @@ trait Constraints {
         Invalid(errorKey, maximum)
     }
 
-  protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
+  protected def maxDate(maximum: LocalDate,
+                        errorKey: String,
+                        args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isAfter(maximum) =>
         Invalid(errorKey, args: _*)
@@ -98,7 +104,9 @@ trait Constraints {
         Valid
     }
 
-  protected def maybeMaxDate(maybeMaximum: Option[LocalDate], errorKey: String, args: Any*): Constraint[LocalDate] =
+  protected def maybeMaxDate(maybeMaximum: Option[LocalDate],
+                             errorKey: String,
+                             args: Any*): Constraint[LocalDate] =
     Constraint { date =>
       maybeMaximum match {
         case Some(value) if date.isAfter(value) => Invalid(errorKey, args: _*)
@@ -107,10 +115,13 @@ trait Constraints {
       }
     }
 
-  protected def maybeMinDate(maybeMaximum: Option[LocalDate], errorKey: String, args: Any*): Constraint[AuthorityStart] =
+  protected def maybeMinDate(maybeMaximum: Option[LocalDate],
+                             errorKey: String,
+                             args: Any*): Constraint[AuthorityStart] =
     Constraint { authorityStart =>
       maybeMaximum match {
-        case Some(value) if authorityStart == AuthorityStart.Today && LocalDate.now().isAfter(value) => Invalid(errorKey, args: _*)
+        case Some(value) if authorityStart == AuthorityStart.Today && LocalDate.now().isAfter(value) =>
+          Invalid(errorKey, args: _*)
         case Some(_) => Valid
         case None => Valid
       }
@@ -144,5 +155,5 @@ trait Constraints {
     }
 
   protected def formatEORINumber(str: String): String =
-    str.replaceAll("\\s", "").toUpperCase
+    str.replaceAll("\\s", emptyString).toUpperCase
 }

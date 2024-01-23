@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.emptyString
+import utils.StringUtils.{emptyString, gbEORIPrefix}
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 
 import javax.inject.Inject
@@ -50,7 +50,9 @@ class AccountsController @Inject()(
                                     noAvailableAccounts: NoAvailableAccountsView,
                                     val controllerComponents: MessagesControllerComponents,
                                     view: AccountsView
-                                  )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                  )(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
   val log = Logger(this.getClass)
@@ -62,7 +64,7 @@ class AccountsController @Inject()(
           authorisedAccountsService.getAuthorisedAccounts(enteredEori.eori).map { authorisedAccounts =>
             if (authorisedAccounts.availableAccounts.nonEmpty) {
 
-              if(enteredEori.eori.contains("GB")) {
+              if(enteredEori.eori.contains(gbEORIPrefix)) {
                 Ok(view(
                   populateForm(authorisedAccounts.availableAccounts.filter(x=> !x.isNiAccount)),
                   getGBAccounts(authorisedAccounts),
@@ -119,7 +121,7 @@ class AccountsController @Inject()(
       accounts.enteredEori)
 
   private def filterAccounts(authorisedAccounts: AuthorisedAccounts, eori: String) = {
-    if(eori.startsWith("GB")) { getGBAccounts(authorisedAccounts) } else { getXIAccounts(authorisedAccounts) }
+    if(eori.startsWith(gbEORIPrefix)) { getGBAccounts(authorisedAccounts) } else { getXIAccounts(authorisedAccounts) }
   }
 
   private def getGBAccounts(authorisedAccounts: AuthorisedAccounts) = {

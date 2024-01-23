@@ -25,9 +25,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AccountsCacheService @Inject()(repository: AccountsRepository, connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
+class AccountsCacheService @Inject()(repository: AccountsRepository,
+                                     connector: CustomsFinancialsConnector)(implicit ec: ExecutionContext) {
 
-  def retrieveAccounts(internalId: InternalId, eoriList: Seq[String])(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
+  def retrieveAccounts(internalId: InternalId,
+                       eoriList: Seq[String])(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
     repository.get(internalId.value).flatMap {
       case Some(value) => Future.successful(value)
       case None =>

@@ -134,10 +134,13 @@ private[mappings] class LocalDateFormatter(
     val yearValue = data.get(s"$key.year")
 
     (dayValue, monthValue, yearValue) match {
-      case (Some(d), _, _) if d.trim.isEmpty || Try(d.trim.toInt).isFailure => s"$key.day"
-      case (_, Some(m), _) if m.trim.isEmpty || Try(m.trim.toInt).isFailure => s"$key.month"
-      case (_, _, Some(y)) if y.trim.isEmpty || Try(y.trim.toInt).isFailure => s"$key.year"
+      case (Some(d), _, _) if d.trim.isEmpty || hasConversionToIntFailed(d) => s"$key.day"
+      case (_, Some(m), _) if m.trim.isEmpty || hasConversionToIntFailed(m) => s"$key.month"
+      case (_, _, Some(y)) if y.trim.isEmpty || hasConversionToIntFailed(y) => s"$key.year"
       case _ => s"$key.day"
     }
   }
+
+  private def hasConversionToIntFailed(strValue: String) =
+    Try(strValue.trim.toInt).isFailure
 }

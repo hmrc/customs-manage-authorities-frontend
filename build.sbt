@@ -18,13 +18,31 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := scala2_13_8
 
+lazy val scalastyleSettings = Seq(
+  scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
+  (Test / scalastyleConfig) := baseDirectory.value/ testDirectory / testScalaStyleConfigFile
+)
+
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(root % "test->test")
+  .settings(DefaultBuildSettings.itSettings)
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrap % Test))
+
+lazy val testSettings: Seq[Def.Setting[?]] = Seq(
+  fork        := true,
+  javaOptions ++= Seq(
+    "-Dconfig.resource=test.application.conf",
+    "-Dlogger.resource=logback-test.xml"
+  )
+)
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(DefaultBuildSettings.scalaSettings *)
   .settings(DefaultBuildSettings.defaultSettings() *)
   .settings(inConfig(Test)(testSettings) *)
-  //.settings(majorVersion := 0)
   .settings(ThisBuild / useSuperShell := false)
   .settings(
     targetJvm := "jvm-11",
@@ -76,9 +94,7 @@ lazy val root = (project in file("."))
       "-Wunused:patvars",
       "-Wunused:implicits",
       "-Wunused:explicits",
-      "-Wunused:privates",
-      //"-Ywarn-macros:none",
-    //"-Wdead-code"
+      "-Wunused:privates"
     ),
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
@@ -92,22 +108,3 @@ lazy val root = (project in file("."))
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
     )
   )
-
-lazy val scalastyleSettings = Seq(
-  scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
-  (Test / scalastyleConfig) := baseDirectory.value/ testDirectory / testScalaStyleConfigFile
-)
-
-lazy val it = project
-  .enablePlugins(PlayScala)
-  .dependsOn(root % "test->test")
-  .settings(DefaultBuildSettings.itSettings)
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrap % Test))
-
-lazy val testSettings: Seq[Def.Setting[?]] = Seq(
-  fork        := true,
-  javaOptions ++= Seq(
-    "-Dconfig.resource=test.application.conf",
-    "-Dlogger.resource=logback-test.xml"
-  )
-)

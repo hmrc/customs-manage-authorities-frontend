@@ -38,6 +38,7 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
       } else {
         Some(dateTimeService.localTime().toLocalDate)
       }
+
       authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(AuthorityEndDatePage) else None
       viewBalance <- userAnswers.get(ShowBalancePage)
       authorisedUser <- userAnswers.get(AuthorityDetailsPage)

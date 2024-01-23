@@ -33,13 +33,22 @@ class EditCheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeS
     for {
       authorityStart <- userAnswers.get(EditAuthorityStartPage(accountId, authorityId))
       authorityEnd <- userAnswers.get(EditAuthorityEndPage(accountId, authorityId))
+
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
         userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId))
       } else {
         Some(dateTimeService.localTime().toLocalDate)
       }
-      authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)) else None
+
+      authorityEndDate =
+        if (authorityEnd == AuthorityEnd.Setdate) {
+          userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId))
+        } else {
+          None
+        }
+
       viewBalance <- userAnswers.get(EditShowBalancePage(accountId, authorityId))
+
       standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
         None
       } else {
@@ -50,6 +59,7 @@ class EditCheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeS
           viewBalance == ShowBalance.Yes
         ))
       }
+
     } yield standingAuthority
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 }

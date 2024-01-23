@@ -19,7 +19,10 @@ package pages
 import play.api.libs.json.{JsPath, Json, OFormat}
 import queries.{Gettable, Settable}
 
-case class ConfirmationDetails(eori : String, startDate: Option[String], companyName: Option[String], multipleAccounts: Boolean)
+case class ConfirmationDetails(eori : String,
+                               startDate: Option[String],
+                               companyName: Option[String],
+                               multipleAccounts: Boolean)
 
 object ConfirmationDetails {
   implicit val format: OFormat[ConfirmationDetails] = Json.format[ConfirmationDetails]
