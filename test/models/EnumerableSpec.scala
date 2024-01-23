@@ -19,6 +19,7 @@ package models
 import base.SpecBase
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json._
+import utils.StringUtils.emptyString
 
 object EnumerableSpec {
 
@@ -51,7 +52,7 @@ class EnumerableSpec extends SpecBase
     Foo.values.foreach {
       value =>
         s"bind correctly for: $value" in {
-          Json.fromJson[Foo](JsString(value.toString)).asEither.getOrElse("") mustEqual value
+          Json.fromJson[Foo](JsString(value.toString)).asEither.getOrElse(emptyString) mustEqual value
         }
     }
 
