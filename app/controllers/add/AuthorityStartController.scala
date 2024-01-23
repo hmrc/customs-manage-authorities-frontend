@@ -32,16 +32,18 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorityStartController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: AuthorityStartFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AuthorityStartView
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          override val messagesApi: MessagesApi,
+                                          sessionRepository: SessionRepository,
+                                          navigator: Navigator,
+                                          identify: IdentifierAction,
+                                          getData: DataRetrievalAction,
+                                          requireData: DataRequiredAction,
+                                          formProvider: AuthorityStartFormProvider,
+                                          val controllerComponents: MessagesControllerComponents,
+                                          view: AuthorityStartView
+                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 
@@ -53,7 +55,11 @@ class AuthorityStartController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))))
+      Ok(view(
+        preparedForm,
+        mode,
+        navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode)))
+      )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {

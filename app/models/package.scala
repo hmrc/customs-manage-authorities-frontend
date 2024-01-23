@@ -20,15 +20,12 @@ import scala.language.implicitConversions
 
 package object models {
 
-  implicit def withNameToString[A >: WithName](x: A) = x.toString
+  implicit def withNameToString[A >: WithName](x: A): String = x.toString
 
   implicit class RichJsObject(jsObject: JsObject) {
 
     def setObject(path: JsPath, value: JsValue): JsResult[JsObject] =
       jsObject.set(path, value).flatMap(_.validate[JsObject])
-
-    def removeObject(path: JsPath): JsResult[JsObject] =
-      jsObject.remove(path).flatMap(_.validate[JsObject])
   }
 
   implicit class RichJsValue(jsValue: JsValue) {
@@ -94,8 +91,12 @@ package object models {
 
       valueToRemoveFrom match {
         case valueToRemoveFrom: JsArray if index >= 0 && index < valueToRemoveFrom.value.length =>
-          val updatedJsArray = valueToRemoveFrom.value.slice(0, index) ++ valueToRemoveFrom.value.slice(index + 1, valueToRemoveFrom.value.size)
+
+          val updatedJsArray = valueToRemoveFrom.value.slice(0, index) ++
+            valueToRemoveFrom.value.slice(index + 1, valueToRemoveFrom.value.size)
+
           JsSuccess(JsArray(updatedJsArray))
+
         case valueToRemoveFrom: JsArray => JsError(s"array index out of bounds: $index, $valueToRemoveFrom")
         case _ => JsError(s"cannot set an index on $valueToRemoveFrom")
       }

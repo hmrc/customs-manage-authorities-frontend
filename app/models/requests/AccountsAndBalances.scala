@@ -107,13 +107,15 @@ case class AccountResponseDetail(EORINo: Option[String],
                                  referenceDate: Option[String],
                                  dutyDefermentAccount: Option[Seq[DutyDefermentAccount]],
                                  generalGuaranteeAccount: Option[Seq[GeneralGuaranteeAccount]],
-                                 cdsCashAccount: Option[Seq[CdsCashAccount]]) {
-  val totalNumberOfAccounts: Int = dutyDefermentAccount.fold(0)(_.size) + generalGuaranteeAccount.fold(0)(_.size) + cdsCashAccount.fold(0)(_.size)
-}
+                                 cdsCashAccount: Option[Seq[CdsCashAccount]])
 
-case class AccountResponseCommon(status: String, statusText: Option[String], processingDate: String, returnParameters: Option[Seq[ReturnParameters]])
+case class AccountResponseCommon(status: String,
+                                 statusText: Option[String],
+                                 processingDate: String,
+                                 returnParameters: Option[Seq[ReturnParameters]])
 
-case class AccountsAndBalancesResponse(responseCommon: Option[AccountResponseCommon], responseDetail: AccountResponseDetail)
+case class AccountsAndBalancesResponse(responseCommon: Option[AccountResponseCommon],
+                                       responseDetail: AccountResponseDetail)
 
 case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: AccountsAndBalancesResponse) {
   def toCdsAccounts(eori: String): domain.CDSAccounts = {

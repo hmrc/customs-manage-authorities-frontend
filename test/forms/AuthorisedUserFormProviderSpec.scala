@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import models.domain.AuthorisedUser
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.FormError
 
 class AuthorisedUserFormProviderSpec extends StringFieldBehaviours {

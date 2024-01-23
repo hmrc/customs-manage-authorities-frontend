@@ -19,7 +19,10 @@ package controllers.add
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.EoriDetailsCorrectFormProvider
-import models.domain.{AccountStatusOpen, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
+import models.domain.{
+  AccountStatusOpen, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount,
+  DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance
+}
 import models.{AuthorityStart, CheckMode, CompanyDetails, EoriDetailsCorrect, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -56,11 +59,10 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val helper = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)(messages(application))
 
-
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute, helper)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute, helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -71,20 +73,26 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+
       val application = applicationBuilder(userAnswers = Some(userAnswersEoriDetails)).build()
 
       running(application) {
 
         val request = fakeRequest(GET, eoriDetailsCorrectRoute)
-        val view = application.injector.instanceOf[EoriDetailsCorrectView]
+        val view: EoriDetailsCorrectView = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         val helper = EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages(application))
+
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(EoriDetailsCorrect.values.head), NormalMode ,backLinkRoute, helper)(request, messages(application), appConfig).toString
+          view(
+            form.fill(EoriDetailsCorrect.values.head),
+            NormalMode,
+            backLinkRoute,
+            helper)(request, messages(application), appConfig).toString
       }
     }
 
@@ -126,8 +134,9 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriNumberController.onPageLoad(CheckMode), CheckMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriNumberController.onPageLoad(CheckMode))
+            ),
             bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
 
@@ -158,7 +167,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(POST, eoriDetailsCorrectRoute)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+          .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -196,7 +205,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(POST, eoriDetailsCorrectRoute)
-            .withFormUrlEncodedBody(("value", EoriDetailsCorrect.values.head.toString))
+          .withFormUrlEncodedBody(("value", EoriDetailsCorrect.values.head.toString))
 
         val result = route(application, request).value
 

@@ -26,14 +26,19 @@ import pages.add._
 import play.api.i18n.Messages
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
+import utils.StringUtils.emptyString
 
 class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
 
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+
+  val dutyDeferment: DutyDefermentAccount =
+    DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+
+  val generalGuarantee: GeneralGuaranteeAccount =
+    GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
 
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
@@ -43,7 +48,7 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
   val userAnswersNoCompanyName: UserAnswers = UserAnswers("id")
     .set(AccountsPage, selectedAccounts).success.value
@@ -51,9 +56,10 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
+
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   "EoriDetailsCorrectHelper" must {

@@ -66,9 +66,13 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(EditAuthorityStartPage("someId", "someId"), AuthorityStart.values.head)(AuthorityStart.writes).success.value
+      val userAnswers =
+        UserAnswers(userAnswersId).set(
+          EditAuthorityStartPage("someId", "someId"), AuthorityStart.values.head
+        )(AuthorityStart.writes).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -82,7 +86,10 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(AuthorityStart.values.head), "someId", "someId")(request, messages(application), appConfig).toString
+          view(
+            form.fill(AuthorityStart.values.head),
+            "someId",
+            "someId")(request, messages(application), appConfig).toString
       }
     }
 
@@ -116,7 +123,9 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(
+          userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 

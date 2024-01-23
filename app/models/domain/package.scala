@@ -22,10 +22,7 @@ package object domain {
   type EORI = String
   type AccountNumber = String
   type LinkId = String
-  type GAN = String
-  type CAN = String
 
-  val lengthToReveal = 4
   val maxUsedPercentage = 100
 
   implicit def optionBindable: PathBindable[Option[LinkId]] = new PathBindable[Option[LinkId]] {

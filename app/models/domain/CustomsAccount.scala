@@ -16,9 +16,9 @@
 
 package models.domain
 
-import play.api.{Logger, LoggerLike}
 import play.api.i18n.Messages
 import play.api.libs.json._
+import play.api.{Logger, LoggerLike}
 
 import scala.math.Numeric.BigDecimalIsFractional.zero
 
@@ -74,7 +74,10 @@ case class DutyDefermentBalance(periodGuaranteeLimit: Option[BigDecimal],
     case _ => (BigDecimal(0), BigDecimal(0))
   }
 
-  val availableBalance: BigDecimal = periodAvailableAccountBalance.getOrElse(BigDecimal(0))
+}
+
+object DutyDefermentBalance {
+  implicit val dutyDefermentBalanceFormat: Format[DutyDefermentBalance] = Json.format[DutyDefermentBalance]
 }
 
 case class GeneralGuaranteeBalance(GuaranteeLimit: BigDecimal,
@@ -83,14 +86,15 @@ case class GeneralGuaranteeBalance(GuaranteeLimit: BigDecimal,
   val usedFunds: BigDecimal = GuaranteeLimit - AvailableGuaranteeBalance
   val usedPercentage: BigDecimal =
     if (GuaranteeLimit.compare(zero) == 0) zero else usedFunds / GuaranteeLimit * maxUsedPercentage
+}
 
+object GeneralGuaranteeBalance {
+  implicit val generalGuaranteeBalanceFormat: Format[GeneralGuaranteeBalance] = Json.format[GeneralGuaranteeBalance]
 }
 
 case class CDSCashBalance(AvailableAccountBalance: Option[BigDecimal]) extends Balances
 
-object Balances {
-  implicit val dutyDefermentBalanceFormat: Format[DutyDefermentBalance] = Json.format[DutyDefermentBalance]
-  implicit val generalGuaranteeBalanceFormat: Format[GeneralGuaranteeBalance] = Json.format[GeneralGuaranteeBalance]
+object CDSCashBalance {
   implicit val cashBalanceFormat: Format[CDSCashBalance] = Json.format[CDSCashBalance]
 }
 
@@ -140,8 +144,12 @@ object CDSAccount {
   def formattedAccountType(cdsAccount: CDSAccount)(implicit messages: Messages): String = {
     cdsAccount match {
       case CashAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsCashAccount", cdsAccount.number)
-      case DutyDefermentAccount(_, _, _, _, _, _) => messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
-      case GeneralGuaranteeAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
+
+      case DutyDefermentAccount(_, _, _, _, _, _) =>
+        messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
+
+      case GeneralGuaranteeAccount(_, _, _, _, _) =>
+        messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
     }
   }
 }

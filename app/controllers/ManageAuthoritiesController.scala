@@ -110,5 +110,3 @@ class ManageAuthoritiesController @Inject()(
       Future.successful(Ok(invalidAuthorityView()))
   }
 }
-
-case object TimeoutResponse extends Exception

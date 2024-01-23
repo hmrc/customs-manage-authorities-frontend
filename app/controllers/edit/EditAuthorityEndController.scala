@@ -41,7 +41,9 @@ class EditAuthorityEndController @Inject()(
                                             formProvider: AuthorityEndFormProvider,
                                             implicit val controllerComponents: MessagesControllerComponents,
                                             view: EditAuthorityEndView
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 

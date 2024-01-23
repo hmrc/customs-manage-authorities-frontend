@@ -64,6 +64,7 @@ lazy val root = (project in file("."))
     uglify / includeFilter := GlobFilter("application.js")
   )
   .configs(IntegrationTest)
+  .settings(scalastyleSettings)
   .settings(
     scalacOptions += "-P:silencer:pathFilters=target/.*",
     scalacOptions += s"-P:silencer:sourceRoots=${baseDirectory.value.getCanonicalPath}",
@@ -77,7 +78,8 @@ lazy val root = (project in file("."))
       "-Wunused:explicits",
       "-Wunused:privates",
       //"-Ywarn-macros:none",
-    "-Wdead-code"),
+    //"-Wdead-code"
+    ),
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
       "-Wunused:params",

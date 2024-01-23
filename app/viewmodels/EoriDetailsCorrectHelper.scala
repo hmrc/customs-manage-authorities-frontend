@@ -29,11 +29,6 @@ case class EoriDetailsCorrectHelper(userAnswers: UserAnswers,
 
   val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
 
-  val companyNameWithConsent: String = companyName match {
-    case Some(_) => messages("authorisedUser.declaration.singular")
-    case _ => messages("authorisedUser.declaration.plural")
-  }
-
   def companyDetailsRows: Seq[SummaryListRow] = {
     if (companyName.isEmpty) {
       Seq(

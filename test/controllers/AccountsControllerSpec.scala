@@ -19,7 +19,8 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount,
+  DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -29,7 +30,6 @@ import pages.add.{AccountsPage, EoriNumberPage}
 import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -44,6 +44,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
   "Accounts Controller" must {
 
     "return OK and the correct view for a GET" when {
+
       "user answers exists with no entered EORI" in new Setup {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -52,7 +53,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
         }
       }
 
@@ -113,7 +115,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               AuthorisedAccounts(
                 Seq.empty,
                 answerAccounts,
-                Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+                Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
                 Seq.empty, "GB9876543210000"),
               NormalMode,
               backLinkRoute)(request, messages(application), appConfig).toString
@@ -144,7 +146,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
                 "123",
                 "XI9876543210000",
                 AccountStatusOpen,
-                DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)),
+                DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
                 true)),
               Seq.empty, "XI9876543210000"),
             NormalMode,
@@ -207,7 +209,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         contentAsString(result) mustEqual
           view(form.fill(answer), AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-            CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+            CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
           ), Seq.empty, "GB9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
@@ -240,7 +242,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             AuthorisedAccounts(
               Seq.empty,
               answerAccounts,
-              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
               Seq.empty, "GB9876543210000"),
             CheckMode,
             backLinkRouteInCheckMode)(request, messages(application), appConfig).toString
@@ -331,7 +333,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-
         }
       }
 
@@ -360,7 +361,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
             controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
-
         }
       }
 
@@ -478,7 +478,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             boundForm,
             AuthorisedAccounts(Seq.empty,
               answerAccounts,
-              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))),
+              Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
               Seq.empty,
               "GB9876543210000"),
             NormalMode,
@@ -488,6 +488,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
   }
 
   trait Setup {
+    val amount100 = 100
+    val bigDecimal100 = 100.00
 
     def onwardRoute: Call = Call("GET", "/foo")
 
@@ -503,13 +505,10 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val formProvider = new AccountsFormProvider()
     val form: Form[List[String]] = formProvider()
 
-    val userAnswersWithEori = emptyUserAnswers.copy(data = Json.obj(
-      "eoriNumber" -> "GB9876543210000"))
-
-    val userAnswersCompanyDetails = emptyUserAnswers.set(
+    val userAnswersCompanyDetails: UserAnswers = emptyUserAnswers.set(
       EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
-    val userAnswersCompanyDetailsXI = emptyUserAnswers.set(
+    val userAnswersCompanyDetailsXI: UserAnswers = emptyUserAnswers.set(
       EoriNumberPage, CompanyDetails("XI9876543210000", Some("name"))).success.value
 
     val standingAuthority: StandingAuthority = StandingAuthority(
@@ -518,29 +517,43 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       Some(LocalDate.parse("2020-04-01")),
       viewBalance = false)
 
-    val accountWithAuthorities = AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
+    val answer: List[String] = List("account_0")
 
-    val answer = List("account_0")
-    val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
-    val accounts = CDSAccounts("GB123456789012", List(
-      DutyDefermentAccount("123", "XI9876543210000", AccountStatusOpen,
-        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true),
-      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
-      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-    ))
+    val answerAccounts: List[CashAccount] =
+      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))))
 
-    val authorisedAccounts = List(CashAccount("12345", "GB123456789012",
-      AccountStatusOpen, CDSCashBalance(Some(100))))
+    val accounts: CDSAccounts =
+      CDSAccounts(
+        "GB123456789012",
+        List(DutyDefermentAccount(
+          "123",
+          "XI9876543210000",
+          AccountStatusOpen,
+          DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+          isNiAccount = true),
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
+        ))
 
-    val closedAccount = List(CashAccount("23456", "GB123456789012",
-      AccountStatusClosed, CDSCashBalance(Some(100))))
+    val authorisedAccounts: List[CashAccount] = List(CashAccount("12345", "GB123456789012",
+      AccountStatusOpen, CDSCashBalance(Some(amount100))))
 
-    val closedAccountXI = List(DutyDefermentAccount("123", "XI9876543210000", AccountStatusOpen,
-      DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), true))
+    private val closedAccount = List(CashAccount("23456", "GB123456789012",
+      AccountStatusClosed, CDSCashBalance(Some(amount100))))
 
-    val mockAccountsCacheService = mock[AccountsCacheService]
-    val mockAuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockAuthorisedAccountService = mock[AuthorisedAccountsService]
+    val closedAccountXI: List[DutyDefermentAccount] =
+      List(
+        DutyDefermentAccount(
+          "123",
+          "XI9876543210000",
+          AccountStatusOpen,
+          DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+          isNiAccount = true)
+      )
+
+    val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+    val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+    val mockAuthorisedAccountService: AuthorisedAccountsService = mock[AuthorisedAccountsService]
 
     when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
       .thenReturn(Future.successful(accounts))

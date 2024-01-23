@@ -15,6 +15,7 @@
  */
 
 package controllers.actions
+
 import models.UserAnswers
 import models.requests.DataRequest
 import play.api.mvc.Result
@@ -24,8 +25,19 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class FakeVerifyAccountNumbersAction(usersAnswers: UserAnswers) extends VerifyAccountNumbersAction {
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-    Future.successful(Right(DataRequest(request.request, request.internalId, request.credentials, request.affinityGroup,
-      request.name, request.email, request.eoriNumber, usersAnswers)))
+    Future.successful(
+      Right(
+        DataRequest(
+          request.request,
+          request.internalId,
+          request.credentials,
+          request.affinityGroup,
+          request.name,
+          request.email,
+          request.eoriNumber,
+          usersAnswers)
+      )
+    )
 
   override protected def executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

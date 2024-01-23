@@ -17,52 +17,40 @@
 package models
 
 import base.SpecBase
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended,
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended,
   CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount,
-  GeneralGuaranteeBalance}
+  GeneralGuaranteeBalance
+}
 import play.api.libs.json._
 
 class CustomsAccountsSpec extends SpecBase {
 
-  private val traderEori = "12345678"
-
-  val guaranteeAccount: GeneralGuaranteeAccount = GeneralGuaranteeAccount("G123456", traderEori,
-    AccountStatusOpen, Some(GeneralGuaranteeBalance(BigDecimal(1000000), BigDecimal(200000))))
-
-  val guaranteeAccountZeroLimit: GeneralGuaranteeAccount = GeneralGuaranteeAccount("G123456", traderEori,
-    AccountStatusOpen, Some(GeneralGuaranteeBalance(BigDecimal(0), BigDecimal(200001))))
-
-  val guaranteeAccountZeroBalance: GeneralGuaranteeAccount = GeneralGuaranteeAccount("G123456", traderEori,
-    AccountStatusOpen, Some(GeneralGuaranteeBalance(BigDecimal(200002), BigDecimal(0))))
-
-  val guaranteeAccountZeroLimitZeroBalance: GeneralGuaranteeAccount = GeneralGuaranteeAccount("G123456", traderEori,
-    AccountStatusOpen, Some(GeneralGuaranteeBalance(BigDecimal(0), BigDecimal(0))))
-
   "GeneralGuaranteeBalance" should {
 
-    "return correct used funds value" in {
+    "return correct used funds value" in new Setup {
       val expectedUsedFunds = 800000
-      guaranteeAccount.balances.get.usedFunds  must be (expectedUsedFunds)
+      guaranteeAccount.balances.get.usedFunds must be(expectedUsedFunds)
     }
 
-    "return zero used funds when the guarantee limit is zero" in {
-      val expectedUsedFunds = -200001
-      guaranteeAccountZeroLimit.balances.get.usedFunds  must be (expectedUsedFunds)
+    "return zero used funds when the guarantee limit is zero" in new Setup {
+      val expectedUsedFunds: Int = -200001
+      guaranteeAccountZeroLimit.balances.get.usedFunds must be(expectedUsedFunds)
     }
 
-    "return correct used percentage value" in {
+    "return correct used percentage value" in new Setup {
       val expectedUsedPercentage = 80
-      guaranteeAccount.balances.get.usedPercentage  must be (expectedUsedPercentage)
+      guaranteeAccount.balances.get.usedPercentage must be(expectedUsedPercentage)
     }
 
-    "return used funds of 100 percent when available balance is zero" in {
+    "return used funds of 100 percent when available balance is zero" in new Setup {
       val expectedUsedPercentage = 100
-      guaranteeAccountZeroBalance.balances.get.usedPercentage  must be (expectedUsedPercentage)
+      guaranteeAccountZeroBalance.balances.get.usedPercentage must be(expectedUsedPercentage)
     }
 
-    "return zero used percentage and funds when available balance and limit are both zero" in {
+    "return zero used percentage and funds when available balance and limit are both zero" in new Setup {
       val expectedUsedPercentage = 0
-      guaranteeAccountZeroLimitZeroBalance.balances.get.usedPercentage  must be (expectedUsedPercentage)
+      guaranteeAccountZeroLimitZeroBalance.balances.get.usedPercentage must be(expectedUsedPercentage)
     }
 
   }
@@ -136,6 +124,48 @@ class CustomsAccountsSpec extends SpecBase {
 
       cdsAccounts.canAuthoriseAccounts(Seq("12345")) mustBe Seq()
     }
+  }
+
+  trait Setup {
+    private val traderEori = "12345678"
+
+    val zeroAmount = 0
+    val guaranteeAmtLimit = 1000000
+    val guaranteeAmtAvlBal = 200000
+    val guaranteeAmtAvlBalForZeroLimit = 200001
+    val guaranteeAmtAvlBalForZeroBal = 200002
+
+    val guaranteeAccount: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount(
+        "G123456",
+        traderEori,
+        AccountStatusOpen,
+        Some(GeneralGuaranteeBalance(BigDecimal(guaranteeAmtLimit), BigDecimal(guaranteeAmtAvlBal)))
+      )
+
+    val guaranteeAccountZeroLimit: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount(
+        "G123456",
+        traderEori,
+        AccountStatusOpen,
+        Some(GeneralGuaranteeBalance(BigDecimal(zeroAmount), BigDecimal(guaranteeAmtAvlBalForZeroLimit)))
+      )
+
+    val guaranteeAccountZeroBalance: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount(
+        "G123456",
+        traderEori,
+        AccountStatusOpen,
+        Some(GeneralGuaranteeBalance(BigDecimal(guaranteeAmtAvlBalForZeroBal), BigDecimal(zeroAmount)))
+      )
+
+    val guaranteeAccountZeroLimitZeroBalance: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount(
+        "G123456",
+        traderEori,
+        AccountStatusOpen,
+        Some(GeneralGuaranteeBalance(BigDecimal(zeroAmount), BigDecimal(zeroAmount)))
+      )
   }
 
 }

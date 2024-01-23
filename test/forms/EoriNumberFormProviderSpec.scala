@@ -18,23 +18,27 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
+import org.scalacheck.Gen
 import org.scalacheck.Gen.choose
 import play.api.data.FormError
 
-class EoriNumberFormProviderSpec extends StringFieldBehaviours with Constraints{
+class EoriNumberFormProviderSpec extends StringFieldBehaviours with Constraints {
 
-  val requiredKey = "eoriNumber.error.required"
-  val lengthKey = "eoriNumber.error.length"
+  val validGenerator: Gen[String] = {
+    val minValue = 100000000000L
+    val maxValue = 999999999999L
 
-  val validGenerator = for {
-    digits <- choose[Long](100000000000L, 999999999999L)
-  } yield {
-    s"GB$digits"
+    for {
+      digits <- choose[Long](minValue, maxValue)
+    } yield {
+      s"GB$digits"
+    }
   }
 
   val form = new EoriNumberFormProvider()()
-  ".value" must {
 
+  ".value" must {
+    val requiredKey = "eoriNumber.error.required"
     val fieldName = "value"
 
     behave like fieldThatBindsValidData(

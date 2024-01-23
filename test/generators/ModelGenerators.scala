@@ -24,41 +24,49 @@ import org.scalacheck.{Arbitrary, Gen}
 trait ModelGenerators {
   self: Generators =>
 
+  val maxLength50 = 50
+
   implicit lazy val arbitraryShowBalance: Arbitrary[ShowBalance] =
     Arbitrary {
-      Gen.oneOf(ShowBalance.values.toSeq)
+      Gen.oneOf(ShowBalance.values)
     }
 
   implicit lazy val arbitraryAuthorityEnd: Arbitrary[AuthorityEnd] =
     Arbitrary {
-      Gen.oneOf(AuthorityEnd.values.toSeq)
+      Gen.oneOf(AuthorityEnd.values)
     }
 
   implicit lazy val arbitraryAuthorityStart: Arbitrary[AuthorityStart] =
     Arbitrary {
-      Gen.oneOf(AuthorityStart.values.toSeq)
+      Gen.oneOf(AuthorityStart.values)
     }
 
   implicit lazy val arbitraryAuthorisedUser: Arbitrary[AuthorisedUser] =
     Arbitrary {
       for {
-        name <- stringsWithMaxLength(50)
-        role <- stringsWithMaxLength(50)
+        name <- stringsWithMaxLength(maxLength50)
+        role <- stringsWithMaxLength(maxLength50)
       } yield AuthorisedUser(name, role)
     }
 
   implicit lazy val arbitraryEoriNumber: Arbitrary[CompanyDetails] =
     Arbitrary {
       for {
-        name <- stringsWithMaxLength(50)
+        name <- stringsWithMaxLength(maxLength50)
       } yield CompanyDetails(name, None)
     }
 
-  val genCashAccount: Gen[CashAccount] = for {
-    number <- Gen.choose(1, 10000)
-    owner <- Gen.choose(100000000000L, 999999999999L)
-    balance <- arbitrary[BigDecimal]
-  } yield CashAccount(number.toString, s"GB$owner", AccountStatusOpen, CDSCashBalance(Some(balance)))
+  val genCashAccount: Gen[CashAccount] = {
+    val max1000 = 10000
+    val min100000000000 = 100000000000L
+    val max999999999999 = 999999999999L
+
+    for {
+      number <- Gen.choose(1, max1000)
+      owner <- Gen.choose(min100000000000, max999999999999)
+      balance <- arbitrary[BigDecimal]
+    } yield CashAccount(number.toString, s"GB$owner", AccountStatusOpen, CDSCashBalance(Some(balance)))
+  }
 
   implicit lazy val arbitraryCashAccount: Arbitrary[CashAccount] =
     Arbitrary {
