@@ -31,6 +31,10 @@ private[mappings] class LocalDateFormatter(
                                           ) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
+  private val maxValidDay = 31
+  private val maxValidMonth = 12
+  private val minAllowedYearValue = 1000
+  private val maxAllowedYearValue = 99999
 
   private def toDate(key: String,
                      day: Int,
@@ -116,14 +120,15 @@ private[mappings] class LocalDateFormatter(
       s"$key.year" -> value.getYear.toString
     )
 
+  //scalastyle:off
   private[mappings] def updateFormErrorKeys(key: String,
                                             day: Int,
                                             month: Int,
                                             year: Int): String =
     (day, month, year) match {
-      case (d, _, _) if d < 1 || d > 31 => s"$key.day"
-      case (_, m, _) if m < 1 || m > 12 => s"$key.month"
-      case (_, _, y) if y < 1000 || y > 99999 => s"$key.year"
+      case (d, _, _) if d < 1 || d > maxValidDay => s"$key.day"
+      case (_, m, _) if m < 1 || m > maxValidMonth => s"$key.month"
+      case (_, _, y) if y < minAllowedYearValue || y > maxAllowedYearValue => s"$key.year"
       case _ => s"$key.day"
     }
 
@@ -139,7 +144,7 @@ private[mappings] class LocalDateFormatter(
       case (_, _, Some(y)) if y.trim.isEmpty || hasConversionToIntFailed(y) => s"$key.year"
       case _ => s"$key.day"
     }
-  }
+  }//scalastyle:on
 
   private def hasConversionToIntFailed(strValue: String) =
     Try(strValue.trim.toInt).isFailure

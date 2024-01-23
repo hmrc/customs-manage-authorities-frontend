@@ -43,7 +43,7 @@ object ViewUtils {
       messages("site.govuk")
     }"
 
-  def errorPrefix(form: Form[_])(implicit messages: Messages): String = {
+  private def errorPrefix(form: Form[_])(implicit messages: Messages): String = {
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else emptyString
   }
 

@@ -35,9 +35,9 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    val standingAuthority: StandingAuthority,
                                    account: AccountWithAuthoritiesWithId,
                                    dataStore: CustomsDataStoreConnector)
-  (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
+                                  (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
 
-  val companyName:Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
+  val companyName: Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
   val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith("XI")
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
@@ -78,7 +78,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
         actions = Actions(items = Seq()),
         secondValue = None
       ))
-      
+
       case _ => Some(summaryListRow(
         messages("remove-cya-h2.4"),
         value = messages("remove-cya-h2.5"),
