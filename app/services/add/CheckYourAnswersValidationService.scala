@@ -22,6 +22,8 @@ import models.requests.Accounts
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UserAnswers}
 import pages.add._
 import services.DateTimeService
+import utils.Constants.{CASH_ACCOUNT_TYPE, DUTY_DEFERMENT_ACCOUNT_TYPE, GENERAL_GUARANTEE_ACCOUNT_TYPE}
+
 import scala.util.Try
 
 class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeService) {
@@ -57,9 +59,9 @@ class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeServi
 
   private def extractAccounts(selected: List[CDSAccount]): Accounts = {
     Accounts(
-      selected.find(_.accountType == "cash").map(_.number),
-      selected.filter(_.accountType == "dutyDeferment").map(_.number),
-      selected.find(_.accountType == "generalGuarantee").map(_.number)
+      selected.find(_.accountType == CASH_ACCOUNT_TYPE).map(_.number),
+      selected.filter(_.accountType == DUTY_DEFERMENT_ACCOUNT_TYPE).map(_.number),
+      selected.find(_.accountType == GENERAL_GUARANTEE_ACCOUNT_TYPE).map(_.number)
     )
   }
 

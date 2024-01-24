@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
+import utils.Constants.DUTY_DEFERMENT_ACCOUNT_TYPE
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 case class CheckYourAnswersHelper(userAnswers: UserAnswers,
@@ -75,7 +76,7 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers,
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
     val list = selectedAccounts.map {
       account =>
-        if (account.isNiAccount && account.accountType == "dutyDeferment") {
+        if (account.isNiAccount && account.accountType == DUTY_DEFERMENT_ACCOUNT_TYPE) {
           s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
         } else {
           s"${messages("accounts.type." + account.accountType)}: ${account.number}"

@@ -31,6 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Constants.{CASH_ACCOUNT_TYPE, GENERAL_GUARANTEE_ACCOUNT_TYPE}
 import utils.StringUtils.{emptyString, gbEORIPrefix}
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 
@@ -74,7 +75,7 @@ class AccountsController @Inject()(
               } else {
                 Ok(
                   view(populateForm(authorisedAccounts.availableAccounts
-                  .filter(x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))),
+                  .filter(x => x.isNiAccount || x.accountType.equals(CASH_ACCOUNT_TYPE) || x.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE))),
                     getXIAccounts(authorisedAccounts),
                     mode,
                     navigator.backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode)))
@@ -130,13 +131,13 @@ class AccountsController @Inject()(
 
   private def getXIAccounts(authorisedAccounts: AuthorisedAccounts) = {
     getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(
-      x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee")))
+      x => x.isNiAccount || x.accountType.equals(CASH_ACCOUNT_TYPE) || x.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE)))
   }
 
   private def filterAccountsWithContext(eori: String, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
       if (eori.startsWith("XI")) {
         value.map(account => authorisedAccounts.availableAccounts.filter(
-          x => x.isNiAccount || x.accountType.equals("cash") || x.accountType.equals("generalGuarantee"))
+          x => x.isNiAccount || x.accountType.equals(CASH_ACCOUNT_TYPE) || x.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE))
         (account.replace("account_", emptyString).toInt))
       } else {
         value.map(account => authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)
