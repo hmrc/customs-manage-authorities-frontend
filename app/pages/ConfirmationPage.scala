@@ -19,7 +19,7 @@ package pages
 import play.api.libs.json.{JsPath, Json, OFormat}
 import queries.{Gettable, Settable}
 
-case class ConfirmationDetails(eori : String,
+case class ConfirmationDetails(eori: String,
                                startDate: Option[String],
                                companyName: Option[String],
                                multipleAccounts: Boolean)
@@ -27,7 +27,11 @@ case class ConfirmationDetails(eori : String,
 object ConfirmationDetails {
   implicit val format: OFormat[ConfirmationDetails] = Json.format[ConfirmationDetails]
 }
-case object ConfirmationPage extends Page with Gettable[ConfirmationDetails] with Settable[ConfirmationDetails] {
+
+case object ConfirmationPage extends Page
+  with Gettable[ConfirmationDetails]
+  with Settable[ConfirmationDetails] {
   override def path: JsPath = JsPath \ toString
-  override def toString = "confirmationDetails"
+
+  override def toString: String = "confirmationDetails"
 }
