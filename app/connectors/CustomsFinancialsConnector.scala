@@ -19,11 +19,12 @@ package connectors
 import config.Service
 import models.domain.{AccountWithAuthorities, CDSAccounts}
 import models.requests._
-import models.{CompanyName, EORIValidationError, EmailUnverifiedResponse, ErrorResponse, EmailVerifiedResponse}
+import models.{CompanyName, EORIValidationError, EmailUnverifiedResponse, EmailVerifiedResponse, ErrorResponse}
 import play.api.Configuration
 import play.mvc.Http.Status
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse, NotFoundException}
+import utils.StringUtils.emptyString
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,35 +41,40 @@ class CustomsFinancialsConnector @Inject()(
     val request = AccountsAndBalancesRequestContainer(AccountsAndBalancesRequest(
       AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None)))
 
-    httpClient.POST[AccountsAndBalancesRequestContainer,
-      AccountsAndBalancesResponseContainer](baseUrl.toString + context + "/eori/accounts/", request).map(_.toCdsAccounts(eori))
+    httpClient.POST[AccountsAndBalancesRequestContainer, AccountsAndBalancesResponseContainer](
+      baseUrl.toString + context + "/eori/accounts/", request).map(_.toCdsAccounts(eori))
   }
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
     httpClient.GET[Seq[AccountWithAuthorities]](baseUrl.toString + context + s"/$eori/account-authorities")
   }
 
-  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[AddAuthorityRequest, HttpResponse](baseUrl.toString + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
+  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest,
+                              eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    httpClient.POST[AddAuthorityRequest, HttpResponse](
+      baseUrl.toString + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
-  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest, eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.POST[RevokeAuthorityRequest, HttpResponse](baseUrl.toString + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
+  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest,
+                               eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    httpClient.POST[RevokeAuthorityRequest, HttpResponse](
+      baseUrl.toString + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
     httpClient.GET[HttpResponse](baseUrl.toString + context + s"/eori/$eori/validate")
-      .map(response => { response.status match {
+      .map(response => {
+        response.status match {
           case Status.OK => Right(true)
           case Status.NOT_FOUND => Right(false)
           case _ => Left(EORIValidationError)
         }
       }).recover {
-        case _: NotFoundException => Right(false)
-        case _ => Left(EORIValidationError)
-      }
+      case _: NotFoundException => Right(false)
+      case _ => Left(EORIValidationError)
+    }
   }
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
@@ -77,7 +83,7 @@ class CustomsFinancialsConnector @Inject()(
 
   def isEmailUnverified(implicit hc: HeaderCarrier): Future[Option[String]] = {
     httpClient.GET[EmailUnverifiedResponse](baseUrl.toString + context + "/subscriptions/unverified-email-display")
-      .map( res => res.unVerifiedEmail)
+      .map(res => res.unVerifiedEmail)
   }
 
   def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =

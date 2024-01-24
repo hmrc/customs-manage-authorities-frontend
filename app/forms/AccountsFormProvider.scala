@@ -23,6 +23,8 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import utils.StringUtils.emptyString
+
 import javax.inject.Inject
 
 class AccountsFormProvider @Inject() extends Mappings {
@@ -69,7 +71,7 @@ object AccountsFormProvider {
 
         CheckboxItem(
           name = Some(s"value[$index]"),
-          id = Some(s"value${if (index > 0) index.toString else ""}"),
+          id = Some(s"value${if (index > 0) index.toString else emptyString}"),
           value = s"account_${index.toString}",
           content = Text(message),
           checked = form.data.values.contains(s"account_${index.toString}")

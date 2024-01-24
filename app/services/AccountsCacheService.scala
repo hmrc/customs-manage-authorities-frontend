@@ -21,6 +21,7 @@ import models.InternalId
 import models.domain.CDSAccounts
 import repositories.AccountsRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -42,7 +43,7 @@ class AccountsCacheService @Inject()(repository: AccountsRepository,
 
   def merge(accounts: Seq[CDSAccounts]): CDSAccounts = {
     val mergedAccounts = accounts.flatMap(_.accounts).toList
-    CDSAccounts("", mergedAccounts)
+    CDSAccounts(emptyString, mergedAccounts)
   }
 
 }

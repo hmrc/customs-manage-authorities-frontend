@@ -27,6 +27,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.StringUtils.emptyString
 import viewmodels.ManageAuthoritiesViewModel
 import views.html._
 
@@ -78,7 +79,7 @@ class ManageAuthoritiesController @Inject()(
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])(
                               implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
-    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+    val eoriList = Seq(eori, xiEori.getOrElse(emptyString)).filterNot(_ == emptyString)
 
     for {
       accounts <- accountsCacheService.retrieveAccounts(request.internalId, eoriList)
@@ -89,7 +90,7 @@ class ManageAuthoritiesController @Inject()(
                                 xiEori: Option[String],
                                 accounts: CDSAccounts)
                                (implicit request: IdentifierRequest[AnyContent]): Future[Option[AuthoritiesWithId]] = {
-    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+    val eoriList = Seq(eori, xiEori.getOrElse(emptyString)).filterNot(_ == emptyString)
 
     for {
       authorities <- if (accounts.openAccounts.nonEmpty || accounts.closedAccounts.nonEmpty) {

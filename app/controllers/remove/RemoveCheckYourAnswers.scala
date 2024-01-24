@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import utils.StringUtils.nIEORIPrefix
+import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
 
@@ -80,16 +80,18 @@ class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
         authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
           case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
           case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+
           case Right(AccountAndAuthority(account, authority)) =>
             for {
               xiEori <- dataStore.getXiEori(request.eoriNumber)
-              result <- request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map { authorisedUser =>
-                val revokeRequest = RevokeAuthorityRequest(
-                  account.accountNumber,
-                  account.accountType,
-                  authority.authorisedEori,
-                  authorisedUser)
-                doSubmission(revokeRequest, accountId, authorityId, xiEori.getOrElse(""), request.eoriNumber)
+              result <- request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map {
+                authorisedUser =>
+                  val revokeRequest = RevokeAuthorityRequest(
+                    account.accountNumber,
+                    account.accountType,
+                    authority.authorisedEori,
+                    authorisedUser)
+                  doSubmission(revokeRequest, accountId, authorityId, xiEori.getOrElse(emptyString), request.eoriNumber)
               }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
             } yield result
         }

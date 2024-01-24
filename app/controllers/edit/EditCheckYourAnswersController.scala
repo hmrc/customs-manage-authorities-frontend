@@ -32,7 +32,7 @@ import services._
 import services.edit.EditAuthorityValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.nIEORIPrefix
+import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
@@ -74,19 +74,22 @@ class EditCheckYourAnswersController @Inject()(override val messagesApi: Message
     }
   }
 
-  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
+  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
+    commonActions.async {
+      implicit request =>
 
-    service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
-      case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
-      case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
-      case Right(AccountAndAuthority(account, authority)) =>
-        for {
-          xiEori <- dataStore.getXiEori(request.eoriNumber)
-          result <- doSubmission(request.userAnswers, accountId, authorityId,
-            authority.authorisedEori, account, xiEori.getOrElse(""), request.eoriNumber)
-        } yield result
+        service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+          case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+          case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
+
+          case Right(AccountAndAuthority(account, authority)) =>
+            for {
+              xiEori <- dataStore.getXiEori(request.eoriNumber)
+              result <- doSubmission(request.userAnswers, accountId, authorityId,
+                authority.authorisedEori, account, xiEori.getOrElse(emptyString), request.eoriNumber)
+            } yield result
+        }
     }
-  }
 
   private def doSubmission(userAnswers: UserAnswers,
                            accountId: String,
