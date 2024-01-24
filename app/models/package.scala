@@ -114,7 +114,6 @@ package object models {
       }
     }
 
-    //scalastyle:off
     def remove(path: JsPath): JsResult[JsValue] = {
 
       (path.path, jsValue) match {
@@ -150,6 +149,6 @@ package object models {
         case _ =>
           JsError(s"cannot remove a key on $jsValue")
       }
-    }  //scalastyle:on
+    }
   }
 }

@@ -25,6 +25,7 @@ import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.Constants.DUTY_DEFERMENT_ACCOUNT_TYPE
+import utils.StringUtils.htmlSingleLineBreak
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 case class CheckYourAnswersHelper(userAnswers: UserAnswers,
@@ -84,8 +85,12 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers,
     }
 
     summaryListRow(
-      if (list.size == 1) messages("accounts.checkYourAnswersLabel.singular") else messages("accounts.checkYourAnswersLabel.plural"),
-      value = list.mkString("<br>"),
+      if (list.size == 1) {
+        messages("accounts.checkYourAnswersLabel.singular")
+      } else {
+        messages("accounts.checkYourAnswersLabel.plural")
+      },
+      value = list.mkString(htmlSingleLineBreak),
       actions =
         Actions(
           items = Seq(ActionItem(

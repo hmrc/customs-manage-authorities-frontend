@@ -29,6 +29,4 @@ object Constants {
   val FIXED_DATE_TIME_DAY_OF_MONTH = 20
   val FIXED_DATE_TIME_HOUR_OF_DAY = 12
   val FIXED_DATE_TIME_MIN_OF_HOUR = 30
-
-  val HTML_LINE_BREAK = "<br>"
 }

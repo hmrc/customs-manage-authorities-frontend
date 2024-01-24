@@ -120,7 +120,6 @@ private[mappings] class LocalDateFormatter(
       s"$key.year" -> value.getYear.toString
     )
 
-  //scalastyle:off
   private[mappings] def updateFormErrorKeys(key: String,
                                             day: Int,
                                             month: Int,
@@ -144,7 +143,7 @@ private[mappings] class LocalDateFormatter(
       case (_, _, Some(y)) if y.trim.isEmpty || hasConversionToIntFailed(y) => s"$key.year"
       case _ => s"$key.day"
     }
-  }//scalastyle:on
+  }
 
   private def hasConversionToIntFailed(strValue: String) =
     Try(strValue.trim.toInt).isFailure
