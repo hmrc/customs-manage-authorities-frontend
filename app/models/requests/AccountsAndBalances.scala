@@ -91,7 +91,7 @@ case class DutyDefermentAccount(account: AccountWithStatus,
                                 isIomAccount: Option[Boolean] = Some(false),
                                 limits: Option[Limits],
                                 balances: Option[DefermentBalances]) {
-  def toDomain(): domain.DutyDefermentAccount = {
+  def toDomain: domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
       limits.map(limit => BigDecimal(limit.periodGuaranteeLimit)),
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
@@ -149,7 +149,7 @@ case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: Acc
     val details = this.accountsAndBalancesResponse.responseDetail
 
     val accounts: List[CDSAccount] = List(
-      details.dutyDefermentAccount.map(_.map(_.toDomain())),
+      details.dutyDefermentAccount.map(_.map(_.toDomain)),
       details.generalGuaranteeAccount.map(_.map(_.toDomain)),
       details.cdsCashAccount.map(_.map(_.toDomain))
     ).flatten.flatten.filter(_.owner == eori)

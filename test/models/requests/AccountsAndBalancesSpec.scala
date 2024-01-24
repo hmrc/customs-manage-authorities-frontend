@@ -119,7 +119,7 @@ class AccountsAndBalancesSpec extends SpecBase
           balances = Some(DefermentBalances("3", "4"))
         )
 
-      dutyDefermentAccount.toDomain() mustBe expectedResult
+      dutyDefermentAccount.toDomain mustBe expectedResult
     }
 
     "correctly generate a domain model when limit and balance are not available" in {
@@ -140,7 +140,7 @@ class AccountsAndBalancesSpec extends SpecBase
           limits = None,
           balances = None)
 
-      dutyDefermentAccount.toDomain() mustBe expectedResult
+      dutyDefermentAccount.toDomain mustBe expectedResult
     }
   }
 }
