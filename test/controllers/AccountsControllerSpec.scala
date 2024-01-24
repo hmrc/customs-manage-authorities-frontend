@@ -19,8 +19,7 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
-import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount,
-  DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
@@ -35,6 +34,7 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{AccountsCacheService, AuthorisedAccountsService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.InternalServerException
+import utils.StringUtils.emptyString
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 
 import java.time.LocalDate
@@ -328,7 +328,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
-            .withFormUrlEncodedBody(("value[0]", ""))
+            .withFormUrlEncodedBody(("value[0]", emptyString))
 
           val result = route(application, request).value
 

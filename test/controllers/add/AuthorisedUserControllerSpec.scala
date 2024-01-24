@@ -247,12 +247,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
 
-      /*
-      [error] /Users/vineet.tyagi/hmrc/codebase/customs-manage-authorities-frontend/test/controllers/add/AuthorisedUserControllerSpec.scala: expected start of definition, but was Token(VAL,val,15080,val)
-      [error] /Users/vineet.tyagi/hmrc/codebase/customs-manage-authorities-frontend/test/controllers/add/EoriNumberControllerSpec.scala: illegal start of simple expression: Token(RPAREN,),15867,))
-      [error] /Users/vineet.tyagi/hmrc/codebase/customs-manage-authorities-frontend/test/controllers/add/AuthorityDetailsControllerSpec.scala: expected start of definition, but was Token(VAL,val,3387,val)
-       */
-
       running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
         val result = route(app, request).value
@@ -296,6 +290,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
     val generalGuarantee: GeneralGuaranteeAccount =
       GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
     val userAnswersTodayToIndefinite: UserAnswers =
@@ -312,7 +307,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
     val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
     val sessionExpiredPage: String = controllers.routes.SessionExpiredController.onPageLoad.url

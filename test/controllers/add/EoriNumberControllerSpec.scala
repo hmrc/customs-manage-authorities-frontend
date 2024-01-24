@@ -33,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 import views.html.add.EoriNumberView
 
 import scala.concurrent.Future
@@ -377,9 +378,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val request =
           fakeRequest(POST, eoriNumberRoute
           )
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", emptyString))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> emptyString))
 
         val view = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]

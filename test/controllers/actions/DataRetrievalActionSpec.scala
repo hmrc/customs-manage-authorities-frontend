@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import utils.StringUtils.emptyString
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,7 +47,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         val action = new Harness(sessionRepository)
 
         val futureResult = action.callTransform(IdentifierRequest(
-          fakeRequest(), InternalId("id"), Credentials("", ""), Organisation,
+          fakeRequest(), InternalId("id"), Credentials(emptyString, emptyString), Organisation,
           Some(Name(Some("name"), Some("last"))), Some("email"), "eori"))
 
         whenReady(futureResult) { result =>
@@ -64,7 +65,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar with ScalaFutur
         val action = new Harness(sessionRepository)
 
         val futureResult = action.callTransform(IdentifierRequest(
-          fakeRequest(), InternalId("id"), Credentials("", ""), Organisation,
+          fakeRequest(), InternalId("id"), Credentials(emptyString, emptyString), Organisation,
           Some(Name(Some("name"), Some("last"))), Some("email"), "eori"))
 
         whenReady(futureResult) { result =>

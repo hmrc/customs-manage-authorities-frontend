@@ -20,6 +20,7 @@ import forms.FormSpec
 import models._
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.Form
+import utils.StringUtils.emptyString
 
 trait FormBehaviours extends FormSpec {
 
@@ -53,7 +54,7 @@ trait FormBehaviours extends FormSpec {
       }
 
       s"fail to bind when ${field.name} is blank" in {
-        val data = validData + (field.name -> "")
+        val data = validData + (field.name -> emptyString)
         val expectedError = error(field.name, field.errorKeys(Required))
         checkForError(form, data, expectedError)
       }

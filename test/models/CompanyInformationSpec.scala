@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import utils.StringUtils.emptyString
 
 class CompanyInformationSpec extends SpecBase {
 
@@ -46,5 +47,5 @@ trait Setup {
   val corp = CompanyInformation(name, consent, address)
 
   def formattedAddress: String = s"${address.streetAndNumber}, ${address.city}, " +
-    s"${address.postalCode.getOrElse("")}, ${address.countryCode}"
+    s"${address.postalCode.getOrElse(emptyString)}, ${address.countryCode}"
 }

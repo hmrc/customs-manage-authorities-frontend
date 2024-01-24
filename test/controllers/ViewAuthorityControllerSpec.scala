@@ -27,6 +27,7 @@ import play.api.Application
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAuthority}
+import utils.StringUtils.emptyString
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -40,8 +41,9 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(
-          GET, controllers.routes.ViewAuthorityController.onPageLoad(
-            "", "").url)
+          GET,
+          controllers.routes.ViewAuthorityController.onPageLoad(emptyString, emptyString).url
+        )
 
         val result = route(application, request).value
         status(result) mustEqual NOT_FOUND

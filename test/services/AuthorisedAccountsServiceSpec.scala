@@ -17,8 +17,7 @@
 package services
 
 import base.SpecBase
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId,
-  CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, EORI, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, EORI, StandingAuthority}
 import models.requests.DataRequest
 import models.{AuthorisedAccounts, InternalId, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -31,6 +30,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
@@ -117,7 +117,7 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
       models.requests.DataRequest(
         fakeRequest(),
         InternalId("id"),
-        Credentials("", ""),
+        Credentials(emptyString, emptyString),
         Organisation,
         Some(Name(Some("name"), Some("last"))), Some("email"),
         eori,

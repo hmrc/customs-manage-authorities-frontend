@@ -28,6 +28,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Value
+import utils.StringUtils.emptyString
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
 import java.time.{LocalDate, LocalDateTime}
@@ -50,7 +51,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
   val userAnswersNoCompanyName: UserAnswers = UserAnswers("id")
     .set(AccountsPage, selectedAccounts).success.value
@@ -58,7 +59,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
@@ -182,7 +183,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
@@ -201,8 +202,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           "67890",
           "GB210987654321",
           AccountStatusOpen,
-          DutyDefermentBalance(None, None, None, None),
-          isNiAccount = false)
+          DutyDefermentBalance(None, None, None, None)
+        )
 
         val cdsAccounts = List(dutyDeferment)
 
@@ -212,7 +213,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)

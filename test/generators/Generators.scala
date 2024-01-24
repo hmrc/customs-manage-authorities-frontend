@@ -19,6 +19,7 @@ package generators
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import utils.StringUtils.emptyString
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
@@ -42,7 +43,7 @@ trait Generators extends UserAnswersGenerator
       seq1 <- gen
       seq2 <- Gen.listOfN(seq1.length, genValue)
     } yield {
-      seq1.toSeq.zip(seq2).foldRight("") {
+      seq1.toSeq.zip(seq2).foldRight(emptyString) {
         case ((n, Some(v)), m) =>
           m + n + v
         case ((n, _), m) =>

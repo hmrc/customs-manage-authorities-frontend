@@ -36,13 +36,14 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository,
     } yield {
       a.flatten
         .groupBy(_.accountNumber)
-        .map { case (accountNumber, accountsWithSameAccountNumber) =>
-          val accountType = accountsWithSameAccountNumber.head.accountType
-          val accountStatus = accountsWithSameAccountNumber.head.accountStatus
-          val authorities = accountsWithSameAccountNumber.flatMap(_.authorities)
-          AccountWithAuthorities(accountType, accountNumber, accountStatus, authorities)
-        }
-        .toSeq
+        .map {
+          case (accountNumber, accountsWithSameAccountNumber) =>
+            val accountType = accountsWithSameAccountNumber.head.accountType
+            val accountStatus = accountsWithSameAccountNumber.head.accountStatus
+            val authorities = accountsWithSameAccountNumber.flatMap(_.authorities)
+
+            AccountWithAuthorities(accountType, accountNumber, accountStatus, authorities)
+        }.toSeq
     }
 
     repository.get(internalId.value).flatMap {
@@ -77,5 +78,4 @@ case class AccountAndAuthority(account: AccountWithAuthoritiesWithId, authority:
 sealed trait AuthoritiesCacheErrorResponse
 
 case object NoAuthority extends AuthoritiesCacheErrorResponse
-
 case object NoAccount extends AuthoritiesCacheErrorResponse
