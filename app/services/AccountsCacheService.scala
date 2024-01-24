@@ -43,6 +43,7 @@ class AccountsCacheService @Inject()(repository: AccountsRepository,
 
   def merge(accounts: Seq[CDSAccounts]): CDSAccounts = {
     val mergedAccounts = accounts.flatMap(_.accounts).toList
+
     CDSAccounts(emptyString, mergedAccounts)
   }
 

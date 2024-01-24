@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.nIEORIPrefix
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -38,7 +39,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                   (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
 
   val companyName: Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
-  val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith("XI")
+  private val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith(nIEORIPrefix)
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
