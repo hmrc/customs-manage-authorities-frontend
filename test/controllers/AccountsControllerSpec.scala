@@ -19,7 +19,10 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
-import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount,
+  DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
+}
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any

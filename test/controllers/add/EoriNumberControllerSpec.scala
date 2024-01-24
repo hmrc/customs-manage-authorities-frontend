@@ -375,10 +375,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request =
-          fakeRequest(POST, eoriNumberRoute
-          )
-            .withFormUrlEncodedBody(("value", emptyString))
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", emptyString))
 
         val boundForm = form.bind(Map("value" -> emptyString))
 
@@ -429,14 +426,11 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(false)))
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CustomsFinancialsConnector].toInstance(mockConnector),
+        bind[CustomsFinancialsConnector].toInstance(mockConnector)
       ).build()
 
       running(application) {
-        val request =
-          fakeRequest(POST, eoriNumberRoute
-          )
-            .withFormUrlEncodedBody(("value", "GB123456789011"))
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", "GB123456789011"))
 
         val boundForm =
           form.bind(Map("value" -> "GB123456789011"))
@@ -478,8 +472,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request =
-          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
-            .withFormUrlEncodedBody(("value", "XI123456789012"))
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute).withFormUrlEncodedBody(("value", "XI123456789012"))
 
         val result = route(application, request).value
 
@@ -502,8 +495,12 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-    lazy val eoriNumberNormalModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
-    lazy val eoriNumberCheckModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+    lazy val eoriNumberNormalModeSubmitRoute: String =
+      controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
+
+    lazy val eoriNumberCheckModeSubmitRoute: String =
+      controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+
     val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
   }
 }

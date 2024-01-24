@@ -101,7 +101,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 

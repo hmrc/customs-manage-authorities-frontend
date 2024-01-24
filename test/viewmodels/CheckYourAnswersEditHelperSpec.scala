@@ -18,10 +18,16 @@ package viewmodels
 
 import base.SpecBase
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance, CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance,
+  CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
+}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
+import pages.add.{
+  AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage,
+  ShowBalancePage
+}
 import play.api.i18n.Messages
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

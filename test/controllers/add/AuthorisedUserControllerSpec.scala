@@ -330,7 +330,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           Seq(
             inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
             inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer)),
+            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer))
           )
         } else {
           Seq(

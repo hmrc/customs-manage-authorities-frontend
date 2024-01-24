@@ -17,7 +17,10 @@
 package services
 
 import base.SpecBase
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, EORI, StandingAuthority}
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId,
+  CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, EORI, StandingAuthority
+}
 import models.requests.DataRequest
 import models.{AuthorisedAccounts, InternalId, UserAnswers}
 import org.mockito.ArgumentMatchers.any
