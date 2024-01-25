@@ -17,13 +17,13 @@
 package controllers
 
 import base.SpecBase
-import models.CompanyDetails
+import models.{CompanyDetails, UserAnswers}
 import models.domain._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, AuthorityStartDatePage, EoriNumberPage}
-import play.api.Application
+import play.api.{Application, inject}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAuthority}
@@ -37,8 +37,6 @@ class ViewAuthorityControllerSpec extends SpecBase {
   "onPageLoad" must {
     "return 404 when calling with empty values" in new Setup {
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
       running(application) {
         val request = FakeRequest(
           GET,
@@ -50,9 +48,11 @@ class ViewAuthorityControllerSpec extends SpecBase {
       }
     }
 
-    "return OK when called with correct values" ignore new Setup {
+    "return OK when called with correct values" in new Setup {
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+      ).build()
 
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -60,17 +60,19 @@ class ViewAuthorityControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET, controllers.routes.ViewAuthorityController.onPageLoad(
-            "test_account", "test_id").url)
+            accountId, authorityId).url)
 
         val result = route(application, request).value
-        //TODO: To be updated to OK
-        status(result) mustEqual SEE_OTHER
+
+        status(result) mustEqual OK
       }
     }
 
     "return 303 when AuthoritiesCacheErrorResponse is received" in new Setup {
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+      ).build()
 
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAuthority)))
@@ -78,9 +80,10 @@ class ViewAuthorityControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET, controllers.routes.ViewAuthorityController.onPageLoad(
-            "test_account", "test_id").url)
+            accountId, authorityId).url)
 
         val result = route(application, request).value
+
         status(result) mustEqual SEE_OTHER
       }
     }
@@ -88,25 +91,34 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
   trait Setup {
 
-    val startDate = LocalDate.now().plusMonths(1)
+    val oneMonth = 1
 
-    val cashAccount = CashAccount(
+    val startDate: LocalDate = LocalDate.now().plusMonths(oneMonth)
+
+    val cashAccount: CashAccount = CashAccount(
       "12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
-    val dutyDeferment = DutyDefermentAccount(
+    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
       "67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
-    val userAnswers = emptyUserAnswers
+    val userAnswers: UserAnswers = emptyUserAnswers
       .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
       .set(AuthorityStartDatePage, startDate).success.value
       .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
 
     val stDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
+
+    val accountId = "test_account"
+    val authorityId = "test_id"
+
     val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
-    val mockAuthCacheService = mock[AuthoritiesCacheService]
+    val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+
+    val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
   }
 }

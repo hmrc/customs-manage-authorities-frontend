@@ -19,10 +19,7 @@ package services
 import base.SpecBase
 import connectors.CustomsFinancialsConnector
 import models.InternalId
-import models.domain.{
-  AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId,
-  CdsCashAccount, StandingAuthority
-}
+import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
@@ -39,7 +36,7 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
 
     "use cached values on cache hit" in new Setup {
       when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
-      when(mockAuthRepo.get("notCachedId")).thenReturn(Future.successful(None))
+
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
 
       when(mockConnector.retrieveAccountAuthorities(any())(any()))
@@ -50,8 +47,15 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
       result.futureValue mustBe cachedAuthorities
     }
 
-    "update cache on cache miss" ignore new Setup {
-      private val result =
+    "update cache on cache miss" in new Setup {
+      when(mockAuthRepo.get("notCachedId")).thenReturn(Future.successful(None))
+
+      when(mockConnector.retrieveAccountAuthorities(any())(any()))
+        .thenReturn(Future.successful(Seq(accountWithAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      private val result: AuthoritiesWithId =
         authCacheServices.retrieveAuthorities(InternalId("notCachedId"), Seq(eoriNumber))(hc).futureValue
 
       result.accounts.head.accountNumber mustEqual accountWithAuthorities.accountNumber
