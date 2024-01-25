@@ -1,8 +1,7 @@
 import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings
-import uk.gov.hmrc.DefaultBuildSettings.targetJvm
+import uk.gov.hmrc.DefaultBuildSettings.{targetJvm, itSettings, scalaSettings, defaultSettings}
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
@@ -26,7 +25,7 @@ lazy val scalastyleSettings = Seq(
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
-  .settings(DefaultBuildSettings.itSettings)
+  .settings(itSettings())
   .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapVersion % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
@@ -40,8 +39,8 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(DefaultBuildSettings.scalaSettings *)
-  .settings(DefaultBuildSettings.defaultSettings() *)
+  .settings(scalaSettings *)
+  .settings(defaultSettings() *)
   .settings(inConfig(Test)(testSettings) *)
   .settings(ThisBuild / useSuperShell := false)
   .settings(
