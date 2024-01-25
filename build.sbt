@@ -8,7 +8,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 lazy val appName: String = "customs-manage-authorities-frontend"
 
 val silencerVersion = "1.17.13"
-val bootstrap = "7.22.0"
+val bootstrapVersion = "7.22.0"
 val scala2_13_8 = "2.13.8"
 
 val testDirectory = "test"
@@ -27,7 +27,7 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
   .settings(DefaultBuildSettings.itSettings)
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrap % Test))
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapVersion % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork        := true,
@@ -91,7 +91,6 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "40"),
     scalacOptions ++= Seq(
       "-Wunused:imports",
-      "-Wunused:params",
       "-Wunused:patvars",
       "-Wunused:implicits",
       "-Wunused:explicits",
