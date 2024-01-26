@@ -14,6 +14,8 @@ val testDirectory = "test"
 val scalaStyleConfigFile = "scalastyle-config.xml"
 val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 
+Global / lintUnusedKeysOnLoad := false
+
 ThisBuild / majorVersion := 0
 ThisBuild / scalaVersion := scala2_13_8
 
@@ -65,7 +67,7 @@ lazy val root = (project in file("."))
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions :=
-      EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+      EvictionWarningOptions.default.withWarnScalaVersionEviction(true),
     resolvers += Resolver.jcenterRepo,
     Concat.groups := Seq(
       "javascripts/application.js" ->
@@ -76,7 +78,6 @@ lazy val root = (project in file("."))
         ))
     ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
-    Test / uglifyCompressOptions:= Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),
     Assets / pipelineStages := Seq(concat,uglify),
     uglify / includeFilter := GlobFilter("application.js")
