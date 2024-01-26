@@ -44,7 +44,8 @@
 
     @layout(
         pageTitle = Some(titleNoForm("remove-cya-heading", None, Seq())),
-        backLink = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(model.accountId, model.authorityId).url)
+        backLink = Some(controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(
+            model.accountId, model.authorityId).url)
     ) {
         @h1(id = Some("remove-cya-heading"), msg = "remove-cya-heading", classes = "govuk-heading-xl")
 
@@ -61,7 +62,8 @@
             @p(Html(messages("remove-cya-p")))
             <div class="govuk-button-group">
                 @button("remove-cya-button")
-                @p(link(location = controllers.routes.ViewAuthorityController.onPageLoad(model.accountId, model.authorityId).url, linkMessage = "remove-cya-cancel"))
+                @link(location = controllers.routes.ViewAuthorityController.onPageLoad(
+                    model.accountId, model.authorityId).url, linkMessage = "remove-cya-cancel")
             </div>
         }
     }
