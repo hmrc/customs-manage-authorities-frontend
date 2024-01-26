@@ -77,8 +77,8 @@ class ManageAuthoritiesController @Inject()(
   }
 
   private def getAllAccounts(eori: EORI,
-                             xiEori: Option[String])(
-                              implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
+                             xiEori: Option[String])
+                            (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
     val eoriList = Seq(eori, xiEori.getOrElse(emptyString)).filterNot(_ == emptyString)
 
     for {
