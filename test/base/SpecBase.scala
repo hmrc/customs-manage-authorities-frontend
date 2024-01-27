@@ -46,9 +46,11 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
-  def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(fakeRequest("", ""))
+  def messages(app: Application): Messages =
+    app.injector.instanceOf[MessagesApi].preferred(fakeRequest(emptyString, emptyString))
 
-  def fakeRequest(method: String = "", path: String = ""): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequest(method: String = emptyString,
+                  path: String = emptyString): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(method, path).withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
   protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,

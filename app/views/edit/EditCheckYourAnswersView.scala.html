@@ -29,7 +29,15 @@
         link: components.link_cya
 )
 
-@(model: CheckYourAnswersEditHelper, accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        model: CheckYourAnswersEditHelper,
+        accountId: String,
+        authorityId: String
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
 @layout(
     pageTitle = Some(titleNoForm("edit-cya-heading", None, Seq())),
@@ -53,11 +61,12 @@
 
         <div class="govuk-button-group">
             @button("edit-cya-button")
-            @p(link(
+
+            @link(
                 location = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url,
                 linkMessage = "edit-cya-cancel",
                 ariaLabel = Some(messages("edit-cya-cancel"))
-            ))
+            )
         </div>
     }
 }
