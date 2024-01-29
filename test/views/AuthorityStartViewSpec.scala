@@ -21,33 +21,35 @@ import config.FrontendAppConfig
 import forms.AuthorityStartFormProvider
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.Matchers._
-import org.scalatestplus.mockito.MockitoSugar
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.{FakeRequest, Helpers}
 import views.html.add.AuthorityStartView
 
-class AuthorityStartViewSpec extends SpecBase with MockitoSugar {
-
+class AuthorityStartViewSpec extends SpecBase {
 
   "AuthorityStartView" should {
+
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-        normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"
-      }
+      normalModeView().getElementsByClass("govuk-back-link")
+        .attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"
+    }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+      checkModeView().getElementsByClass("govuk-back-link")
+        .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
-    }
+  }
 
+  trait Setup {
+    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
+      fakeRequest("GET", "/some/resource/path")
 
-  trait Setup  {
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
     implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
-
 
     private val formProvider = new AuthorityStartFormProvider()
     private val form = formProvider()
@@ -55,7 +57,10 @@ class AuthorityStartViewSpec extends SpecBase with MockitoSugar {
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
-    def normalModeView() = Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form,NormalMode,normalModeBackLinkRoute).body)
-    def checkModeView() = Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form,CheckMode,checkModeBackLinkRoute).body)
+    def normalModeView(): Document =
+      Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form, NormalMode, normalModeBackLinkRoute).body)
+
+    def checkModeView(): Document =
+      Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form, CheckMode, checkModeBackLinkRoute).body)
   }
 }

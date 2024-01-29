@@ -25,16 +25,17 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import scala.collection.immutable.ListMap
 
-
 case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId, accounts: CDSAccounts) {
 
+  def hasAccounts: Boolean = authorities.accounts.nonEmpty
 
-  def hasAccounts = authorities.accounts.nonEmpty
-  def hasNoAccounts = authorities.accounts.isEmpty
-  def sortedAccounts = ListMap(authorities.authorities.toSeq.sortBy(_._2):_*)
-  def niIndicator(acc: String) = accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
-  //def apply(authorities: AuthoritiesWithId, accounts: CDSAccounts): ManageAuthoritiesViewModel
+  def hasNoAccounts: Boolean = authorities.accounts.isEmpty
 
+  def sortedAccounts: ListMap[String, AccountWithAuthoritiesWithId] =
+    ListMap(authorities.authorities.toSeq.sortBy(_._2): _*)
+
+  def niIndicator(acc: String): Boolean =
+    accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
 }
 
 object ManageAuthoritiesViewModel extends DateUtils {
@@ -44,7 +45,9 @@ object ManageAuthoritiesViewModel extends DateUtils {
 
   implicit class AccountWithAuthoritiesViewModel(account: AccountWithAuthoritiesWithId) {
     def id: String = s"${account.accountType}-${account.accountNumber}"
-    def sortedAuthorities = ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate):_*)
+
+    def sortedAuthorities: ListMap[String, StandingAuthority] =
+      ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate): _*)
   }
 
   implicit class StandingAuthorityViewModel(standingAuthority: StandingAuthority) {
@@ -55,7 +58,9 @@ object ManageAuthoritiesViewModel extends DateUtils {
     }
 
     def formattedFromDate()(implicit messages: Messages): String = dateAsdMMMyyyy(standingAuthority.authorisedFromDate)
-    def formattedToDate()(implicit messages: Messages): Option[String] = standingAuthority.authorisedToDate map dateAsdMMMyyyy
+
+    def formattedToDate()(implicit messages: Messages): Option[String] =
+      standingAuthority.authorisedToDate map dateAsdMMMyyyy
   }
 
 }

@@ -23,12 +23,19 @@
         p:  components.p
 )
 
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        pageTitle: String,
+        heading: String,
+        message: String
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
 @layout(Some(titleNoForm(pageTitle, None, Seq())), backLink = None) {
 
     @h1(messages(heading))
 
     @p(Html(messages(message)))
-
 }

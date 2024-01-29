@@ -33,28 +33,36 @@ class AccountsCacheServiceSpec extends SpecBase {
   "retrieveAccounts" must {
     "use cached values on cache hit" in new Setup {
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
+
       result.futureValue mustBe cachedAccounts
     }
 
     "closed Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(closedAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
+
       result.futureValue mustBe closedAccount
     }
 
     "suspended Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(suspendedAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
+
       result.futureValue mustBe suspendedAccount
     }
 
     "pending Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(pendingAccount)))
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+
       val result = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
+
       result.futureValue mustBe pendingAccount
     }
 
@@ -66,6 +74,7 @@ class AccountsCacheServiceSpec extends SpecBase {
 
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val res = service.merge(Seq(notCachedAccounts))
+
       res mustBe compare
     }
   }
@@ -73,29 +82,31 @@ class AccountsCacheServiceSpec extends SpecBase {
 
 trait Setup {
 
-  val notCachedAccounts = CDSAccounts("GB123456789012",
+  val notCachedAccounts: CDSAccounts = CDSAccounts("GB123456789012",
     List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
 
-  val cachedAccounts = CDSAccounts("GB098765432109",
+  val cachedAccounts: CDSAccounts = CDSAccounts("GB098765432109",
     List(CashAccount("54321", "GB098765432109", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
 
-  val closedAccount = CDSAccounts("GB098765432109",
+  val closedAccount: CDSAccounts = CDSAccounts("GB098765432109",
     List(CashAccount("54321", "GB098765432109", AccountStatusClosed, CDSCashBalance(Some(100.00)))))
 
-  val suspendedAccount = CDSAccounts("GB098765432109",
+  val suspendedAccount: CDSAccounts = CDSAccounts("GB098765432109",
     List(CashAccount("54321", "GB098765432109", AccountStatusSuspended, CDSCashBalance(Some(100.00)))))
 
-  val pendingAccount = CDSAccounts("GB098765432109",
+  val pendingAccount: CDSAccounts = CDSAccounts("GB098765432109",
     List(CashAccount("54321", "GB098765432109", AccountStatusPending, CDSCashBalance(Some(100.00)))))
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  var mockRepository = mock[AccountsRepository]
+  var mockRepository: AccountsRepository = mock[AccountsRepository]
+
   when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(cachedAccounts)))
   when(mockRepository.get("notCachedId")).thenReturn(Future.successful(None))
   when(mockRepository.set(any(), any())).thenReturn(Future.successful(true))
 
-  val mockConnector = mock[CustomsFinancialsConnector]
+  val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+
   when(mockConnector.retrieveAccounts(any())(any())).thenReturn(Future.successful(notCachedAccounts))
 }

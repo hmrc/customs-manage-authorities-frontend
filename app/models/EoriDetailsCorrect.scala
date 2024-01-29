@@ -30,6 +30,7 @@ object EoriDetailsCorrect extends Enumerable.Implicits {
   )
 
   case object Yes extends WithName("radioYes") with EoriDetailsCorrect
+
   case object No extends WithName("radioNo") with EoriDetailsCorrect
 
   def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
@@ -38,6 +39,7 @@ object EoriDetailsCorrect extends Enumerable.Implicits {
       content = Text(messages(s"eoriDetails.${value.toString}")),
       checked = form("value").value.contains(value.toString)
     )
+
     case value@No => RadioItem(
       value = Some(value.toString),
       content = Text(messages(s"eoriDetails.${value.toString}")),

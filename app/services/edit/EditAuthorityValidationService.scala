@@ -29,24 +29,31 @@ class EditAuthorityValidationService @Inject()(editCyaValidationService: EditChe
                authorityId: String,
                authorisedEori: String,
                account: AccountWithAuthoritiesWithId): Either[ErrorResponse, AddAuthorityRequest] = {
+
     val maybeAccounts = for {
       standingAuthority <- editCyaValidationService.validate(userAnswers, accountId, authorityId, authorisedEori)
       authorisedUser <- userAnswers.get(EditAuthorisedUserPage(accountId, authorityId))
-      accounts = account.accountType match {
-        case CdsCashAccount => Right(Accounts(Some(account.accountNumber), Seq.empty, None))
-        case CdsDutyDefermentAccount => Right(Accounts(None, Seq(account.accountNumber), None))
-        case CdsGeneralGuaranteeAccount => Right(Accounts(None, Seq.empty, Some(account.accountNumber)))
-        case UnknownAccount => Left(UnknownAccountType)
-      }
+
+      accounts = checkAndRetrieveAccounts(account)
     } yield {
       accounts match {
-        case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, true))
+        case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true))
         case Left(error) => Left(error)
       }
     }
+
     maybeAccounts match {
       case Some(authorities) => authorities
       case None => Left(UnknownAccountType)
+    }
+  }
+
+  private def checkAndRetrieveAccounts(account: AccountWithAuthoritiesWithId): Either[UnknownAccountType.type, Accounts] = {
+    account.accountType match {
+      case CdsCashAccount => Right(Accounts(Some(account.accountNumber), Seq.empty, None))
+      case CdsDutyDefermentAccount => Right(Accounts(None, Seq(account.accountNumber), None))
+      case CdsGeneralGuaranteeAccount => Right(Accounts(None, Seq.empty, Some(account.accountNumber)))
+      case UnknownAccount => Left(UnknownAccountType)
     }
   }
 

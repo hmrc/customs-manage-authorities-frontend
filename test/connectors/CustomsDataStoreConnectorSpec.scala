@@ -22,11 +22,11 @@ import config.FrontendAppConfig
 import models.{UndeliverableEmail, UnverifiedEmail}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
-import org.scalatest.{EitherValues, MustMatchers, OptionValues}
+import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.{Application, inject}
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
+import play.api.{Application, inject}
 import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
@@ -34,7 +34,6 @@ import utils.WireMockHelper
 class CustomsDataStoreConnectorSpec extends SpecBase
   with WireMockHelper
   with ScalaFutures
-  with MustMatchers
   with IntegrationPatience
   with EitherValues
   with OptionValues
@@ -45,7 +44,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
   ".getCompanyName" must {
     "return companyName when consent is defined as 1(True)" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |   "name":"Tony Stark",
@@ -59,13 +58,14 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expectedResult = Some("Tony Stark")
+      val expectedResult: Option[String] = Some("Tony Stark")
 
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
         )
+
         val result = connector.getCompanyName("GB123456789012").futureValue
         result mustBe expectedResult
       }
@@ -73,7 +73,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
 
     "return None when consent is defined as 0(False)" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |   "name":"Tony Stark",
@@ -92,13 +92,14 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
         )
+
         val result = connector.getCompanyName("GB123456789012").futureValue
         result mustBe expected
       }
     }
 
     "return None when consent is empty" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |   "name":"Tony Stark",
@@ -117,6 +118,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
         )
+
         val result = connector.getCompanyName("GB123456789012").futureValue
         result mustBe expected
       }
@@ -125,7 +127,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
   ".get XiEori" must {
     "return xi eori when it is returned from data store" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |   "xiEori":"XI1234567",
@@ -138,7 +140,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           |}
           |""".stripMargin
 
-      val expectedResult = Some("XI1234567")
+      val expectedResult: Option[String] = Some("XI1234567")
 
       running(app) {
 
@@ -146,13 +148,14 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
         )
+
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe expectedResult
       }
     }
 
     "return None when empty XI EORI value is returned from data store" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |   "xiEori":"",
@@ -222,7 +225,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
         )
-        
+
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe None
       }
@@ -231,7 +234,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
   "getEmail" should {
     "return an email address when the request is successful and undeliverable is not present in the response" in new Setup {
-      val emailResponse =
+      val emailResponse: String =
         """{
           |"address": "some@email.com"
           |}""".stripMargin
@@ -248,7 +251,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
     }
 
     "return no email address when the request is successful and undeliverable is present in the response" in new Setup {
-      val emailResponse =
+      val emailResponse: String =
         """{
           |"address": "some@email.com",
           |"timestamp": "2022-10-10T11:22:22Z",
@@ -303,9 +306,9 @@ class CustomsDataStoreConnectorSpec extends SpecBase
         .configure("microservice.services.customs-data-store.port" -> server.port)
         .build()
 
-    val expected = None
-    val app = application
-    val connector = app.injector.instanceOf[CustomsDataStoreConnector]
+    val expected: Option[Nothing] = None
+    val app: Application = application
+    val connector: CustomsDataStoreConnector = app.injector.instanceOf[CustomsDataStoreConnector]
   }
 }
 

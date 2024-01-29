@@ -24,9 +24,16 @@ import java.time.LocalDate
 class AuthorityStartDatePageSpec extends PageBehaviours {
 
   "AuthorityStartDatePage" must {
+    val year1900 = 1990
+    val year2100 = 2100
+    val firstMonthOfTheYear = 1
+    val firstDayOfMonth = 1
 
     implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
-      datesBetween(LocalDate.of(1900, 1, 1), LocalDate.of(2100, 1, 1))
+      datesBetween(
+        LocalDate.of(year1900, firstMonthOfTheYear, firstDayOfMonth),
+        LocalDate.of(year2100, firstMonthOfTheYear, firstMonthOfTheYear)
+      )
     }
 
     beRetrievable[LocalDate](AuthorityStartDatePage)

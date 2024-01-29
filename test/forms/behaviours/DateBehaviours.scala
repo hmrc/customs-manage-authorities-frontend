@@ -17,6 +17,7 @@
 package forms.behaviours
 
 import org.scalacheck.Gen
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.{Form, FormError}
 
 import java.time.LocalDate
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter
 
 class DateBehaviours extends FieldBehaviours {
 
+  val noOfYears = 10
   def dateField(form: Form[_], key: String, validData: Gen[LocalDate]): Unit = {
 
     "bind valid data" in {
@@ -48,7 +50,7 @@ class DateBehaviours extends FieldBehaviours {
 
     s"fail to bind a date greater than ${max.format(DateTimeFormatter.ISO_LOCAL_DATE)}" in {
 
-      val generator = datesBetween(max.plusDays(1), max.plusYears(10))
+      val generator = datesBetween(max.plusDays(1), max.plusYears(noOfYears))
 
       forAll(generator -> "invalid dates") {
         date =>
@@ -70,7 +72,7 @@ class DateBehaviours extends FieldBehaviours {
 
     s"fail to bind a date earlier than ${min.format(DateTimeFormatter.ISO_LOCAL_DATE)}" in {
 
-      val generator = datesBetween(min.minusYears(10), min.minusDays(1))
+      val generator = datesBetween(min.minusYears(noOfYears), min.minusDays(1))
 
       forAll(generator -> "invalid dates") {
         date =>

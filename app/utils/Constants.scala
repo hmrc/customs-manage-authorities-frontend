@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package forms
+package utils
 
-import forms.mappings.Mappings
-import models.ShowBalance
-import play.api.data.Form
+object Constants {
+  val MDG_ACK_REF_LENGTH = 32
+  val RANDOM_GENERATION_INT_LENGTH = 10
 
-import javax.inject.Inject
+  val CASH_ACCOUNT_TYPE = "cash"
+  val GENERAL_GUARANTEE_ACCOUNT_TYPE = "generalGuarantee"
+  val DUTY_DEFERMENT_ACCOUNT_TYPE = "dutyDeferment"
 
-class ShowBalanceFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[ShowBalance] =
-    Form(
-      "value" -> enumerable[ShowBalance](requiredKey = "showBalance.error.required")
-    )
+  val FIXED_DATE_TIME_YEAR = 2027
+  val FIXED_DATE_TIME_MONTH_OF_YEAR = 12
+  val FIXED_DATE_TIME_DAY_OF_MONTH = 20
+  val FIXED_DATE_TIME_HOUR_OF_DAY = 12
+  val FIXED_DATE_TIME_MIN_OF_HOUR = 30
 }

@@ -36,12 +36,15 @@ case class AccountWithAuthoritiesWithId(accountType: AccountType,
 
 object AccountWithAuthoritiesWithId {
 
-  implicit val accountWithAuthoritiesWithIdFormat: Format[AccountWithAuthoritiesWithId] = Json.format[AccountWithAuthoritiesWithId]
+  implicit val accountWithAuthoritiesWithIdFormat: Format[AccountWithAuthoritiesWithId] =
+    Json.format[AccountWithAuthoritiesWithId]
 
   private val encoder = Base64.getUrlEncoder
 
   def apply(accountWithAuthorities: AccountWithAuthorities): AccountWithAuthoritiesWithId = {
-    val authoritiesWithId = accountWithAuthorities.authorities.map(new String(encoder.encode(UUID.randomUUID().toString.getBytes)) -> _).toMap
+    val authoritiesWithId =
+      accountWithAuthorities.authorities.map(new String(encoder.encode(UUID.randomUUID().toString.getBytes)) -> _).toMap
+
     AccountWithAuthoritiesWithId(
       accountWithAuthorities.accountType,
       accountWithAuthorities.accountNumber,
@@ -55,8 +58,8 @@ object AccountWithAuthoritiesWithId {
 case class AuthoritiesWithId(authorities: Map[String, AccountWithAuthoritiesWithId]) {
   def accounts: Seq[AccountWithAuthoritiesWithId] = authorities.values.toSeq
 
-  def authorisedWithEori(eori: EORI): Seq[AccountWithAuthoritiesWithId] = accounts.filter(_.authorities.values.exists(_.containsEori(eori)))
-
+  def authorisedWithEori(eori: EORI): Seq[AccountWithAuthoritiesWithId] =
+    accounts.filter(_.authorities.values.exists(_.containsEori(eori)))
 }
 
 object AuthoritiesWithId {

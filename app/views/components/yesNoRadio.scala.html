@@ -23,7 +23,9 @@
         headingMessageArgs: Seq[String] = Seq(),
         isPageHeading: Boolean = true,
         classes: String = "govuk-fieldset__legend--xl"
-)(implicit messages: Messages)
+)(
+        implicit messages: Messages
+)
 
 @govukRadios(Radios(
     classes = "govuk-radios--inline",

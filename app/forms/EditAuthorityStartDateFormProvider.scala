@@ -34,8 +34,16 @@ class EditAuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeServ
         allRequiredKey = "authorityStartDate.error.required.all",
         twoRequiredKey = "authorityStartDate.error.required.two",
         requiredKey = "authorityStartDate.error.required"
-      ).verifying(minDate(dateTimeService.localTime().toLocalDate,
-        "authorityStartDate.error.minimum", "authorityStartDate.error.year.length"))
-       .verifying(maybeMaxDate(maybeEndDate, "authorityStartDate.error.maximum", dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))))
+      ).verifying(
+        minDate(
+          dateTimeService.localTime().toLocalDate,
+          minimumMsg = "authorityStartDate.error.minimum",
+          yearMsg = "authorityStartDate.error.year.length")
+      ).verifying(
+        maybeMaxDate(
+          maybeEndDate,
+          errorKey = "authorityStartDate.error.maximum",
+          dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX)))
+      )
     )
 }

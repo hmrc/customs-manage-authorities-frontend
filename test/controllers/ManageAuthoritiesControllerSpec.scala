@@ -19,7 +19,10 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsFinancialsConnector
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId,
+  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
+}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -42,6 +45,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
   val startDate = LocalDate.parse("2020-03-01")
   val endDate = LocalDate.parse("2020-04-01")
+
   val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
   val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
 
@@ -58,6 +62,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         val mockRepository = mock[AuthoritiesRepository]
         val mockAccountsCacheService = mock[AccountsCacheService]
+
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
@@ -92,6 +97,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         val mockRepository = mock[AuthoritiesRepository]
         val mockAccountsCacheService = mock[AccountsCacheService]
+
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
@@ -114,7 +120,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts))(request, messages(application), appConfig).toString
+            view(
+              ManageAuthoritiesViewModel(authoritiesWithId, accounts)
+            )(request, messages(application), appConfig).toString
         }
       }
 
@@ -208,15 +216,18 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     "API call fails due to GBN EORI Json Validation" must {
 
       "redirect to 'account unavailable' page" in {
+        val statusCode = 500
+
         val mockAccountsCacheService = mock[AccountsCacheService]
-        when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", 500)))
+
+        when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+          .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", statusCode)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AccountsCacheService].toInstance(mockAccountsCacheService)
           )
           .build()
-
 
         running(application) {
           val request = fakeRequest(GET, manageAuthoritiesRoute)

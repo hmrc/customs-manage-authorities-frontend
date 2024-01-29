@@ -37,7 +37,9 @@ import scala.concurrent.Future
 class AddConfirmationControllerSpec extends SpecBase {
 
   val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+
+  val dutyDeferment =
+    DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
   "AddConfirmation Controller" must {
 
@@ -99,7 +101,10 @@ class AddConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None, Some("Company Name"), multipleAccounts = false)(request, messages(application), appConfig).toString
+            view("GB123456789012",
+              None,
+              Some("Company Name"),
+              multipleAccounts = false)(request, messages(application), appConfig).toString
         }
       }
 
@@ -127,7 +132,10 @@ class AddConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB123456789012", Some(startDate.format(dateFormat)), Some("Company Name"), multipleAccounts = true)(request, messages(application), appConfig).toString
+            view("GB123456789012",
+              Some(startDate.format(dateFormat)),
+              Some("Company Name"),
+              multipleAccounts = true)(request, messages(application), appConfig).toString
         }
       }
 
@@ -150,7 +158,10 @@ class AddConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB123456789012", None, Some("Company Name"), multipleAccounts = true)(request, messages(application), appConfig).toString
+            view("GB123456789012",
+              None,
+              Some("Company Name"),
+              multipleAccounts = true)(request, messages(application), appConfig).toString
 
           contentAsString(result) mustNot contain("Starting on")
         }
@@ -159,6 +170,7 @@ class AddConfirmationControllerSpec extends SpecBase {
       "Company doesn't consent to displaying company name " in {
         val userAnswers = emptyUserAnswers.set(ConfirmationPage, ConfirmationDetails("eori", None, None, true)).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
         running(application) {
           val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
 

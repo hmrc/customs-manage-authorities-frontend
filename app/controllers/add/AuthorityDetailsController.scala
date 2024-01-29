@@ -19,7 +19,6 @@ package controllers.add
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.AuthorityDetailsFormProvider
-import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.add.AuthorityDetailsPage
@@ -27,9 +26,10 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.add.AuthorityDetailsView
+
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthorityDetailsController @Inject()(
@@ -40,30 +40,42 @@ class AuthorityDetailsController @Inject()(
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             formProvider: AuthorityDetailsFormProvider,
-                                            dateTimeService: DateTimeService,
-                                            verifyAccountNumbers: VerifyAccountNumbersAction,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: AuthorityDetailsView
-                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
+
       val preparedForm = request.userAnswers.get(AuthorityDetailsPage) match {
-              case None => form
-              case Some(value) => form.fill(value)
-            }
+        case None => form
+        case Some(value) => form.fill(value)
+      }
 
-     Ok(view(preparedForm, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode))))
+      Ok(
+        view(
+          preparedForm,
+          mode,
+          navigator.backLinkRoute(mode, controllers.add.routes.ShowBalanceController.onPageLoad(mode)))
+      )
   }
-
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-          Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRoute(mode,controllers.add.routes.ShowBalanceController.onPageLoad(mode)))))
+          Future.successful(
+            BadRequest(
+              view(
+                formWithErrors,
+                mode,
+                navigator.backLinkRoute(mode, controllers.add.routes.ShowBalanceController.onPageLoad(mode))))
+          )
         },
         value =>
           (for {

@@ -33,6 +33,7 @@ import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 import views.html.add.EoriNumberView
 
 import scala.concurrent.Future
@@ -43,7 +44,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "return OK and the correct view for a GET" in new SetUp {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
 
@@ -59,15 +60,16 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
       }
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in new SetUp {
 
-      val userAnswers = UserAnswers(userAnswersId).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
+      val userAnswers: UserAnswers =
+        UserAnswers(userAnswersId).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
 
@@ -83,7 +85,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill("answer"), NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(form.fill("answer"),
+            NormalMode,
+            backLinkRoute,
+            xiEoriEnabled)(request, messages(application), appConfig).toString
       }
     }
 
@@ -119,11 +124,11 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid eori with lowercase is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
@@ -148,11 +153,11 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when GBN EORI is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
@@ -177,11 +182,11 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid eori with whitespace is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
@@ -210,7 +215,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
@@ -239,11 +244,12 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
+            ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
@@ -270,12 +276,13 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application =
+      val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers.set(
           EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
+            ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
@@ -307,8 +314,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           EoriNumberPage, CompanyDetails("gb123456789011", None)).success.value),
           requestEoriNUmber = "gb123456789033")
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode), mode = CheckMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode))
+            ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository)
           ).build()
@@ -339,8 +347,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       val application: Application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = CheckMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
+            ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
@@ -366,12 +375,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request =
-          fakeRequest(POST, eoriNumberRoute
-        )
-        .withFormUrlEncodedBody(("value", ""))
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", emptyString))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> emptyString))
 
         val view = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -383,7 +389,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val xiEoriEnabled = true
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
       }
     }
 
@@ -398,7 +404,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           )
             .withFormUrlEncodedBody(("value", "GB123456789012"))
 
-        val boundForm = form.bind(Map("value" -> "GB123456789012")).withError("value", "eoriNumber.error.authorise-own-eori")
+        val boundForm =
+          form.bind(Map("value" -> "GB123456789012"))
+            .withError("value", "eoriNumber.error.authorise-own-eori")
 
         val view = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -409,23 +417,24 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val xiEoriEnabled = true
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
       }
     }
 
     "return a Bad Request and errors when invalid EORI is submitted" in new SetUp {
 
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(false)))
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-        bind[CustomsFinancialsConnector].toInstance(mockConnector),
-      ).build()
-      running(application) {
-        val request =
-          fakeRequest(POST, eoriNumberRoute
-          )
-            .withFormUrlEncodedBody(("value", "GB123456789011"))
 
-        val boundForm = form.bind(Map("value" -> "GB123456789011")).withError("value", "eoriNumber.error.invalid")
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+        bind[CustomsFinancialsConnector].toInstance(mockConnector)
+      ).build()
+
+      running(application) {
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", "GB123456789011"))
+
+        val boundForm =
+          form.bind(Map("value" -> "GB123456789011"))
+            .withError("value", "eoriNumber.error.invalid")
 
         val view = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -437,7 +446,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val xiEoriEnabled = true
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
       }
     }
 
@@ -452,8 +461,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       val application: Application =
         applicationBuilder(Some(emptyUserAnswers), "GB123456789011")
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(
-              controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode), mode = NormalMode)),
+            bind[Navigator].toInstance(
+              new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
+            ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
@@ -462,8 +472,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request =
-          fakeRequest(POST, eoriNumberNormalModeSubmitRoute)
-            .withFormUrlEncodedBody(("value", "XI123456789012"))
+          fakeRequest(POST, eoriNumberNormalModeSubmitRoute).withFormUrlEncodedBody(("value", "XI123456789012"))
 
         val result = route(application, request).value
 
@@ -479,14 +488,19 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     val formProvider = new EoriNumberFormProvider()
     val form: Form[String] = formProvider()
+
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
     lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-    lazy val eoriNumberNormalModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
-    lazy val eoriNumberCheckModeSubmitRoute: String = controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+    lazy val eoriNumberNormalModeSubmitRoute: String =
+      controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
+
+    lazy val eoriNumberCheckModeSubmitRoute: String =
+      controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
+
     val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
   }
 }

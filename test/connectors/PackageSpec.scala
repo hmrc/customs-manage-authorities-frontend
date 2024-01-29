@@ -17,16 +17,10 @@
 package connectors
 
 import base.SpecBase
-import models.withNameToString
 
 class PackageSpec extends SpecBase {
 
   ".PackageSpec" must {
-    "MDG_ACK_REF_LENGTH is 32" in {
-      val result = connectors.MDG_ACK_REF_LENGTH
-      result.length() mustBe 2
-      result mustBe 32
-    }
 
     ".acknowledgmentRef Generate Random Digits returns correct length" in {
       val result = connectors.acknowledgmentRef(3)

@@ -24,7 +24,6 @@ import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import utils.WireMockHelper
 
-
 class AccountsAndBalancesSpec extends SpecBase
   with WireMockHelper
   with ScalaFutures
@@ -33,16 +32,22 @@ class AccountsAndBalancesSpec extends SpecBase
   with OptionValues
   with MockitoSugar {
 
-  val accountWithStatus: AccountWithStatus = AccountWithStatus("number", "type", "owner", AccountStatusClosed ,viewBalanceIsGranted = true)
+  val accountWithStatus: AccountWithStatus =
+    AccountWithStatus("number", "type", "owner", AccountStatusClosed, viewBalanceIsGranted = true)
 
   "GeneralGuaranteeAccount model" should {
 
     "correctly generate a domain model when a account, limit and balance are available" in {
 
-      val expectedResult = domain.GeneralGuaranteeAccount("number", "owner", AccountStatusClosed, Some(GeneralGuaranteeBalance(BigDecimal(1), BigDecimal(2))))
+      val expectedResult =
+        domain.GeneralGuaranteeAccount(
+          "number", "owner", AccountStatusClosed, Some(GeneralGuaranteeBalance(BigDecimal(1), BigDecimal(2))))
 
       val generalGuaranteeAccount =
-        GeneralGuaranteeAccount(account = accountWithStatus, guaranteeLimit = Some("1"), availableGuaranteeBalance = Some("2"))
+        GeneralGuaranteeAccount(
+          account = accountWithStatus,
+          guaranteeLimit = Some("1"),
+          availableGuaranteeBalance = Some("2"))
 
       generalGuaranteeAccount.toDomain mustBe expectedResult
     }
@@ -52,7 +57,10 @@ class AccountsAndBalancesSpec extends SpecBase
       val expectedResult = domain.GeneralGuaranteeAccount("number", "owner", AccountStatusClosed, None)
 
       val generalGuaranteeAccount =
-        GeneralGuaranteeAccount(account = accountWithStatus, guaranteeLimit = None, availableGuaranteeBalance = None)
+        GeneralGuaranteeAccount(
+          account = accountWithStatus,
+          guaranteeLimit = None,
+          availableGuaranteeBalance = None)
 
       generalGuaranteeAccount.toDomain mustBe expectedResult
     }
@@ -83,23 +91,56 @@ class AccountsAndBalancesSpec extends SpecBase
   "DutyDefermentAccount model" should {
 
     "correctly generate a domain model when a account, limit and balance are available" in {
+      val amount = 4
 
-      val expectedResult = domain.DutyDefermentAccount("number", "owner", AccountStatusClosed, DutyDefermentBalance(Some(BigDecimal(1)), Some(BigDecimal(2)), Some(BigDecimal(3)), Some(BigDecimal(4))), true)
+      val guaranteeLimit = BigDecimal(1)
+      val accountLimit = BigDecimal(2)
+      val availableGuaranteeBalance = BigDecimal(3)
+      val availableAccountBalance = BigDecimal(amount)
+
+      val expectedResult =
+        domain.DutyDefermentAccount(
+          "number",
+          "owner",
+          AccountStatusClosed,
+          DutyDefermentBalance(
+            Some(guaranteeLimit),
+            Some(accountLimit),
+            Some(availableGuaranteeBalance),
+            Some(availableAccountBalance)),
+          isNiAccount = true)
 
       val dutyDefermentAccount =
-        DutyDefermentAccount(account = accountWithStatus, isNiAccount = Some(true), isIomAccount = Some(false), limits = Some(Limits("1", "2")), balances = Some(DefermentBalances("3","4")))
+        DutyDefermentAccount(
+          account = accountWithStatus,
+          isNiAccount = Some(true),
+          isIomAccount = Some(false),
+          limits = Some(Limits("1", "2")),
+          balances = Some(DefermentBalances("3", "4"))
+        )
 
-      dutyDefermentAccount.toDomain() mustBe expectedResult
+      dutyDefermentAccount.toDomain mustBe expectedResult
     }
 
     "correctly generate a domain model when limit and balance are not available" in {
 
-      val expectedResult = domain.DutyDefermentAccount("number", "owner", AccountStatusClosed, DutyDefermentBalance(None, None, None, None), false)
+      val expectedResult =
+        domain.DutyDefermentAccount(
+          "number",
+          "owner",
+          AccountStatusClosed,
+          DutyDefermentBalance(None, None, None, None)
+        )
 
       val dutyDefermentAccount =
-        DutyDefermentAccount(account = accountWithStatus, isNiAccount = Some(false), isIomAccount = Some(false), limits = None, balances = None)
+        DutyDefermentAccount(
+          account = accountWithStatus,
+          isNiAccount = Some(false),
+          isIomAccount = Some(false),
+          limits = None,
+          balances = None)
 
-      dutyDefermentAccount.toDomain() mustBe expectedResult
+      dutyDefermentAccount.toDomain mustBe expectedResult
     }
   }
 }

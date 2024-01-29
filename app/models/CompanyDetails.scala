@@ -26,4 +26,3 @@ object CompanyDetails {
   implicit val companyDetailsReads: Reads[CompanyDetails] = Json.reads[CompanyDetails]
   implicit val companyDetailsWrites: Writes[CompanyDetails] = Json.writes[CompanyDetails]
 }
-

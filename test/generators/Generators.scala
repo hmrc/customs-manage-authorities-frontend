@@ -19,17 +19,23 @@ package generators
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import utils.StringUtils.emptyString
 
 import java.time.{Instant, LocalDate, ZoneOffset}
 
-trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
+trait Generators extends UserAnswersGenerator
+  with PageGenerators
+  with ModelGenerators
+  with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  private val defaultFreqV = 1
+  private val defaultFreqN = 10
 
   def genIntersperseString(gen: Gen[String],
                            value: String,
-                           frequencyV: Int = 1,
-                           frequencyN: Int = 10): Gen[String] = {
+                           frequencyV: Int = defaultFreqV,
+                           frequencyN: Int = defaultFreqN): Gen[String] = {
 
     val genValue: Gen[Option[String]] = Gen.frequency(frequencyN -> None, frequencyV -> Gen.const(Some(value)))
 
@@ -37,7 +43,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       seq1 <- gen
       seq2 <- Gen.listOfN(seq1.length, genValue)
     } yield {
-      seq1.toSeq.zip(seq2).foldRight("") {
+      seq1.toSeq.zip(seq2).foldRight(emptyString) {
         case ((n, Some(v)), m) =>
           m + n + v
         case ((n, _), m) =>
@@ -48,7 +54,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def intsInRangeWithCommas(min: Int, max: Int): Gen[String] = {
     val numberGen = choose[Int](min, max)
-    genIntersperseString(numberGen.toString, ",")
+    val comma = ","
+
+    genIntersperseString(numberGen.toString, comma)
   }
 
   def intsLargerThanMaxValue: Gen[BigInt] =
@@ -58,13 +66,13 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     arbitrary[BigInt] suchThat(x => x < Int.MinValue)
 
   def nonNumerics: Gen[String] =
-    alphaStr suchThat(_.size > 0)
+    alphaStr suchThat(_.nonEmpty)
 
   def decimals: Gen[String] =
     arbitrary[BigDecimal]
       .suchThat(_.abs < Int.MaxValue)
       .suchThat(!_.isValidInt)
-      .map(_.formatted("%f"))
+      .map("%f".format(_))
 
   def intsBelowValue(value: Int): Gen[Int] =
     arbitrary[Int] suchThat(_ < value)
@@ -90,11 +98,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       chars <- listOfN(length, arbitrary[Char])
     } yield chars.mkString
 
-  def stringsLongerThan(minLength: Int): Gen[String] = for {
-    maxLength <- (minLength * 2).max(100)
-    length    <- Gen.chooseNum(minLength + 1, maxLength)
-    chars     <- listOfN(length, arbitrary[Char])
-  } yield chars.mkString
+  def stringsLongerThan(minLength: Int): Gen[String] = {
+    val maxLength100 = 100
+
+    for {
+      maxLength <- (minLength * 2).max(maxLength100)
+      length    <- Gen.chooseNum(minLength + 1, maxLength)
+      chars     <- listOfN(length, arbitrary[Char])
+    } yield chars.mkString
+  }
 
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))

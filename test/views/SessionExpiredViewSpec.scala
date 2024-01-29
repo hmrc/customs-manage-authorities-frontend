@@ -19,7 +19,8 @@ package views
 import base.SpecBase
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
-import org.scalatest.Matchers._
+import org.jsoup.nodes.Document
+import play.api.Application
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
@@ -27,21 +28,21 @@ import views.html.SessionExpiredView
 
 class SessionExpiredViewSpec extends SpecBase {
 
-
   "SessionExpired view" should {
     "when back link is clicked returns to start of the journey" in new Setup {
-      view().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
+      view().getElementsByClass("govuk-back-link")
+        .attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
       }
     }
 
 
   trait Setup  {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app = applicationBuilder().build()
+    val app: Application = applicationBuilder().build()
 
-    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    def view() = Jsoup.parse(app.injector.instanceOf[SessionExpiredView].apply().body)
+    def view(): Document = Jsoup.parse(app.injector.instanceOf[SessionExpiredView].apply().body)
   }
 }

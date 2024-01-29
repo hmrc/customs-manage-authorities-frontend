@@ -14,18 +14,7 @@
  * limitations under the License.
  */
 
-package forms
-
-import forms.mappings.Mappings
-import models.ShowBalance
-import play.api.data.Form
-
-import javax.inject.Inject
-
-class ShowBalanceFormProvider @Inject() extends Mappings {
-
-  def apply(): Form[ShowBalance] =
-    Form(
-      "value" -> enumerable[ShowBalance](requiredKey = "showBalance.error.required")
-    )
+package object forms {
+  val fullNameMaxLength = 255
+  val jobRoleMaxLength = 255
 }

@@ -36,18 +36,27 @@
         p:  components.p
 )
 
-@(form: Form[_], viewModel: RemoveViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+        form: Form[_],
+        viewModel: RemoveViewModel
+)(
+        implicit request: Request[_],
+        messages: Messages,
+        appConfig: FrontendAppConfig
+)
 
 @layout(
     pageTitle = Some(title(form, "authorised-user-remove.heading", None, Seq())),
     backLink = Some(controllers.routes.ViewAuthorityController.onPageLoad(viewModel.accountId, viewModel.authorityId))
 ) {
 
-    @formHelper(action = controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
+    @formHelper(action =
+        controllers.remove.routes.RemoveAuthorisedUserController.onSubmit(viewModel.accountId, viewModel.authorityId)) {
 
         @errorSummary(form.errors)
 
-        @h1(msg = messages("authorised-user-remove.heading", viewModel.standingAuthority.authorisedEori), classes="govuk-heading-xl")
+        @h1(msg = messages("authorised-user-remove.heading", viewModel.standingAuthority.authorisedEori),
+            classes="govuk-heading-xl")
 
         @h2("remove.yourDetails")
 

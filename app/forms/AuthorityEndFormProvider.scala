@@ -26,6 +26,6 @@ class AuthorityEndFormProvider @Inject() extends Mappings {
 
   def apply(): Form[AuthorityEnd] =
     Form(
-      "value" -> enumerable[AuthorityEnd]("authorityEnd.error.required")
+      "value" -> enumerable[AuthorityEnd](requiredKey = "authorityEnd.error.required")
     )
 }

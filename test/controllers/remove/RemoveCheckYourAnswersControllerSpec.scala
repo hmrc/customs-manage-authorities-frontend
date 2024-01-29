@@ -99,9 +99,6 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        //TODO find why this comparison is running successfully in local environment
-        // but not in Jenkins build - Temporarily commenting this
-        //contentAsString(result) mustBe view(helper)(getRequest, messages(app), appConfig).toString()
       }
     }
   }

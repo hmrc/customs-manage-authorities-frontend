@@ -17,9 +17,8 @@
 package controllers.actions
 
 import connectors.CustomsDataStoreConnector
-import controllers.routes
-import models.{UnverifiedEmail, UndeliverableEmail, EmailResponses}
 import models.requests.IdentifierRequest
+import models.{EmailResponses, UndeliverableEmail, UnverifiedEmail}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionFilter, Result}
@@ -30,12 +29,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EmailAction @Inject()(dataStoreConnector: CustomsDataStoreConnector)(implicit val executionContext: ExecutionContext, val messagesApi: MessagesApi)
-  extends ActionFilter[IdentifierRequest] with I18nSupport {
+class EmailAction @Inject()(dataStoreConnector: CustomsDataStoreConnector)(
+  implicit val executionContext: ExecutionContext, val messagesApi: MessagesApi)
+  extends ActionFilter[IdentifierRequest]
+    with I18nSupport {
 
   def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-    
+
     dataStoreConnector.getEmail(request.eoriNumber).map {
       case Left(value) => checkEmailResponseAndRedirect(value)
       case Right(_) => None

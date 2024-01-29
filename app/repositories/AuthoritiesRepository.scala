@@ -25,7 +25,7 @@ import play.api.libs.json.{Json, OFormat, Reads, Writes}
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
-import java.time.{LocalDateTime}
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -71,7 +71,9 @@ class AuthoritiesRepository @Inject()(
       .map(_.wasAcknowledged())
 }
 
-case class AuthoritiesWithIdCacheEntry(_id: String, data: AuthoritiesWithId, lastUpdated: LocalDateTime)
+case class AuthoritiesWithIdCacheEntry(_id: String,
+                                       data: AuthoritiesWithId,
+                                       lastUpdated: LocalDateTime)
 
 object AuthoritiesWithIdCacheEntry {
   implicit val lastUpdatedReads: Reads[LocalDateTime] = MongoJavatimeFormats.localDateTimeReads

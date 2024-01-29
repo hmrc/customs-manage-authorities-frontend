@@ -27,7 +27,8 @@ class InternalIdSpec extends SpecBase {
     }
 
     "return JSError when incorrect JS value is used to create InternalId" in {
-      Json.fromJson[InternalId](Json.toJson(5)).mustEqual(JsError(s"Expected JSON string type"))
+      val intValue = 5
+      Json.fromJson[InternalId](Json.toJson(intValue)).mustEqual(JsError(s"Expected JSON string type"))
     }
   }
 }

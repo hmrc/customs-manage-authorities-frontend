@@ -49,7 +49,9 @@ class EoriNumberController @Inject()(
                                       view: EoriNumberView,
                                       connector: CustomsFinancialsConnector,
                                       dataStore: CustomsDataStoreConnector
-                                    )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                    )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   val form: Form[String] = formProvider()
 
@@ -61,6 +63,7 @@ class EoriNumberController @Inject()(
       }
 
       val isXiEoriEnabled = appConfig.xiEoriEnabled
+
       Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
   }
 
@@ -68,7 +71,13 @@ class EoriNumberController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => {
-            Future.successful(BadRequest(view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)))
+            Future.successful(BadRequest(
+              view(
+                formWithErrors,
+                mode,
+                navigator.backLinkRouteForEORINUmberPage(mode),
+                appConfig.xiEoriEnabled))
+            )
         },
         eoriNumber => {
           processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
@@ -101,13 +110,6 @@ class EoriNumberController @Inject()(
     }
   }
 
-  /**
-   * Performs below checks
-   * 1.Whether associated XI EORI is empty and input EORI is XI EORI
-   * 2.Whether input XI EORI is user's own XI EORI
-   * if above checks match, error is raised with relevant msg
-   * else proceed to submission
-   */
   private def performXiEoriChecks(xiEoriNumber: Option[String],
                                   inputEoriNumber: String,
                                   eoriInUpperCase: String,
@@ -122,9 +124,6 @@ class EoriNumberController @Inject()(
         processValidEoriAndSubmit(mode, request, hc, msgs, eoriInUpperCase)
     }
 
-  /**
-   * Processes valid EORI
-   */
   private def processValidEoriAndSubmit(mode: Mode,
                                         request: OptionalDataRequest[AnyContent],
                                         hc: HeaderCarrier,
@@ -136,7 +135,7 @@ class EoriNumberController @Inject()(
       updatedAnswers <- Future.fromTry(
         request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails))
       updatedAnswersWithRefreshedAccounts <- refreshAccountsInChangeMode(
-        mode, eori, eoriFromUserAnswers(mode, request), updatedAnswers)
+        eori, eoriFromUserAnswers(request), updatedAnswers)
       _ <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
       result <- doSubmission(updatedAnswers, eori, mode)(hc, request)
     } yield result).recover {
@@ -155,8 +154,10 @@ class EoriNumberController @Inject()(
     connector.validateEori(eori) map {
       case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _ => BadRequest(view(
-        form.withError("value",
-          "eoriNumber.error.invalid").fill(eori), mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled))
+        form.withError("value", "eoriNumber.error.invalid").fill(eori),
+        mode,
+        navigator.backLinkRouteForEORINUmberPage(mode),
+        appConfig.xiEoriEnabled))
     }
   }
 
@@ -172,22 +173,11 @@ class EoriNumberController @Inject()(
       navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)(request, msgs, appConfig))
     )
 
-  /**
-   * Gets the eori from UserAnswers. Sets eori to emptyString if not found
-   */
-  private def eoriFromUserAnswers(mode: Mode,
-                                  request: OptionalDataRequest[AnyContent]): String =
+  private def eoriFromUserAnswers(request: OptionalDataRequest[AnyContent]): String =
         request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).get(
           EoriNumberPage).getOrElse(CompanyDetails(emptyString, None)).eori
 
-  /**
-   * Updates the AccountsPage value to empty list (in UserAnswers)(to refresh the Accounts selection)
-   * and EoriDetailsCorrectPage value to No
-   *
-   * Returns: UserAnswers updated with refreshed accounts
-   */
-  private def refreshAccountsInChangeMode(mode: Mode,
-                                          requestEori: String,
+  private def refreshAccountsInChangeMode(requestEori: String,
                                           eoriFromUserAnswers: String,
                                           userAnswers: UserAnswers): Future[UserAnswers] =
     Future(
@@ -203,9 +193,6 @@ class EoriNumberController @Inject()(
       }
     )
 
-  /**
-   * Checks whether the provided XI EORI is user's own XI EORI
-   */
   private def isOwnXiEori(xiEori: Option[String],
                           inputEori: String): Boolean =
     xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString))

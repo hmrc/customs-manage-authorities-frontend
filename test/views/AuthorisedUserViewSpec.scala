@@ -19,7 +19,10 @@ package views
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.AuthorisedUserFormProviderWithConsent
-import models.domain.{AccountStatusOpen, AuthorisedUser, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance}
+import models.domain.{
+  AccountStatusOpen, AuthorisedUser, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount,
+  DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance
+}
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -31,6 +34,7 @@ import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
 import services.DateTimeService
+import utils.StringUtils.emptyString
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
 
@@ -67,7 +71,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
         .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
       override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -103,7 +107,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
         .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
       override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -135,7 +139,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
         .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
       override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
@@ -173,7 +177,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
         .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
       override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -210,7 +214,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
         .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
       override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -246,7 +250,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
         override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -283,7 +287,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
         override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -320,7 +324,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
         override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -357,7 +361,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
 
         override val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(dutyDeferment)).success.value
@@ -391,7 +395,7 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())

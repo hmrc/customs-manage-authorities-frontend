@@ -16,9 +16,9 @@
 
 package models.domain
 
-import play.api.{Logger, LoggerLike}
 import play.api.i18n.Messages
 import play.api.libs.json._
+import play.api.{Logger, LoggerLike}
 
 import scala.math.Numeric.BigDecimalIsFractional.zero
 
@@ -62,30 +62,39 @@ case class DutyDefermentBalance(periodGuaranteeLimit: Option[BigDecimal],
   val (usedFunds, usedPercentage) = (periodAccountLimit, periodAvailableAccountBalance) match {
     case (Some(limit), Some(balance)) if limit <= BigDecimal(0) =>
       val fundsUsed = limit - balance
-      (fundsUsed, BigDecimal(100))
+
+      (fundsUsed, BigDecimal(maxUsedPercentage))
+
     case (Some(limit), Some(balance)) =>
       val fundsUsed = limit - balance
-      val percentage = fundsUsed / limit * BigDecimal(100)
+      val percentage = fundsUsed / limit * BigDecimal(maxUsedPercentage)
+
       (fundsUsed, percentage)
+
     case _ => (BigDecimal(0), BigDecimal(0))
   }
 
-  val availableBalance: BigDecimal = periodAvailableAccountBalance.getOrElse(BigDecimal(0))
+}
+
+object DutyDefermentBalance {
+  implicit val dutyDefermentBalanceFormat: Format[DutyDefermentBalance] = Json.format[DutyDefermentBalance]
 }
 
 case class GeneralGuaranteeBalance(GuaranteeLimit: BigDecimal,
                                    AvailableGuaranteeBalance: BigDecimal) extends Balances {
 
   val usedFunds: BigDecimal = GuaranteeLimit - AvailableGuaranteeBalance
-  val usedPercentage: BigDecimal = if (GuaranteeLimit.compare(zero) == 0) zero else usedFunds / GuaranteeLimit * 100
+  val usedPercentage: BigDecimal =
+    if (GuaranteeLimit.compare(zero) == 0) zero else usedFunds / GuaranteeLimit * maxUsedPercentage
+}
 
+object GeneralGuaranteeBalance {
+  implicit val generalGuaranteeBalanceFormat: Format[GeneralGuaranteeBalance] = Json.format[GeneralGuaranteeBalance]
 }
 
 case class CDSCashBalance(AvailableAccountBalance: Option[BigDecimal]) extends Balances
 
-object Balances {
-  implicit val dutyDefermentBalanceFormat: Format[DutyDefermentBalance] = Json.format[DutyDefermentBalance]
-  implicit val generalGuaranteeBalanceFormat: Format[GeneralGuaranteeBalance] = Json.format[GeneralGuaranteeBalance]
+object CDSCashBalance {
   implicit val cashBalanceFormat: Format[CDSCashBalance] = Json.format[CDSCashBalance]
 }
 
@@ -104,6 +113,7 @@ case class DutyDefermentAccount(number: String,
                                 isIomAccount: Boolean = false
                                ) extends Ordered[DutyDefermentAccount] with CDSAccount {
   override def compare(that: DutyDefermentAccount): Int = number.compareTo(that.number)
+
   override val accountType: String = "dutyDeferment"
 }
 
@@ -135,20 +145,26 @@ object CDSAccount {
   def formattedAccountType(cdsAccount: CDSAccount)(implicit messages: Messages): String = {
     cdsAccount match {
       case CashAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsCashAccount", cdsAccount.number)
-      case DutyDefermentAccount(_, _, _, _, _, _) => messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
-      case GeneralGuaranteeAccount(_, _, _, _, _) => messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
+
+      case DutyDefermentAccount(_, _, _, _, _, _) =>
+        messages("remove.heading.caption.CdsDutyDefermentAccount", cdsAccount.number)
+
+      case GeneralGuaranteeAccount(_, _, _, _, _) =>
+        messages("remove.heading.caption.CdsGeneralGuaranteeAccount", cdsAccount.number)
     }
   }
 }
 
 case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   lazy val myAccounts = accounts
+
   lazy val closedAccounts: Seq[CDSAccount] = myAccounts.flatMap {
     case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case value@CashAccount(_, _, status, _, _) if status == AccountStatusClosed => Some(value)
     case value@DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusClosed => Some(value)
     case _ => None
   }
+
   lazy val pendingAccounts: Seq[CDSAccount] = myAccounts.flatMap {
     case value@GeneralGuaranteeAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
     case value@CashAccount(_, _, status, _, _) if status == AccountStatusPending => Some(value)
@@ -157,8 +173,12 @@ case class CDSAccounts(eori: String, accounts: List[CDSAccount]) {
   }
 
   lazy val openAccounts: Seq[CDSAccount] = myAccounts.diff(closedAccounts).diff(pendingAccounts)
-  def alreadyAuthorised(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.filter(accountNumbers contains _.number)
-  def canAuthoriseAccounts(accountNumbers: Seq[String]): Seq[CDSAccount] = openAccounts.diff(alreadyAuthorised(accountNumbers))
+
+  def alreadyAuthorised(accountNumbers: Seq[String]): Seq[CDSAccount] =
+    openAccounts.filter(accountNumbers contains _.number)
+
+  def canAuthoriseAccounts(accountNumbers: Seq[String]): Seq[CDSAccount] =
+    openAccounts.diff(alreadyAuthorised(accountNumbers))
 }
 
 object CDSAccounts {

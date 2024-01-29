@@ -25,7 +25,6 @@ import pages.edit._
 import play.api.i18n._
 import play.api.mvc._
 import repositories.SessionRepository
-import services.DateTimeService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.edit.EditAuthorityStartView
 
@@ -39,18 +38,19 @@ class EditAuthorityStartController @Inject()(
                                               identify: IdentifierAction,
                                               getData: DataRetrievalAction,
                                               requireData: DataRequiredAction,
-                                              dateTimeService: DateTimeService,
                                               formProvider: EditAuthorityStartFormProvider,
                                               implicit val controllerComponents: MessagesControllerComponents,
                                               view: EditAuthorityStartView
-                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
-
-
+                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
-    ) { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)), dateTimeService.localDate())
+    ) {
+    implicit request =>
+      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
+
       val preparedForm = request.userAnswers.get(EditAuthorityStartPage(accountId, authorityId)) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -59,18 +59,25 @@ class EditAuthorityStartController @Inject()(
       Ok(view(preparedForm, accountId, authorityId))
   }
 
-  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (
-    identify andThen getData andThen requireData
-    ).async { implicit request =>
-      val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)), dateTimeService.localDate())
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EditAuthorityStartPage(accountId, authorityId), value)(AuthorityStart.writes))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EditAuthorityStartPage(accountId: String, authorityId: String), NormalMode, updatedAnswers))
-      )
-  }
+  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
+
+        val form = formProvider(request.userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)))
+
+        form.bindFromRequest().fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(
+                EditAuthorityStartPage(accountId, authorityId), value)(AuthorityStart.writes))
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(
+              navigator.nextPage(
+                EditAuthorityStartPage(accountId: String, authorityId: String),
+                NormalMode,
+                updatedAnswers)
+            )
+        )
+    }
 }

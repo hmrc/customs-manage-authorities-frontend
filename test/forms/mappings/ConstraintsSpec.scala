@@ -16,36 +16,43 @@
 
 package forms.mappings
 
+import base.SpecBase
 import generators.Generators
 import org.scalacheck.Gen
-import org.scalatest.{MustMatchers, WordSpec}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.data.validation.{Invalid, Valid}
+import play.api.data.validation.{Invalid, Valid, ValidationResult}
+import utils.StringUtils.emptyString
 
 import java.time.LocalDate
 
-class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with Generators with Constraints {
-
+class ConstraintsSpec extends SpecBase
+  with ScalaCheckPropertyChecks
+  with Generators
+  with Constraints {
 
   "firstError" must {
 
     "return Valid when all constraints pass" in new Setup {
       val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("foo")
+
       result mustEqual Valid
     }
 
     "return Invalid when the first constraint fails" in new Setup {
       val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("a" * 11)
+
       result mustEqual Invalid(errLengthKey, maxVal)
     }
 
     "return Invalid when the second constraint fails" in new Setup {
-      val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))("")
+      val result = firstError(maxLength(maxVal, errLengthKey), regexp("""^\w+$""", errRegexKey))(emptyString)
+
       result mustEqual Invalid(errRegexKey, """^\w+$""")
     }
 
     "return Invalid for the first error when both constraints fail" in new Setup {
-      val result = firstError(maxLength(-1, errLengthKey), regexp("""^\w+$""", errRegexKey))("")
+      val result = firstError(maxLength(-1, errLengthKey), regexp("""^\w+$""", errRegexKey))(emptyString)
+
       result mustEqual Invalid(errLengthKey, -1)
     }
   }
@@ -53,17 +60,20 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
   "minimumValue" must {
 
     "return Valid for a number greater than the threshold" in new Setup {
-      val result = minimumValue(minVal, "error.min").apply(2)
+      val result: ValidationResult = minimumValue(minVal, "error.min").apply(2)
+
       result mustEqual Valid
     }
 
     "return Valid for a number equal to the threshold" in new Setup {
-      val result = minimumValue(minVal, "error.min").apply(1)
+      val result: ValidationResult = minimumValue(minVal, "error.min").apply(1)
+
       result mustEqual Valid
     }
 
     "return Invalid for a number below the threshold" in new Setup {
-      val result = minimumValue(minVal, "error.min").apply(0)
+      val result: ValidationResult = minimumValue(minVal, "error.min").apply(0)
+
       result mustEqual Invalid("error.min", 1)
     }
   }
@@ -71,21 +81,23 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
   "maximumValue" must {
 
     "return Valid for a number less than the threshold" in new Setup {
-      val result = maximumValue(1, "error.max").apply(0)
+      val result: ValidationResult = maximumValue(1, "error.max").apply(0)
+
       result mustEqual Valid
     }
 
     "return Valid for a number equal to the threshold" in new Setup {
       val result = maximumValue(1, "error.max").apply(1)
+
       result mustEqual Valid
     }
 
     "return Invalid for a number above the threshold" in new Setup {
       val result = maximumValue(1, "error.max").apply(2)
+
       result mustEqual Invalid("error.max", 1)
     }
   }
-
 
   "InRange" must {
 
@@ -105,11 +117,13 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
 
     "return Valid for an input that matches the expression" in {
       val result = regexp("""^\w+$""", "error.invalid")("foo")
+
       result mustEqual Valid
     }
 
     "return Invalid for an input that does not match the expression" in {
       val result = regexp("""^\d+$""", "error.invalid")("foo")
+
       result mustEqual Invalid("error.invalid", """^\d+$""")
     }
   }
@@ -117,22 +131,26 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
   "maxLength" must {
 
     "return Valid for a string shorter than the allowed length" in new Setup {
-      val result = maxLength(maxVal, errLengthKey)("a" * 9)
+      val result: ValidationResult = maxLength(maxVal, errLengthKey)("a" * 9)
+
       result mustEqual Valid
     }
 
     "return Valid for an empty string" in new Setup {
-      val result = maxLength(maxVal, errLengthKey)("")
+      val result: ValidationResult = maxLength(maxVal, errLengthKey)(emptyString)
+
       result mustEqual Valid
     }
 
     "return Valid for a string equal to the allowed length" in new Setup {
-      val result = maxLength(maxVal, errLengthKey)("a" * 10)
+      val result: ValidationResult = maxLength(maxVal, errLengthKey)("a" * 10)
+
       result mustEqual Valid
     }
 
     "return Invalid for a string longer than the allowed length" in new Setup {
-      val result = maxLength(maxVal, errLengthKey)("a" * 11)
+      val result: ValidationResult = maxLength(maxVal, errLengthKey)("a" * 11)
+
       result mustEqual Invalid(errLengthKey, maxVal)
     }
   }
@@ -142,8 +160,11 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Valid for a date before or equal to the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        date <- datesBetween(LocalDate.of(2000, 1, 1), max)
+        max <- datesBetween(
+          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+        )
+        date <- datesBetween(LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth), max)
       } yield (max, date)
 
       forAll(gen) {
@@ -157,8 +178,10 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Invalid for a date after the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        date <- datesBetween(max.plusDays(1), LocalDate.of(3000, 1, 2))
+        max <- datesBetween(
+          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
+        date <- datesBetween(max.plusDays(oneDay), LocalDate.of(year3000, firstMonthOfTheYear, secondDayOfTheMonth))
       } yield (max, date)
 
       forAll(gen) {
@@ -175,14 +198,16 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Valid for a date after or equal to the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
-        date <- datesBetween(min, LocalDate.of(3000, 1, 1))
+        min <- datesBetween(
+          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
+        date <- datesBetween(min, LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
       } yield (min, date)
 
       forAll(gen) {
         case (min, date) =>
 
-          val result = minDate(min, "error.past", "foo")(date)
+          val result = minDate(min, minimumMsg = "error.past", yearMsg = "foo")(date)
           result mustEqual Valid
       }
     }
@@ -190,57 +215,85 @@ class ConstraintsSpec extends WordSpec with MustMatchers with ScalaCheckProperty
     "return Invalid for a date before the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min <- datesBetween(LocalDate.of(2000, 1, 2), LocalDate.of(3000, 1, 1))
-        date <- datesBetween(LocalDate.of(2000, 1, 1), min.minusDays(1))
+        min <- datesBetween(
+          LocalDate.of(year2000, firstMonthOfTheYear, secondDayOfTheMonth),
+          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+        )
+        date <- datesBetween(LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth), min.minusDays(oneDay))
       } yield (min, date)
 
       forAll(gen) {
         case (min, date) =>
-          val result = minDate(min, "authorityStartDate.error.minimum",
-            "authorityStartDate.error.year.length", "foo")(date)
+          val result = minDate(
+            min,
+            minimumMsg = "authorityStartDate.error.minimum",
+            yearMsg = "authorityStartDate.error.year.length",
+            "foo")(date)
+
           result mustEqual Invalid("authorityStartDate.error.minimum", "foo")
       }
     }
 
     "return Invalid for a date below the minimum length" in new Setup {
 
-      val date = LocalDate.of(200, 1, 2)
-      val min = LocalDate.of(200, 1, 1)
-      val result = minDate(min, "authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length", "foo")(date)
+      val date = LocalDate.of(year200, firstMonthOfTheYear, secondDayOfTheMonth)
+      val min = LocalDate.of(year200, firstMonthOfTheYear, firstDayOfTheMonth)
+
+      val result = minDate(
+        min,
+        "authorityStartDate.error.minimum",
+        "authorityStartDate.error.year.length",
+        "foo")(date)
+
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
 
     "return Invalid for a date above the max length" in new Setup {
 
-      val date = LocalDate.of(20000, 1, 2)
-      val max = LocalDate.of(20000, 1, 1)
-      val result = minDate(max, "authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length", "foo")(date)
+      val date = LocalDate.of(invalidYear20000, firstMonthOfTheYear, secondDayOfTheMonth)
+      val max = LocalDate.of(invalidYear20000, firstMonthOfTheYear, firstDayOfTheMonth)
+
+      val result = minDate(
+        max,
+        "authorityStartDate.error.minimum",
+        "authorityStartDate.error.year.length",
+        "foo")(date)
+
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
   }
-
 
   "checkEORI" must {
 
     "return valid when GBN EORI is provided" in {
       val result = checkEORI("error.invalid2")("GBN45365789211")
+
       result mustEqual Valid
     }
 
     "return Invalid when an incorrect EORI format is provided" in {
       val result = checkEORI("error.invalid2")("XI453")
+
       result mustEqual Invalid("error.invalid2", """GB\d{12}""")
     }
 
     "return Valid for an input that does not match the expression" in {
       val result = checkEORI("error.invalid2")("GB123456789102")
+
       result mustEqual Valid
     }
   }
 
   trait Setup {
+    val year2000 = 2000
+    val year200 = 200
+    val year3000 = 3000
+    val firstMonthOfTheYear = 1
+    val firstDayOfTheMonth = 1
+    val secondDayOfTheMonth = 2
+
+    val invalidYear20000 = 20000
+    val oneDay = 1
 
     val maxVal = 10
     val minVal = 1

@@ -16,13 +16,14 @@
 
 package models
 
-import org.scalatest.{MustMatchers, WordSpec}
+import base.SpecBase
 
-class WithNameSpec extends WordSpec with MustMatchers {
+class WithNameSpec extends SpecBase {
 
   object Foo extends WithName("bar")
 
   ".toString" must {
+
     "return the correct string" in {
       Foo.toString mustEqual "bar"
     }

@@ -30,7 +30,9 @@ import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import utils.StringUtils.emptyString
 import views.html.add.AuthorityDetailsView
+
 import scala.concurrent.Future
 
 class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
@@ -99,7 +101,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
@@ -126,12 +128,9 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request =
-          fakeRequest(POST, authorityDetailsRoute
-          )
-            .withFormUrlEncodedBody(("value", ""))
+        val request = fakeRequest(POST, authorityDetailsRoute).withFormUrlEncodedBody(("value", emptyString))
 
-        val boundForm = form.bind(Map("value" -> ""))
+        val boundForm = form.bind(Map("value" -> emptyString))
 
         val view = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]

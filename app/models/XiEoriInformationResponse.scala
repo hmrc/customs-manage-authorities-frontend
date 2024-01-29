@@ -18,7 +18,9 @@ package models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class XiEoriInformationResponse(xiEori: String, consent: String, address: XiEoriAddressInformation)
+case class XiEoriInformationResponse(xiEori: String,
+                                     consent: String,
+                                     address: XiEoriAddressInformation)
 
 object XiEoriInformationResponse {
   implicit val format: OFormat[XiEoriInformationResponse] = Json.format[XiEoriInformationResponse]

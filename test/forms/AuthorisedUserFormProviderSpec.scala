@@ -18,7 +18,9 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import models.domain.AuthorisedUser
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.FormError
+import utils.StringUtils.emptyString
 
 class AuthorisedUserFormProviderSpec extends StringFieldBehaviours {
 
@@ -74,8 +76,8 @@ class AuthorisedUserFormProviderSpec extends StringFieldBehaviours {
 
     "not bind empty values" in {
       val result = form.bind(Map(
-        "fullName" -> "",
-        "jobRole" -> ""))
+        "fullName" -> emptyString,
+        "jobRole" -> emptyString))
 
       result.errors shouldEqual Seq(
         FormError("fullName", nameRequiredKey),

@@ -35,12 +35,15 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  dateTimeService: DateTimeService,
                                  val standingAuthority: StandingAuthority,
                                  account: AccountWithAuthoritiesWithId,
-                                 companyName: Option[String])(implicit val messages: Messages) extends SummaryListRowHelper with DateUtils {
+                                 companyName: Option[String])(implicit val messages: Messages)
+  extends SummaryListRowHelper
+    with DateUtils {
 
   def yourAccountRow: Seq[SummaryListRow] = {
     val accountNumberRowFromHelper = Seq(
       accountNumberRow(account)
     ).flatten
+
     amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper, account.accountNumber)
   }
 
@@ -66,32 +69,34 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
   }
 
   private def authorisedUserNameRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
-    authorisedUser.map { user =>
-      summaryListRow(
-        messages("edit-cya-name"),
-        value = user.userName,
-        actions = Actions(items = Seq(ActionItem(
-          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
-          content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-name"))
-        ))),
-        secondValue = None
-      )
+    authorisedUser.map {
+      user =>
+        summaryListRow(
+          messages("edit-cya-name"),
+          value = user.userName,
+          actions = Actions(items = Seq(ActionItem(
+            href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+            content = span(messages("site.change")),
+            visuallyHiddenText = Some(messages("edit-cya-visually-hidden-name"))
+          ))),
+          secondValue = None
+        )
     }
   }
 
   private def authorisedUserRoleRow(authorisedUser: Option[AuthorisedUser]): Option[SummaryListRow] = {
-    authorisedUser.map { user =>
-      summaryListRow(
-        messages("edit-cya-role"),
-        value = user.userRole,
-        actions = Actions(items = Seq(ActionItem(
-          href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
-          content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("edit-cya-visually-hidden-role"))
-        ))),
-        secondValue = None
-      )
+    authorisedUser.map {
+      user =>
+        summaryListRow(
+          messages("edit-cya-role"),
+          value = user.userRole,
+          actions = Actions(items = Seq(ActionItem(
+            href = controllers.edit.routes.EditAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+            content = span(messages("site.change")),
+            visuallyHiddenText = Some(messages("edit-cya-visually-hidden-role"))
+          ))),
+          secondValue = None
+        )
     }
   }
 
@@ -115,6 +120,7 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
         actions = Actions(items = Seq()),
         secondValue = None
       ))
+
       case _ => Some(summaryListRow(
         messages("view-authority-h2.5"),
         value = messages("view-authority-h2.6"),
@@ -126,42 +132,52 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
 
   private def authorityStartRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityStartPage(accountId, authorityId)).flatMap {
-      case AuthorityStart.Today => Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}")
-      case AuthorityStart.Setdate => userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
-    }.map { date =>
-      summaryListRow(
-        messages("authorityStart.checkYourAnswersLabel"),
-        value = date,
-        secondValue = None,
-        actions = if (standingAuthority.canEditStartDate(dateTimeService.localDate())) {
-          Actions(items =
-            Seq(ActionItem(
-              href = controllers.edit.routes.EditAuthorityStartController.onPageLoad(accountId, authorityId).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            ))
-          )
-        } else {
-          Actions(items = Seq())
-        })
+      case AuthorityStart.Today =>
+        Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${
+          dateAsDayMonthAndYear(
+            dateTimeService.localTime().toLocalDate)
+        }")
+
+      case AuthorityStart.Setdate =>
+        userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+
+    }.map {
+      date =>
+        summaryListRow(
+          messages("authorityStart.checkYourAnswersLabel"),
+          value = date,
+          secondValue = None,
+          actions = if (standingAuthority.canEditStartDate(dateTimeService.localDate())) {
+            Actions(items =
+              Seq(ActionItem(
+                href = controllers.edit.routes.EditAuthorityStartController.onPageLoad(accountId, authorityId).url,
+                content = span(messages("site.change")),
+                visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
+              ))
+            )
+          } else {
+            Actions(items = Seq())
+          })
     }
   }
 
   private def authorityEndRow: Option[SummaryListRow] = {
     userAnswers.get(EditAuthorityEndPage(accountId, authorityId)).flatMap {
       case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
-      case AuthorityEnd.Setdate => userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
-    }.map(value =>
-      summaryListRow(
-        messages("authorityEnd.checkYourAnswersLabel"),
-        value = value,
-        secondValue = None,
-        actions = Actions(items = Seq(ActionItem(
-          href = controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId).url,
-          content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
-        )))
-      )
+      case AuthorityEnd.Setdate =>
+        userAnswers.get(EditAuthorityEndDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+    }.map(
+      value =>
+        summaryListRow(
+          messages("authorityEnd.checkYourAnswersLabel"),
+          value = value,
+          secondValue = None,
+          actions = Actions(items = Seq(ActionItem(
+            href = controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId).url,
+            content = span(messages("site.change")),
+            visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+          )))
+        )
     )
   }
 
@@ -180,13 +196,6 @@ class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
     )
   }
 
-  /**
-   * Updates the Value attribute of SummaryListRow to add Northern Ireland label
-   * if the EORI is XI and account is of type Duty Deferment
-   *
-   * @param accountNumberRowFromHelper Seq[SummaryListRow]
-   * @return Updated Seq[SummaryListRow]
-   */
   private def amendValueAttributeForNIEoriAndDefermentAccount(accountNumberRowFromHelper: Seq[SummaryListRow],
                                                               accNumber: String): Seq[SummaryListRow] =
     accountNumberRowFromHelper.map {

@@ -18,9 +18,9 @@
 @import views.html.templates.Layout
 
 @this(
- layout: Layout,
- h1: components.h1,
- p:  components.p
+     layout: Layout,
+     h1: components.h1,
+     p:  components.p
 )
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -30,5 +30,4 @@
     @h1(messages(messages("service-unavailable.heading")))
 
     @p(Html(messages("service-unavailable.p")))
-
 }

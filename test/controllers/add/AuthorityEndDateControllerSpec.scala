@@ -37,7 +37,9 @@ import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.Future
 
 class AuthorityEndDateControllerSpec extends SpecBase {
+
   "onPageLoad" must {
+
     "return OK with pre-populated values if form has some values" in new SetUp {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
@@ -81,9 +83,16 @@ class AuthorityEndDateControllerSpec extends SpecBase {
   }
 
   "onSubmit" must {
+
     "redirect to next page if form has no error" in new SetUp {
+      val year2023 = 2023
+      val monthOfTheYear = 6
+      val dayOfMonth = 12
+      val hourOfDay = 2
+      val minuteOfHour = 20
+
       when(mockDateTimeService.localTime()).thenReturn(
-        LocalDateTime.of(2023, 6, 12, 2, 20))
+        LocalDateTime.of(year2023, monthOfTheYear, dayOfMonth, hourOfDay, minuteOfHour))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(

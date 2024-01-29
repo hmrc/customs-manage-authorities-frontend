@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import forms.AuthorisedUserFormProvider
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
@@ -49,15 +50,16 @@ class RemoveViewSpec extends SpecBase {
   }
 
   trait Setup  {
-    val startDate = LocalDate.parse("2020-03-01")
-    val endDate = LocalDate.parse("2020-04-01")
-    val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-    val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    private val startDate = LocalDate.parse("2020-03-01")
+    private val endDate = LocalDate.parse("2020-04-01")
+    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
 
-    val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+    private val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+    val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
       CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
-    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new AuthorisedUserFormProvider()
@@ -66,7 +68,7 @@ class RemoveViewSpec extends SpecBase {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(
       "GET", "/some/resource/path")
 
-    def view(viewModel: RemoveViewModel) = Jsoup.parse(
+    def view(viewModel: RemoveViewModel): Document = Jsoup.parse(
       app.injector.instanceOf[RemoveAuthorisedUserView].apply(form,viewModel).body)
   }
 }

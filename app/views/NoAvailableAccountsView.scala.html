@@ -28,9 +28,11 @@
 
 @(enteredEori: EORI)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())), backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
+@layout(pageTitle = Some(titleNoForm("accounts.title", None, Seq())),
+        backLink = Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))){
 
  @h1(id=Some("accounts.heading"), msg = messages("accounts.noAvailableAccounts.heading", enteredEori))
 
- @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url, messageKey = "accounts.noAvailableAccounts.link", pMessageKey = "accounts.noAvailableAccounts.p")
+ @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url,
+        messageKey = "accounts.noAvailableAccounts.link", pMessageKey = "accounts.noAvailableAccounts.p")
 }

@@ -26,7 +26,9 @@
         isDecimal: Boolean = true,
         hint: Option[Html] = None,
         classes: Option[String] = None
-)(implicit messages: Messages)
+)(
+        implicit messages: Messages
+)
 
 <div class="@govukToClasses("govuk-form-group", if(form.hasErrors) "govuk-form-group--error" else "")">
     @govukLabel(Label(

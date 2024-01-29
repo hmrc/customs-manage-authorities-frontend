@@ -28,7 +28,16 @@
     inputText: components.inputText
 )
 
-@(form: Form[_], mode: Mode, call: Call, xiEoriEnabled: Boolean)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+    form: Form[_],
+    mode: Mode,
+    call: Call,
+    xiEoriEnabled: Boolean
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    appConfig: FrontendAppConfig
+)
 
 @layout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLink = Some(call)) {
 

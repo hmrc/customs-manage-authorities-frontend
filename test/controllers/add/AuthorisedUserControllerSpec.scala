@@ -30,7 +30,10 @@ import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add._
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.inject.guice.GuiceableModule
+import play.api.mvc.AnyContentAsEmpty
+import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, inject}
 import services.DateTimeService
@@ -53,16 +56,18 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
       running(app) {
-        val request = fakeRequest(GET, authorisedUserRoute)
-        val result = route(app, request).value
         val view = app.injector.instanceOf[AuthorisedUserView]
-        val appConfig = app.injector.instanceOf[FrontendAppConfig]
+        implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+        implicit val msg: Messages = messages(app)
+
         val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(app))
+
+        implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(GET, authorisedUserRoute)
+        val result = route(app, request).value
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual
-          view(form, helper)(request, messages(app), appConfig).toString
+        contentAsString(result) mustEqual view(form, helper).toString
       }
     }
 
@@ -112,6 +117,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
   }
 
   "onSubmit" must {
+
     "redirect to next page for valid data" in new SetUp {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
       val app: Application = applicationWithUserAnswersAndEori(
@@ -284,23 +290,24 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
     val generalGuarantee: GeneralGuaranteeAccount =
       GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
-    val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
-      .set(AccountsPage, selectedAccounts).success.value
+    val userAnswersTodayToIndefinite: UserAnswers =
+      UserAnswers("id").set(AccountsPage, selectedAccounts).success.value
       .set(EoriNumberPage, CompanyDetails(gbEori, Some("companyName"))).success.value
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
-    val userAnswersTodayToIndefiniteWithXIEori: UserAnswers = UserAnswers("id")
-      .set(AccountsPage, selectedAccounts).success.value
+    val userAnswersTodayToIndefiniteWithXIEori: UserAnswers =
+      UserAnswers("id").set(AccountsPage, selectedAccounts).success.value
       .set(EoriNumberPage, CompanyDetails(xiEori, Some("companyName"))).success.value
       .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
       .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
       .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-      .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+      .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
     val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
     val sessionExpiredPage: String = controllers.routes.SessionExpiredController.onPageLoad.url
@@ -310,8 +317,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
     when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
-    when(mockValidator.validate(userAnswersTodayToIndefinite)).thenReturn(
-      Some((accounts, standingAuthority, authorisedUser)))
+    when(mockValidator.validate(userAnswersTodayToIndefinite))
+      .thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
     def applicationWithUserAnswersAndEori(userAnswer: UserAnswers = emptyUserAnswers,
@@ -322,7 +330,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           Seq(
             inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
             inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
-            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer)),
+            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswer))
           )
         } else {
           Seq(
