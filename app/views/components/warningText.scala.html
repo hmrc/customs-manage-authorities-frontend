@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
+@import utils.StringUtils.emptyString
+
 @this(govukWarningText: GovukWarningText)
 
 @(msg: String)(implicit messages: Messages)
 
 @govukWarningText(WarningText(
                               iconFallbackText = Some(messages(msg)),
-                              classes = "",
+                              classes = emptyString,
                               attributes = Map.empty,
                               content = Text(messages(msg))
                               )
