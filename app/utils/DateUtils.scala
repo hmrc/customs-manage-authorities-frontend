@@ -22,16 +22,23 @@ import java.time.LocalDate
 
 trait DateUtils {
 
-  def latestOf(first: LocalDate, rest: LocalDate*): LocalDate =
+  def latestOf(first: LocalDate,
+               rest: LocalDate*): LocalDate =
     rest.fold(first)((a: LocalDate, b: LocalDate) => if (a.isAfter(b)) a else b)
 
-  def earliestOf(first: LocalDate, rest: LocalDate*): LocalDate =
+  def earliestOf(first: LocalDate,
+                 rest: LocalDate*): LocalDate =
     rest.fold(first)((a: LocalDate, b: LocalDate) => if (a.isBefore(b)) a else b)
 
-  def dateAsDayMonthAndYear(date: LocalDate)(implicit messages: Messages): String = s"${date.getDayOfMonth} ${dateAsMonth(date)} ${date.getYear}"
+  def dateAsDayMonthAndYear(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${dateAsMonth(date)} ${date.getYear}"
 
-  def dateAsdMMMyyyy(date: LocalDate)(implicit messages: Messages): String = s"${date.getDayOfMonth} ${dateAsMonthAbbr(date)} ${date.getYear}"
+  def dateAsdMMMyyyy(date: LocalDate)(implicit messages: Messages): String =
+    s"${date.getDayOfMonth} ${dateAsMonthAbbr(date)} ${date.getYear}"
 
-  private def dateAsMonthAbbr(date: LocalDate)(implicit messages: Messages): String = messages(s"month.abbr.${date.getMonthValue}")
-  private def dateAsMonth(date: LocalDate)(implicit messages: Messages): String = messages(s"month.${date.getMonthValue}")
+  private def dateAsMonthAbbr(date: LocalDate)(implicit messages: Messages): String =
+    messages(s"month.abbr.${date.getMonthValue}")
+
+  private def dateAsMonth(date: LocalDate)(implicit messages: Messages): String =
+    messages(s"month.${date.getMonthValue}")
 }

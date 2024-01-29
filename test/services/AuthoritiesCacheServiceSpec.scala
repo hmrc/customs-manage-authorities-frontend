@@ -17,55 +17,89 @@
 package services
 
 import base.SpecBase
+import connectors.CustomsFinancialsConnector
+import models.InternalId
+import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.{Application, inject}
+import repositories.AuthoritiesRepository
+import uk.gov.hmrc.http.HeaderCarrier
+
+import java.time.LocalDate
+import scala.concurrent.Future
 
 class AuthoritiesCacheServiceSpec extends SpecBase {
 
- /* implicit lazy val hc: HeaderCarrier = HeaderCarrier()
-  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-
-  val startDate = LocalDate.parse("2020-03-01")
-  val endDate = LocalDate.parse("2020-04-01")
-  val standingAuthority = StandingAuthority(
-    "EORI",
-    LocalDate.parse("2020-03-01"),
-    Some(LocalDate.parse("2020-04-01")),
-    viewBalance = false
-  )
-
-  val accountWithAuthorities = AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
-  val cachedAuthorities: AuthoritiesWithId = AuthoritiesWithId(Map(
-    ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
-  ))
-
-  val mockRepository = mock[AuthoritiesRepository]
-  when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
-  when(mockRepository.get("notCachedId")).thenReturn(Future.successful(None))
-  when(mockRepository.set(any(), any())).thenReturn(Future.successful(true))
-
-  val mockConnector = mock[CustomsFinancialsConnector]
-  //when(mockConnector.retrieveAccountAuthorities()(any())).thenReturn(Future.successful(Seq(accountWithAuthorities)))
-
-  when(mockConnector.retrieveAccountAuthorities("GB123456789012")(any())).thenReturn(Future.successful(Seq(accountWithAuthorities)))
-
   "retrieveAuthorities" must {
 
-    "use cached values on cache hit" in {
-      val service = new AuthoritiesCacheService(mockRepository, mockConnector)(implicitly)
-      val result = service.retrieveAuthorities(InternalId("cachedId"), Seq("GB123456789012"))(hc)
+    "use cached values on cache hit" in new Setup {
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      when(mockConnector.retrieveAccountAuthorities(any())(any()))
+        .thenReturn(Future.successful(Seq(accountWithAuthorities)))
+
+      private val result = authCacheServices.retrieveAuthorities(InternalId("cachedId"), Seq(eoriNumber))(hc)
 
       result.futureValue mustBe cachedAuthorities
     }
 
-    "update cache on cache miss" in {
-      val service = new AuthoritiesCacheService(mockRepository, mockConnector)(implicitly)
-      val result = service.retrieveAuthorities(InternalId("notCachedId"), Seq("GB123456789012"))(hc).futureValue
+    "update cache on cache miss" in new Setup {
+      when(mockAuthRepo.get("notCachedId")).thenReturn(Future.successful(None))
+
+      when(mockConnector.retrieveAccountAuthorities(any())(any()))
+        .thenReturn(Future.successful(Seq(accountWithAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      private val result: AuthoritiesWithId =
+        authCacheServices.retrieveAuthorities(InternalId("notCachedId"), Seq(eoriNumber))(hc).futureValue
 
       result.accounts.head.accountNumber mustEqual accountWithAuthorities.accountNumber
 
-      verify(mockConnector, times(1)).retrieveAccountAuthorities()
-      verify(mockRepository, times(1)).set("notCachedId", result)
+      verify(mockConnector, times(1)).retrieveAccountAuthorities(eoriNumber)
+      verify(mockAuthRepo, times(1)).set("notCachedId", result)
     }
+  }
 
-  }*/
+  trait Setup {
+    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+    implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+
+    val eoriNumber = "GB123456789012"
+
+    val dateString1 = "2020-03-01"
+    val dateString2 = "2020-04-01"
+    val startDate: LocalDate = LocalDate.parse(dateString1)
+    val endDate: LocalDate = LocalDate.parse(dateString2)
+
+    val standingAuthority: StandingAuthority = StandingAuthority(
+      "EORI",
+      LocalDate.parse(dateString1),
+      Some(LocalDate.parse(dateString2)),
+      viewBalance = false
+    )
+
+    val accountWithAuthorities: AccountWithAuthorities =
+      AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
+
+    val cachedAuthorities: AuthoritiesWithId = AuthoritiesWithId(
+      Map("a" ->
+        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      ))
+
+    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val mockAuthRepo: AuthoritiesRepository = mock[AuthoritiesRepository]
+
+    val app: Application = applicationBuilder().overrides(
+      inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+      inject.bind[AuthoritiesRepository].toInstance(mockAuthRepo)
+    ).build()
+
+    val authCacheServices: AuthoritiesCacheService = app.injector.instanceOf[AuthoritiesCacheService]
+  }
 
 }

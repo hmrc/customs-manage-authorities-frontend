@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
+import utils.Constants.RANDOM_GENERATION_INT_LENGTH
+
 import scala.util.Random
 
 package object connectors {
-  val MDG_ACK_REF_LENGTH = 32
 
   def generateStringOfRandomDigits(length: Int): String = {
-    (1 to length).map(_ => Random.nextInt(10)).mkString // scalastyle:ignore magic.number
+
+    (1 to length).map(_ => Random.nextInt(RANDOM_GENERATION_INT_LENGTH)).mkString
   }
 
-  def acknowledgmentRef(length: Int) = generateStringOfRandomDigits(length)
+  def acknowledgmentRef(length: Int): String = generateStringOfRandomDigits(length)
 }

@@ -23,7 +23,10 @@ import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbers
 import models.AuthorityEnd.Indefinite
 import models.AuthorityStart.Today
 import models.ShowBalance.Yes
-import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthorisedUser,
+  AuthoritiesWithId, CdsCashAccount, StandingAuthority
+}
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain}
 import org.mockito.ArgumentMatchers.{any, anyString}
@@ -65,9 +68,11 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
         Future.successful(Seq(accWithAuthorities1))
       )
+
       when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
         Future.successful(authoritiesWithId)
       )
+
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
@@ -223,7 +228,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
       "and authorised EORI is XI EORI" in new Setup {
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+      val application: Application = applicationBuilder(Some(userAnswers), gbEori)
         .overrides(
           inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
           inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
@@ -263,7 +268,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockConnector.grantAccountAuthorities(
         any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(true))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(true))
 
       running(application) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -277,7 +282,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
       "and authorised EORI is XI EORI but grant authority calls fail" in new Setup {
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+      val application: Application = applicationBuilder(Some(userAnswers), gbEori)
         .overrides(
           inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
           inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
@@ -317,7 +322,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockConnector.grantAccountAuthorities(
         any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(false))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(false))
 
       running(application) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -332,7 +337,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
       "and authorised EORI is XI EORI but one of grant authority call fails" in new Setup {
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+      val application: Application = applicationBuilder(Some(userAnswers), gbEori)
         .overrides(
           inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
           inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
@@ -372,7 +377,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockConnector.grantAccountAuthorities(
         any, ArgumentMatchers.eq("XI123456789012"))(any)).thenReturn(Future.successful(true))
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(false))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(false))
 
       running(application) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -387,7 +392,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "Redirect to next page for valid data when user has selected cash,guarantee and DD accounts is submitted " +
       "and authorised EORI is GB EORI" in new Setup {
 
-      val application: Application = applicationBuilder(Some(userAnswers), "GB123456789012")
+      val application: Application = applicationBuilder(Some(userAnswers), gbEori)
         .overrides(
           inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
           inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
@@ -425,7 +430,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       )
 
       when(mockConnector.grantAccountAuthorities(
-        any, ArgumentMatchers.eq("GB123456789012"))(any)).thenReturn(Future.successful(true))
+        any, ArgumentMatchers.eq(gbEori))(any)).thenReturn(Future.successful(true))
 
       running(application) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -651,13 +656,21 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   }
 
   trait Setup {
+    private val oneDay = 1
+    private val twoDays = 2
+
+    private val accountId = "a"
+    private val authId = "b"
+
+    val gbEori = "GB123456789012"
+
     def onwardRoute: Call = Call("GET", "/foo")
 
     lazy val authorisedUserRoute: String =
-      controllers.edit.routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
+      controllers.edit.routes.EditCheckYourAnswersController.onPageLoad(accountId, authId).url
 
     lazy val onSubmitRoute: String =
-      controllers.edit.routes.EditCheckYourAnswersController.onSubmit("a", "b").url
+      controllers.edit.routes.EditCheckYourAnswersController.onSubmit(accountId, authId).url
 
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
@@ -668,20 +681,21 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
     val userAnswers: UserAnswers = emptyUserAnswers
-      .set(EditAuthorityStartDatePage("a", "b"), LocalDate.now()).get
-      .set(EditAuthorityStartPage("a", "b"), Today).get
-      .set(EditAuthorityEndPage("a", "b"), Indefinite).get
-      .set(EditShowBalancePage("a", "b"), Yes).get
-      .set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
+      .set(EditAuthorityStartDatePage(accountId, authId), LocalDate.now()).get
+      .set(EditAuthorityStartPage(accountId, authId), Today).get
+      .set(EditAuthorityEndPage(accountId, authId), Indefinite).get
+      .set(EditShowBalancePage(accountId, authId), Yes).get
+      .set(EditAuthorisedUserPage(accountId, authId), AuthorisedUser("test", "test")).get
 
     def populatedUserAnswers(userAnswers: UserAnswers): UserAnswers = {
-      userAnswers.set(EditShowBalancePage("a", "b"), ShowBalance.Yes)(ShowBalance.writes).success.value
-        .set(EditAuthorityStartPage("a", "b"), AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(EditAuthorityEndPage("a", "b"), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
+      userAnswers
+        .set(EditShowBalancePage(accountId, authId), ShowBalance.Yes)(ShowBalance.writes).success.value
+        .set(EditAuthorityStartPage(accountId, authId), AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EditAuthorityEndPage(accountId, authId), AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     }
 
     val standingAuthority: StandingAuthority =
-      domain.StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
+      domain.StandingAuthority(gbEori, LocalDate.now(), None, viewBalance = true)
 
     val standingAuthorityForXI: StandingAuthority =
       domain.StandingAuthority("XI123456789012", LocalDate.now(), None, viewBalance = true)
@@ -693,7 +707,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     ))
 
     val standingAuthorityPast: StandingAuthority =
-      StandingAuthority("GB123456789012", LocalDate.now().minusDays(2), None, viewBalance = true)
+      StandingAuthority(gbEori, LocalDate.now().minusDays(twoDays), None, viewBalance = true)
 
     val accountsWithAuthoritiesWithIdPast: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
@@ -702,15 +716,15 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     ))
 
     val standingAuthority1: StandingAuthority = StandingAuthority(
-      "GB123456789012",
+      gbEori,
       LocalDate.now(),
-      Option(LocalDate.now().plusDays(1)),
+      Option(LocalDate.now().plusDays(oneDay)),
       viewBalance = true)
 
     val standingAuthority2: StandingAuthority = StandingAuthority(
-      "GB123456789012",
+      gbEori,
       LocalDate.now(),
-      Option(LocalDate.now().plusDays(1)),
+      Option(LocalDate.now().plusDays(oneDay)),
       viewBalance = true)
 
     val accWithAuthorities1: AccountWithAuthorities = AccountWithAuthorities(CdsCashAccount,
@@ -720,13 +734,14 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     def helper(userAnswers: UserAnswers,
                application: Application,
-               authority: StandingAuthority = standingAuthority) = new CheckYourAnswersEditHelper(
-      populatedUserAnswers(userAnswers),
-      "a",
-      "b",
-      mockDateTimeService,
-      authority,
-      accountsWithAuthoritiesWithId, None)(messages(application))
+               authority: StandingAuthority = standingAuthority): CheckYourAnswersEditHelper =
+      new CheckYourAnswersEditHelper(
+        populatedUserAnswers(userAnswers),
+        accountId,
+        authId,
+        mockDateTimeService,
+        authority,
+        accountsWithAuthoritiesWithId, None)(messages(application))
 
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())

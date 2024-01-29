@@ -16,25 +16,33 @@
 
 package forms
 
-import org.scalatest.{Matchers, OptionValues, WordSpec}
+import base.SpecBase
+import org.scalatest.Assertion
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.{Form, FormError}
 
-trait FormSpec extends WordSpec with OptionValues with Matchers {
+trait FormSpec extends SpecBase {
 
-  def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]) = {
+  def checkForError(form: Form[_],
+                    data: Map[String, String],
+                    expectedErrors: Seq[FormError]): Assertion = {
 
     form.bind(data).fold(
       formWithErrors => {
-        for (error <- expectedErrors) formWithErrors.errors should contain(FormError(error.key, error.message, error.args))
+        for (error <- expectedErrors) formWithErrors.errors should
+          contain(FormError(error.key, error.message, error.args))
+
         formWithErrors.errors.size shouldBe expectedErrors.size
       },
-      form => {
-        fail("Expected a validation error when binding the form, but it was bound successfully.")
+      _ => {
+        fail(message = "Expected a validation error when binding the form, but it was bound successfully.")
       }
     )
   }
 
-  def error(key: String, value: String, args: Any*) = Seq(FormError(key, value, args))
+  def error(key: String,
+            value: String,
+            args: Any*): Seq[FormError] = Seq(FormError(key, value, args))
 
   lazy val emptyForm = Map[String, String]()
 }

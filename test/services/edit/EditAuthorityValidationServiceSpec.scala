@@ -19,9 +19,8 @@ package services.edit
 import base.SpecBase
 import models.domain.{
   AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSAccount, CDSCashBalance,
-  CashAccount, CdsCashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount,
-  GeneralGuaranteeBalance, StandingAuthority, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount,
-  UnknownAccount
+  CashAccount, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount, DutyDefermentAccount,
+  DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance, StandingAuthority, UnknownAccount
 }
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityStart, CompanyDetails, ShowBalance, UnknownAccountType, UserAnswers}
@@ -30,24 +29,27 @@ import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, AuthorityStartPage, EoriNumberPage, ShowBalancePage}
 import pages.edit.EditAuthorisedUserPage
-import play.api.inject
+import play.api.{Application, inject}
 import play.api.test.Helpers.running
 
 import java.time.LocalDate
 
 class EditAuthorityValidationServiceSpec extends SpecBase {
+
   "validate" must {
+
     "return correct AddAuthorityRequest" when {
+
       "EditCheckYourAnswerValidationService returns StandingAuthority" in new SetUp {
 
         when(mockECYAService.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal))
           .thenReturn(Option(standingAuthority))
 
-        val application = applicationBuilder().overrides(
+        val application: Application = applicationBuilder().overrides(
           inject.bind[EditCheckYourAnswersValidationService].toInstance(mockECYAService)
         ).build()
 
-        val service = application.injector.instanceOf[EditAuthorityValidationService]
+        val service: EditAuthorityValidationService = application.injector.instanceOf[EditAuthorityValidationService]
 
         running(application) {
           service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority) mustBe
@@ -74,11 +76,11 @@ class EditAuthorityValidationServiceSpec extends SpecBase {
         when(mockECYAService.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal))
           .thenReturn(None)
 
-        val application = applicationBuilder().overrides(
+        val application: Application = applicationBuilder().overrides(
           inject.bind[EditCheckYourAnswersValidationService].toInstance(mockECYAService)
         ).build()
 
-        val service = application.injector.instanceOf[EditAuthorityValidationService]
+        val service: EditAuthorityValidationService = application.injector.instanceOf[EditAuthorityValidationService]
 
         running(application) {
           service.validate(
@@ -100,34 +102,59 @@ trait SetUp {
   val authorisedEoriVal = "GB098765432109"
   val accountNumberVal = "12345"
 
-  val mockECYAService = mock[EditCheckYourAnswersValidationService]
-  val cashAccount = CashAccount(accountNumberVal, "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDefermentBalance = DutyDefermentBalance(None, None, None, None)
-  val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, dutyDefermentBalance)
-  val genGuaranteeBal = GeneralGuaranteeBalance(50.00, 50.00)
-  val generalGuarantee = GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(genGuaranteeBal))
+  val mockECYAService: EditCheckYourAnswersValidationService = mock[EditCheckYourAnswersValidationService]
+
+  private val cashAccount =
+    CashAccount(accountNumberVal, "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+
+  private val dutyDefermentBalance = DutyDefermentBalance(None, None, None, None)
+  private val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, dutyDefermentBalance)
+  private val genGuaranteeBal = GeneralGuaranteeBalance(50.00, 50.00)
+
+  private val generalGuarantee =
+    GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(genGuaranteeBal))
+
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
-  val accAuthority = AccountWithAuthoritiesWithId(CdsCashAccount, accountNumberVal, Some(AccountStatusOpen),
-    Map("b" -> standingAuthority))
 
-  val accAuthority02 = AccountWithAuthoritiesWithId(CdsDutyDefermentAccount, accountNumberVal, Some(AccountStatusOpen),
-    Map("b" -> standingAuthority))
+  private val year2023 = 2023
+  private val monthOfTheYear = 6
+  private val dayOfMonth = 12
+  private val startDate = LocalDate.of(year2023, monthOfTheYear, dayOfMonth)
 
-  val accAuthority03 = AccountWithAuthoritiesWithId(CdsGeneralGuaranteeAccount, accountNumberVal, Some(AccountStatusOpen),
-    Map("b" -> standingAuthority))
+  val standingAuthority: StandingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+  val accAuthority: AccountWithAuthoritiesWithId =
+    AccountWithAuthoritiesWithId(
+      CdsCashAccount,
+      accountNumberVal,
+      Some(AccountStatusOpen),
+      Map("b" -> standingAuthority)
+    )
 
-  val accAuthority04 = AccountWithAuthoritiesWithId(UnknownAccount, accountNumberVal, Some(AccountStatusOpen),
-    Map("b" -> standingAuthority))
+  val accAuthority02: AccountWithAuthoritiesWithId =
+    AccountWithAuthoritiesWithId(
+      CdsDutyDefermentAccount,
+      accountNumberVal,
+      Some(AccountStatusOpen),
+      Map("b" -> standingAuthority)
+    )
 
-  val authUser = AuthorisedUser("test", "test2")
+  val accAuthority03: AccountWithAuthoritiesWithId =
+    AccountWithAuthoritiesWithId(
+      CdsGeneralGuaranteeAccount,
+      accountNumberVal, Some(AccountStatusOpen),
+      Map("b" -> standingAuthority)
+    )
 
-  val userAnswers = UserAnswers("id")
+  val accAuthority04: AccountWithAuthoritiesWithId =
+    AccountWithAuthoritiesWithId(UnknownAccount, accountNumberVal, Some(AccountStatusOpen),
+      Map("b" -> standingAuthority))
+
+  val authUser: AuthorisedUser = AuthorisedUser("test", "test2")
+
+  val userAnswers: UserAnswers = UserAnswers("id")
     .set(AccountsPage, selectedAccounts).success.value
     .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
     .set(EditAuthorisedUserPage(accountIdVal, authorityIdVal), authUser).success.value
-
-  val startDate = LocalDate.of(2023, 6, 12)
-  val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 }

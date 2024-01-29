@@ -19,17 +19,18 @@ package controllers.actions
 import base.SpecBase
 import connectors.CustomsDataStoreConnector
 import models.requests.IdentifierRequest
-import models.{InternalId, UnverifiedEmail, UndeliverableEmail}
+import models.{InternalId, UndeliverableEmail, UnverifiedEmail}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.SEE_OTHER
-import play.api.mvc.Result
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers.LOCATION
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Email}
 import uk.gov.hmrc.http.ServiceUnavailableException
+import utils.StringUtils.emptyString
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -55,7 +56,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
       when(
         mockDataStoreConnector.getEmail("GB123456789012")(any())
-      ) thenReturn Future.failed(new ServiceUnavailableException(""))
+      ) thenReturn Future.failed(new ServiceUnavailableException(emptyString))
 
       val futureResult = action.filter(identifierRequest())
       whenReady(futureResult) { result =>
@@ -97,10 +98,10 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
     val mockDataStoreConnector: CustomsDataStoreConnector =
     mock[CustomsDataStoreConnector]
 
-    def identifierRequest() = IdentifierRequest(
+    def identifierRequest(): IdentifierRequest[AnyContentAsEmpty.type] = IdentifierRequest(
       fakeRequest(),
       InternalId("id"),
-      Credentials("", ""),
+      Credentials(emptyString, emptyString),
       Organisation,
       None,
       None,

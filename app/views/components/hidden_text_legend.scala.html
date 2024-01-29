@@ -16,6 +16,9 @@
 
 @this()
 
-@(msg: String, classes: String = "govuk-fieldset__legend govuk-fieldset__legend--l govuk-visually-hidden")(implicit messages: Messages)
+@(
+  msg: String,
+  classes: String = "govuk-fieldset__legend govuk-fieldset__legend--l govuk-visually-hidden"
+)(implicit messages: Messages)
 
 <legend class="@classes">@messages(msg)</legend>

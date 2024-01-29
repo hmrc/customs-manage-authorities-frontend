@@ -43,23 +43,34 @@ class AddConfirmationController @Inject()(
                                            val controllerComponents: MessagesControllerComponents,
                                            confirmationService: ConfirmationService,
                                            view: AddConfirmationView
-                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       val startDate: Option[String] = request.userAnswers.get(AuthorityStartDatePage).map(dateAsDayMonthAndYear)
       val multipleAccounts = request.userAnswers.get(AccountsPage).exists(_.size > 1)
+
       request.userAnswers.get(EoriNumberPage) match {
         case Some(companyDetails) =>
           for {
             _ <- sessionRepository.clear(request.userAnswers.id)
             _ <- accountsRepository.clear(request.internalId.value)
             _ <- authoritiesRepository.clear(request.internalId.value)
-            _ <- confirmationService.populateConfirmation(request.internalId.value, companyDetails.eori, startDate, companyDetails.name, multipleAccounts)
+            _ <- confirmationService.populateConfirmation(
+              request.internalId.value,
+              companyDetails.eori,
+              startDate,
+              companyDetails.name,
+              multipleAccounts)
           } yield Ok(view(companyDetails.eori, startDate, companyDetails.name, multipleAccounts))
+
         case None =>
           request.userAnswers.get(ConfirmationPage) match {
-            case Some(value) => Future.successful(Ok(view(value.eori, value.startDate, value.companyName, value.multipleAccounts)));
+            case Some(value) =>
+              Future.successful(Ok(view(value.eori, value.startDate, value.companyName, value.multipleAccounts)))
             case None =>
               logger.warn("No EORI number could be found for add confirmation page")
               Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))

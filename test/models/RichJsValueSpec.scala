@@ -16,14 +16,17 @@
 
 package models
 
+import base.SpecBase
 import generators.Generators
 import org.scalacheck.Gen
-import org.scalatest.{FreeSpec, MustMatchers, OptionValues}
+import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 
-class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues with Generators {
-
+class RichJsValueSpec extends SpecBase
+  with ScalaCheckPropertyChecks
+  with OptionValues
+  with Generators {
 
   val min = 2
   val max = 10
@@ -35,16 +38,16 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
     }
   }
 
-    "set" - {
+    "set" should {
 
-      "must return an error if the path is empty" in {
+      "return an error if the path is empty" in {
 
         val value = Json.obj()
 
         value.set(JsPath, Json.obj()) mustEqual JsError("path cannot be empty")
       }
 
-      "must set a value on a JsObject" in {
+      "set a value on a JsObject" in {
 
         val gen = for {
           originalKey   <- nonEmptyAlphaStr
@@ -60,11 +63,12 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
             val path = JsPath \ pathKey
 
-            value.set(path, JsString(newValue)) mustEqual JsSuccess(Json.obj(originalKey -> originalValue, pathKey -> newValue))
+            value.set(path, JsString(newValue)) mustEqual
+              JsSuccess(Json.obj(originalKey -> originalValue, pathKey -> newValue))
         }
       }
 
-      "must set a nested value on a JsObject" in {
+      "set a nested value on a JsObject" in {
 
         val value = Json.obj(
           "foo" -> Json.obj()
@@ -79,7 +83,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         )
       }
 
-      "must add a value to an empty JsArray" in {
+      "add a value to an empty JsArray" in {
 
         forAll(nonEmptyAlphaStr) {
           newValue =>
@@ -92,7 +96,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         }
       }
 
-      "must add a value to the end of a JsArray" in {
+      "add a value to the end of a JsArray" in {
 
         forAll(nonEmptyAlphaStr, nonEmptyAlphaStr) {
           (oldValue, newValue) =>
@@ -105,7 +109,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         }
       }
 
-      "must change a value in an existing JsArray" in {
+      "change a value in an existing JsArray" in {
 
         forAll(nonEmptyAlphaStr, nonEmptyAlphaStr, nonEmptyAlphaStr) {
           (firstValue, secondValue, newValue) =>
@@ -118,7 +122,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         }
       }
 
-      "must set a nested value on a JsArray" in {
+      "set a nested value on a JsArray" in {
 
         val value = Json.arr(Json.arr("foo"))
 
@@ -127,7 +131,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         value.set(path, JsString("bar")).asOpt.value mustEqual Json.arr(Json.arr("bar"))
       }
 
-      "must change the value of an existing key" in {
+      "change the value of an existing key" in {
 
         val gen = for {
           originalKey   <- nonEmptyAlphaStr
@@ -146,7 +150,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         }
       }
 
-      "must return an error when trying to set a key on a non-JsObject" in {
+      "return an error when trying to set a key on a non-JsObject" in {
 
         val value = Json.arr()
 
@@ -155,7 +159,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         value.set(path, JsString("bar")) mustEqual JsError(s"cannot set a key on $value")
       }
 
-      "must return an error when trying to set an index on a non-JsArray" in {
+      "return an error when trying to set an index on a non-JsArray" in {
 
         val value = Json.obj()
 
@@ -164,7 +168,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         value.set(path, JsString("bar")) mustEqual JsError(s"cannot set an index on $value")
       }
 
-      "must return an error when trying to set an index other than zero on an empty array" in {
+      "return an error when trying to set an index other than zero on an empty array" in {
 
         val value = Json.arr()
 
@@ -173,7 +177,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         value.set(path, JsString("bar")) mustEqual JsError("array index out of bounds: 1, []")
       }
 
-      "must return an error when trying to set an index out of bounds" in {
+      "return an error when trying to set an index out of bounds" in {
 
         val value = Json.arr("bar", "baz")
 
@@ -182,7 +186,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         value.set(path, JsString("fork")) mustEqual JsError("array index out of bounds: 3, [\"bar\",\"baz\"]")
       }
 
-      "must set into an array which does not exist" in {
+      "set into an array which does not exist" in {
 
         val value = Json.obj()
 
@@ -193,7 +197,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         ))
       }
 
-      "must set into an object which does not exist" in {
+      "set into an object which does not exist" in {
 
         val value = Json.obj()
 
@@ -206,7 +210,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
         ))
       }
 
-      "must set nested objects and arrays" in {
+      "set nested objects and arrays" in {
 
         val value = Json.obj()
 
@@ -224,8 +228,9 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
       }
     }
 
-  "remove" - {
-    "must return an error if the path is empty" in {
+  "remove" must {
+
+    "return an error if the path is empty" in {
 
       val value = Json.obj()
 
@@ -233,7 +238,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
     }
 
 
-    "must return an error if the path does not contain a value" in {
+    "return an error if the path does not contain a value" in {
 
       val gen = for {
         originalKey   <- nonEmptyAlphaStr
@@ -254,7 +259,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
 
     }
 
-    "must remove a value given a keyPathNode and return the new object" in {
+    "remove a value given a keyPathNode and return the new object" in {
 
       val gen = for {
         keys   <- Gen.listOf(nonEmptyAlphaStr)
@@ -279,7 +284,7 @@ class RichJsValueSpec extends FreeSpec with MustMatchers with ScalaCheckProperty
       }
     }
 
-    "must remove a value given an index node and return the new object for one array" in {
+    "remove a value given an index node and return the new object for one array" in {
 
       implicit val writes: Writes[Seq[JsValue]] = Writes.iterableWrites2[JsValue, Seq[JsValue]]
 

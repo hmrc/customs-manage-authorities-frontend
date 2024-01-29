@@ -28,7 +28,8 @@ class DateTimeServiceSpec() extends SpecBase {
   "DateTimeService" should {
     "return system date when fixed-systemdate-for-tests feature is disabled" in new Setup {
       val service = new DateTimeService(appConfig)
-      val result = service.systemTime()
+      val result: LocalDateTime = service.systemTime()
+
       result.until(LocalDateTime.now(), ChronoUnit.SECONDS) mustBe <(1L)
     }
 
@@ -42,11 +43,18 @@ class DateTimeServiceSpec() extends SpecBase {
 
     "return local date when fixed-systemdate-for-tests feature is disabled" in new Setup {
       val service = new DateTimeService(appConfig)
-      val result = service.localTime()
+      val result: LocalDateTime = service.localTime()
+
       result.until(LocalDateTime.now(ZoneId.of("Europe/London")), ChronoUnit.SECONDS) mustBe <(1L)
     }
 
     "return date as 20-Dec-2027 when fixed-systemdate-for-tests feature is enabled" in {
+      val year2027 = 2027
+      val monthOfTheYear = 12
+      val dayOfMonth = 20
+      val hourOfDay = 12
+      val minuteOfHour = 30
+
       val app = applicationBuilder()
         .configure("features.fixed-system-time" -> true)
         .build()
@@ -54,7 +62,9 @@ class DateTimeServiceSpec() extends SpecBase {
 
       val service = new DateTimeService(appConfig)
       val result = service.systemTime()
-      result mustBe LocalDateTime.of(LocalDate.of(2027, 12, 20), LocalTime.of(12, 30))
+
+      result mustBe
+        LocalDateTime.of(LocalDate.of(year2027, monthOfTheYear, dayOfMonth), LocalTime.of(hourOfDay, minuteOfHour))
     }
   }
 

@@ -16,26 +16,12 @@
 
 package forms.mappings
 
+import base.SpecBase
 import models.Enumerable
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
 import play.api.data.{Form, FormError}
+import utils.StringUtils.emptyString
 
-object MappingsSpec {
-
-  sealed trait Foo
-  case object Bar extends Foo
-  case object Baz extends Foo
-
-  object Foo {
-
-    val values: Set[Foo] = Set(Bar, Baz)
-
-    implicit val fooEnumerable: Enumerable[Foo] =
-      Enumerable(values.toSeq.map(v => v.toString -> v): _*)
-  }
-}
-
-class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Mappings {
+class MappingsSpec extends SpecBase with Mappings {
 
   import MappingsSpec._
 
@@ -48,11 +34,11 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     "bind a valid string" in {
       val result = testForm.bind(Map("value" -> "foobar"))
-      result.get mustEqual "foobar"
+      result.get mustBe "foobar"
     }
 
     "not bind an empty string" in {
-      val result = testForm.bind(Map("value" -> ""))
+      val result = testForm.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "error.required"))
     }
 
@@ -63,7 +49,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
 
     "return a custom error message" in {
       val form = Form("value" -> text("custom.error"))
-      val result = form.bind(Map("value" -> ""))
+      val result = form.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "custom.error"))
     }
 
@@ -96,7 +82,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "not bind an empty value" in {
-      val result = testForm.bind(Map("value" -> ""))
+      val result = testForm.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "error.required"))
     }
 
@@ -124,7 +110,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "not bind an empty value" in {
-      val result = testForm.bind(Map("value" -> ""))
+      val result = testForm.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "error.required"))
     }
 
@@ -134,8 +120,11 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "unbind a valid value" in {
-      val result = testForm.fill(123)
-      result.apply("value").value.value mustEqual "123"
+      val formValue = 123
+
+      val result = testForm.fill(formValue)
+
+      result.apply("value").value.value mustEqual formValue.toString
     }
   }
 
@@ -184,7 +173,7 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
 
     "not bind an empty value" in {
-      val result = testForm.bind(Map("value" -> ""))
+      val result = testForm.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "error.required"))
     }
 
@@ -204,4 +193,18 @@ class MappingsSpec extends WordSpec with MustMatchers with OptionValues with Map
     }
   }
 
+}
+
+object MappingsSpec {
+  sealed trait Foo
+
+  case object Bar extends Foo
+  case object Baz extends Foo
+
+  object Foo {
+
+    val values: Set[Foo] = Set(Bar, Baz)
+
+    implicit val fooEnumerable: Enumerable[Foo] = Enumerable(values.toSeq.map(v => v.toString -> v): _*)
+  }
 }

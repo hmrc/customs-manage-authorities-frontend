@@ -22,16 +22,29 @@ import utils.StringUtils.emptyString
 
 object ViewUtils {
 
-  def title(form: Form[_], titleStr: String, section: Option[String], titleMessageArgs: Seq[String])
+  def title(form: Form[_],
+            titleStr: String,
+            section: Option[String],
+            titleMessageArgs: Seq[String])
            (implicit messages: Messages): String = {
-    titleNoForm(s"${errorPrefix(form)} ${messages(titleStr, titleMessageArgs:_*)}", section, Seq())
+    titleNoForm(s"${errorPrefix(form)} ${messages(titleStr, titleMessageArgs: _*)}", section, Seq())
   }
 
-  def titleNoForm(title: String, section: Option[String], titleMessageArgs: Seq[String])(implicit messages: Messages): String =
-    s"${messages(title, titleMessageArgs:_*)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} - ${messages("site.govuk")}"
+  def titleNoForm(title: String,
+                  section: Option[String],
+                  titleMessageArgs: Seq[String])(implicit messages: Messages): String =
+    s"${
+      messages(title, titleMessageArgs: _*)
+    } - ${
+      section.fold(emptyString)(messages(_) + " - ")
+    }${
+      messages("service.name")
+    } - ${
+      messages("site.govuk")
+    }"
 
-  def errorPrefix(form: Form[_])(implicit messages: Messages): String = {
-    if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+  private def errorPrefix(form: Form[_])(implicit messages: Messages): String = {
+    if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else emptyString
   }
 
   case class DetailsHint(summaryText: String,
@@ -42,5 +55,6 @@ object ViewUtils {
 
   case class LabelHint(labelText: String, classes: String = emptyString)
 
-  case class InputTextHint(detailsHint: Option[DetailsHint] = None, labelHint: Option[LabelHint] = None)
+  case class InputTextHint(detailsHint: Option[DetailsHint] = None,
+                           labelHint: Option[LabelHint] = None)
 }

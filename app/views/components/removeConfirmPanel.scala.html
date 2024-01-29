@@ -16,8 +16,13 @@
 
 @this()
 
-@(message: Option[String] = None, companyName: Option[String] = None, eori: Option[String] = None)(implicit messages: Messages)
-
+@(
+    message: Option[String] = None,
+    companyName: Option[String] = None,
+    eori: Option[String] = None
+)(
+    implicit messages: Messages
+)
 
 <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">

@@ -21,6 +21,7 @@ import play.api.i18n.Messages
 import play.twirl.api.{Html, HtmlFormat}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{HtmlContent, Text}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, Key, Value}
+import utils.StringUtils.emptyString
 
 trait SummaryListRowHelper {
 
@@ -32,7 +33,7 @@ trait SummaryListRowHelper {
       key = Key(content = Text(label)),
       value = Value(content = HtmlContent(value)),
       secondValue = secondValue.map { value => Value(content = HtmlContent(value)) },
-      classes = "",
+      classes = emptyString,
       actions = Some(actions)
     )
 
@@ -41,7 +42,8 @@ trait SummaryListRowHelper {
 
   def span(contents: String): HtmlContent = HtmlContent(Html(s"""$contents"""))
 
-  def accountNumberRow(account: AccountWithAuthoritiesWithId, xiEori: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] = {
+  def accountNumberRow(account: AccountWithAuthoritiesWithId,
+                       xiEori: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] = {
 
     val displayText = if (xiEori && account.accountType == CdsDutyDefermentAccount) {
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.Ni", account.accountNumber)

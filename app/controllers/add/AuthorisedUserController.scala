@@ -32,7 +32,7 @@ import services.DateTimeService
 import services.add.{AddAuthorityValidationService, CheckYourAnswersValidationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.nIEORIPrefix
+import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
 
@@ -69,7 +69,7 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
     implicit request =>
       for {
         xiEori <- dataStore.getXiEori(request.eoriNumber)
-        result <- doSubmission(request.userAnswers, xiEori.getOrElse(""), request.eoriNumber)
+        result <- doSubmission(request.userAnswers, xiEori.getOrElse(emptyString), request.eoriNumber)
       } yield result
   }
 
@@ -92,11 +92,6 @@ class AuthorisedUserController @Inject()(override val messagesApi: MessagesApi,
       }
   }
 
-  /**
-   * Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI )
-   *   and Cash/Guarantee accounts (with GB EORI as ownerEORI)
-   * Sends only one call if Accounts has only DD account
-   */
   private def processPayloadForXIEori(userAnswers: UserAnswers,
                                       xiEori: String,
                                       gbEori: String,

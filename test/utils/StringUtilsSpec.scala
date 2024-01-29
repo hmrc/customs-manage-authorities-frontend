@@ -102,4 +102,28 @@ class StringUtilsSpec extends SpecBase {
       isXIEori("xi") mustBe false
     }
   }
+
+  "gbEORIPrefix" should {
+    "return correct value" in {
+      gbEORIPrefix mustBe "GB"
+    }
+  }
+
+  "comma" should {
+    "return correct value" in {
+      comma mustBe ","
+    }
+  }
+
+  "hyphenWithSpaces" should {
+    "return correct value" in {
+      hyphenWithSpaces mustBe " - "
+    }
+  }
+
+  "htmlSingleLineBreak" should {
+    "return correct value" in {
+      htmlSingleLineBreak mustBe "<br>"
+    }
+  }
 }

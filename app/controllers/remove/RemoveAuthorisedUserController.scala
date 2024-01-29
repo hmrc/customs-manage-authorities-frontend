@@ -43,37 +43,50 @@ class RemoveAuthorisedUserController @Inject()(
                                                 formProvider: AuthorisedUserFormProvider,
                                                 implicit val controllerComponents: MessagesControllerComponents,
                                                 view: RemoveAuthorisedUserView
-                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   private val form = formProvider()
 
-  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
-        case Left(NoAuthority) => errorPage(MissingAuthorityError)
-        case Left(NoAccount) => errorPage(MissingAccountError)
-        case Right(AccountAndAuthority(account, authority)) =>
-          val populatedForm = request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
-            case Some(value) => form.fill(value)
-            case None => form
-          }
-          Ok(view(populatedForm, RemoveViewModel(accountId, authorityId, account, authority)))
-      }
-  }
+  def onPageLoad(accountId: String,
+                 authorityId: String): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async {
+      implicit request =>
 
-  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+        service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
+          case Left(NoAuthority) => errorPage(MissingAuthorityError)
+          case Left(NoAccount) => errorPage(MissingAccountError)
+          case Right(AccountAndAuthority(account, authority)) =>
+            val populatedForm = request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
+              case Some(value) => form.fill(value)
+              case None => form
+            }
+
+            Ok(view(populatedForm, RemoveViewModel(accountId, authorityId, account, authority)))
+        }
+    }
+
+  def onSubmit(accountId: String,
+               authorityId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+
       service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
         case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
         case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
         case Right(AccountAndAuthority(account, authority)) =>
           form.bindFromRequest().fold(
             formWithErrors => {
-              Future.successful(BadRequest(view(formWithErrors, RemoveViewModel(accountId, authorityId, account, authority))))
+              Future.successful(BadRequest(view(
+                formWithErrors,
+                RemoveViewModel(accountId, authorityId, account, authority))
+              ))
             },
             authorisedUser => {
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(RemoveAuthorisedUserPage(accountId, authorityId), authorisedUser))
+                updatedAnswers <- Future.fromTry(
+                  request.userAnswers.set(RemoveAuthorisedUserPage(accountId, authorityId), authorisedUser))
                 _ <- sessionRepository.set(updatedAnswers)
               } yield Redirect(routes.RemoveCheckYourAnswers.onPageLoad(accountId, authorityId))
             }

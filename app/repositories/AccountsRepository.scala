@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-
 @Singleton
 class AccountsRepository @Inject()(
                                     val mongoComponent: PlayMongoComponent,
@@ -73,23 +72,31 @@ class AccountsRepository @Inject()(
       .map(_.wasAcknowledged())
 }
 
-case class AccountsRepositoryCacheEntry(_id: String, data: CDSAccounts, lastUpdated: LocalDateTime)
+case class AccountsRepositoryCacheEntry(_id: String,
+                                        data: CDSAccounts,
+                                        lastUpdated: LocalDateTime)
 
 trait MongoJavatimeFormats {
   outer =>
+
   final val localDateTimeReads: Reads[LocalDateTime] =
     Reads.at[String](__ \ "$date" \ "$numberLong")
       .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
+
   final val localDateTimeWrites: Writes[LocalDateTime] =
     Writes.at[String](__ \ "$date" \ "$numberLong")
       .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
+
   final val localDateTimeFormat: Format[LocalDateTime] =
     Format(localDateTimeReads, localDateTimeWrites)
+
   trait Implicits {
     implicit val jatLocalDateTimeFormat: Format[LocalDateTime] = outer.localDateTimeFormat
   }
+
   object Implicits extends Implicits
 }
+
 object MongoJavatimeFormats extends MongoJavatimeFormats
 
 object AccountsRepositoryCacheEntry {

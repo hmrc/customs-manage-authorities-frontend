@@ -19,8 +19,10 @@ package forms.behaviours
 import forms.FormSpec
 import generators.Generators
 import org.scalacheck.Gen
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
+import utils.StringUtils.emptyString
 
 trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Generators {
 
@@ -50,7 +52,7 @@ trait FieldBehaviours extends FormSpec with ScalaCheckPropertyChecks with Genera
 
     "not bind blank values" in {
 
-      val result = form.bind(Map(fieldName -> "")).apply(fieldName)
+      val result = form.bind(Map(fieldName -> emptyString)).apply(fieldName)
       result.errors shouldEqual Seq(requiredError)
     }
   }

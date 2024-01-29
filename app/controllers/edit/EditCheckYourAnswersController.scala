@@ -32,7 +32,7 @@ import services._
 import services.edit.EditAuthorityValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.nIEORIPrefix
+import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
@@ -53,34 +53,43 @@ class EditCheckYourAnswersController @Inject()(override val messagesApi: Message
                                                implicit val controllerComponents: MessagesControllerComponents,
                                                dataStore: CustomsDataStoreConnector
                                               )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-                                              extends FrontendBaseController with I18nSupport with Logging {
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
+
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
       case Left(NoAuthority) => errorPage(MissingAuthorityError)
       case Left(NoAccount) => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
+
         val companyName = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
         val helper = new CheckYourAnswersEditHelper(
           request.userAnswers, accountId, authorityId, dateTimeService, authority, account, companyName)
+
         Ok(view(helper, accountId, authorityId))
     }
   }
 
-  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
-    service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
-      case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
-      case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
-      case Right(AccountAndAuthority(account, authority)) =>
-        for {
-          xiEori <- dataStore.getXiEori(request.eoriNumber)
-          result <- doSubmission(request.userAnswers, accountId, authorityId,
-            authority.authorisedEori, account, xiEori.getOrElse(""), request.eoriNumber)
-        } yield result
+  def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
+    commonActions.async {
+      implicit request =>
+
+        service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+          case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+          case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
+
+          case Right(AccountAndAuthority(account, authority)) =>
+            for {
+              xiEori <- dataStore.getXiEori(request.eoriNumber)
+              result <- doSubmission(request.userAnswers, accountId, authorityId,
+                authority.authorisedEori, account, xiEori.getOrElse(emptyString), request.eoriNumber)
+            } yield result
+        }
     }
-  }
 
   private def doSubmission(userAnswers: UserAnswers,
                            accountId: String,

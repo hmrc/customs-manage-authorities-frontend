@@ -23,4 +23,3 @@ case class CompanyName(name: Option[String], consent: String)
 object CompanyName {
   implicit val format: OFormat[CompanyName] = Json.format[CompanyName]
 }
-

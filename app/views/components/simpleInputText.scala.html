@@ -26,7 +26,9 @@
     hint: Option[Html] = None,
     classes: Option[String] = None,
     stripWhitespace: Boolean = false
-)(implicit messages: Messages)
+)(
+    implicit messages: Messages
+)
 
 @govukInput(Input(
     id,
@@ -43,4 +45,3 @@
     value = form(name).value,
     errorMessage = form(name).error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
 ))
-

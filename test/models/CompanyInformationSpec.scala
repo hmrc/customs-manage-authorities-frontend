@@ -17,18 +17,21 @@
 package models
 
 import base.SpecBase
+import utils.StringUtils.emptyString
 
-class CompanyInformationSpec extends SpecBase  {
+class CompanyInformationSpec extends SpecBase {
 
   ".GeneralInformationSpec" should {
 
     "Company Information must be valid" in new Setup {
-      val result = CompanyInformation(name, consent, address)
+      val result: CompanyInformation = CompanyInformation(name, consent, address)
+
       result mustBe corp
     }
 
     "Company Information must have a valid formatted address" in new Setup {
-      val result = CompanyInformation(name, consent, address)
+      val result: CompanyInformation = CompanyInformation(name, consent, address)
+
       result.formattedAddress mustBe formattedAddress
     }
   }
@@ -43,6 +46,6 @@ trait Setup {
 
   val corp = CompanyInformation(name, consent, address)
 
-  def formattedAddress = s"${address.streetAndNumber}, ${address.city}, " +
-    s"${address.postalCode.getOrElse("")}, ${address.countryCode}"
+  def formattedAddress: String = s"${address.streetAndNumber}, ${address.city}, " +
+    s"${address.postalCode.getOrElse(emptyString)}, ${address.countryCode}"
 }

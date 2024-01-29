@@ -43,7 +43,10 @@ class RemoveConfirmationController @Inject()(
                                            implicit val controllerComponents: MessagesControllerComponents,
                                            view: RemoveConfirmationView,
                                            dataStore: CustomsDataStoreConnector
-                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                         )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
+
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (identify andThen getData).async {
@@ -54,7 +57,9 @@ class RemoveConfirmationController @Inject()(
          authority    <- OptionT.fromOption[Future](account.authorities.get(authorityId))
          companyName  <- OptionT.liftF(dataStore.getCompanyName(authority.authorisedEori))
          _            <- OptionT.liftF(repository.clear(request.internalId.value))
-         _            <- OptionT.liftF(confirmationService.populateConfirmation(request.internalId.value, authority.authorisedEori))
+         _            <- OptionT.liftF(confirmationService.populateConfirmation(
+                                                                              request.internalId.value,
+                                                                              authority.authorisedEori))
       } yield Ok(view(authority.authorisedEori, companyName))).value
 
       maybeResult flatMap {

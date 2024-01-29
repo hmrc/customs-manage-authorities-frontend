@@ -31,8 +31,19 @@ class DataRequiredActionImpl @Inject()(implicit val executionContext: ExecutionC
       case None =>
         Future.successful(Left(Redirect(routes.SessionExpiredController.onPageLoad)))
       case Some(userAnswers) =>
-        Future.successful(Right(DataRequest(request.request, request.internalId, request.credentials, request.affinityGroup,
-          request.name, request.email, request.eoriNumber, userAnswers)))
+        Future.successful(
+          Right(
+            DataRequest(
+              request.request,
+              request.internalId,
+              request.credentials,
+              request.affinityGroup,
+              request.name,
+              request.email,
+              request.eoriNumber,
+              userAnswers)
+          )
+        )
     }
   }
 }

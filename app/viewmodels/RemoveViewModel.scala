@@ -25,7 +25,6 @@ case class RemoveViewModel(
                             accountWithAuthorities: AccountWithAuthoritiesWithId,
                             standingAuthority: StandingAuthority
                           ) {
-
   def headingCaptionKey(implicit messages: Messages): String = {
     messages("remove.heading.caption." + accountWithAuthorities.accountType, accountWithAuthorities.accountNumber)
   }

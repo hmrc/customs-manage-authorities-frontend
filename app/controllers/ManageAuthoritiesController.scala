@@ -27,6 +27,7 @@ import play.api.mvc._
 import services._
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.StringUtils.emptyString
 import viewmodels.ManageAuthoritiesViewModel
 import views.html._
 
@@ -46,10 +47,14 @@ class ManageAuthoritiesController @Inject()(
                                              view: ManageAuthoritiesView,
                                              failureView: ManageAuthoritiesApiFailureView,
                                              invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
-                                           )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                           )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
+
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
         accounts <- getAllAccounts(request.eoriNumber, xiEori)
@@ -62,7 +67,7 @@ class ManageAuthoritiesController @Inject()(
         case (None, _) =>
           Ok(noAccountsView())
       }.recover {
-        case  UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error")=>
+        case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
           logger.warn(s"[FetchAccountAuthorities API] Failed with JSON Validation error")
           Redirect(routes.ManageAuthoritiesController.validationFailure())
         case NonFatal(e) =>
@@ -71,20 +76,28 @@ class ManageAuthoritiesController @Inject()(
       }
   }
 
-  private def getAllAccounts(eori: EORI, xiEori: Option[String])(implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
-    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+  private def getAllAccounts(eori: EORI,
+                             xiEori: Option[String])
+                            (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
+    val eoriList = Seq(eori, xiEori.getOrElse(emptyString)).filterNot(_ == emptyString)
+
     for {
       accounts <- accountsCacheService.retrieveAccounts(request.internalId, eoriList)
     } yield accounts
   }
 
-  private def getAllAuthorities(eori: EORI, xiEori: Option[String], accounts: CDSAccounts)
+  private def getAllAuthorities(eori: EORI,
+                                xiEori: Option[String],
+                                accounts: CDSAccounts)
                                (implicit request: IdentifierRequest[AnyContent]): Future[Option[AuthoritiesWithId]] = {
-    val eoriList = Seq(eori, xiEori.getOrElse("")).filterNot(_ == "")
+    val eoriList = Seq(eori, xiEori.getOrElse(emptyString)).filterNot(_ == emptyString)
+
     for {
       authorities <- if (accounts.openAccounts.nonEmpty || accounts.closedAccounts.nonEmpty) {
         service.retrieveAuthorities(request.internalId, eoriList).map(Some(_))
-      } else { Future.successful(None) }
+      } else {
+        Future.successful(None)
+      }
     } yield authorities
   }
 
@@ -98,4 +111,3 @@ class ManageAuthoritiesController @Inject()(
       Future.successful(Ok(invalidAuthorityView()))
   }
 }
-case object TimeoutResponse extends Exception

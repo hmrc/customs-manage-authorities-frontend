@@ -28,7 +28,10 @@
     pId: Option[String] = None,
     ariaLabel: Option[String] = None,
     ariaHidden: Boolean = false,
-    pClass: String = "govuk-body")(implicit messages: Messages)
+    pClass: String = "govuk-body"
+)(
+    implicit messages: Messages
+)
 
 @link = {
   <a @{linkId.fold("")(id => s"id=$id")} class="@linkClass @linkSpace" href="@location">

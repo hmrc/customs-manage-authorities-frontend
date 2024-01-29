@@ -28,11 +28,15 @@ class AuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService)
   def apply(): Form[LocalDate] =
     Form(
       "value" -> localDate(
-        invalidKey     = "authorityStartDate.error.invalid",
+        invalidKey = "authorityStartDate.error.invalid",
         allRequiredKey = "authorityStartDate.error.required.all",
         twoRequiredKey = "authorityStartDate.error.required.two",
-        requiredKey    = "authorityStartDate.error.required"
-      ).verifying(minDate(dateTimeService.localTime().toLocalDate,
-        "authorityStartDate.error.minimum", "authorityStartDate.error.year.length"))
+        requiredKey = "authorityStartDate.error.required"
+      ).verifying(
+        minDate(
+          dateTimeService.localTime().toLocalDate,
+          minimumMsg = "authorityStartDate.error.minimum",
+          yearMsg = "authorityStartDate.error.year.length")
+      )
     )
 }

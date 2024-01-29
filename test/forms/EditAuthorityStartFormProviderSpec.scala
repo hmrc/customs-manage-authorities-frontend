@@ -22,12 +22,10 @@ import play.api.data.FormError
 import play.api.i18n.Messages
 import play.api.test.Helpers
 
-import java.time.LocalDate
-
 class EditAuthorityStartFormProviderSpec extends OptionFieldBehaviours {
 
   implicit val messages: Messages = Helpers.stubMessages()
-  val form = new EditAuthorityStartFormProvider()(None, LocalDate.now())
+  val form = new EditAuthorityStartFormProvider()(None)
 
   ".value" must {
 

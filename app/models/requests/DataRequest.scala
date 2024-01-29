@@ -31,10 +31,21 @@ trait RequestWithUserAnswers[A] extends Request[A] {
   def userAnswers: UserAnswers
 }
 
-final case class OptionalDataRequest[A](request: Request[A], internalId: InternalId, credentials: Credentials,
-                                        affinityGroup: AffinityGroup, name: Option[Name], email: Option[String],
-                                        eoriNumber: String, userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+final case class OptionalDataRequest[A](request: Request[A],
+                                        internalId: InternalId,
+                                        credentials: Credentials,
+                                        affinityGroup: AffinityGroup,
+                                        name: Option[Name],
+                                        email: Option[String],
+                                        eoriNumber: String,
+                                        userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
 
-final case class DataRequest[A](request: Request[A], internalId: InternalId, credentials: Credentials,
-                                affinityGroup: AffinityGroup, name: Option[Name], email: Option[String],
-                                eoriNumber: String, userAnswers: UserAnswers) extends WrappedRequest[A](request) with RequestWithUserAnswers[A]
+final case class DataRequest[A](request: Request[A],
+                                internalId: InternalId,
+                                credentials: Credentials,
+                                affinityGroup: AffinityGroup,
+                                name: Option[Name],
+                                email: Option[String],
+                                eoriNumber: String,
+                                userAnswers: UserAnswers)
+  extends WrappedRequest[A](request) with RequestWithUserAnswers[A]

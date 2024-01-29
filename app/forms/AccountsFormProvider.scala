@@ -23,47 +23,58 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+import utils.StringUtils.emptyString
+
 import javax.inject.Inject
 
 class AccountsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[List[String]] =
     Form(
-      "value" -> listText("accounts.error.required")
-        .verifying(nonEmptyList("accounts.error.required"))
-        .verifying("accounts.error.required", accounts => accounts.forall(_.startsWith("account_")))
+      "value" -> listText(errorKey = "accounts.error.required")
+        .verifying(
+          nonEmptyList(errorKey = "accounts.error.required")
+        )
+        .verifying(
+          error = "accounts.error.required",
+          accounts => accounts.forall(_.startsWith("account_"))
+        )
     )
 }
 
 object AccountsFormProvider {
 
   def accountsHeadingKey(accounts: AuthorisedAccounts): String = {
-    if(accounts.availableAccounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
+    if (accounts.availableAccounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
   }
 
   def accountsTitleKey(accounts: AuthorisedAccounts): String = {
-    if(accounts.availableAccounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
+    if (accounts.availableAccounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
   }
 
-  def options(form: Form[_], accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] = accounts.zipWithIndex.map {
-    case(account, index) =>
-      val message = account match {
-        case DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusPending =>
-          s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
-        case _ =>
-          if (account.isNiAccount) {
-            s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
-          } else {
-            s"${messages("accounts.type." + account.accountType)}: ${account.number}"
-          }
-      }
+  def options(form: Form[_],
+              accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] =
+    accounts.zipWithIndex.map {
 
-      CheckboxItem(
-        name = Some(s"value[$index]"),
-        id = Some(s"value${if (index > 0) index.toString else ""}"),
-        value = s"account_${index.toString}",
-        content = Text(message),
-        checked = form.data.values.contains(s"account_${index.toString}")
-      )
-  }
+      case (account, index) =>
+        val message = account match {
+          case DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusPending =>
+            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
+
+          case _ =>
+            if (account.isNiAccount) {
+              s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
+            } else {
+              s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+            }
+        }
+
+        CheckboxItem(
+          name = Some(s"value[$index]"),
+          id = Some(s"value${if (index > 0) index.toString else emptyString}"),
+          value = s"account_${index.toString}",
+          content = Text(message),
+          checked = form.data.values.contains(s"account_${index.toString}")
+        )
+    }
 }

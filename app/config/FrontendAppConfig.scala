@@ -21,7 +21,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
+class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: ServicesConfig) {
 
   lazy val host: String = configuration.get[String]("host")
 
@@ -41,21 +41,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val loginUrl: String = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
 
-  lazy val authUrl: String = configuration.get[Service]("auth").baseUrl
-
-  lazy val origin: String = configuration.get[String]("origin")
-
-  lazy val cookies: String         = host + configuration.get[String]("urls.footer.cookies")
-  lazy val privacy: String         = host + configuration.get[String]("urls.footer.privacy")
-  lazy val termsConditions: String = host + configuration.get[String]("urls.footer.termsConditions")
-  lazy val govukHelp: String       = configuration.get[String]("urls.footer.govukHelp")
-  lazy val accessibilityStatement: String = configuration.get[String]("urls.footer.accessibility")
-  lazy val registerCdsUrl: String = configuration.get[String]("urls.cdsRegisterUrl")
   lazy val subscribeCdsUrl: String = configuration.get[String]("urls.cdsSubscribeUrl")
-  lazy val appName: String         = configuration.get[String]("appName")
+  lazy val appName: String = configuration.get[String]("appName")
 
-  val customsFinancialsFrontendHomepageUrl: String = configuration.get[String]("microservice.services.customs-financials-frontend.homepage")
-  lazy val contactFrontendUrl: String = configuration.get[String]("urls.contactFrontendUrl")
+  val customsFinancialsFrontendHomepageUrl: String =
+    configuration.get[String]("microservice.services.customs-financials-frontend.homepage")
 
   lazy val customsDataStore: String = servicesConfig.baseUrl("customs-data-store") +
     configuration.get[String]("microservice.services.customs-data-store.context")

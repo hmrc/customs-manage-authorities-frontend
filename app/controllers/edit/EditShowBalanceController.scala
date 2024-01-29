@@ -41,7 +41,9 @@ class EditShowBalanceController @Inject()(
                                        formProvider: ShowBalanceFormProvider,
                                        implicit val controllerComponents: MessagesControllerComponents,
                                        view: EditShowBalanceView
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 
@@ -65,7 +67,8 @@ class EditShowBalanceController @Inject()(
         },
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EditShowBalancePage(accountId, authorityId), value)(ShowBalance.writes))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(
+                                                EditShowBalancePage(accountId, authorityId), value)(ShowBalance.writes))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(EditShowBalancePage(accountId, authorityId), NormalMode, updatedAnswers))
       )

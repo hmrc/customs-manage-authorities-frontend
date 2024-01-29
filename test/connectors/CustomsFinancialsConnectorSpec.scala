@@ -123,7 +123,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
           get(urlEqualTo("/customs-financials-api/()/account-authorities"))
             .willReturn(ok(response))
         )
-        val result = connector.retrieveAccountAuthorities().futureValue
+
+        val result = connector.retrieveAccountAuthorities((): Unit).futureValue
+
         result mustBe accountAuthorities
       }
     }
@@ -147,7 +149,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     )
 
     "return success response" in new Setup {
-  
+
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
@@ -169,7 +171,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     }
 
     "handle errors" in new Setup {
-  
+
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
@@ -190,7 +192,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     )
 
     "return success response" in new Setup {
-      
+
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
@@ -213,7 +215,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     }
 
     "handle errors" in new Setup {
-    
+
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
@@ -229,24 +231,29 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     "return true for valid eori" in new Setup {
 
       running(app) {
-      
+
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(ok())
         )
-        val result = connector.validateEori(121312).futureValue
+
+        val result = connector.validateEori(eoriNumber).futureValue
+
         result mustBe Right(true)
       }
     }
+
     "return false for not found" in new Setup {
 
       running(app) {
-      
+
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(notFound())
         )
-        val result = connector.validateEori(121312).futureValue
+
+        val result = connector.validateEori(eoriNumber).futureValue
+
         result mustBe Right(false)
       }
     }
@@ -254,12 +261,14 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     "return validation error for internal server error" in new Setup {
 
       running(app) {
-      
+
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(serverError())
         )
-        val result = connector.validateEori(121312).futureValue
+
+        val result = connector.validateEori(eoriNumber).futureValue
+
         result mustBe Left(EORIValidationError)
       }
     }
@@ -269,7 +278,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     "return success response" in new Setup {
 
       running(app) {
-      
+
         val json = """{"name" : "ABCD", "consent":"1"}"""
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/subscriptions/company-name"))
@@ -311,6 +320,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     val connector = app.injector.instanceOf[CustomsFinancialsConnector]
 
     val emailValue = "test@test.com"
+    val eoriNumber = "121312"
     val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
   }
 }

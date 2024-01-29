@@ -19,6 +19,5 @@ package pages.add
 import pages.Page
 
 case object AuthorisedUserPage extends Page {
-  
   override def toString: String = "authorisedUser"
 }

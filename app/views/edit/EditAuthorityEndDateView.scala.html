@@ -26,11 +26,21 @@
     button: components.button
 )
 
-@(form: Form[_], accountId: String, authorityId: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+    form: Form[_],
+    accountId: String,
+    authorityId: String
+)(
+    implicit request: Request[_],
+    messages: Messages,
+    appConfig: FrontendAppConfig
+)
 
-@layout(pageTitle = Some(title(form, "authorityEndDate.title", None, Seq())), backLink = Some(controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId))) {
+@layout(pageTitle = Some(title(form, "authorityEndDate.title", None, Seq())),
+        backLink = Some(controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId))) {
 
-    @formHelper(action = controllers.edit.routes.EditAuthorityEndDateController.onSubmit(accountId, authorityId), 'autoComplete -> "off") {
+    @formHelper(action = controllers.edit.routes.EditAuthorityEndDateController.onSubmit(accountId, authorityId),
+                'autoComplete -> "off") {
 
         @errorSummary(form.errors, None)
 

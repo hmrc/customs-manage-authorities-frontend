@@ -31,22 +31,40 @@ class Navigator @Inject()() {
   private val normalRoutes: Page => UserAnswers => Call = {
     case EoriNumberPage => _ => controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
     case AccountsPage => _ => controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+
     case EoriDetailsCorrectPage => eoriDetailsCorrectRoutes
     case AuthorityStartPage => authorityStartRoutes
+
     case AuthorityStartDatePage => _ => controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+
     case AuthorityEndPage => authorityEndRoutes
+
     case AuthorityEndDatePage => _ => controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
     case ShowBalancePage => _ => controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode)
     case AuthorityDetailsPage => _ => controllers.add.routes.AuthorisedUserController.onPageLoad()
     case AuthorisedUserPage => _ => controllers.add.routes.AddConfirmationController.onPageLoad()
-    case EditAuthorityStartPage(accountId: String, authorityId: String) => editAuthorityStartRoutes(_, accountId, authorityId)
-    case EditAuthorityEndPage(accountId: String, authorityId: String) => editAuthorityEndRoutes(_, accountId, authorityId)
-    case EditAuthorityStartDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
-    case EditAuthorityEndDatePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
-    case EditShowBalancePage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
-    case EditAuthorisedUserPage(accountId: String, authorityId: String) => editCheckYourAnswers(_, accountId, authorityId)
+
+    case EditAuthorityStartPage(accountId: String, authorityId: String) =>
+      editAuthorityStartRoutes(_, accountId, authorityId)
+
+    case EditAuthorityEndPage(accountId: String, authorityId: String) =>
+      editAuthorityEndRoutes(_, accountId, authorityId)
+
+    case EditAuthorityStartDatePage(accountId: String, authorityId: String) =>
+      editCheckYourAnswers(_, accountId, authorityId)
+
+    case EditAuthorityEndDatePage(accountId: String, authorityId: String) =>
+      editCheckYourAnswers(_, accountId, authorityId)
+
+    case EditShowBalancePage(accountId: String, authorityId: String) =>
+      editCheckYourAnswers(_, accountId, authorityId)
+
+    case EditAuthorisedUserPage(accountId: String, authorityId: String) =>
+      editCheckYourAnswers(_, accountId, authorityId)
+
     case EditCheckYourAnswersPage(accountId: String, authorityId: String) => _ =>
       controllers.edit.routes.EditConfirmationController.onPageLoad(accountId, authorityId)
+
     case _ => _ => routes.IndexController.onPageLoad
   }
 
@@ -57,17 +75,25 @@ class Navigator @Inject()() {
     }
   }
 
-  private def editAuthorityStartRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
+  private def editAuthorityStartRoutes(answers: UserAnswers,
+                                       accountId: String,
+                                       authorityId: String): Call =
     answers.get(EditAuthorityStartPage(accountId, authorityId)) match {
       case Some(AuthorityStart.Today) => editCheckYourAnswers(answers, accountId, authorityId)
-      case Some(AuthorityStart.Setdate) => controllers.edit.routes.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
+      case Some(AuthorityStart.Setdate) =>
+        controllers.edit.routes.EditAuthorityStartDateController.onPageLoad(accountId, authorityId)
+
       case _ => controllers.edit.routes.EditAuthorityStartController.onPageLoad(accountId, authorityId)
     }
 
-  private def editAuthorityEndRoutes(answers: UserAnswers, accountId: String, authorityId: String): Call =
+  private def editAuthorityEndRoutes(answers: UserAnswers,
+                                     accountId: String,
+                                     authorityId: String): Call =
     answers.get(EditAuthorityEndPage(accountId, authorityId)) match {
       case Some(AuthorityEnd.Indefinite) => editCheckYourAnswers(answers, accountId, authorityId)
-      case Some(AuthorityEnd.Setdate) => controllers.edit.routes.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
+      case Some(AuthorityEnd.Setdate) =>
+        controllers.edit.routes.EditAuthorityEndDateController.onPageLoad(accountId, authorityId)
+
       case _ => controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId)
     }
 
@@ -137,7 +163,9 @@ class Navigator @Inject()() {
   def backLinkRouteForAuthorityEndPage(mode: Mode, answers: UserAnswers): Call = {
     (mode, answers.get(AuthorityStartPage)) match {
       case (NormalMode, Some(AuthorityStart.Today)) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
-      case (NormalMode, Some(AuthorityStart.Setdate)) => controllers.add.routes.AuthorityStartDateController.onPageLoad(mode)
+      case (NormalMode, Some(AuthorityStart.Setdate)) =>
+        controllers.add.routes.AuthorityStartDateController.onPageLoad(mode)
+
       case (NormalMode, None) => controllers.add.routes.AuthorityStartController.onPageLoad(mode)
       case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
     }
@@ -145,8 +173,12 @@ class Navigator @Inject()() {
 
   def backLinkRouteForShowBalancePage(mode: Mode, answers: UserAnswers): Call = {
     (mode, answers.get(AuthorityEndPage)) match {
-      case (NormalMode, Some(AuthorityEnd.Indefinite)) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
-      case (NormalMode, Some(AuthorityEnd.Setdate)) => controllers.add.routes.AuthorityEndDateController.onPageLoad(mode)
+      case (NormalMode, Some(AuthorityEnd.Indefinite)) =>
+        controllers.add.routes.AuthorityEndController.onPageLoad(mode)
+
+      case (NormalMode, Some(AuthorityEnd.Setdate)) =>
+        controllers.add.routes.AuthorityEndDateController.onPageLoad(mode)
+
       case (NormalMode, None) => controllers.add.routes.AuthorityEndController.onPageLoad(mode)
       case (CheckMode, _) => controllers.add.routes.AuthorisedUserController.onPageLoad()
     }

@@ -21,7 +21,8 @@ import config.FrontendAppConfig
 import forms.ShowBalanceFormProvider
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.Matchers._
+import org.jsoup.nodes.Document
+import play.api.Application
 import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.{FakeRequest, Helpers}
@@ -29,25 +30,24 @@ import views.html.ShowBalanceView
 
 class ShowBalanceViewSpec extends SpecBase {
 
-
-  "Showbalance view" should {
+  "view" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/end"
-      }
+      normalModeView().getElementsByClass("govuk-back-link")
+        .attr("href") mustBe s"/customs/manage-authorities/add-authority/end"
+    }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+      checkModeView().getElementsByClass("govuk-back-link")
+        .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
-    }
-
+  }
 
   trait Setup  {
-
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
+    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new ShowBalanceFormProvider()
@@ -56,7 +56,16 @@ class ShowBalanceViewSpec extends SpecBase {
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
-    def normalModeView() = Jsoup.parse(app.injector.instanceOf[ShowBalanceView].apply(form,accountsLength = 2,NormalMode,normalModeBackLinkRoute).body)
-    def checkModeView() = Jsoup.parse(app.injector.instanceOf[ShowBalanceView].apply(form,accountsLength = 2,CheckMode,checkModeBackLinkRoute).body)
+    def normalModeView(): Document =
+      Jsoup.parse(
+        app.injector.instanceOf[ShowBalanceView].apply(form,
+          accountsLength = 2,
+          NormalMode,
+          normalModeBackLinkRoute).body
+      )
+    def checkModeView(): Document =
+      Jsoup.parse(
+        app.injector.instanceOf[ShowBalanceView].apply(form,accountsLength = 2,CheckMode,checkModeBackLinkRoute).body
+      )
   }
 }

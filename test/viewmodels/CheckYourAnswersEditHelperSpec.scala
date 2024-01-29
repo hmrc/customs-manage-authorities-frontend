@@ -18,14 +18,21 @@ package viewmodels
 
 import base.SpecBase
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance, CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance,
+  CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
+}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import pages.add.{AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage}
+import pages.add.{
+  AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage,
+  ShowBalancePage
+}
 import play.api.i18n.Messages
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Value
+import utils.StringUtils.emptyString
 
 import java.time.{LocalDate, LocalDateTime}
 
@@ -68,7 +75,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
         val helper = new CheckYourAnswersEditHelper(userAnswers,
@@ -77,7 +84,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(""))
+          Some(emptyString))
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
@@ -120,7 +127,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
         val userAnswers = userAnswersWithNIEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
         val helper = new CheckYourAnswersEditHelper(userAnswers,
@@ -129,7 +136,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(""))
+          Some(emptyString))
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
@@ -170,7 +177,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
           .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
           .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser("", "")).success.value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
 
         val userAnswers = userAnswersWithGBEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
         val helper = new CheckYourAnswersEditHelper(userAnswers,
@@ -179,7 +186,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(""))
+          Some(emptyString))
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe

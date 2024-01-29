@@ -41,7 +41,9 @@ class EditAuthorityEndController @Inject()(
                                             formProvider: AuthorityEndFormProvider,
                                             implicit val controllerComponents: MessagesControllerComponents,
                                             view: EditAuthorityEndView
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport {
 
   private val form = formProvider()
 
@@ -63,7 +65,8 @@ class EditAuthorityEndController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EditAuthorityEndPage(accountId, authorityId), value)(AuthorityEnd.writes))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(
+                                              EditAuthorityEndPage(accountId, authorityId), value)(AuthorityEnd.writes))
             _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(EditAuthorityEndPage(accountId, authorityId), NormalMode, updatedAnswers))
       )

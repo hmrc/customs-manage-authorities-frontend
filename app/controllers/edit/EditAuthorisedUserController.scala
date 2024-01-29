@@ -44,8 +44,11 @@ class EditAuthorisedUserController @Inject()(
                                               sessionRepository: SessionRepository,
                                               view: EditAuthorisedUserView,
                                               navigator: Navigator,
-                                              implicit val controllerComponents: MessagesControllerComponents,
-                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport with Logging {
+                                              implicit val controllerComponents: MessagesControllerComponents
+                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  extends FrontendBaseController
+    with I18nSupport
+    with Logging {
 
   private val form = formProvider()
 
@@ -56,6 +59,7 @@ class EditAuthorisedUserController @Inject()(
       case Some(value) => form.fill(value)
       case None => form
     }
+
     Ok(view(populatedForm, accountId, authorityId))
   }
 
@@ -66,9 +70,13 @@ class EditAuthorisedUserController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
         authorisedUser => {
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EditAuthorisedUserPage(accountId, authorityId), authorisedUser))
+            updatedAnswers <- Future.fromTry(
+              request.userAnswers.set(EditAuthorisedUserPage(accountId, authorityId), authorisedUser)
+            )
             _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(EditAuthorisedUserPage(accountId: String, authorityId: String), NormalMode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(
+            EditAuthorisedUserPage(accountId: String, authorityId: String), NormalMode, updatedAnswers)
+          )
         })
     }
 }

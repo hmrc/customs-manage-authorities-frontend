@@ -16,19 +16,22 @@
 
 package models
 
+import base.SpecBase
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
-import org.scalatest.{MustMatchers, OptionValues, WordSpec}
+import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class AuthorityStartSpec extends WordSpec with MustMatchers with ScalaCheckPropertyChecks with OptionValues {
+class AuthorityStartSpec extends SpecBase
+  with ScalaCheckPropertyChecks
+  with OptionValues {
 
   "AuthorityStart" must {
 
     "deserialise valid values" in {
 
-      val gen = Gen.oneOf(AuthorityStart.values.toSeq)
+      val gen = Gen.oneOf(AuthorityStart.values)
 
       forAll(gen) {
         authorityStart =>
@@ -50,7 +53,7 @@ class AuthorityStartSpec extends WordSpec with MustMatchers with ScalaCheckPrope
 
     "serialise" in {
 
-      val gen = Gen.oneOf(AuthorityStart.values.toSeq)
+      val gen = Gen.oneOf(AuthorityStart.values)
 
       forAll(gen) {
         authorityStart =>

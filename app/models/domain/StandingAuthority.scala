@@ -33,5 +33,7 @@ case class StandingAuthority(authorisedEori: EORI,
 object StandingAuthority {
   implicit val standingAuthorityReads: Reads[StandingAuthority] = Json.reads[StandingAuthority]
   implicit val standingAuthorityWrites: Writes[StandingAuthority] = Json.writes[StandingAuthority]
-  implicit val standingAuthorityFormat: Format[StandingAuthority] = Format(standingAuthorityReads, standingAuthorityWrites)
+
+  implicit val standingAuthorityFormat: Format[StandingAuthority] =
+    Format(standingAuthorityReads, standingAuthorityWrites)
 }

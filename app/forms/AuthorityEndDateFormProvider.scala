@@ -31,12 +31,16 @@ class AuthorityEndDateFormProvider @Inject()(dateTimeService: DateTimeService) e
     val minimumDate = latestOf(startDate, dateTimeService.localTime().toLocalDate)
     Form(
       "value" -> localDate(
-        invalidKey     = "authorityEndDate.error.invalid",
+        invalidKey = "authorityEndDate.error.invalid",
         allRequiredKey = "authorityEndDate.error.required.all",
         twoRequiredKey = "authorityEndDate.error.required.two",
-        requiredKey    = "authorityEndDate.error.required"
-      ).verifying(minDate(minimumDate, "authorityEndDate.error.minimum",
-        "authorityStartDate.error.year.length", dateAsDayMonthAndYear(minimumDate)))
+        requiredKey = "authorityEndDate.error.required"
+      ).verifying(
+        minDate(
+          minimumDate,
+          minimumMsg = "authorityEndDate.error.minimum",
+          yearMsg = "authorityStartDate.error.year.length", dateAsDayMonthAndYear(minimumDate))
+      )
     )
   }
 }

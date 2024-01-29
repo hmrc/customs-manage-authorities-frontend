@@ -20,7 +20,10 @@ object StringUtils {
   val emptyString = ""
   val singleSpace = " "
   val nIEORIPrefix = "XI"
+  val gbEORIPrefix = "GB"
   val htmlSingleLineBreak = "<br>"
+  val comma = ","
+  val hyphenWithSpaces = " - "
 
   def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
 

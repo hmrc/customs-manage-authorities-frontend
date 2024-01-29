@@ -24,6 +24,7 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.nIEORIPrefix
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -35,10 +36,10 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
                                    val standingAuthority: StandingAuthority,
                                    account: AccountWithAuthoritiesWithId,
                                    dataStore: CustomsDataStoreConnector)
-  (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
+                                  (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
 
-  val companyName:Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
-  val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith("XI")
+  val companyName: Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
+  private val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith(nIEORIPrefix)
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
     Seq(
@@ -78,6 +79,7 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
         actions = Actions(items = Seq()),
         secondValue = None
       ))
+
       case _ => Some(summaryListRow(
         messages("remove-cya-h2.4"),
         value = messages("remove-cya-h2.5"),
