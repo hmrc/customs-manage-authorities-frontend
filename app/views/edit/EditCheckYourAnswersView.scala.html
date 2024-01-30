@@ -61,11 +61,13 @@
 
         <div class="govuk-button-group">
             @button("edit-cya-button")
-            @p(link(
+
+            @link(
                 location = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url,
                 linkMessage = "edit-cya-cancel",
-                ariaLabel = Some(messages("edit-cya-cancel"))
-            ))
+                ariaLabel = Some(messages("edit-cya-cancel")),
+                ariaHidden = true
+            )
         </div>
     }
 }
