@@ -371,6 +371,7 @@ edit-cya-h2.3 = Authority details
 edit-cya-h2.4 = Your details
 edit-cya-button = Confirm and submit
 edit-cya-cancel = Cancel
+edit-cya-visually-hidden-cancel = Cancel change and return to account authority
 edit-cya-account-number = Your account
 edit-cya-visually-hidden-name = your name
 edit-cya-visually-hidden-role = your role

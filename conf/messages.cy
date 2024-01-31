@@ -358,6 +358,7 @@ edit-cya-h2.3 = Manylion yr awdurdod
 edit-cya-h2.4 = Eich manylion
 edit-cya-button = Cadarnhau a chyflwyno
 edit-cya-cancel = Canslo
+edit-cya-visually-hidden-cancel = Canslo newid ac yn ôl i awdurdod y cyfrif
 edit-cya-account-number = Eich cyfrif
 edit-cya-visually-hidden-name = eich enw
 edit-cya-visually-hidden-role = eich swydd
