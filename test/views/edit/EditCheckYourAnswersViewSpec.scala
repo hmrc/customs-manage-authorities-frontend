@@ -178,7 +178,7 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val cancelButton: Elements = elementsAsDoc.getElementsByClass("govuk-visually-hidden")
 
       confirmButton.text() mustBe msgs("edit-cya-button")
-      cancelButton.text() mustBe msgs("edit-cya-cancel")
+      cancelButton.text() mustBe msgs("edit-cya-visually-hidden-cancel")
     }
   }
 
