@@ -357,6 +357,7 @@ remove-cya-h2.5 = This business has not consented to their name being shared.
 remove-cya-p = I confirm that I wish to remove authority for this company. I understand this means they will no longer be able to use this account on a customs import declaration.
 remove-cya-button = Confirm and submit
 remove-cya-cancel = Cancel
+remove-cya-visually-hidden-cancel = Cancel change and return to account authority
 remove-cya-name = Your name
 remove-cya-role = Your role
 remove-cya-visually-hidden-name = your name
