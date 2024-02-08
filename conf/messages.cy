@@ -343,6 +343,7 @@ remove-cya-h2.5 = Nid yw’r busnes hwn wedi caniatáu i’w enw gael ei rannu.
 remove-cya-p = Rwy’n cadarnhau fy mod am dynnu awdurdod ar gyfer y cwmni hwn. Rwy’n deall bod hyn yn golygu na fydd yn gallu defnyddio’r cyfrif hwn mwyach ar ddatganiad tollau ar gyfer mewnforion.
 remove-cya-button = Cadarnhau a chyflwyno
 remove-cya-cancel = Canslo
+remove-cya-visually-hidden-cancel = Canslo newid ac yn ôl i awdurdod y cyfrif
 remove-cya-name = Eich enw
 remove-cya-role = Eich swydd
 remove-cya-visually-hidden-name = eich enw
