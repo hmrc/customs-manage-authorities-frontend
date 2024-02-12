@@ -17,6 +17,7 @@
 @import domain.{AccountStatusClosed, AccountStatusPending, AccountWithAuthoritiesWithId}
 @import viewmodels.ManageAuthoritiesTableViewModel
 @import models.domain.{AccountStatusSuspended, CdsDutyDefermentAccount}
+@import utils.StringUtils.emptyString
 
 @this()
 
@@ -75,9 +76,9 @@
                     </span>
                     @authRowModel.viewBalanceAsString.displayValue
                 </td>
-                    <td class="@authRowModel.viewLink.classValue">
+                <td class="@authRowModel.viewLink.classValue">
                     @if(authRowModel.viewLink.isAccountStatusNonClosed) {
-                        <a class="govuk-link" href="@authRowModel.viewLink.href.get">
+                        <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
                             <span aria-hidden="true">
                                 @authRowModel.viewLink.hiddenHeadingMsg
                             </span>
@@ -86,7 +87,7 @@
                             </span>
                         </a>
                     }
-                    </td>
+                </td>
             </tr>
         }
         </tbody>
