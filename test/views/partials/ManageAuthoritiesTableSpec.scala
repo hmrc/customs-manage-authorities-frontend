@@ -20,11 +20,13 @@ import models.domain.{AccountStatusClosed, AccountWithAuthoritiesWithId}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
-import utils.TestData.{ACCOUNT_ID, AUTH_ID_B, AUTH_ID_C, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID, PENDING_CASH_ACC_WITH_AUTH_WITH_ID, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID}
+import utils.TestData._
 import utils.ViewTestHelper
+import viewmodels.ManageAuthoritiesTableViewModel
 import views.html.partials.ManageAuthoritiesTable
 
 class ManageAuthoritiesTableSpec extends ViewTestHelper {
+
   "View" should {
 
     "display correct text and guidance" when {
@@ -82,24 +84,26 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
   private def viewAsDoc(accountId: String,
                         account: AccountWithAuthoritiesWithId,
                         isNiAccount: Boolean = false): Document =
-    Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesTable].apply(accountId, account, isNiAccount).body)
+    Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesTable].apply(
+      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount)
+    ).body)
 
   private def shouldContainCorrectAccountStatusMsgForStatusOpen(view: Document,
-                                                   account: AccountWithAuthoritiesWithId): Assertion =
+                                                                account: AccountWithAuthoritiesWithId): Assertion =
     view.getElementById(s"${
       account.accountType
     }-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
   private def shouldContainCorrectAccountStatusMsgForStatusClosed(view: Document,
-                                                                account: AccountWithAuthoritiesWithId): Assertion =
+                                                                  account: AccountWithAuthoritiesWithId): Assertion =
     view.getElementById(s"${
       account.accountType
     }-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.closed", account.accountNumber)
 
   private def shouldContainCorrectAccountStatusMsgForStatusSuspended(view: Document,
-                                                                  account: AccountWithAuthoritiesWithId): Assertion =
+                                                                     account: AccountWithAuthoritiesWithId): Assertion =
     view.getElementById(s"${
       account.accountType
     }-${account.accountNumber}-heading").text() mustBe
@@ -113,24 +117,25 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.pending", account.accountNumber)
 
   private def shouldContainCorrectAccountStatusMsgForStatusNone(view: Document,
-                                                                   account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
-      messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-
-  private def shouldContainCorrectAccountStatusMsgForDDNonNIAccount(view: Document,
                                                                 account: AccountWithAuthoritiesWithId): Assertion =
     view.getElementById(s"${
       account.accountType
     }-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
+  private def shouldContainCorrectAccountStatusMsgForDDNonNIAccount(view: Document,
+                                                                    account: AccountWithAuthoritiesWithId): Assertion =
+    view.getElementById(s"${
+      account.accountType
+    }-${account.accountNumber}-heading").text() mustBe
+      messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+
   private def shouldContainCorrectHeaderValues(view: Document,
-                                                account: AccountWithAuthoritiesWithId): Assertion = {
+                                               account: AccountWithAuthoritiesWithId): Assertion = {
     view.getElementById(
       s"account-authorities-table-user-heading-${
-        account.accountType}-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.user")
+        account.accountType
+      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.user")
 
     view.getElementById(
       s"account-authorities-table-start-date-heading-${
@@ -154,7 +159,7 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
   }
 
   private def shouldContainCorrectElementValuesForAuthorityRows(view: Document,
-                                               account: AccountWithAuthoritiesWithId): Assertion = {
+                                                                account: AccountWithAuthoritiesWithId): Assertion = {
 
     val tableRowHtml = view.getElementsByClass("govuk-table__row").html()
 
@@ -163,7 +168,7 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     tableRowHtml.contains(messages("manageAuthorities.table.heading.endDate")) mustBe true
     tableRowHtml.contains(messages("manageAuthorities.table.heading.balance")) mustBe true
 
-    if(account.accountStatus.fold(true)(status => status != AccountStatusClosed)) {
+    if (account.accountStatus.fold(true)(status => status != AccountStatusClosed)) {
       tableRowHtml.contains(messages("manageAuthorities.table.view-or-change")) mustBe true
 
       view.getElementsByClass("govuk-table__cell view-or-change").html()

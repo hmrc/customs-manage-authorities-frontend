@@ -16,102 +16,100 @@
 
 package viewmodels
 
-import models.domain._
+import utils.TestData._
 import utils.ViewTestHelper
 import viewmodels.ManageAuthoritiesViewModel._
-
-import java.time.LocalDate
 
 class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
   "View model" should {
 
-    "contain correct account id" in new Setup {
-      private val viewModelOb = ManageAuthoritiesTableViewModel(accountId, closedCashAccWithAuthoritiesWithId)
+    "contain correct account id" in {
+      val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
 
-      viewModelOb.idString mustBe s"CdsCashAccount-$accountNumber"
+      viewModelOb.idString mustBe s"CdsCashAccount-$ACCOUNT_NUMBER"
     }
 
     "contain correct accountHeadingMsg" when {
 
-      "account status is closed" in new Setup {
-        private val viewModelOb = ManageAuthoritiesTableViewModel(accountId, closedCashAccWithAuthoritiesWithId)
+      "account status is closed" in {
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.closed", accountNumber)
+          "manageAuthorities.table.heading.account.CdsCashAccount.closed", ACCOUNT_NUMBER)
       }
 
-      "account status is pending" in new Setup {
-        private val viewModelOb = ManageAuthoritiesTableViewModel(accountId, pendingCashAccWithAuthoritiesWithId)
+      "account status is pending" in {
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.pending", accountNumber)
+          "manageAuthorities.table.heading.account.CdsCashAccount.pending", ACCOUNT_NUMBER)
       }
 
-      "account status is suspended" in new Setup {
-        private val viewModelOb = ManageAuthoritiesTableViewModel(accountId, suspendedCashAccWithAuthoritiesWithId)
+      "account status is suspended" in {
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.suspended", accountNumber)
+          "manageAuthorities.table.heading.account.CdsCashAccount.suspended", ACCOUNT_NUMBER)
       }
 
-      "account is of Northern Ireland and account type is Duty Deferment" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openDDAccWithAuthoritiesWithId, isNiAccount = true)
+      "account is of Northern Ireland and account type is Duty Deferment" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID, isNiAccount = true)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", accountNumber)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", ACCOUNT_NUMBER)
       }
 
-      "account is non Northern Ireland and account type is Duty Deferment" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openDDAccWithAuthoritiesWithId)
+      "account is non Northern Ireland and account type is Duty Deferment" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", accountNumber)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
       }
 
-      "account status is None" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, noneDDAccWithAuthoritiesWithId)
+      "account status is None" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", accountNumber)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
       }
 
-      "CdsCashAccount status is open" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openCashAccWithAuthoritiesWithId)
+      "CdsCashAccount status is open" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount", accountNumber)
+          "manageAuthorities.table.heading.account.CdsCashAccount", ACCOUNT_NUMBER)
       }
 
-      "CdsGeneralGuaranteeAccount status is open" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openGGAccWithAuthoritiesWithId)
+      "CdsGeneralGuaranteeAccount status is open" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", accountNumber)
+          "manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
       }
     }
 
     "contain correct authority header row" when {
 
-      "CdsGeneralGuaranteeAccount status is open" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openGGAccWithAuthoritiesWithId)
+      "CdsGeneralGuaranteeAccount status is open" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         val expectedRowViewModel: AuthorityHeaderRowViewModel = AuthorityHeaderRowViewModel(
-          authCompanyId = s"account-authorities-table-user-heading-CdsGeneralGuaranteeAccount-$accountNumber",
+          authCompanyId = s"account-authorities-table-user-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
           authCompanyHeaderValue = messages("manageAuthorities.table.heading.user"),
-          startDateId = s"account-authorities-table-start-date-heading-CdsGeneralGuaranteeAccount-$accountNumber",
+          startDateId = s"account-authorities-table-start-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
           startDateHeader = messages("manageAuthorities.table.heading.startDate"),
-          endDateId = s"account-authorities-table-end-date-heading-CdsGeneralGuaranteeAccount-$accountNumber",
+          endDateId = s"account-authorities-table-end-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
           endDateHeader = messages("manageAuthorities.table.heading.endDate"),
-          viewBalanceId = s"account-authorities-table-view-balance-heading-CdsGeneralGuaranteeAccount-$accountNumber",
+          viewBalanceId = s"account-authorities-table-view-balance-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
           viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
-          hiddenActionsId = s"account-authorities-table-actions-heading--CdsGeneralGuaranteeAccount-$accountNumber",
+          hiddenActionsId = s"account-authorities-table-actions-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
           hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
         )
 
@@ -121,21 +119,21 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
     "contain correct authority rows" when {
 
-      "account status is open" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, openGGAccWithAuthoritiesWithId)
+      "account status is open" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         val expectedAuthRowsView: Seq[AuthorityRowViewModel] = Seq(
           AuthorityRowViewModel(
             authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), eoriNumber),
+              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
             formattedFromDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(startDate1)
+                dateAsdMMMyyyy(START_DATE_1)
               ),
             formattedToDate =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), dateAsdMMMyyyy(endDate1)),
+              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), dateAsdMMMyyyy(END_DATE_1)),
             viewBalanceAsString =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.balance"),
@@ -143,25 +141,25 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
               ),
             viewLink = AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", eoriNumber, accountNumber)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", accountNumber)
+              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
               }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authIdb)),
+              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
               classValue = "govuk-table__cell view-or-change",
               spanClassValue = "govuk-visually-hidden")
           ),
           AuthorityRowViewModel(
             authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), eoriNumber),
+              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
             formattedFromDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(startDate2)
+                dateAsdMMMyyyy(START_DATE_2)
               ),
             formattedToDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(endDate2)
+                dateAsdMMMyyyy(END_DATE_2)
               ),
             viewBalanceAsString =
               AuthorityRowColumnViewModel(
@@ -170,10 +168,10 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
               ),
             viewLink = AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", eoriNumber, accountNumber)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", accountNumber)
+              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
               }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authIdc)),
+              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
               classValue = "govuk-table__cell view-or-change",
               spanClassValue = "govuk-visually-hidden")
           )
@@ -182,49 +180,49 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         viewModelOb.authRowsView mustBe expectedAuthRowsView
       }
 
-      "account status is closed" in new Setup {
-        private val viewModelOb =
-          ManageAuthoritiesTableViewModel(accountId, closedGGAccWithAuthoritiesWithId)
+      "account status is closed" in {
+        val viewModelOb =
+          ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_GG_ACC_WITH_AUTH_WITH_ID)
 
         val expectedAuthRowsView: Seq[AuthorityRowViewModel] = Seq(
           AuthorityRowViewModel(
             authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), eoriNumber),
+              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
             formattedFromDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(startDate1)
+                dateAsdMMMyyyy(START_DATE_1)
               ),
             formattedToDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(endDate1)
+                dateAsdMMMyyyy(END_DATE_1)
               ),
             viewBalanceAsString =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.balance"), messages("manageAuthorities.table.viewBalance.no")),
             viewLink = AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", eoriNumber, accountNumber)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", accountNumber)
+              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
               }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authIdb)),
+              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
               isAccountStatusNonClosed = false,
               classValue = "govuk-table__cell view-or-change",
               spanClassValue = "govuk-visually-hidden")
           ),
           AuthorityRowViewModel(
             authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), eoriNumber),
+              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
             formattedFromDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(startDate1)
+                dateAsdMMMyyyy(START_DATE_1)
               ),
             formattedToDate =
               AuthorityRowColumnViewModel(
                 messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(endDate1)
+                dateAsdMMMyyyy(END_DATE_1)
               ),
             viewBalanceAsString =
               AuthorityRowColumnViewModel(
@@ -233,10 +231,10 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
               ),
             viewLink = AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", eoriNumber, accountNumber)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", accountNumber)
+              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
               }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authIdc)),
+              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
               isAccountStatusNonClosed = false,
               classValue = "govuk-table__cell view-or-change",
               spanClassValue = "govuk-visually-hidden")
@@ -248,85 +246,4 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
     }
   }
 
-  trait Setup {
-
-    val accountId = "a"
-    val authIdb = "b"
-    val authIdc = "c"
-
-    val accountNumber = "12345678"
-    val eoriNumber = "EORI"
-
-    val startDate1: LocalDate = LocalDate.parse("2020-03-01")
-    val startDate2: LocalDate = LocalDate.parse("2020-04-01")
-    val endDate1: LocalDate = LocalDate.parse("2020-04-01")
-    val endDate2: LocalDate = LocalDate.parse("2020-05-01")
-
-    val standingAuthority1: StandingAuthority =
-      StandingAuthority(eoriNumber, startDate1, Some(endDate1), viewBalance = false)
-
-    val standingAuthority2: StandingAuthority =
-      StandingAuthority(eoriNumber, startDate2, Some(endDate2), viewBalance = false)
-
-    val standingAuthority3: StandingAuthority =
-      StandingAuthority(eoriNumber, startDate1, Some(endDate1), viewBalance = true)
-
-    val openCashAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsCashAccount,
-      accountNumber,
-      Some(AccountStatusOpen),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val closedCashAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsCashAccount,
-      accountNumber,
-      Some(AccountStatusClosed),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val pendingCashAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsCashAccount,
-      accountNumber,
-      Some(AccountStatusPending),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val suspendedCashAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsCashAccount,
-      accountNumber,
-      Some(AccountStatusSuspended),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val openDDAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsDutyDefermentAccount,
-      accountNumber,
-      Some(AccountStatusOpen),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val noneDDAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsDutyDefermentAccount,
-      accountNumber,
-      None,
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val openGGAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsGeneralGuaranteeAccount,
-      accountNumber,
-      Some(AccountStatusOpen),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2))
-
-    val closedGGAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsGeneralGuaranteeAccount,
-      accountNumber,
-      Some(AccountStatusClosed),
-      Map(authIdb -> standingAuthority1, authIdc -> standingAuthority3))
-
-    val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-      ("a" ->
-        AccountWithAuthoritiesWithId(
-          CdsCashAccount,
-          "12345",
-          Some(AccountStatusOpen),
-          Map(authIdb -> standingAuthority1, authIdc -> standingAuthority2)))
-    ))
-
-  }
 }

@@ -107,7 +107,7 @@ object ManageAuthoritiesTableViewModel {
       endDateHeader = messages("manageAuthorities.table.heading.endDate"),
       viewBalanceId = s"account-authorities-table-view-balance-heading-${account.accountType}-${account.accountNumber}",
       viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
-      hiddenActionsId = s"account-authorities-table-actions-heading--${account.accountType}-${account.accountNumber}",
+      hiddenActionsId = s"account-authorities-table-actions-heading-${account.accountType}-${account.accountNumber}",
       hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
     )
 
@@ -118,7 +118,7 @@ object ManageAuthoritiesTableViewModel {
     val sortedAuthorities: ListMap[String, StandingAuthority] =
       ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate): _*)
 
-    val result = for {
+    val authRows = for {
       (authorityId, authority) <- sortedAuthorities
     } yield {
       AuthorityRowViewModel(
@@ -142,7 +142,7 @@ object ManageAuthoritiesTableViewModel {
       )
     }
 
-    result.toSeq
+    authRows.toSeq
   }
 
   private def authRowColumnViewForAuthorisedToDate(authorisedToDate: Option[LocalDate])
