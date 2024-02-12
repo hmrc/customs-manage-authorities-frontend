@@ -29,7 +29,8 @@
     h1: components.h1,
     h2: components.h2,
     inset: components.inset,
-    p: components.p
+    p: components.p,
+    manageAuthoritiesTable:partials.ManageAuthoritiesTable
 )
 
 @(
@@ -65,7 +66,7 @@
 
         <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
             @for((id, account) <- viewModel.sortedAccounts) {
-                @ManageAuthoritiesTable(id, account, viewModel.niIndicator(account.accountNumber))
+                @manageAuthoritiesTable(id, account, viewModel.niIndicator(account.accountNumber))
             }
         </div>
     }

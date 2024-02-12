@@ -19,6 +19,8 @@
 @import models.domain.AccountStatusSuspended
 @import models.domain.CdsDutyDefermentAccount
 
+@this()
+
 @(accountId: String, account: AccountWithAuthoritiesWithId, isNiAccount: Boolean)(implicit messages: Messages)
 
 <div id="@account.id" class="account-with-authorities">
@@ -124,8 +126,7 @@
                                 @messages("manageAuthorities.table.view-or-change")
                             </span>
                             <span class="govuk-visually-hidden">
-                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber)
-                                @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber) @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
                             </span>
                         </a>
                     }

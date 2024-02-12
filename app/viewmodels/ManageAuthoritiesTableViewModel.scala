@@ -51,7 +51,8 @@ case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
                                  viewBalanceAsString: AuthorityRowColumnViewModel,
                                  viewLink: AuthorityRowColumnViewModel)
 
-case class ManageAuthoritiesTableViewModel(accountHeadingMsg: String,
+case class ManageAuthoritiesTableViewModel(idString: String,
+                                           accountHeadingMsg: String,
                                            authHeaderRowViewModel: AuthorityHeaderRowViewModel,
                                            authRowsView: Seq[AuthorityRowViewModel])
 
@@ -60,12 +61,15 @@ object ManageAuthoritiesTableViewModel {
             account: AccountWithAuthoritiesWithId,
             isNiAccount: Boolean = false)(implicit messages: Messages): ManageAuthoritiesTableViewModel = {
 
+    val idString = s"${account.accountType}-${account.accountNumber}"
+
     val accountHeadingMsg: String = account.accountStatus match {
       case Some(status) => accountMsgForAccountStatus(status, account, isNiAccount)
       case _ => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
     }
 
     ManageAuthoritiesTableViewModel(
+      idString,
       accountHeadingMsg,
       authorityHeaderRowViewModel(account),
       prepareAuthRowsView(accountId, account)

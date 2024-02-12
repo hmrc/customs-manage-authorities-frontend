@@ -26,6 +26,12 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
   "View model" should {
 
+    "contain correct account id" in new Setup {
+      private val viewModelOb = ManageAuthoritiesTableViewModel(accountId, closedCashAccWithAuthoritiesWithId)
+
+      viewModelOb.idString mustBe s"CdsCashAccount-$accountNumber"
+    }
+
     "contain correct accountHeadingMsg" when {
 
       "account status is closed" in new Setup {
