@@ -124,7 +124,8 @@
                                 @messages("manageAuthorities.table.view-or-change")
                             </span>
                             <span class="govuk-visually-hidden">
-                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber) @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber)
+                                @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
                             </span>
                         </a>
                     }
