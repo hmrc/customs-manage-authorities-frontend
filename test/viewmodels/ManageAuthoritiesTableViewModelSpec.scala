@@ -54,40 +54,35 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       }
 
       "account is of Northern Ireland and account type is Duty Deferment" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID, isNiAccount = true)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID, isNiAccount = true)
 
         viewModelOb.accountHeadingMsg mustBe messages(
           "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", ACCOUNT_NUMBER)
       }
 
       "account is non Northern Ireland and account type is Duty Deferment" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
           "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
       }
 
       "account status is None" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
           "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
       }
 
       "CdsCashAccount status is open" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
           "manageAuthorities.table.heading.account.CdsCashAccount", ACCOUNT_NUMBER)
       }
 
       "CdsGeneralGuaranteeAccount status is open" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
           "manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
@@ -97,8 +92,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
     "contain correct authority header row" when {
 
       "CdsGeneralGuaranteeAccount status is open" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         val expectedRowViewModel: AuthorityHeaderRowViewModel = authorityHeaderRowViewModel
 
@@ -109,8 +103,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
     "contain correct authority rows" when {
 
       "account status is open" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForOpenAccount
 
