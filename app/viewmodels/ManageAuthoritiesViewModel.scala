@@ -16,8 +16,7 @@
 
 package viewmodels
 
-import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, StandingAuthority}
-import play.api.i18n.Messages
+import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts}
 import utils.DateUtils
 import viewmodels.ManageAuthoritiesViewModel.accountWithAuthoritiesOrdering
 
@@ -42,25 +41,4 @@ object ManageAuthoritiesViewModel extends DateUtils {
 
   implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(identity[ChronoLocalDate])
   implicit val accountWithAuthoritiesOrdering: Ordering[AccountWithAuthoritiesWithId] = Ordering.by(_.toString)
-
-  implicit class AccountWithAuthoritiesViewModel(account: AccountWithAuthoritiesWithId) {
-    def id: String = s"${account.accountType}-${account.accountNumber}"
-
-    def sortedAuthorities: ListMap[String, StandingAuthority] =
-      ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate): _*)
-  }
-
-  implicit class StandingAuthorityViewModel(standingAuthority: StandingAuthority) {
-    val viewBalanceAsString: String = if (standingAuthority.viewBalance) {
-      "manageAuthorities.table.viewBalance.yes"
-    } else {
-      "manageAuthorities.table.viewBalance.no"
-    }
-
-    def formattedFromDate()(implicit messages: Messages): String = dateAsdMMMyyyy(standingAuthority.authorisedFromDate)
-
-    def formattedToDate()(implicit messages: Messages): Option[String] =
-      standingAuthority.authorisedToDate map dateAsdMMMyyyy
-  }
-
 }
