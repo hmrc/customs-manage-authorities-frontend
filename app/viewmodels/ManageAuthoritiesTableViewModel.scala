@@ -22,6 +22,7 @@ import models.domain.{
 }
 import play.api.i18n.Messages
 import play.api.mvc.Call
+import utils.DateUtils
 import utils.StringUtils.emptyString
 
 import java.time.LocalDate
@@ -56,7 +57,7 @@ case class ManageAuthoritiesTableViewModel(idString: String,
                                            authHeaderRowViewModel: AuthorityHeaderRowViewModel,
                                            authRows: Seq[AuthorityRowViewModel])
 
-object ManageAuthoritiesTableViewModel {
+object ManageAuthoritiesTableViewModel extends DateUtils {
   def apply(accountId: String,
             account: AccountWithAuthoritiesWithId,
             isNiAccount: Boolean = false)(implicit messages: Messages): ManageAuthoritiesTableViewModel = {
@@ -189,10 +190,4 @@ object ManageAuthoritiesTableViewModel {
       classValue = "govuk-table__cell view-or-change",
       spanClassValue = "govuk-visually-hidden")
   }
-
-  private def dateAsdMMMyyyy(date: LocalDate)(implicit messages: Messages): String =
-    s"${date.getDayOfMonth} ${dateAsMonthAbbr(date)} ${date.getYear}"
-
-  private def dateAsMonthAbbr(date: LocalDate)(implicit messages: Messages): String =
-    messages(s"month.abbr.${date.getMonthValue}")
 }
