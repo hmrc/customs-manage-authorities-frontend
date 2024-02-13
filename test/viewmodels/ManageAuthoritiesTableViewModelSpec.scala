@@ -100,18 +100,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         val viewModelOb =
           ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
-        val expectedRowViewModel: AuthorityHeaderRowViewModel = AuthorityHeaderRowViewModel(
-          authCompanyId = s"account-authorities-table-user-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-          authCompanyHeaderValue = messages("manageAuthorities.table.heading.user"),
-          startDateId = s"account-authorities-table-start-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-          startDateHeader = messages("manageAuthorities.table.heading.startDate"),
-          endDateId = s"account-authorities-table-end-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-          endDateHeader = messages("manageAuthorities.table.heading.endDate"),
-          viewBalanceId = s"account-authorities-table-view-balance-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-          viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
-          hiddenActionsId = s"account-authorities-table-actions-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-          hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
-        )
+        val expectedRowViewModel: AuthorityHeaderRowViewModel = authorityHeaderRowViewModel
 
         viewModelOb.authHeaderRowViewModel mustBe expectedRowViewModel
       }
@@ -123,127 +112,137 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         val viewModelOb =
           ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
-        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = Seq(
-          AuthorityRowViewModel(
-            authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-            formattedFromDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(START_DATE_1)
-              ),
-            formattedToDate =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), dateAsdMMMyyyy(END_DATE_1)),
-            viewBalanceAsString =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.balance"),
-                messages("manageAuthorities.table.viewBalance.no")
-              ),
-            viewLink = AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-              }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
-              classValue = "govuk-table__cell view-or-change",
-              spanClassValue = "govuk-visually-hidden")
-          ),
-          AuthorityRowViewModel(
-            authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-            formattedFromDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(START_DATE_2)
-              ),
-            formattedToDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(END_DATE_2)
-              ),
-            viewBalanceAsString =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.balance"),
-                messages("manageAuthorities.table.viewBalance.no")
-              ),
-            viewLink = AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-              }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
-              classValue = "govuk-table__cell view-or-change",
-              spanClassValue = "govuk-visually-hidden")
-          )
-        )
+        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForOpenAccount
 
         viewModelOb.authRows mustBe expectedAuthRowsView
       }
 
       "account status is closed" in {
-        val viewModelOb =
-          ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_GG_ACC_WITH_AUTH_WITH_ID)
+        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_GG_ACC_WITH_AUTH_WITH_ID)
 
-        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = Seq(
-          AuthorityRowViewModel(
-            authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-            formattedFromDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(START_DATE_1)
-              ),
-            formattedToDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(END_DATE_1)
-              ),
-            viewBalanceAsString =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.balance"), messages("manageAuthorities.table.viewBalance.no")),
-            viewLink = AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-              }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
-              isAccountStatusNonClosed = false,
-              classValue = "govuk-table__cell view-or-change",
-              spanClassValue = "govuk-visually-hidden")
-          ),
-          AuthorityRowViewModel(
-            authorisedEori =
-              AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-            formattedFromDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.startDate"),
-                dateAsdMMMyyyy(START_DATE_1)
-              ),
-            formattedToDate =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.endDate"),
-                dateAsdMMMyyyy(END_DATE_1)
-              ),
-            viewBalanceAsString =
-              AuthorityRowColumnViewModel(
-                messages("manageAuthorities.table.heading.balance"),
-                messages("manageAuthorities.table.viewBalance.yes")
-              ),
-            viewLink = AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.view-or-change"),
-              s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-                messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-              }",
-              href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
-              isAccountStatusNonClosed = false,
-              classValue = "govuk-table__cell view-or-change",
-              spanClassValue = "govuk-visually-hidden")
-          )
-        )
+        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForClosedAccount
 
         viewModelOb.authRows mustBe expectedAuthRowsView
       }
     }
   }
 
+  private def authorityHeaderRowViewModel = {
+    AuthorityHeaderRowViewModel(
+      authCompanyId = s"account-authorities-table-user-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
+      authCompanyHeaderValue = messages("manageAuthorities.table.heading.user"),
+      startDateId = s"account-authorities-table-start-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
+      startDateHeader = messages("manageAuthorities.table.heading.startDate"),
+      endDateId = s"account-authorities-table-end-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
+      endDateHeader = messages("manageAuthorities.table.heading.endDate"),
+      viewBalanceId = s"account-authorities-table-view-balance-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
+      viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
+      hiddenActionsId = s"account-authorities-table-actions-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
+      hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
+    )
+  }
+
+  private def authRowViewModelForOpenAccount: Seq[AuthorityRowViewModel] = {
+    Seq(
+      AuthorityRowViewModel(
+        authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        formattedFromDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.startDate"), dateAsdMMMyyyy(START_DATE_1)),
+
+        formattedToDate =
+          AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), dateAsdMMMyyyy(END_DATE_1)),
+
+        viewBalanceAsString = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.balance"),
+          messages("manageAuthorities.table.viewBalance.no")),
+
+        viewLink = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.view-or-change"),
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
+          }",
+          href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
+          classValue = "govuk-table__cell view-or-change",
+          spanClassValue = "govuk-visually-hidden")
+      ),
+      AuthorityRowViewModel(
+        authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        formattedFromDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.startDate"),
+          dateAsdMMMyyyy(START_DATE_2)),
+
+        formattedToDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.endDate"),
+          dateAsdMMMyyyy(END_DATE_2)),
+
+        viewBalanceAsString = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.balance"),
+          messages("manageAuthorities.table.viewBalance.no")),
+
+        viewLink = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.view-or-change"),
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
+          }",
+          href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
+          classValue = "govuk-table__cell view-or-change",
+          spanClassValue = "govuk-visually-hidden")
+      )
+    )
+  }
+
+  private def authRowViewModelForClosedAccount: Seq[AuthorityRowViewModel] = {
+    Seq(
+      AuthorityRowViewModel(
+        authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        formattedFromDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.startDate"),
+          dateAsdMMMyyyy(START_DATE_1)),
+
+        formattedToDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.endDate"),
+          dateAsdMMMyyyy(END_DATE_1)),
+
+        viewBalanceAsString = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.balance"), messages("manageAuthorities.table.viewBalance.no")),
+
+        viewLink = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.view-or-change"),
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
+          }",
+          href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
+          isAccountStatusNonClosed = false,
+          classValue = "govuk-table__cell view-or-change",
+          spanClassValue = "govuk-visually-hidden")
+      ),
+      AuthorityRowViewModel(
+        authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        formattedFromDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.startDate"),
+          dateAsdMMMyyyy(START_DATE_1)),
+
+        formattedToDate = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.endDate"),
+          dateAsdMMMyyyy(END_DATE_1)),
+
+        viewBalanceAsString = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.heading.balance"),
+          messages("manageAuthorities.table.viewBalance.yes")),
+
+        viewLink = AuthorityRowColumnViewModel(
+          messages("manageAuthorities.table.view-or-change"),
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
+            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
+          }",
+          href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
+          isAccountStatusNonClosed = false,
+          classValue = "govuk-table__cell view-or-change",
+          spanClassValue = "govuk-visually-hidden"))
+    )
+  }
 }

@@ -103,5 +103,4 @@ object TestData {
         Some(AccountStatusOpen),
         Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)))
   ))
-
 }
