@@ -20,6 +20,7 @@ import models.domain.{
   AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
   AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority
 }
+
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.DateUtils

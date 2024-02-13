@@ -66,11 +66,8 @@
 
         <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
             @for((id, account) <- viewModel.sortedAccounts) {
-                @manageAuthoritiesTable(ManageAuthoritiesTableViewModel(
-                                                    id,
-                                                    account,
-                                                    viewModel.niIndicator(account.accountNumber)
-                                        )
+                @manageAuthoritiesTable(
+                    ManageAuthoritiesTableViewModel(id, account, viewModel.niIndicator(account.accountNumber))
                 )
             }
         </div>
