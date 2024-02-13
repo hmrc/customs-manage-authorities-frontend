@@ -15,122 +15,82 @@
  *@
 
 @import domain.{AccountStatusClosed, AccountStatusPending, AccountWithAuthoritiesWithId}
-@import viewmodels.ManageAuthoritiesViewModel._
-@import models.domain.AccountStatusSuspended
-@import models.domain.CdsDutyDefermentAccount
+@import viewmodels.ManageAuthoritiesTableViewModel
+@import models.domain.{AccountStatusSuspended, CdsDutyDefermentAccount}
+@import utils.StringUtils.emptyString
 
-@(accountId: String, account: AccountWithAuthoritiesWithId, isNiAccount: Boolean)(implicit messages: Messages)
+@this()
 
-<div id="@account.id" class="account-with-authorities">
+@(model: ManageAuthoritiesTableViewModel)(implicit messages: Messages)
+
+<div id="@model.idString" class="account-with-authorities">
     <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
-        <caption id="@account.id-heading" class="govuk-table__caption">
-        @{
-            account.accountStatus match {
-                case Some(status) => {
-                    status match {
-                        case AccountStatusClosed => messages(s"manageAuthorities.table.heading.account.${account.accountType}.closed", account.accountNumber)
-                        case AccountStatusPending => messages(s"manageAuthorities.table.heading.account.${account.accountType}.pending", account.accountNumber)
-                        case AccountStatusSuspended => messages(s"manageAuthorities.table.heading.account.${account.accountType}.suspended", account.accountNumber)
-                        case _ => if(isNiAccount && account.accountType == CdsDutyDefermentAccount ) {
-                                    messages("manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", account.accountNumber)
-                                  } else {
-                                    messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-                                  }
-                    }
-                }
-                case None => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-            }
-            }
+        <caption id="@model.idString-heading" class="govuk-table__caption">
+            @model.accountHeadingMsg
         </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th id="account-authorities-table-user-heading-@{
-                    account.accountType
-                }-@{
-                    account.accountNumber
-                }" scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                @messages("manageAuthorities.table.heading.user")
+                <th id="@model.authHeaderRowViewModel.authCompanyId" scope="col"
+                    class="govuk-table__header govuk-!-width-one-quarter">
+                    @model.authHeaderRowViewModel.authCompanyHeaderValue
                 </th>
-                <th id="account-authorities-table-start-date-heading-@{
-                    account.accountType
-                }-@{
-                    account.accountNumber
-                }" scope="col" class="govuk-table__header">
-                @messages("manageAuthorities.table.heading.startDate")
+                <th id="@model.authHeaderRowViewModel.startDateId" scope="col" class="govuk-table__header">
+                    @model.authHeaderRowViewModel.startDateHeader
                 </th>
-                <th id="account-authorities-table-end-date-heading-@{
-                    account.accountType
-                }-@{
-                    account.accountNumber
-                }" scope="col" class="govuk-table__header">
-                @messages("manageAuthorities.table.heading.endDate")
+                <th id="@model.authHeaderRowViewModel.endDateId" scope="col" class="govuk-table__header">
+                    @model.authHeaderRowViewModel.endDateHeader
                 </th>
-                <th id="account-authorities-table-view-balance-heading-@{
-                    account.accountType
-                }-@{
-                    account.accountNumber
-                }" scope="col" class="govuk-table__header">
-                @messages("manageAuthorities.table.heading.balance")
+                <th id="@model.authHeaderRowViewModel.viewBalanceId" scope="col" class="govuk-table__header">
+                    @model.authHeaderRowViewModel.viewBalanceHeaderValue
                 </th>
-                <th id="account-authorities-table-actions-heading-@{
-                    account.accountType
-                }-@{
-                    account.accountNumber
-                }" scope="col" class="govuk-table__header">
-                    <span class="govuk-visually-hidden">@messages("manageAuthorities.table.heading.actions")</span>
+                <th id="@model.authHeaderRowViewModel.hiddenActionsId" scope="col" class="govuk-table__header">
+                    <span class="govuk-visually-hidden">
+                        @model.authHeaderRowViewModel.hiddenActionsHeaderValue
+                    </span>
                 </th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-        @for((authorityId, authority) <- account.sortedAuthorities) {
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
-                        @messages("manageAuthorities.table.heading.user")
-                    </span>
-                    @authority.authorisedEori
-                </td>
-                <td class="govuk-table__cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
-                        @messages("manageAuthorities.table.heading.startDate")
-                    </span>
-                    @authority.formattedFromDate
-                </td>
-                @if(authority.formattedToDate.isDefined) {
-                    <td class="govuk-table__cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
-                        @messages("manageAuthorities.table.heading.endDate")
-                    </span>
-                    @authority.formattedToDate.get
-                    </td>
-                } else {
-                    <td class="govuk-table__cell">
-                        <span class="hmrc-responsive-table__heading" aria-hidden="true">
-                            @messages("manageAuthorities.table.heading.endDate")
+            @for(authRowModel <- model.authRows) {
+                <tr class="govuk-table__row">
+                    <td class="@authRowModel.authorisedEori.classValue">
+                        <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
+                            @authRowModel.authorisedEori.hiddenHeadingMsg
                         </span>
-                        @messages("manageAuthorities.table.endDate.empty")
+                        @authRowModel.authorisedEori.displayValue
                     </td>
-                }
-                <td class="govuk-table__cell">
-                    <span class="hmrc-responsive-table__heading" aria-hidden="true">
-                        @messages("manageAuthorities.table.heading.balance")
-                    </span>
-                    @messages(authority.viewBalanceAsString)
-                </td>
-                    <td class="govuk-table__cell view-or-change">
-                    @if(account.accountStatus.fold(true)(v => v != AccountStatusClosed)) {
-                        <a class="govuk-link" href="@controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)">
-                            <span aria-hidden="true">
-                                @messages("manageAuthorities.table.view-or-change")
-                            </span>
-                            <span class="govuk-visually-hidden">
-                                @messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, account.accountNumber) @messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
-                            </span>
-                        </a>
-                    }
+                    <td class="@authRowModel.formattedFromDate.classValue">
+                        <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">
+                            @authRowModel.formattedFromDate.hiddenHeadingMsg
+                        </span>
+                        @authRowModel.formattedFromDate.displayValue
                     </td>
-            </tr>
-        }
+                    <td class="@authRowModel.formattedToDate.classValue">
+                        <span class="@authRowModel.formattedToDate.spanClassValue" aria-hidden="true">
+                            @authRowModel.formattedToDate.hiddenHeadingMsg
+                        </span>
+                            @authRowModel.formattedToDate.displayValue
+                    </td>
+                    <td class="@authRowModel.viewBalanceAsString.classValue">
+                        <span class="@authRowModel.viewBalanceAsString.spanClassValue" aria-hidden="true">
+                            @authRowModel.viewBalanceAsString.hiddenHeadingMsg
+                        </span>
+                        @authRowModel.viewBalanceAsString.displayValue
+                    </td>
+                    <td class="@authRowModel.viewLink.classValue">
+                        @if(authRowModel.viewLink.isAccountStatusNonClosed) {
+                            <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
+                                <span aria-hidden="true">
+                                    @authRowModel.viewLink.hiddenHeadingMsg
+                                </span>
+                                <span class="@authRowModel.viewLink.spanClassValue">
+                                    @authRowModel.viewLink.displayValue
+                                </span>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>

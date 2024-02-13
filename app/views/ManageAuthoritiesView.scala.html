@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.ManageAuthoritiesViewModel
+@import viewmodels.{ManageAuthoritiesViewModel, ManageAuthoritiesTableViewModel}
 @import views.html.partials._
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -29,7 +29,8 @@
     h1: components.h1,
     h2: components.h2,
     inset: components.inset,
-    p: components.p
+    p: components.p,
+    manageAuthoritiesTable:partials.ManageAuthoritiesTable
 )
 
 @(
@@ -43,30 +44,32 @@
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())),
         backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), isFullWidth = viewModel.hasAccounts) {
 
-@h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
+    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
-@if(viewModel.hasNoAccounts) {
+    @if(viewModel.hasNoAccounts) {
 
-@p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
-    classes = "govuk-body govuk-!-margin-bottom-6")
+        @p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
+            classes = "govuk-body govuk-!-margin-bottom-6")
 
-@inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
-        classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
-}
-
-<div class="govuk-form-group">
-    @button(msg = "manageAuthorities.addAuthority", href =
-    Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
-</div>
-
-@if(viewModel.hasAccounts) {
-
-@h2("manageAuthorities.accounts.authorised")
-
-<div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
-    @for((id, account) <- viewModel.sortedAccounts) {
-    @ManageAuthoritiesTable(id, account, viewModel.niIndicator(account.accountNumber))
+        @inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
+                classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
     }
-</div>
-}
+
+    <div class="govuk-form-group">
+        @button(msg = "manageAuthorities.addAuthority", href =
+        Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
+    </div>
+
+    @if(viewModel.hasAccounts) {
+
+        @h2("manageAuthorities.accounts.authorised")
+
+        <div id="accounts-with-authorities" class="govuk-!-margin-bottom-6 govuk-!-padding-top-3">
+            @for((id, account) <- viewModel.sortedAccounts) {
+                @manageAuthoritiesTable(
+                    ManageAuthoritiesTableViewModel(id, account, viewModel.niIndicator(account.accountNumber))
+                )
+            }
+        </div>
+    }
 }

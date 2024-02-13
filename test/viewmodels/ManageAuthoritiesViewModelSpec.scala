@@ -104,67 +104,6 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
 
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
     }
-
-    "sort authorities by start date" in {
-      import viewmodels.ManageAuthoritiesViewModel.AccountWithAuthoritiesViewModel
-
-      val cdsAccounts = CDSAccounts("GB123456789012", List(
-        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
-        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-      ))
-
-      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
-
-      viewModel.sortedAccounts.get("a").value.sortedAuthorities.keys.toSeq mustBe Seq("2", "1")
-    }
-
-    "assign id to authorities based on account type and account number" in {
-      import viewmodels.ManageAuthoritiesViewModel.AccountWithAuthoritiesViewModel
-
-      val cdsAccounts = CDSAccounts("GB123456789012", List(
-        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
-        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-      ))
-
-      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
-
-      viewModel.sortedAccounts.get("a").value.id mustBe "CdsDutyDefermentAccount-1"
-      viewModel.sortedAccounts.get("b").value.id mustBe "CdsGeneralGuaranteeAccount-2"
-      viewModel.sortedAccounts.get("c").value.id mustBe "CdsCashAccount-4"
-      viewModel.sortedAccounts.get("d").value.id mustBe "CdsCashAccount-3"
-    }
-
-    "generate view balance message key for standing authority" when {
-
-      "view balance is true" in {
-        import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
-
-        standingAuthorityWithView.viewBalanceAsString mustBe "manageAuthorities.table.viewBalance.yes"
-      }
-
-      "view balance is false" in {
-        import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
-
-        standingAuthorityWithoutView.viewBalanceAsString mustBe "manageAuthorities.table.viewBalance.no"
-      }
-
-    }
-
-    "format authority start dates" in {
-      import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
-
-      standingAuthorityWithView.formattedFromDate() mustBe "1 Mar 2020"
-    }
-    "format authority end dates" when {
-      import viewmodels.ManageAuthoritiesViewModel.StandingAuthorityViewModel
-
-      "when present" in {
-        standingAuthorityWithView.formattedToDate() mustBe Some("1 Apr 2020")
-      }
-
-      "when missing" in {
-        standingAuthorityWithoutView.formattedToDate() mustBe None
-      }
-    }
   }
+
 }
