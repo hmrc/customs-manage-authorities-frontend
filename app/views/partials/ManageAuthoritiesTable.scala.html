@@ -30,7 +30,8 @@
         </caption>
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
-                <th id="@model.authHeaderRowViewModel.authCompanyId" scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <th id="@model.authHeaderRowViewModel.authCompanyId" scope="col"
+                    class="govuk-table__header govuk-!-width-one-quarter">
                     @model.authHeaderRowViewModel.authCompanyHeaderValue
                 </th>
                 <th id="@model.authHeaderRowViewModel.startDateId" scope="col" class="govuk-table__header">
@@ -50,46 +51,46 @@
             </tr>
         </thead>
         <tbody class="govuk-table__body">
-        @for(authRowModel <- model.authRowsView) {
-            <tr class="govuk-table__row">
-                <td class="@authRowModel.authorisedEori.classValue">
-                    <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
-                        @authRowModel.authorisedEori.hiddenHeadingMsg
-                    </span>
-                    @authRowModel.authorisedEori.displayValue
-                </td>
-                <td class="@authRowModel.formattedFromDate.classValue">
-                    <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">
-                        @authRowModel.formattedFromDate.hiddenHeadingMsg
-                    </span>
-                    @authRowModel.formattedFromDate.displayValue
-                </td>
-                <td class="@authRowModel.formattedToDate.classValue">
-                    <span class="@authRowModel.formattedToDate.spanClassValue" aria-hidden="true">
-                        @authRowModel.formattedToDate.hiddenHeadingMsg
-                    </span>
-                        @authRowModel.formattedToDate.displayValue
-                </td>
-                <td class="@authRowModel.viewBalanceAsString.classValue">
-                    <span class="@authRowModel.viewBalanceAsString.spanClassValue" aria-hidden="true">
-                        @authRowModel.viewBalanceAsString.hiddenHeadingMsg
-                    </span>
-                    @authRowModel.viewBalanceAsString.displayValue
-                </td>
-                <td class="@authRowModel.viewLink.classValue">
-                    @if(authRowModel.viewLink.isAccountStatusNonClosed) {
-                        <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
-                            <span aria-hidden="true">
-                                @authRowModel.viewLink.hiddenHeadingMsg
-                            </span>
-                            <span class="@authRowModel.viewLink.spanClassValue">
-                                @authRowModel.viewLink.displayValue
-                            </span>
-                        </a>
-                    }
-                </td>
-            </tr>
-        }
+            @for(authRowModel <- model.authRows) {
+                <tr class="govuk-table__row">
+                    <td class="@authRowModel.authorisedEori.classValue">
+                        <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
+                            @authRowModel.authorisedEori.hiddenHeadingMsg
+                        </span>
+                        @authRowModel.authorisedEori.displayValue
+                    </td>
+                    <td class="@authRowModel.formattedFromDate.classValue">
+                        <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">
+                            @authRowModel.formattedFromDate.hiddenHeadingMsg
+                        </span>
+                        @authRowModel.formattedFromDate.displayValue
+                    </td>
+                    <td class="@authRowModel.formattedToDate.classValue">
+                        <span class="@authRowModel.formattedToDate.spanClassValue" aria-hidden="true">
+                            @authRowModel.formattedToDate.hiddenHeadingMsg
+                        </span>
+                            @authRowModel.formattedToDate.displayValue
+                    </td>
+                    <td class="@authRowModel.viewBalanceAsString.classValue">
+                        <span class="@authRowModel.viewBalanceAsString.spanClassValue" aria-hidden="true">
+                            @authRowModel.viewBalanceAsString.hiddenHeadingMsg
+                        </span>
+                        @authRowModel.viewBalanceAsString.displayValue
+                    </td>
+                    <td class="@authRowModel.viewLink.classValue">
+                        @if(authRowModel.viewLink.isAccountStatusNonClosed) {
+                            <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
+                                <span aria-hidden="true">
+                                    @authRowModel.viewLink.hiddenHeadingMsg
+                                </span>
+                                <span class="@authRowModel.viewLink.spanClassValue">
+                                    @authRowModel.viewLink.displayValue
+                                </span>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>

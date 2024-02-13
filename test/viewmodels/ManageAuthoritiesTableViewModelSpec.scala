@@ -177,7 +177,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
           )
         )
 
-        viewModelOb.authRowsView mustBe expectedAuthRowsView
+        viewModelOb.authRows mustBe expectedAuthRowsView
       }
 
       "account status is closed" in {
@@ -241,7 +241,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
           )
         )
 
-        viewModelOb.authRowsView mustBe expectedAuthRowsView
+        viewModelOb.authRows mustBe expectedAuthRowsView
       }
     }
   }

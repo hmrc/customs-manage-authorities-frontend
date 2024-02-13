@@ -54,7 +54,7 @@ case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
 case class ManageAuthoritiesTableViewModel(idString: String,
                                            accountHeadingMsg: String,
                                            authHeaderRowViewModel: AuthorityHeaderRowViewModel,
-                                           authRowsView: Seq[AuthorityRowViewModel])
+                                           authRows: Seq[AuthorityRowViewModel])
 
 object ManageAuthoritiesTableViewModel {
   def apply(accountId: String,
