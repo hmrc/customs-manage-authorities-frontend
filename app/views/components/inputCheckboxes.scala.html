@@ -21,15 +21,15 @@
         legend: String,
         items: Seq[CheckboxItem],
         name: String = "value",
-        legendAsHeading: Boolean,
-        hint: Option[Html] = None
+        legendAsHeading: Boolean = false,
+        hint: String
 )(implicit messages: Messages)
 
     @govukCheckboxes(Checkboxes(
         name = "value",
         fieldset = None,
-        hint = hint.map(hintHtml => Hint(
-            content = HtmlContent(hintHtml)
+        hint = Some(Hint(
+            content = Text(messages(hint))
         )),
         items = items,
         errorMessage = form.errors.headOption.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
