@@ -57,7 +57,10 @@
             describedBy = if (form.hasErrors || form.hasGlobalErrors) Some("value-error") else Some("") 
         ) {
 
-            @if(accounts.alreadyAuthorisedAccounts.nonEmpty || accounts.closedAccounts.nonEmpty || accounts.pendingAccounts.nonEmpty) {
+            @if(
+                accounts.alreadyAuthorisedAccounts.nonEmpty || 
+                accounts.closedAccounts.nonEmpty || 
+                accounts.pendingAccounts.nonEmpty) {
         
                 <div class="govuk-inset-text">
                     @accounts.alreadyAuthorisedAccounts.map { account =>
