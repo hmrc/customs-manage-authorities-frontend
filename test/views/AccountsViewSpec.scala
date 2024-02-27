@@ -28,6 +28,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.{FakeRequest, Helpers}
 import views.html.AccountsView
+import utils.StringUtils.emptyString
 
 class AccountsViewSpec extends SpecBase {
 
@@ -61,7 +62,7 @@ class AccountsViewSpec extends SpecBase {
 
     private val formProvider = new AccountsFormProvider()
     private val form = formProvider()
-    private val invalidForm = formProvider().bind(Map("value"->""))
+    private val invalidForm = formProvider().bind(Map("value" -> emptyString))
 
     private val ownerEori = "GB123456789012"
     private val enteredEori = "GB9876543210000"
