@@ -28,6 +28,7 @@ import play.api.i18n.Messages
 import play.api.mvc.{AnyContentAsEmpty, Call}
 import play.api.test.{FakeRequest, Helpers}
 import views.html.AccountsView
+import utils.StringUtils.emptyString
 
 class AccountsViewSpec extends SpecBase {
 
@@ -40,6 +41,10 @@ class AccountsViewSpec extends SpecBase {
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
       checkModeView().getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
+    }
+
+    "display error if form has any error" in new Setup {
+      invalidModeView().getElementById("value-error").childNodes().size() must be > 0
     }
   }
 
@@ -57,6 +62,7 @@ class AccountsViewSpec extends SpecBase {
 
     private val formProvider = new AccountsFormProvider()
     private val form = formProvider()
+    private val invalidForm = formProvider().bind(Map("value" -> emptyString))
 
     private val ownerEori = "GB123456789012"
     private val enteredEori = "GB9876543210000"
@@ -91,6 +97,19 @@ class AccountsViewSpec extends SpecBase {
           enteredEori),
         CheckMode,
         checkModeBackLinkRoute).body
+      )
+    
+    def invalidModeView(): Document =
+      Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
+        invalidForm,
+        AuthorisedAccounts(
+          Seq.empty,
+          answerAccounts,
+          Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
+          Seq.empty,
+          enteredEori),
+        NormalMode,
+        normalModeBackLinkRoute).body
       )
   }
 }
