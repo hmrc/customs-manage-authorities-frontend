@@ -41,6 +41,10 @@ class AccountsViewSpec extends SpecBase {
       checkModeView().getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
+
+    "display error if form has any error" in new Setup {
+      invalidModeView().getElementById("value-error").childNodes().size() must be > 0
+    }
   }
 
   trait Setup {
@@ -57,6 +61,7 @@ class AccountsViewSpec extends SpecBase {
 
     private val formProvider = new AccountsFormProvider()
     private val form = formProvider()
+    private val invalidForm = formProvider().bind(Map("value"->""))
 
     private val ownerEori = "GB123456789012"
     private val enteredEori = "GB9876543210000"
@@ -91,6 +96,19 @@ class AccountsViewSpec extends SpecBase {
           enteredEori),
         CheckMode,
         checkModeBackLinkRoute).body
+      )
+    
+    def invalidModeView(): Document =
+      Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
+        invalidForm,
+        AuthorisedAccounts(
+          Seq.empty,
+          answerAccounts,
+          Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
+          Seq.empty,
+          enteredEori),
+        NormalMode,
+        normalModeBackLinkRoute).body
       )
   }
 }
