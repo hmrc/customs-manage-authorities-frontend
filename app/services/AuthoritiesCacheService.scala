@@ -21,7 +21,6 @@ import models.InternalId
 import models.domain.{AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, StandingAuthority}
 import repositories.AuthoritiesRepository
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.StringUtils.emptyString
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -61,7 +60,7 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository,
                              authorityId: String,
                              accountId: String)
                             (implicit hc: HeaderCarrier): Future[Either[AuthoritiesCacheErrorResponse, AccountAndAuthority]] = {
-    retrieveAuthorities(internalId, Seq(emptyString)).map {
+    retrieveAuthorities(internalId).map {
       accountsWithAuthorities =>
         accountsWithAuthorities.authorities.get(accountId).map {
           account =>

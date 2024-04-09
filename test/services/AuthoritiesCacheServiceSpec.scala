@@ -22,6 +22,7 @@ import models.InternalId
 import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.{Application, inject}
 import repositories.AuthoritiesRepository
@@ -65,11 +66,54 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
     }
   }
 
+  "getAccountAndAuthority" must {
+
+    "return correct AccountAndAuthority when there is no error" in new Setup {
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      private val result: Either[AuthoritiesCacheErrorResponse, AccountAndAuthority] =
+        authCacheServices.getAccountAndAuthority(
+          InternalId("cachedId"),
+          authorityId = authorityIdB,
+          accountId = accountIdA)(hc).futureValue
+
+      result shouldBe Right(AccountAndAuthority(
+        AccountWithAuthoritiesWithId(
+          CdsCashAccount, "12345",
+          Some(AccountStatusOpen),
+          Map(authorityIdB -> standingAuthority)),
+        standingAuthority))
+
+      verify(mockConnector, times(0)).retrieveAccountAuthorities(eoriNumber)
+    }
+
+    "return NoAccount when authority is not found for the accountId" in new Setup {
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      private val result: Either[AuthoritiesCacheErrorResponse, AccountAndAuthority] =
+        authCacheServices.getAccountAndAuthority(
+          InternalId("cachedId"),
+          authorityId = authorityIdB,
+          accountId = accountIdUnknown)(hc).futureValue
+
+      result shouldBe Left(NoAccount)
+
+      verify(mockConnector, times(0)).retrieveAccountAuthorities(eoriNumber)
+    }
+  }
+
   trait Setup {
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
     val eoriNumber = "GB123456789012"
+    val authorityIdB = "b"
+    val accountIdA = "a"
+    val accountIdUnknown = "unknown"
 
     val dateString1 = "2020-03-01"
     val dateString2 = "2020-04-01"
@@ -87,8 +131,12 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
       AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
 
     val cachedAuthorities: AuthoritiesWithId = AuthoritiesWithId(
-      Map("a" ->
-        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      Map(accountIdA ->
+        AccountWithAuthoritiesWithId(
+          CdsCashAccount,
+          "12345",
+          Some(AccountStatusOpen),
+          Map(authorityIdB -> standingAuthority))
       ))
 
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
