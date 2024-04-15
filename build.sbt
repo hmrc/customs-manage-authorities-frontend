@@ -6,9 +6,9 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
 
-val silencerVersion = "1.17.13"
-val bootstrapVersion = "7.22.0"
-val scala2_13_8 = "2.13.8"
+val silencerVersion = "1.7.16"
+val bootstrapVersion = "8.5.0"
+val scala2_13_12 = "2.13.12"
 
 val testDirectory = "test"
 val scalaStyleConfigFile = "scalastyle-config.xml"
@@ -17,7 +17,7 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 Global / lintUnusedKeysOnLoad := false
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := scala2_13_8
+ThisBuild / scalaVersion := scala2_13_12
 
 lazy val scalastyleSettings = Seq(
   scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
@@ -28,7 +28,7 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
   .settings(itSettings())
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-28" % bootstrapVersion % Test))
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork        := true,
@@ -82,7 +82,6 @@ lazy val root = (project in file("."))
     Assets / pipelineStages := Seq(concat,uglify),
     uglify / includeFilter := GlobFilter("application.js")
   )
-  .configs(IntegrationTest)
   .settings(scalastyleSettings)
   .settings(
     scalacOptions += "-P:silencer:pathFilters=target/.*",
@@ -94,7 +93,8 @@ lazy val root = (project in file("."))
       "-Wunused:patvars",
       "-Wunused:implicits",
       "-Wunused:explicits",
-      "-Wunused:privates"
+      "-Wunused:privates",
+      "-Wconf:cat=unused-imports&src=routes/.*:s"
     ),
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
