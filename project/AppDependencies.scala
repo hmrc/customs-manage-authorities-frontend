@@ -22,7 +22,7 @@ object AppDependencies {
     "org.mockito" % "mockito-core" % "5.11.0",
     "org.pegdown" % "pegdown" % "1.6.0",
     "org.jsoup" % "jsoup" % "1.16.1",
-    "com.typesafe.play" %% "play-test" % PlayVersion.current,
+    "org.playframework" %% "play-test" % PlayVersion.current,
     "org.mockito" % "mockito-all" % "1.10.19",
     "org.scalacheck" %% "scalacheck" % "1.17.0",
     "com.github.tomakehurst" % "wiremock-standalone" % "2.27.2",
