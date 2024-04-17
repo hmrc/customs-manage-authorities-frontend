@@ -30,7 +30,7 @@ import views.html.add.AuthorityStartView
 class AuthorityStartViewSpec extends SpecBase {
 
   "AuthorityStartView" should {
-    
+
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
       normalModeView().getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"

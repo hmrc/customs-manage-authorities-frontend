@@ -34,8 +34,7 @@ import play.api.test.FakeRequest
 import utils.StringUtils.emptyString
 
 class FakeMetrics extends Metrics {
-  val defaultRegistry: MetricRegistry = new MetricRegistry
-  val toJson: String = "{}"
+  override val defaultRegistry: MetricRegistry = new MetricRegistry
 }
 
 trait SpecBase extends PlaySpec with TryValues with ScalaFutures with IntegrationPatience {
