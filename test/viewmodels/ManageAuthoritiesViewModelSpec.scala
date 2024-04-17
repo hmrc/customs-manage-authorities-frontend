@@ -31,16 +31,16 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     )
   )
 
-  implicit val messages = messagesApi.preferred(fakeRequest())
-
   val startDate = LocalDate.parse("2020-03-01")
   val endDate = LocalDate.parse("2020-04-01")
+
   val standingAuthorityWithView = StandingAuthority(
     "EORI1",
     LocalDate.parse("2020-03-01"),
     Some(LocalDate.parse("2020-04-01")),
     viewBalance = true
   )
+
   val standingAuthorityWithoutView = StandingAuthority(
     "EORI2",
     LocalDate.parse("2020-02-01"),
@@ -91,7 +91,6 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
         viewModel.hasAccounts mustBe false
         viewModel.hasNoAccounts mustBe true
       }
-
     }
 
     "sort accounts by Cash, Duty deferment and General guarantee, then account number" in {
@@ -101,9 +100,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
       ))
 
       val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
-
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
     }
   }
-
 }
