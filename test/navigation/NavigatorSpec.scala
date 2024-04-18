@@ -203,12 +203,38 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
           NormalMode, emptyUserAnswers) mustBe controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
       }
 
+      "go from ShowBalance to AuthorityDetails" in {
+        navigator.nextPage(ShowBalancePage,
+          NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode)
+      }
+
+      "go from AuthorityDetails to AuthorisedUser" in {
+        navigator.nextPage(AuthorityDetailsPage,
+          NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+      }
+
+      "backLink on EndPage should navigate to AuthorityStart when Today is selected" in {
+        val userAnswers = emptyUserAnswers
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+
+        navigator.backLinkRouteForAuthorityEndPage(NormalMode,
+          userAnswers) mustBe controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+      }
+
       "backLink on EndPage should navigate to AuthorityStartDate when setDate is selected" in {
         val userAnswers = emptyUserAnswers
           .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
 
         navigator.backLinkRouteForAuthorityEndPage(NormalMode,
           userAnswers) mustBe controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode)
+      }
+
+      "backLink on EndPage should navigate to AuthorisedUserController when mode is check" in {
+        val userAnswers = emptyUserAnswers
+          .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
+
+        navigator.backLinkRouteForAuthorityEndPage(CheckMode,
+          userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
       }
 
       "go from AuthorityStartDate to AuthorityEndDate when 'set date' is chosen for AuthorityEnd" in {
@@ -292,6 +318,28 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
 
       "backLink should navigate to manage authorities when in normal mode" in {
         navigator.backLinkRouteForEORINUmberPage(NormalMode) mustBe controllers.routes.ManageAuthoritiesController.onPageLoad
+      }
+
+      "backLink on showbalance Normal Mode should navigate to AuthorityEnd when Authority Infinite" in {
+        val userAnswers = emptyUserAnswers
+          .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityStart.writes).success.value
+
+        navigator.backLinkRouteForShowBalancePage(NormalMode,
+          userAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+      }
+
+      "backLink on showbalance Normal Mode should navigate to AuthorityEndDate when Authority Setdate" in {
+        val userAnswers = emptyUserAnswers
+          .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityStart.writes).success.value
+
+        navigator.backLinkRouteForShowBalancePage(NormalMode,
+          userAnswers) mustBe controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode)
+      }
+
+      "backLink on showbalance Normal Mode should navigate to AuthorityEndController" in {
+        val userAnswers = emptyUserAnswers
+        navigator.backLinkRouteForShowBalancePage(NormalMode,
+          userAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
       }
 
       "backLink on showbalance should navigate to AuthorisedUser" in {

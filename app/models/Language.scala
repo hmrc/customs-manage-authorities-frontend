@@ -38,7 +38,6 @@ object Language {
       value match {
         case Cymraeg.toString => Right(Cymraeg)
         case English.toString => Right(English)
-        case _                => Left("Invalid language")
       }
 
     override def unbind(key: String, value: Language): String =
