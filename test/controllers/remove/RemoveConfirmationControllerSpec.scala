@@ -17,13 +17,18 @@
 package controllers.remove
 
 import base.SpecBase
+import models.CompanyDetails
 import models.domain._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.add.{AccountsPage, EoriNumberPage}
+import play.api.inject
 import play.api.inject.bind
 import play.api.test.Helpers._
 import repositories.AuthoritiesRepository
+import services.ConfirmationService
+
 import java.time.LocalDate
 import scala.concurrent.Future
 
@@ -33,6 +38,7 @@ class RemoveConfirmationControllerSpec extends SpecBase {
   val endDate = LocalDate.parse("2020-04-01")
   val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
   val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
+  val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
     ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
@@ -73,6 +79,36 @@ class RemoveConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
+      }
+    }
+
+    "return Ok for a GET" in {
+      val mockAuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockConfirmationService = mock[ConfirmationService]
+
+      when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+
+      val userAnswers = emptyUserAnswers
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
+        .set(AccountsPage, List(cashAccount)).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+        inject.bind[ConfirmationService].toInstance(mockConfirmationService)
+      ).configure("features.edit-journey" -> true).build()
+
+      running(application) {
+
+        val request = fakeRequest(GET,
+          controllers.remove.routes.RemoveConfirmationController.onPageLoad(
+            "a", "b").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockAuthoritiesRepository, times(1)).clear("id")
       }
     }
   }
