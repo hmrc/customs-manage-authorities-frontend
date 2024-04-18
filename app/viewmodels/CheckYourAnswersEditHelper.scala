@@ -28,7 +28,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.DateUtils
 import utils.StringUtils.nIEORIPrefix
 
-
 class CheckYourAnswersEditHelper(val userAnswers: UserAnswers,
                                  accountId: String,
                                  authorityId: String,

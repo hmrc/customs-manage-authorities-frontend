@@ -33,32 +33,27 @@ class RemoveConfirmationControllerSpec extends SpecBase {
   val endDate = LocalDate.parse("2020-04-01")
   val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
   val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
+
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-    ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
-  ))
+    ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
+      Some(AccountStatusOpen), Map("b" -> standingAuthority)))))
 
   "RemoveConfirmation Controller" must {
-
     "throw an exception" when {
-
       "accountId cannot be found" in {
+
         val mockRepository = mock[AuthoritiesRepository]
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
         val application = applicationBuilder()
-          .overrides(
-            bind[AuthoritiesRepository].toInstance(mockRepository)
-          )
-          .build()
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository)).build()
 
         running(application) {
 
           val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("missing", "b").url)
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }
@@ -68,24 +63,17 @@ class RemoveConfirmationControllerSpec extends SpecBase {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
         val application = applicationBuilder()
-          .overrides(
-            bind[AuthoritiesRepository].toInstance(mockRepository)
-          )
-          .build()
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository)).build()
 
         running(application) {
 
           val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "missing").url)
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }
-
     }
-
   }
 }
