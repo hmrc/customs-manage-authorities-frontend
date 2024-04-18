@@ -19,7 +19,6 @@ package models
 import base.SpecBase
 import org.scalatest.{EitherValues, OptionValues}
 import play.api.libs.json._
-import utils.StringUtils.emptyString
 
 object EnumerableSpec {
 
