@@ -126,6 +126,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             None,
             actions = Actions(items = Seq()))
         )
+
         helper.authorityDurationRows mustBe Seq(
           summaryListRow(
             "authorityStart.checkYourAnswersLabel",
@@ -189,9 +190,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         helper.accountsRows.size mustBe 1
-        helper.accountsRows.head.value mustBe
-          Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
-
+        helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
       }
     }
 
@@ -219,9 +218,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         helper.accountsRows.size mustBe 1
-        helper.accountsRows.head.value mustBe
-          Value(HtmlContent("accounts.type.dutyDeferment: 67890"))
-
+        helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment: 67890"))
       }
     }
   }
