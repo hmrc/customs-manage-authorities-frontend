@@ -164,6 +164,11 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
           controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
       }
 
+      "stay on EoriDetailsCorrect page when there is no yes or no option stored" in {
+        navigator.nextPage(EoriDetailsCorrectPage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+      }
+
       "go from Accounts to AuthorityStart page" in {
         navigator.nextPage(AccountsPage, NormalMode, emptyUserAnswers) mustBe
           controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
@@ -179,6 +184,11 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         navigator.nextPage(AuthorityStartPage, NormalMode, userAnswers) mustBe
           controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+      }
+
+      "stay on AuthorityStart page when no start date is saved in user answers" in {
+        navigator.nextPage(AuthorityStartPage, NormalMode, emptyUserAnswers) mustBe
+          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityStartDate to AuthorityEnd" in {
@@ -206,6 +216,11 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       "go from ShowBalance to AuthorityDetails" in {
         navigator.nextPage(ShowBalancePage,
           NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode)
+      }
+
+      "stay on AuthorityEnd page when no end date is saved in user answers" in {
+        navigator.nextPage(AuthorityEndPage,
+          NormalMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
       }
 
       "go from AuthorityDetails to AuthorisedUser" in {
@@ -304,6 +319,22 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
         val userAnswers = emptyUserAnswers.set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
         navigator.nextPage(AuthorityStartPage,
           CheckMode, userAnswers) mustBe controllers.add.routes.AuthorisedUserController.onPageLoad()
+      }
+
+      "go from AuthorityStart to AuthorityStart page when start date is not present in userAnswers" in {
+        navigator.nextPage(AuthorityStartPage,
+          CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
+      }
+
+      "go from AuthorityEnd to AuthorityEndDate page when 'set date' is chosen" in {
+        val userAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
+        navigator.nextPage(AuthorityEndPage,
+          CheckMode, userAnswers) mustBe controllers.add.routes.AuthorityEndDateController.onPageLoad(CheckMode)
+      }
+
+      "go from AuthorityEnd to AuthorityEnd page when end date is not present in userAnswers" in {
+        navigator.nextPage(AuthorityEndPage,
+          CheckMode, emptyUserAnswers) mustBe controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode)
       }
 
       "go from ShowBalance to AuthorisedUser" in {

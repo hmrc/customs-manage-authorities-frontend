@@ -57,6 +57,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     .set(AccountsPage, selectedAccounts).success.value
     .set(EoriNumberPage, CompanyDetails("GB123456789012", None)).success.value
     .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+    .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
     .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
     .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
     .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
@@ -136,6 +137,16 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
               href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
               content = span(messages("site.change")),
               visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
+            )))
+          ),
+          summaryListRow(
+            "authorityEnd.checkYourAnswersLabel",
+            s"checkYourAnswers.authorityEnd.indefinite",
+            None,
+            actions = Actions(items = Seq(ActionItem(
+              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
+              content = span(messages("site.change")),
+              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
             )))
           ),
           summaryListRow(
