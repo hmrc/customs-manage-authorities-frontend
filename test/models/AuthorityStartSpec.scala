@@ -35,7 +35,6 @@ class AuthorityStartSpec extends SpecBase
 
       forAll(gen) {
         authorityStart =>
-
           JsString(authorityStart.toString).validate[AuthorityStart].asOpt.value mustEqual authorityStart
       }
     }
@@ -46,7 +45,6 @@ class AuthorityStartSpec extends SpecBase
 
       forAll(gen) {
         invalidValue =>
-
           JsString(invalidValue).validate[AuthorityStart] mustEqual JsError("error.invalid")
       }
     }
@@ -57,7 +55,6 @@ class AuthorityStartSpec extends SpecBase
 
       forAll(gen) {
         authorityStart =>
-
           Json.toJson(authorityStart)(AuthorityStart.writes) mustEqual JsString(authorityStart.toString)
       }
     }

@@ -96,6 +96,25 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "populate the view correctly on a GET when DetailsCorrect equal No" in new SetUp {
+
+      val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
+        .set(AccountsPage, selectedAccounts).success.value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)(EoriDetailsCorrect.writes).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersEoriDetails)).build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, eoriDetailsCorrectRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
     "redirect to the next page when valid data is submitted" in new SetUp {
 
       val mockSessionRepository = mock[SessionRepository]

@@ -17,7 +17,7 @@
 package base
 
 import com.codahale.metrics.MetricRegistry
-import com.kenshoo.play.metrics.Metrics
+import uk.gov.hmrc.play.bootstrap.metrics.Metrics
 import config.FrontendAppConfig
 import controllers.actions._
 import models.{InternalId, UserAnswers}
@@ -35,7 +35,6 @@ import utils.StringUtils.emptyString
 
 class FakeMetrics extends Metrics {
   override val defaultRegistry: MetricRegistry = new MetricRegistry
-  override val toJson: String = "{}"
 }
 
 trait SpecBase extends PlaySpec with TryValues with ScalaFutures with IntegrationPatience {
@@ -62,8 +61,8 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, requestEoriNUmber)),
         bind[Metrics].toInstance(new FakeMetrics)
       ).configure(
-      "play.filters.csp.nonce.enabled" -> false
-    )
+        "play.filters.csp.nonce.enabled" -> false
+      )
 
   val messagesApi = new DefaultMessagesApi(
     Map("en" ->
@@ -83,5 +82,4 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
       )
     )
   )
-
 }

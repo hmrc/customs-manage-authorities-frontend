@@ -48,7 +48,7 @@ class AuthorityStartViewSpec extends SpecBase {
 
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-    implicit val appConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new AuthorityStartFormProvider()

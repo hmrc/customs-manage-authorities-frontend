@@ -18,7 +18,6 @@
 @import config.FrontendAppConfig
 @import views.html.templates.Layout
 
-
 @this(
     layout: Layout,
     formHelper: FormWithCSRF,
@@ -36,5 +35,4 @@
 
     @inset(msg = messages("manageAuthorities.error"), id=Some("problem-with-service-text"),
             classes = "govuk-inset-text govuk-!-margin-top-9 govuk-!-margin-bottom-9")
-
 }

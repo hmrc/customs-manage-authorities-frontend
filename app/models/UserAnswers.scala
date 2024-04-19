@@ -21,7 +21,7 @@ import play.api.libs.json._
 import queries.{Gettable, Settable}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
-import scala.util.{Failure, Success, Try}
+import scala.util.{Success, Try}
 
 final case class UserAnswers(id: String,
                              data: JsObject = Json.obj(),
@@ -33,10 +33,7 @@ final case class UserAnswers(id: String,
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
+      case JsSuccess(jsValue, _) => Success(jsValue)
     }
 
     updatedData.flatMap {
@@ -49,10 +46,7 @@ final case class UserAnswers(id: String,
   def remove[A](page: Settable[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, JsNull) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(_) =>
-        Success(data)
+      case JsSuccess(jsValue, _) => Success(jsValue)
     }
 
     updatedData.flatMap {
