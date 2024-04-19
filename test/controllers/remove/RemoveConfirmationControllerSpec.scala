@@ -87,7 +87,8 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockConfirmationService.populateConfirmation(
+          any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
           .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
