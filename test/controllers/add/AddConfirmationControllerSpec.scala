@@ -74,7 +74,9 @@ class AddConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
-        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockConfirmationService.populateConfirmation(
+          any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+
         val userAnswers = emptyUserAnswers
           .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
           .set(AccountsPage, List(cashAccount)).success.value

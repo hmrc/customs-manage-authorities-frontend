@@ -109,10 +109,6 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, eoriDetailsCorrectRoute)
-        val view: EoriDetailsCorrectView = application.injector.instanceOf[EoriDetailsCorrectView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages(application))
-
         val result = route(application, request).value
 
         status(result) mustEqual OK

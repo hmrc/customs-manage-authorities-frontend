@@ -98,7 +98,7 @@ class AccountsViewSpec extends SpecBase {
         CheckMode,
         checkModeBackLinkRoute).body
       )
-    
+
     def invalidModeView(): Document =
       Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
         invalidForm,
