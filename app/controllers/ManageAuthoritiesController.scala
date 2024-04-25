@@ -76,6 +76,10 @@ class ManageAuthoritiesController @Inject()(
       }
   }
 
+  def fetchAllAuthoritiesWhileLoadingHomePage(eori: EORI): Future[Int] = {
+    Future(OK)
+  }
+
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
                             (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
