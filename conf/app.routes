@@ -14,7 +14,7 @@ GET        /not-subscribed-for-cds                                controllers.Un
 GET        /manage-account-authorities                            controllers.ManageAuthoritiesController.onPageLoad
 GET        /manage-account-authorities-unavailable                controllers.ManageAuthoritiesController.unavailable
 GET        /manage-account-authorities/account-unavailable        controllers.ManageAuthoritiesController.validationFailure()
-GET        /manage-account-authorities/fetch-authorities/:eori    controllers.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoad(eori)
+GET        /account-authorities/fetch-authorities/:eori           controllers.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoad(eori)
 
 GET        /view-authority/:accountId/:authorityId                controllers.ViewAuthorityController.onPageLoad(accountId, authorityId)
 
@@ -23,4 +23,3 @@ GET        /undeliverable-email                                   controllers.Em
 
 GET        /logout-survey                                         controllers.LogoutController.logout
 GET        /logout                                                controllers.LogoutController.logoutNoSurvey
-
