@@ -76,9 +76,25 @@ class ManageAuthoritiesController @Inject()(
       }
   }
 
-  def fetchAllAuthoritiesWhileLoadingHomePage(eori: EORI): Future[Int] = {
-    Future(OK)
-  }
+  def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
+    (identify andThen checkEmailIsVerified).async {
+      implicit request =>
+
+        val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
+          xiEori <- dataStoreConnector.getXiEori(eori)
+          accounts <- getAllAccounts(eori, xiEori)
+          authorities <- getAllAuthorities(eori, xiEori, accounts)
+        } yield authorities
+
+        fetchedAuthorities.map {
+          case Some(_) => Future.successful(Ok)
+          case _ => Future.successful(NoContent)
+        }.recover {
+          case _ =>
+            logger.warn(s"Authorities could not be fetched and saved in cache for Eori number : $eori")
+            Future.successful(InternalServerError)
+        }.flatten
+    }
 
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
