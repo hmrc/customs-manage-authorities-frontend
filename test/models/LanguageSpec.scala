@@ -38,6 +38,12 @@ class LanguageSpec extends SpecBase with EitherValues {
       result.getOrElse(Language.English) mustEqual Language.English
     }
 
+    "throw exception while binding language other than English or Welsh" in {
+      intercept[RuntimeException] {
+        pathBindable.bind("language", "Unknown")
+      }.getMessage mustBe "Unknown language, not supported"
+    }
+
     "unbind Cymraeg" in {
       val result = pathBindable.unbind("language", Language.Cymraeg)
 

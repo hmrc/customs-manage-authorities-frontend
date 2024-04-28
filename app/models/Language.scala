@@ -34,10 +34,12 @@ object Language {
   }
 
   implicit def pathBindable: PathBindable[Language] = new PathBindable[Language] {
+
     override def bind(key: String, value: String): Either[String, Language] =
       value match {
         case Cymraeg.toString => Right(Cymraeg)
         case English.toString => Right(English)
+        case _ => throw new RuntimeException("Unknown language, not supported")
       }
 
     override def unbind(key: String, value: Language): String =
