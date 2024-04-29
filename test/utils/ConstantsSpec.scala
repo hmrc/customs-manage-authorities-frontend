@@ -91,4 +91,18 @@ class ConstantsSpec extends SpecBase {
     }
   }
 
+  "ENROLMENT_KEY" should {
+
+    "return correct value" in {
+      ENROLMENT_KEY mustBe "HMRC-CUS-ORG"
+    }
+  }
+
+  "ENROLMENT_IDENTIFIER" should {
+
+    "return correct value" in {
+      ENROLMENT_IDENTIFIER mustBe "EORINumber"
+    }
+  }
+
 }
