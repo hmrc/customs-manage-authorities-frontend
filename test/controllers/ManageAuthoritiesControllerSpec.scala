@@ -18,19 +18,21 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId,
+  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
   AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
 }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.Application
 import play.api.inject.bind
 import play.api.test.Helpers._
 import repositories.AuthoritiesRepository
-import services.AccountsCacheService
+import services.{AccountsCacheService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
+import utils.TestData.{EORI_NUMBER, XI_EORI, testEmail}
 import viewmodels.ManageAuthoritiesViewModel
 import views.html.{ManageAuthoritiesApiFailureView, ManageAuthoritiesView, NoAccountsView}
 
@@ -39,25 +41,11 @@ import scala.concurrent.Future
 
 class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
-  private lazy val manageAuthoritiesRoute = routes.ManageAuthoritiesController.onPageLoad.url
-  private lazy val manageAuthoritiesUnavailableRoute = routes.ManageAuthoritiesController.unavailable.url
-  private lazy val manageAuthoritiesGBNValidationRoute = routes.ManageAuthoritiesController.validationFailure().url
-
-  val startDate = LocalDate.parse("2020-03-01")
-  val endDate = LocalDate.parse("2020-04-01")
-
-  val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-  val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
-
-  val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-    ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
-  ))
-
   "ManageAuthorities Controller" when {
 
     "API call succeeds" must {
 
-      "return OK and the correct view if no accounts associated with a EORI" in {
+      "return OK and the correct view if no accounts associated with a EORI" in new Setup {
         val accounts = CDSAccounts("GB123456789012", List())
 
         val mockRepository = mock[AuthoritiesRepository]
@@ -89,7 +77,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "return OK and the correct view" in {
+      "return OK and the correct view" in new Setup {
         val accounts = CDSAccounts("GB123456789012", List(
           CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
           CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
@@ -126,7 +114,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "return OK and the correct view when no authority accounts are found" in {
+      "return OK and the correct view when no authority accounts are found" in new Setup {
         val accounts = CDSAccounts("GB123456789012", List(
           CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
           CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
@@ -166,7 +154,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
     "API call fails" must {
 
-      "redirect to 'unavailable' page" in {
+      "redirect to 'unavailable' page" in new Setup {
 
         val mockRepository = mock[AuthoritiesRepository]
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
@@ -178,8 +166,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
             bind[CustomsFinancialsConnector].toInstance(failingConnector),
             bind[AuthoritiesRepository].toInstance(mockRepository)
 
-          )
-          .build()
+          ).build()
 
         running(application) {
 
@@ -192,9 +179,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "serve unavailable page on a separate route" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .build()
+      "serve unavailable page on a separate route" in new Setup {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
 
@@ -215,19 +201,18 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
     "API call fails due to GBN EORI Json Validation" must {
 
-      "redirect to 'account unavailable' page" in {
+      "redirect to 'account unavailable' page" in new Setup {
         val statusCode = 500
 
-        val mockAccountsCacheService = mock[AccountsCacheService]
+        val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
 
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
           .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", statusCode)))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AccountsCacheService].toInstance(mockAccountsCacheService)
-          )
-          .build()
+          ).build()
 
         running(application) {
           val request = fakeRequest(GET, manageAuthoritiesRoute)
@@ -237,5 +222,126 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         }
       }
     }
+  }
+
+  "fetchAuthoritiesOnMIDVAHomePageLoad" should {
+
+    "return OK when authorities are retrieved successfully" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId))
+
+      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+        ).configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
+    "return NO_CONTENT when there are no authorities found due to Pending accounts" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00)))
+      ))
+
+      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+
+      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        ).configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual NO_CONTENT
+      }
+    }
+
+    "return INTERNAL_SERVER_ERROR if there is an error during the processing" in new Setup {
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+        ).build()
+
+      running(application) {
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
+  trait Setup {
+    lazy val manageAuthoritiesRoute: String = routes.ManageAuthoritiesController.onPageLoad.url
+    lazy val manageAuthoritiesUnavailableRoute: String = routes.ManageAuthoritiesController.unavailable.url
+    lazy val manageAuthoritiesGBNValidationRoute: String = routes.ManageAuthoritiesController.validationFailure().url
+
+    val fetchAllAuthoritiesRoute: String =
+      routes.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoad(EORI_NUMBER).url
+
+    val startDate: LocalDate = LocalDate.parse("2020-03-01")
+    val endDate: LocalDate = LocalDate.parse("2020-04-01")
+
+    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+
+    val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
+      ("a" ->
+        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
+    ))
   }
 }

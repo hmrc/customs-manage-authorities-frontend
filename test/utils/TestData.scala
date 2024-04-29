@@ -21,6 +21,7 @@ import models.domain.{
   AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount,
   StandingAuthority
 }
+import uk.gov.hmrc.auth.core.retrieve.Email
 
 import java.time.LocalDate
 
@@ -32,6 +33,9 @@ object TestData {
 
   val ACCOUNT_NUMBER = "12345678"
   val EORI_NUMBER = "EORI"
+  val XI_EORI = "XI12345678"
+
+  val testEmail: Email = Email("test_address")
 
   val START_DATE_1: LocalDate = LocalDate.parse("2020-03-01")
   val START_DATE_2: LocalDate = LocalDate.parse("2020-04-01")

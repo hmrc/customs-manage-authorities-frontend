@@ -35,18 +35,17 @@ import javax.inject.Inject
 import scala.concurrent._
 import scala.util.control.NonFatal
 
-class ManageAuthoritiesController @Inject()(
-                                             override val messagesApi: MessagesApi,
-                                             identify: IdentifierAction,
-                                             checkEmailIsVerified: EmailAction,
-                                             service: AuthoritiesCacheService,
-                                             accountsCacheService: AccountsCacheService,
-                                             dataStoreConnector: CustomsDataStoreConnector,
-                                             noAccountsView: NoAccountsView,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             view: ManageAuthoritiesView,
-                                             failureView: ManageAuthoritiesApiFailureView,
-                                             invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
+class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesApi,
+                                            identify: IdentifierAction,
+                                            checkEmailIsVerified: EmailAction,
+                                            service: AuthoritiesCacheService,
+                                            accountsCacheService: AccountsCacheService,
+                                            dataStoreConnector: CustomsDataStoreConnector,
+                                            noAccountsView: NoAccountsView,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: ManageAuthoritiesView,
+                                            failureView: ManageAuthoritiesApiFailureView,
+                                            invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport
@@ -75,6 +74,25 @@ class ManageAuthoritiesController @Inject()(
           Redirect(routes.ManageAuthoritiesController.unavailable)
       }
   }
+
+  def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
+    (identify andThen checkEmailIsVerified).async {
+      implicit request =>
+        val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
+          xiEori <- dataStoreConnector.getXiEori(eori)
+          accounts <- getAllAccounts(eori, xiEori)
+          authorities <- getAllAuthorities(eori, xiEori, accounts)
+        } yield authorities
+
+        fetchedAuthorities.map {
+          case Some(_) => Future.successful(Ok)
+          case _ => Future.successful(NoContent)
+        }.recover {
+          case _ =>
+            logger.warn(s"Authorities could not be fetched and saved in cache for Eori number : $eori")
+            Future.successful(InternalServerError)
+        }.flatten
+    }
 
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
