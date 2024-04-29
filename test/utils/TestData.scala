@@ -16,7 +16,11 @@
 
 package utils
 
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended,
+  AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount,
+  StandingAuthority
+}
 import uk.gov.hmrc.auth.core.retrieve.Email
 
 import java.time.LocalDate
