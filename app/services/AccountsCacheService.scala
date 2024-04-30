@@ -47,4 +47,9 @@ class AccountsCacheService @Inject()(repository: AccountsRepository,
     CDSAccounts(emptyString, mergedAccounts)
   }
 
+  def retrieveAccountsForId(internalId: InternalId)(implicit hc: HeaderCarrier): Future[Option[CDSAccounts]] =
+    {
+      repository.get(internalId.value)
+    }
+
 }

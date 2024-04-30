@@ -19,17 +19,14 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
-  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
-}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.Helpers._
-import repositories.AuthoritiesRepository
+import repositories.{AccountsRepository, AuthoritiesRepository}
 import services.{AccountsCacheService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.TestData.{EORI_NUMBER, XI_EORI, testEmail}
@@ -93,6 +90,43 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+          ).configure("features.edit-journey" -> true)
+          .build()
+
+        running(application) {
+
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+
+          val result = route(application, request).value
+
+          val view = application.injector.instanceOf[ManageAuthoritiesView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual
+            view(
+              ManageAuthoritiesViewModel(authoritiesWithId, accounts)
+            )(request, messages(application), appConfig).toString
+        }
+      }
+
+      "return OK and the correct view when authorities and account data  is found in cache" in new Setup {
+        val accounts = CDSAccounts("GB123456789012", List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        ))
+
+        val mockAuthRepository = mock[AuthoritiesRepository]
+        val mockAccountsRepository = mock[AccountsRepository]
+
+        when(mockAccountsRepository.get(any())).thenReturn(Future.successful(Some(accounts)))
+        when(mockAuthRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[AuthoritiesRepository].toInstance(mockAuthRepository),
+            bind[AccountsRepository].toInstance(mockAccountsRepository)
           ).configure("features.edit-journey" -> true)
           .build()
 

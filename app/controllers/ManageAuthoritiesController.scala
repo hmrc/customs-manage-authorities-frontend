@@ -56,8 +56,20 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
-        accounts <- getAllAccounts(request.eoriNumber, xiEori)
-        authorities <- getAllAuthorities(request.eoriNumber, xiEori, accounts)
+        accountsFromCache: Option[CDSAccounts] <- accountsCacheService.retrieveAccountsForId(request.internalId)
+        accounts <-
+          if(accountsFromCache.isEmpty) {
+            getAllAccounts(request.eoriNumber, xiEori)
+          } else {
+            Future(accountsFromCache.get)
+          }
+        authoritiesFromCache: Option[AuthoritiesWithId] <- service.retrieveAuthoritiesForId(request.internalId)
+        authorities <-
+          if(authoritiesFromCache.isEmpty) {
+            getAllAuthorities(request.eoriNumber, xiEori, accounts)
+          } else {
+            Future(authoritiesFromCache)
+          }
       } yield (authorities, accounts)
 
       response.map {
