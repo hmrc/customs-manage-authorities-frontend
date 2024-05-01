@@ -84,9 +84,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
           authorities <- getAllAuthorities(eori, xiEori, accounts)
         } yield authorities
 
-        Future {
-          fetchCompanyDetails(fetchedAuthorities)
-        }
+        fetchCompanyDetails(fetchedAuthorities)
 
         fetchedAuthorities.map {
           case Some(_) => Future.successful(Ok)
@@ -124,7 +122,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   }
 
   private def fetchCompanyDetails(authWithId: Future[Option[AuthoritiesWithId]])
-                                 (implicit request: IdentifierRequest[AnyContent]): Unit = {
+                                 (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
       case Some(authorities) =>
         getUniqueAuthorisedEORIs(authorities) match {
