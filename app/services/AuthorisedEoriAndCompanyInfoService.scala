@@ -22,8 +22,8 @@ import repositories.AuthorisedEoriAndCompanyInfoRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedEoriAndCompanyInfoService @Inject ()(repository: AuthorisedEoriAndCompanyInfoRepository)
-                                                    (implicit executionContext: ExecutionContext) {
+class AuthorisedEoriAndCompanyInfoService @Inject()(repository: AuthorisedEoriAndCompanyInfoRepository)
+                                                   (implicit executionContext: ExecutionContext) {
 
   def retrieveAuthEorisAndCompanyInfo(internalId: InternalId): Future[Option[Map[String, String]]] = {
     repository.get(internalId.value)
