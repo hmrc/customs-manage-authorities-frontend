@@ -106,6 +106,21 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
     }
   }
 
+  "retrieveAuthoritiesForId" must {
+
+    "return return the authorities for the given InternalId" in new Setup {
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
+
+      when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
+
+      val result: Future[Option[AuthoritiesWithId]] = authCacheServices.retrieveAuthoritiesForId(InternalId("cachedId"))
+
+      result.map {
+        authorities => authorities mustBe Some(InternalId("cachedId"))
+      }
+    }
+  }
+
   trait Setup {
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
