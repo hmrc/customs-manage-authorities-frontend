@@ -19,10 +19,8 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
-  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
-}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended,
+  AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -230,6 +228,49 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId))
+
+      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+        ).configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
+    "return OK when accounts retrieved are suspended or pending" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusSuspended, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00)))
       ))
 
       val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
