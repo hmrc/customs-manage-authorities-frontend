@@ -56,20 +56,10 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
-        accountsFromCache: Option[CDSAccounts] <- accountsCacheService.retrieveAccountsForId(request.internalId)
-        accounts <-
-          if(accountsFromCache.isEmpty) {
-            getAllAccounts(request.eoriNumber, xiEori)
-          } else {
-            Future(accountsFromCache.get)
-          }
-        authoritiesFromCache: Option[AuthoritiesWithId] <- service.retrieveAuthoritiesForId(request.internalId)
-        authorities <-
-          if(authoritiesFromCache.isEmpty) {
-            getAllAuthorities(request.eoriNumber, xiEori, accounts)
-          } else {
-            Future(authoritiesFromCache)
-          }
+        accountsFromCache <- accountsCacheService.retrieveAccountsForId(request.internalId)
+        accounts <- fetchAccounts(xiEori, accountsFromCache)
+        authoritiesFromCache <- service.retrieveAuthoritiesForId(request.internalId)
+        authorities <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
       } yield (authorities, accounts)
 
       response.map {
@@ -105,6 +95,27 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
             Future.successful(InternalServerError)
         }.flatten
     }
+
+  private def fetchAccounts(xiEori: Option[EORI],
+                            accountsFromCache: Option[CDSAccounts])
+                           (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
+    if (accountsFromCache.isEmpty) {
+      getAllAccounts(request.eoriNumber, xiEori)
+    } else {
+      Future(accountsFromCache.get)
+    }
+  }
+
+  private def fetchAuthorities(xiEori: Option[EORI],
+                               accounts: CDSAccounts,
+                               authoritiesFromCache: Option[AuthoritiesWithId])
+                              (implicit request: IdentifierRequest[AnyContent]): Future[Option[AuthoritiesWithId]] = {
+    if (authoritiesFromCache.isEmpty) {
+      getAllAuthorities(request.eoriNumber, xiEori, accounts)
+    } else {
+      Future(authoritiesFromCache)
+    }
+  }
 
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
