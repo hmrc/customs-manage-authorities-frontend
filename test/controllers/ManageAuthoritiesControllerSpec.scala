@@ -307,7 +307,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return OK even if getCompanies api throws exception" in new Setup {
+    "return OK even if getCompanyName api throws exception" in new Setup {
       val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
