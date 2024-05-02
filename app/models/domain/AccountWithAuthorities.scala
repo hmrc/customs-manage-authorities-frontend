@@ -60,6 +60,10 @@ case class AuthoritiesWithId(authorities: Map[String, AccountWithAuthoritiesWith
 
   def authorisedWithEori(eori: EORI): Seq[AccountWithAuthoritiesWithId] =
     accounts.filter(_.authorities.values.exists(_.containsEori(eori)))
+
+  def uniqueAuthorisedEORIs: Set[EORI] = {
+    accounts.flatMap(_.authorities.values).map(_.authorisedEori).toSet
+  }
 }
 
 object AuthoritiesWithId {
