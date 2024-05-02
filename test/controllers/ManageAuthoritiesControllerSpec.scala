@@ -24,7 +24,7 @@ import models.domain.{
   AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
 }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
@@ -266,6 +266,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
       }
     }
 
@@ -306,6 +307,51 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "return OK even if getCompanies api throws exception" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId02))
+
+      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getCompanyName(any())(any())).thenReturn(Future.failed(new RuntimeException("Failed")))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+        ).configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(2)).getCompanyName(any())(any())
+      }
+    }
+
     "return INTERNAL_SERVER_ERROR if there is an error during the processing" in new Setup {
       val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
 
@@ -337,11 +383,19 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+    val standingAuthority01: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+    val standingAuthority02: StandingAuthority = StandingAuthority("EORI2", startDate, Some(endDate), viewBalance = false)
 
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-      ("a" ->
-        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority)))
+      "a" ->
+        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority01))
+    ))
+
+    val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(Map(
+      "a" ->
+        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority01)),
+      "c" ->
+        AccountWithAuthoritiesWithId(CdsCashAccount, "123456", Some(AccountStatusClosed), Map("d" -> standingAuthority02))
     ))
   }
 }

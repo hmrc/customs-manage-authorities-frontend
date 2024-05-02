@@ -63,6 +63,18 @@ class AccountWithAuthoritiesSpec extends SpecBase {
     }
   }
 
+  "AuthoritiesWithId.uniqueAuthorisedEORIs" must {
+    "return the correct result" in new SetUp {
+      val authsWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
+        "key1" -> AccountWithAuthoritiesWithId(accWithAuthorities1),
+        "key2" -> AccountWithAuthoritiesWithId(accWithAuthorities2)))
+
+      authsWithId.accounts should have size 2
+      authsWithId.uniqueAuthorisedEORIs should have size 1
+      authsWithIdWithEmptyMap.uniqueAuthorisedEORIs should have size 0
+    }
+  }
+
   trait SetUp {
     val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
 
