@@ -58,6 +58,13 @@
                             @authRowModel.authorisedEori.hiddenHeadingMsg
                         </span>
                         @authRowModel.authorisedEori.displayValue
+                        <br/>
+                        @authRowModel.companyName.map { companyModel =>
+                            <span class="@companyModel.spanClassValue" aria-hidden="true">
+                                @companyModel.hiddenHeadingMsg
+                            </span>
+                            @companyModel.displayValue
+                        }
                     </td>
                     <td class="@authRowModel.formattedFromDate.classValue">
                         <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">

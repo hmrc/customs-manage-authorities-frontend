@@ -64,7 +64,10 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
       response.map {
         case (Some(authorities), accounts) =>
-          Ok(view(ManageAuthoritiesViewModel(authorities, accounts)))
+          Ok(view(ManageAuthoritiesViewModel(
+            authorities,
+            accounts,
+            Map("GB9988776655000" -> "test_company", "XI9988776655000" -> "test_company_1"))))
         case (None, _) =>
           Ok(noAccountsView())
       }.recover {

@@ -24,7 +24,9 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import scala.collection.immutable.ListMap
 
-case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId, accounts: CDSAccounts) {
+case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
+                                      accounts: CDSAccounts,
+                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty) {
 
   def hasAccounts: Boolean = authorities.accounts.nonEmpty
 

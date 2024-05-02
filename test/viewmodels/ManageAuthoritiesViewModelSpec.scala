@@ -31,17 +31,17 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
     )
   )
 
-  val startDate = LocalDate.parse("2020-03-01")
-  val endDate = LocalDate.parse("2020-04-01")
+  val startDate: LocalDate = LocalDate.parse("2020-03-01")
+  val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-  val standingAuthorityWithView = StandingAuthority(
+  val standingAuthorityWithView: StandingAuthority = StandingAuthority(
     "EORI1",
     LocalDate.parse("2020-03-01"),
     Some(LocalDate.parse("2020-04-01")),
     viewBalance = true
   )
 
-  val standingAuthorityWithoutView = StandingAuthority(
+  val standingAuthorityWithoutView: StandingAuthority = StandingAuthority(
     "EORI2",
     LocalDate.parse("2020-02-01"),
     None,
@@ -101,6 +101,18 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
 
       val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
+    }
+
+    "return correct value of authorisedEoriAndCompany map" in {
+      val authEoriAndCompanyDetails = Map("test_eori_1" -> "company_1", "test_eori_2" -> "company_2")
+
+      val cdsAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts, authEoriAndCompanyDetails)
+      viewModel.auhorisedEoriAndCompanyMap mustBe authEoriAndCompanyDetails
     }
   }
 }

@@ -16,11 +16,8 @@
 
 package viewmodels
 
-import models.domain.{
-  AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
-  AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority
-}
-
+import models.domain.{AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
+  AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.DateUtils
@@ -48,6 +45,7 @@ case class AuthorityRowColumnViewModel(hiddenHeadingMsg: String,
                                        spanClassValue: String = "hmrc-responsive-table__heading")
 
 case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
+                                 companyName: Option[AuthorityRowColumnViewModel] = None,
                                  formattedFromDate: AuthorityRowColumnViewModel,
                                  formattedToDate: AuthorityRowColumnViewModel,
                                  viewBalanceAsString: AuthorityRowColumnViewModel,
@@ -61,7 +59,9 @@ case class ManageAuthoritiesTableViewModel(idString: String,
 object ManageAuthoritiesTableViewModel extends DateUtils {
   def apply(accountId: String,
             account: AccountWithAuthoritiesWithId,
-            isNiAccount: Boolean = false)(implicit messages: Messages): ManageAuthoritiesTableViewModel = {
+            isNiAccount: Boolean = false,
+            authorisedEoriAndCompanyMap: Map[String, String] = Map.empty)
+           (implicit messages: Messages): ManageAuthoritiesTableViewModel = {
 
     val idString = s"${account.accountType}-${account.accountNumber}"
 
@@ -74,7 +74,7 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
       idString,
       accountHeadingMsg,
       authorityHeaderRowViewModel(account),
-      prepareAuthRowsView(accountId, account)
+      prepareAuthRowsView(accountId, account, authorisedEoriAndCompanyMap)
     )
   }
 
@@ -114,7 +114,8 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     )
 
   private def prepareAuthRowsView(accountId: String,
-                                  account: AccountWithAuthoritiesWithId)
+                                  account: AccountWithAuthoritiesWithId,
+                                  authorisedEoriAndCompanyMap: Map[String, String] = Map.empty)
                                  (implicit messages: Messages): Seq[AuthorityRowViewModel] = {
 
     val sortedAuthorities: ListMap[String, StandingAuthority] =
@@ -126,6 +127,12 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
       AuthorityRowViewModel(
         authorisedEori =
           AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authority.authorisedEori),
+        companyName =
+        if(authorisedEoriAndCompanyMap.contains(authority.authorisedEori)) {
+          Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authorisedEoriAndCompanyMap(authority.authorisedEori)))
+        } else {
+          None
+        },
         formattedFromDate =
           AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.startDate"),
             dateAsdMMMyyyy(authority.authorisedFromDate)),
