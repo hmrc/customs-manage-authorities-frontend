@@ -32,7 +32,9 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     "display correct text and guidance" when {
 
       "account status is open" in {
-        val view = viewAsDoc(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
+        val authEoriAndCompanyMap = Map(EORI_NUMBER -> "test_company")
+
+        val view = viewAsDoc(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID, isNiAccount = false, authEoriAndCompanyMap)
 
         shouldContainCorrectAccountStatusMsgForStatusOpen(view, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectHeaderValues(view, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
@@ -83,9 +85,10 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
 
   private def viewAsDoc(accountId: String,
                         account: AccountWithAuthoritiesWithId,
-                        isNiAccount: Boolean = false): Document =
+                        isNiAccount: Boolean = false,
+                        authEoriAndCompanyMap: Map[String, String] = Map.empty): Document =
     Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesTable].apply(
-      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount)
+      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount, authEoriAndCompanyMap)
     ).body)
 
   private def shouldContainCorrectAccountStatusMsgForStatusOpen(view: Document,
@@ -159,11 +162,16 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
   }
 
   private def shouldContainCorrectElementValuesForAuthorityRows(view: Document,
-                                                                account: AccountWithAuthoritiesWithId): Assertion = {
+                                                                account: AccountWithAuthoritiesWithId,
+                                                                authEoriAndCompanyMap: Map[String, String] = Map.empty): Assertion = {
 
     val tableRowHtml = view.getElementsByClass("govuk-table__row").html()
 
     tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
+
+    if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+      tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
+    }
     tableRowHtml.contains(messages("manageAuthorities.table.heading.startDate")) mustBe true
     tableRowHtml.contains(messages("manageAuthorities.table.heading.endDate")) mustBe true
     tableRowHtml.contains(messages("manageAuthorities.table.heading.balance")) mustBe true
