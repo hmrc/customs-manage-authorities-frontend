@@ -1,6 +1,6 @@
 # Site-wide Messages
 # ----------------------------------------------------------
-service.name=Bwrw golwg dros eich cyfrifon ariannol ar gyfer y tollau
+service.name=Rheoli tollau mewnforio a chyfrifon TAW
 
 language.cymraeg=Cymraeg
 language.english=English
