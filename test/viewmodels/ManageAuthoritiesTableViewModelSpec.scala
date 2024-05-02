@@ -113,7 +113,20 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       "account status is closed" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_GG_ACC_WITH_AUTH_WITH_ID)
 
-        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForClosedAccount
+        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForClosedAccount()
+
+        viewModelOb.authRows mustBe expectedAuthRowsView
+      }
+
+      "authorisedEoriAndCompanyMap in not empty" in {
+        val authEorisAndCompanyMap = Map(EORI_NUMBER -> "test_company")
+        val viewModelOb = ManageAuthoritiesTableViewModel(
+          ACCOUNT_ID,
+          CLOSED_GG_ACC_WITH_AUTH_WITH_ID,
+          isNiAccount = false,
+          authEorisAndCompanyMap)
+
+        val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForClosedAccount(authEorisAndCompanyMap)
 
         viewModelOb.authRows mustBe expectedAuthRowsView
       }
@@ -186,10 +199,16 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
     )
   }
 
-  private def authRowViewModelForClosedAccount: Seq[AuthorityRowViewModel] = {
+  private def authRowViewModelForClosedAccount(authEoriAndCompanyMap: Map[String, String] = Map.empty
+                                              ): Seq[AuthorityRowViewModel] = {
     Seq(
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        companyName =
+          if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
+          } else None,
 
         formattedFromDate = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.heading.startDate"),
@@ -214,6 +233,11 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       ),
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
+
+        companyName =
+          if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
+          } else None,
 
         formattedFromDate = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.heading.startDate"),
