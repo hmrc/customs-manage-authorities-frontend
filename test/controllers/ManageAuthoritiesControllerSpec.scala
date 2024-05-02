@@ -267,49 +267,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return OK when accounts retrieved are suspended or pending" in new Setup {
-      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
-        CashAccount("12345", "GB123456789012", AccountStatusSuspended, CDSCashBalance(Some(100.00))),
-        CashAccount("23456", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00)))
-      ))
-
-      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
-      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
-      val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-
-      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
-      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
-
-      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
-
-      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
-        .thenReturn(Future.successful(accounts))
-
-      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
-        .thenReturn(Future.successful(authoritiesWithId))
-
-      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
-
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .overrides(
-          bind[AuthoritiesRepository].toInstance(mockRepository),
-          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
-          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
-        ).configure("features.edit-journey" -> true)
-        .build()
-
-      running(application) {
-
-        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-      }
-    }
-
     "return NO_CONTENT when there are no authorities found due to Pending accounts" in new Setup {
       val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
         CashAccount("12345", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00))),

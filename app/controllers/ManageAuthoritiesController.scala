@@ -124,23 +124,13 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   private def fetchCompanyDetails(authWithId: Future[Option[AuthoritiesWithId]])
                                  (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
-      case Some(authorities) =>
-        getUniqueAuthorisedEORIs(authorities) match {
-          case Some(setOfAuthEori) => setOfAuthEori.foreach(dataStoreConnector.getCompanyName)
-          case _ => logger.info("AccountWithAuthoritiesWithId is empty");
-        }
-      case _ => logger.info("AccountWithAuthoritiesWithId is empty");
+      case Some(authorities) => getUniqueAuthorisedEORIs(authorities).foreach(dataStoreConnector.getCompanyName)
+      case _ => None
     }
   }
 
-  private def getUniqueAuthorisedEORIs(authorities: AuthoritiesWithId): Option[Set[EORI]] = {
-    logger.error("getAuthorisedEORIs")
-    val accounts = authorities.accounts
-    if (accounts.nonEmpty) {
-      Some(accounts.flatMap(_.authorities.values).map(_.authorisedEori).toSet)
-    } else {
-      None
-    }
+  private def getUniqueAuthorisedEORIs(authorities: AuthoritiesWithId): Set[EORI] = {
+    authorities.accounts.flatMap(_.authorities.values).map(_.authorisedEori).toSet
   }
 
   def unavailable(): Action[AnyContent] = identify.async {
