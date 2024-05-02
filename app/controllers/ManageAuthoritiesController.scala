@@ -84,6 +84,8 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
           authorities <- getAllAuthorities(eori, xiEori, accounts)
         } yield authorities
 
+        fetchCompanyDetailsForAuthorisedEORIs(fetchedAuthorities)
+
         fetchedAuthorities.map {
           case Some(_) => Future.successful(Ok)
           case _ => Future.successful(NoContent)
@@ -117,6 +119,14 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         Future.successful(None)
       }
     } yield authorities
+  }
+
+  private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])
+                                                   (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
+    authWithId.map {
+      case Some(authorities) => authorities.uniqueAuthorisedEORIs.foreach(dataStoreConnector.getCompanyName)
+      case _ => None
+    }
   }
 
   def unavailable(): Action[AnyContent] = identify.async {
