@@ -19,8 +19,7 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
-  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -28,9 +27,9 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.test.Helpers._
 import repositories.{AccountsRepository, AuthoritiesRepository}
-import services.{AccountsCacheService, AuthoritiesCacheService}
+import services.{AccountsCacheService, AuthorisedEoriAndCompanyInfoService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
-import utils.TestData.{EORI_NUMBER, XI_EORI, testEmail}
+import utils.TestData.{COMPANY_NAME, EORI_NUMBER, XI_EORI, testEmail}
 import viewmodels.ManageAuthoritiesViewModel
 import views.html.{ManageAuthoritiesApiFailureView, ManageAuthoritiesView, NoAccountsView}
 
@@ -330,6 +329,52 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
+      }
+    }
+
+    "return OK when authorities are retrieved successfully and save company info in the cache" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts("GB123456789012", List(
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ))
+
+      val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+      val mockAuthAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId))
+      when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+      when(mockAuthAndCompanyInfoService.storeAuthEorisAndCompanyInfo(any, any)).thenReturn(Future.successful(true))
+
+      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthAndCompanyInfoService)
+        ).configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
+        verify(mockAuthAndCompanyInfoService, times(1)).storeAuthEorisAndCompanyInfo(any(), any())
       }
     }
 

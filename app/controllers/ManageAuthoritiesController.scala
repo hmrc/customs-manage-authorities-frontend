@@ -32,6 +32,7 @@ import viewmodels.ManageAuthoritiesViewModel
 import views.html._
 
 import javax.inject.Inject
+import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent._
 import scala.util.control.NonFatal
 
@@ -40,6 +41,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                             checkEmailIsVerified: EmailAction,
                                             service: AuthoritiesCacheService,
                                             accountsCacheService: AccountsCacheService,
+                                            authEoriAndCompanyInfoService:AuthorisedEoriAndCompanyInfoService,
                                             dataStoreConnector: CustomsDataStoreConnector,
                                             noAccountsView: NoAccountsView,
                                             val controllerComponents: MessagesControllerComponents,
@@ -60,14 +62,16 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         accounts <- fetchAccounts(xiEori, accountsFromCache)
         authoritiesFromCache <- service.retrieveAuthoritiesForId(request.internalId)
         authorities <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
-      } yield (authorities, accounts)
+        authEoriAndCompanyInfo <- authEoriAndCompanyInfoService.retrieveAuthEorisAndCompanyInfo(request.internalId)
+      } yield (authorities, accounts, authEoriAndCompanyInfo)
 
       response.map {
-        case (Some(authorities), accounts) =>
+        case (Some(authorities), accounts, Some(authEoriAndCompanyInfo)) =>
           Ok(view(ManageAuthoritiesViewModel(
             authorities,
-            accounts)))
-        case (None, _) =>
+            accounts,
+            authEoriAndCompanyInfo)))
+        case (None, _, _) =>
           Ok(noAccountsView())
       }.recover {
         case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
@@ -149,7 +153,18 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])
                                                    (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
-      case Some(authorities) => authorities.uniqueAuthorisedEORIs.foreach(dataStoreConnector.getCompanyName)
+      case Some(authorities) => {
+        val eoriAndCompanyMap: MutableMap[String, String] = MutableMap().empty
+
+        authorities.uniqueAuthorisedEORIs.foreach {
+          eori =>
+            dataStoreConnector.getCompanyName(eori).map {
+              companyOpt => if (companyOpt.isDefined) eoriAndCompanyMap += eori -> companyOpt.get
+            }
+        }
+
+        authEoriAndCompanyInfoService.storeAuthEorisAndCompanyInfo(request.internalId, eoriAndCompanyMap.toMap)
+      }
       case _ => None
     }
   }
