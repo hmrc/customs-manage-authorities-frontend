@@ -19,7 +19,8 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
+import models.domain.{AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
+  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -90,7 +91,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockAccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService = mock[AuthoritiesCacheService]
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-        //val mockAuthEoriAndCompanyService = mock[AuthorisedEoriAndCompanyInfoService]
+        val mockAuthEoriAndCompanyService = mock[AuthorisedEoriAndCompanyInfoService]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
@@ -99,8 +100,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
-        /*when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
-          .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))*/
+        when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
+          .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(

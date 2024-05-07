@@ -208,7 +208,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         companyName =
           if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
             Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
-          } else None,
+          } else { None },
 
         formattedFromDate = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.heading.startDate"),
@@ -237,7 +237,7 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         companyName =
           if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
             Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
-          } else None,
+          } else { None },
 
         formattedFromDate = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.heading.startDate"),

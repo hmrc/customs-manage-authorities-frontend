@@ -128,11 +128,12 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
         authorisedEori =
           AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authority.authorisedEori),
         companyName =
-        if(authorisedEoriAndCompanyMap.contains(authority.authorisedEori)) {
-          Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authorisedEoriAndCompanyMap(authority.authorisedEori)))
-        } else {
-          None
-        },
+          if (authorisedEoriAndCompanyMap.contains(authority.authorisedEori)) {
+            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"),
+              authorisedEoriAndCompanyMap(authority.authorisedEori)))
+          } else {
+            None
+          },
         formattedFromDate =
           AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.startDate"),
             dateAsdMMMyyyy(authority.authorisedFromDate)),
