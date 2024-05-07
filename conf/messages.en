@@ -1,6 +1,6 @@
 # Site-wide Messages
 # ----------------------------------------------------------
-service.name = View your customs financial accounts
+service.name = Manage import duties and VAT accounts
 
 language.cymraeg = Cymraeg
 language.english = English
@@ -21,7 +21,7 @@ cf.error.not-found.message.address-typed-wrong=If you typed the web address, che
 cf.error.not-found.message.address-pasted-wrong=If you pasted the web address, check you copied the entire address.
 cf.error.not-found.message.go-to-home-page-text1=Or you can
 cf.error.not-found.message.go-to-home-page-text2=.
-cf.accounts.view-customs-account=view your customs financial accounts
+cf.accounts.view-customs-account=manage import duties and VAT accounts
 
 footer.accessibility   = Accessibility statement
 footer.cookies         = Cookies

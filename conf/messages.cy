@@ -1,6 +1,6 @@
 # Site-wide Messages
 # ----------------------------------------------------------
-service.name=Bwrw golwg dros eich cyfrifon ariannol ar gyfer y tollau
+service.name=Rheoli tollau mewnforio a chyfrifon TAW
 
 language.cymraeg=Cymraeg
 language.english=English
@@ -21,7 +21,7 @@ cf.error.not-found.message.address-typed-wrong=Os gwnaethoch deipio’r cyfeiria
 cf.error.not-found.message.address-pasted-wrong=Os gwnaethoch ludo’r cyfeiriad gwe, gwiriwch eich bod wedi copïo’r cyfeiriad yn llawn.
 cf.error.not-found.message.go-to-home-page-text1=Neu gallwch
 cf.error.not-found.message.go-to-home-page-text2=.
-cf.accounts.view-customs-account=fwrw golwg dros eich cyfrifon ariannol ar gyfer y tollau
+cf.accounts.view-customs-account=rheoli tollau mewnforio a chyfrifon TAW
 
 
 footer.accessibility=Datganiad hygyrchedd
