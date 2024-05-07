@@ -26,7 +26,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.Helpers._
-import repositories.{AccountsRepository, AuthoritiesRepository}
+import repositories.{AccountsRepository, AuthorisedEoriAndCompanyInfoRepository, AuthoritiesRepository}
 import services.{AccountsCacheService, AuthorisedEoriAndCompanyInfoService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.TestData.{COMPANY_NAME, EORI_NUMBER, XI_EORI, testEmail}
@@ -43,19 +43,18 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     "API call succeeds" must {
 
       "return OK and the correct view if no accounts associated with a EORI" in new Setup {
-        val accounts = CDSAccounts("GB123456789012", List())
+        val accounts: CDSAccounts = CDSAccounts("GB123456789012", List())
 
-        val mockRepository = mock[AuthoritiesRepository]
-        val mockAccountsCacheService = mock[AccountsCacheService]
-        val mockAuthCacheService = mock[AuthoritiesCacheService]
+        val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
+        val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+        val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
-
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
@@ -85,10 +84,13 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
         ))
 
+        val eoriAndCompanyInfoMap: Map[String, String] = Map(eori1 -> "Tony Stark")
+
         val mockRepository = mock[AuthoritiesRepository]
         val mockAccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService = mock[AuthoritiesCacheService]
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+        //val mockAuthEoriAndCompanyService = mock[AuthorisedEoriAndCompanyInfoService]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
@@ -97,6 +99,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+        /*when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
+          .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))*/
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
@@ -120,7 +124,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
           contentAsString(result) mustEqual
             view(
-              ManageAuthoritiesViewModel(authoritiesWithId, accounts)
+              ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap)
             )(request, messages(application), appConfig).toString
         }
       }
@@ -130,6 +134,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
           CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
         ))
+
+        val eoriAndCompanyInfoMap: Map[String, String] = Map(eori1 -> "Tony Stark")
 
         val mockAuthRepository = mock[AuthoritiesRepository]
         val mockAccountsRepository = mock[AccountsRepository]
@@ -157,7 +163,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
           contentAsString(result) mustEqual
             view(
-              ManageAuthoritiesViewModel(authoritiesWithId, accounts)
+              ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap)
             )(request, messages(application), appConfig).toString
         }
       }
@@ -298,11 +304,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
       val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
       val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+      val mockAuthAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
 
-      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
-      val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
-
-      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId02)))
 
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
         .thenReturn(Future.successful(accounts))
@@ -312,13 +317,17 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
       when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
+      when(mockAuthAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
+        .thenReturn(Future.successful(Some(eoriAndCompanyMap)))
 
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
         ).configure("features.edit-journey" -> true)
         .build()
 
@@ -341,10 +350,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
       val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
       val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-      val mockAuthAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
       val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-
-      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
 
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
         .thenReturn(Future.successful(accounts))
@@ -352,7 +359,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
         .thenReturn(Future.successful(authoritiesWithId))
       when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
-      when(mockAuthAndCompanyInfoService.storeAuthEorisAndCompanyInfo(any, any)).thenReturn(Future.successful(true))
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
       when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
       when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
@@ -363,7 +370,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
           bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-          bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthAndCompanyInfoService)
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
         ).configure("features.edit-journey" -> true)
         .build()
 
@@ -374,7 +381,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
-        verify(mockAuthAndCompanyInfoService, times(1)).storeAuthEorisAndCompanyInfo(any(), any())
       }
     }
 
@@ -425,6 +431,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
       val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
       val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
 
       val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
       val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
@@ -440,13 +447,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
       when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
       when(mockDataStoreConnector.getCompanyName(any())(any())).thenReturn(Future.failed(new RuntimeException("Failed")))
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
       val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService)
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
         ).configure("features.edit-journey" -> true)
         .build()
 
@@ -484,6 +493,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     lazy val manageAuthoritiesRoute: String = routes.ManageAuthoritiesController.onPageLoad.url
     lazy val manageAuthoritiesUnavailableRoute: String = routes.ManageAuthoritiesController.unavailable.url
     lazy val manageAuthoritiesGBNValidationRoute: String = routes.ManageAuthoritiesController.validationFailure().url
+
+    val eori1 = "EORI"
+    val eori2 = "EORI2"
+    val eoriAndCompanyMap: Map[String, String] = Map(eori1 -> COMPANY_NAME, eori2 -> COMPANY_NAME)
 
     val fetchAllAuthoritiesRoute: String =
       routes.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoad(EORI_NUMBER).url

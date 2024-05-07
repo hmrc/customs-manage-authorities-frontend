@@ -25,10 +25,10 @@
 
 <div id="@model.idString" class="account-with-authorities">
     <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
-        <caption id="@model.idString-heading" class="govuk-table__caption">
+        <caption id="@model.idString-heading" class="govuk-table__caption govuk-table__cell">
             @model.accountHeadingMsg
         </caption>
-        <thead class="govuk-table__head">
+        <!--<thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th id="@model.authHeaderRowViewModel.authCompanyId" scope="col"
                     class="govuk-table__header govuk-!-width-one-quarter">
@@ -49,7 +49,7 @@
                     </span>
                 </th>
             </tr>
-        </thead>
+        </thead>-->
         <tbody class="govuk-table__body">
             @for(authRowModel <- model.authRows) {
                 <tr class="govuk-table__row">
@@ -66,7 +66,7 @@
                             @companyModel.displayValue
                         }
                     </td>
-                    <td class="@authRowModel.formattedFromDate.classValue">
+                    <!--<td class="@authRowModel.formattedFromDate.classValue">
                         <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">
                             @authRowModel.formattedFromDate.hiddenHeadingMsg
                         </span>
@@ -83,7 +83,7 @@
                             @authRowModel.viewBalanceAsString.hiddenHeadingMsg
                         </span>
                         @authRowModel.viewBalanceAsString.displayValue
-                    </td>
+                    </td>-->
                     <td class="@authRowModel.viewLink.classValue">
                         @if(authRowModel.viewLink.isAccountStatusNonClosed) {
                             <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">

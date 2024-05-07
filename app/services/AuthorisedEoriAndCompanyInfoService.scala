@@ -16,17 +16,42 @@
 
 package services
 
+import connectors.CustomsDataStoreConnector
 import models.InternalId
+import models.domain.EORI
 import repositories.AuthorisedEoriAndCompanyInfoRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import utils.StringUtils.emptyString
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedEoriAndCompanyInfoService @Inject()(repository: AuthorisedEoriAndCompanyInfoRepository)
+class AuthorisedEoriAndCompanyInfoService @Inject()(repository: AuthorisedEoriAndCompanyInfoRepository,
+                                                    dataStoreConnector: CustomsDataStoreConnector)
                                                    (implicit executionContext: ExecutionContext) {
 
-  def retrieveAuthEorisAndCompanyInfo(internalId: InternalId): Future[Option[Map[String, String]]] = {
+  def retrieveAuthEorisAndCompanyInfoForId(internalId: InternalId): Future[Option[Map[String, String]]] = {
     repository.get(internalId.value)
+  }
+
+  def retrieveAuthorisedEoriAndCompanyInfo(internalId: InternalId,
+                                           eoris: Set[EORI])
+                                          (implicit hc: HeaderCarrier):Future[Option[Map[String, String]]] = {
+    lazy val eoriAndCompanyMap = for {
+      test: Seq[Option[EORI]] <- Future.sequence(eoris.toSeq.map(dataStoreConnector.getCompanyName(_)))
+    } yield {
+      eoris.zip(test).toMap.map(keyValue => (keyValue._1, keyValue._2.getOrElse(emptyString)))
+    }
+
+    repository.get(internalId.value).flatMap {
+      case Some(data) => Future.successful(Some(data))
+      case _ =>
+        for {
+            dataMap <- eoriAndCompanyMap
+          _ <- repository.set(internalId.value, dataMap)
+        } yield Some(dataMap)
+    }
+
   }
 
   def storeAuthEorisAndCompanyInfo(internalId: InternalId,

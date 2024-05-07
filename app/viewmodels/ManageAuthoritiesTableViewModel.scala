@@ -115,7 +115,7 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
 
   private def prepareAuthRowsView(accountId: String,
                                   account: AccountWithAuthoritiesWithId,
-                                  authorisedEoriAndCompanyMap: Map[String, String] = Map.empty)
+                                  authorisedEoriAndCompanyMap: Map[String, String])
                                  (implicit messages: Messages): Seq[AuthorityRowViewModel] = {
 
     val sortedAuthorities: ListMap[String, StandingAuthority] =

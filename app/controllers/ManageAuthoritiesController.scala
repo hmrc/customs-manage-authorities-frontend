@@ -32,7 +32,6 @@ import viewmodels.ManageAuthoritiesViewModel
 import views.html._
 
 import javax.inject.Inject
-import scala.collection.mutable.{Map => MutableMap}
 import scala.concurrent._
 import scala.util.control.NonFatal
 
@@ -62,11 +61,12 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         accounts <- fetchAccounts(xiEori, accountsFromCache)
         authoritiesFromCache <- service.retrieveAuthoritiesForId(request.internalId)
         authorities <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
-        authEoriAndCompanyInfo <- authEoriAndCompanyInfoService.retrieveAuthEorisAndCompanyInfo(request.internalId)
-      } yield (authorities, accounts, authEoriAndCompanyInfo)
+        authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
+          authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs))
+      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty))
 
       response.map {
-        case (Some(authorities), accounts, Some(authEoriAndCompanyInfo)) =>
+        case (Some(authorities), accounts, authEoriAndCompanyInfo) =>
           Ok(view(ManageAuthoritiesViewModel(
             authorities,
             accounts,
@@ -125,6 +125,15 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
     }
   }
 
+  private def fetchAuthEoriAndCompanyInfoForTheView(authorisedEoris: Set[EORI])
+                                                   (implicit request: IdentifierRequest[AnyContent])= {
+    if(authorisedEoris.isEmpty) {
+      Future(None)
+    } else {
+      authEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(request.internalId, authorisedEoris)
+    }
+  }
+
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
                             (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
@@ -153,19 +162,13 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])
                                                    (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
-      case Some(authorities) => {
-        val eoriAndCompanyMap: MutableMap[String, String] = MutableMap().empty
+      case Some(authorities) =>
 
-        authorities.uniqueAuthorisedEORIs.foreach {
-          eori =>
-            dataStoreConnector.getCompanyName(eori).map {
-              companyOpt => if (companyOpt.isDefined) eoriAndCompanyMap += eori -> companyOpt.get
-            }
-        }
+        authEoriAndCompanyInfoService
+          .retrieveAuthorisedEoriAndCompanyInfo(request.internalId, authorities.uniqueAuthorisedEORIs)
+        logger.info(s"Company info is saved in cache")
 
-        authEoriAndCompanyInfoService.storeAuthEorisAndCompanyInfo(request.internalId, eoriAndCompanyMap.toMap)
-      }
-      case _ => None
+      case _ => logger.info(s"Company info could not be saved in cache")
     }
   }
 
