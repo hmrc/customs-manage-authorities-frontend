@@ -40,6 +40,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                             checkEmailIsVerified: EmailAction,
                                             service: AuthoritiesCacheService,
                                             accountsCacheService: AccountsCacheService,
+                                            authEoriAndCompanyInfoService:AuthorisedEoriAndCompanyInfoService,
                                             dataStoreConnector: CustomsDataStoreConnector,
                                             noAccountsView: NoAccountsView,
                                             val controllerComponents: MessagesControllerComponents,
@@ -56,14 +57,21 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
-        accounts <- getAllAccounts(request.eoriNumber, xiEori)
-        authorities <- getAllAuthorities(request.eoriNumber, xiEori, accounts)
-      } yield (authorities, accounts)
+        accountsFromCache <- accountsCacheService.retrieveAccountsForId(request.internalId)
+        accounts <- fetchAccounts(xiEori, accountsFromCache)
+        authoritiesFromCache <- service.retrieveAuthoritiesForId(request.internalId)
+        authorities <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
+        authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
+          authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs))
+      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty))
 
       response.map {
-        case (Some(authorities), accounts) =>
-          Ok(view(ManageAuthoritiesViewModel(authorities, accounts)))
-        case (None, _) =>
+        case (Some(authorities), accounts, authEoriAndCompanyInfo) =>
+          Ok(view(ManageAuthoritiesViewModel(
+            authorities,
+            accounts,
+            authEoriAndCompanyInfo)))
+        case (None, _, _) =>
           Ok(noAccountsView())
       }.recover {
         case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
@@ -96,6 +104,36 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         }.flatten
     }
 
+  private def fetchAccounts(xiEori: Option[EORI],
+                            accountsFromCache: Option[CDSAccounts])
+                           (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
+    if (accountsFromCache.isEmpty) {
+      getAllAccounts(request.eoriNumber, xiEori)
+    } else {
+      Future(accountsFromCache.get)
+    }
+  }
+
+  private def fetchAuthorities(xiEori: Option[EORI],
+                               accounts: CDSAccounts,
+                               authoritiesFromCache: Option[AuthoritiesWithId])
+                              (implicit request: IdentifierRequest[AnyContent]): Future[Option[AuthoritiesWithId]] = {
+    if (authoritiesFromCache.isEmpty) {
+      getAllAuthorities(request.eoriNumber, xiEori, accounts)
+    } else {
+      Future(authoritiesFromCache)
+    }
+  }
+
+  private def fetchAuthEoriAndCompanyInfoForTheView(authorisedEoris: Set[EORI])
+                                                   (implicit request: IdentifierRequest[AnyContent])= {
+    if(authorisedEoris.isEmpty) {
+      Future(None)
+    } else {
+      authEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(request.internalId, authorisedEoris)
+    }
+  }
+
   private def getAllAccounts(eori: EORI,
                              xiEori: Option[String])
                             (implicit request: IdentifierRequest[AnyContent]): Future[CDSAccounts] = {
@@ -124,8 +162,13 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])
                                                    (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
-      case Some(authorities) => authorities.uniqueAuthorisedEORIs.foreach(dataStoreConnector.getCompanyName)
-      case _ => None
+      case Some(authorities) =>
+
+        authEoriAndCompanyInfoService
+          .retrieveAuthorisedEoriAndCompanyInfo(request.internalId, authorities.uniqueAuthorisedEORIs)
+        logger.info(s"Company info is saved in cache")
+
+      case _ => logger.info(s"Company info could not be saved in cache")
     }
   }
 

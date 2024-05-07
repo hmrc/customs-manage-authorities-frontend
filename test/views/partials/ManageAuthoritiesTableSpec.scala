@@ -32,10 +32,11 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     "display correct text and guidance" when {
 
       "account status is open" in {
-        val view = viewAsDoc(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
+        val authEoriAndCompanyMap = Map(EORI_NUMBER -> "test_company")
+
+        val view = viewAsDoc(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID, isNiAccount = false, authEoriAndCompanyMap)
 
         shouldContainCorrectAccountStatusMsgForStatusOpen(view, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
       }
 
@@ -43,7 +44,6 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
         val view = viewAsDoc(ACCOUNT_ID, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         shouldContainCorrectAccountStatusMsgForStatusClosed(view, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
       }
 
@@ -51,7 +51,6 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
         val view = viewAsDoc(ACCOUNT_ID, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         shouldContainCorrectAccountStatusMsgForStatusSuspended(view, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
       }
 
@@ -59,7 +58,6 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
         val view = viewAsDoc(ACCOUNT_ID, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
 
         shouldContainCorrectAccountStatusMsgForStatusPending(view, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
       }
 
@@ -67,7 +65,6 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
         val view = viewAsDoc(ACCOUNT_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID)
 
         shouldContainCorrectAccountStatusMsgForStatusNone(view, NONE_DD_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, NONE_DD_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, NONE_DD_ACC_WITH_AUTH_WITH_ID)
       }
 
@@ -75,7 +72,6 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
         val view = viewAsDoc(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
 
         shouldContainCorrectAccountStatusMsgForDDNonNIAccount(view, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
-        shouldContainCorrectHeaderValues(view, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
         shouldContainCorrectElementValuesForAuthorityRows(view, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
       }
     }
@@ -83,9 +79,10 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
 
   private def viewAsDoc(accountId: String,
                         account: AccountWithAuthoritiesWithId,
-                        isNiAccount: Boolean = false): Document =
+                        isNiAccount: Boolean = false,
+                        authEoriAndCompanyMap: Map[String, String] = Map.empty): Document =
     Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesTable].apply(
-      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount)
+      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount, authEoriAndCompanyMap)
     ).body)
 
   private def shouldContainCorrectAccountStatusMsgForStatusOpen(view: Document,
@@ -130,43 +127,17 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     }-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
-  private def shouldContainCorrectHeaderValues(view: Document,
-                                               account: AccountWithAuthoritiesWithId): Assertion = {
-    view.getElementById(
-      s"account-authorities-table-user-heading-${
-        account.accountType
-      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.user")
-
-    view.getElementById(
-      s"account-authorities-table-start-date-heading-${
-        account.accountType
-      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.startDate")
-
-    view.getElementById(
-      s"account-authorities-table-end-date-heading-${
-        account.accountType
-      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.endDate")
-
-    view.getElementById(
-      s"account-authorities-table-view-balance-heading-${
-        account.accountType
-      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.balance")
-
-    view.getElementById(
-      s"account-authorities-table-actions-heading-${
-        account.accountType
-      }-${account.accountNumber}").text() mustBe messages("manageAuthorities.table.heading.actions")
-  }
-
   private def shouldContainCorrectElementValuesForAuthorityRows(view: Document,
-                                                                account: AccountWithAuthoritiesWithId): Assertion = {
+                                                                account: AccountWithAuthoritiesWithId,
+                                                                authEoriAndCompanyMap: Map[String, String] = Map.empty): Assertion = {
 
     val tableRowHtml = view.getElementsByClass("govuk-table__row").html()
 
     tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
-    tableRowHtml.contains(messages("manageAuthorities.table.heading.startDate")) mustBe true
-    tableRowHtml.contains(messages("manageAuthorities.table.heading.endDate")) mustBe true
-    tableRowHtml.contains(messages("manageAuthorities.table.heading.balance")) mustBe true
+
+    if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+      tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
+    }
 
     if (account.accountStatus.fold(true)(status => status != AccountStatusClosed)) {
       tableRowHtml.contains(messages("manageAuthorities.table.view-or-change")) mustBe true

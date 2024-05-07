@@ -25,31 +25,9 @@
 
 <div id="@model.idString" class="account-with-authorities">
     <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
-        <caption id="@model.idString-heading" class="govuk-table__caption">
+        <caption id="@model.idString-heading" class="govuk-table__caption govuk-table__cell">
             @model.accountHeadingMsg
         </caption>
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th id="@model.authHeaderRowViewModel.authCompanyId" scope="col"
-                    class="govuk-table__header govuk-!-width-one-quarter">
-                    @model.authHeaderRowViewModel.authCompanyHeaderValue
-                </th>
-                <th id="@model.authHeaderRowViewModel.startDateId" scope="col" class="govuk-table__header">
-                    @model.authHeaderRowViewModel.startDateHeader
-                </th>
-                <th id="@model.authHeaderRowViewModel.endDateId" scope="col" class="govuk-table__header">
-                    @model.authHeaderRowViewModel.endDateHeader
-                </th>
-                <th id="@model.authHeaderRowViewModel.viewBalanceId" scope="col" class="govuk-table__header">
-                    @model.authHeaderRowViewModel.viewBalanceHeaderValue
-                </th>
-                <th id="@model.authHeaderRowViewModel.hiddenActionsId" scope="col" class="govuk-table__header">
-                    <span class="govuk-visually-hidden">
-                        @model.authHeaderRowViewModel.hiddenActionsHeaderValue
-                    </span>
-                </th>
-            </tr>
-        </thead>
         <tbody class="govuk-table__body">
             @for(authRowModel <- model.authRows) {
                 <tr class="govuk-table__row">
@@ -58,24 +36,13 @@
                             @authRowModel.authorisedEori.hiddenHeadingMsg
                         </span>
                         @authRowModel.authorisedEori.displayValue
-                    </td>
-                    <td class="@authRowModel.formattedFromDate.classValue">
-                        <span class="@authRowModel.formattedFromDate.spanClassValue" aria-hidden="true">
-                            @authRowModel.formattedFromDate.hiddenHeadingMsg
-                        </span>
-                        @authRowModel.formattedFromDate.displayValue
-                    </td>
-                    <td class="@authRowModel.formattedToDate.classValue">
-                        <span class="@authRowModel.formattedToDate.spanClassValue" aria-hidden="true">
-                            @authRowModel.formattedToDate.hiddenHeadingMsg
-                        </span>
-                            @authRowModel.formattedToDate.displayValue
-                    </td>
-                    <td class="@authRowModel.viewBalanceAsString.classValue">
-                        <span class="@authRowModel.viewBalanceAsString.spanClassValue" aria-hidden="true">
-                            @authRowModel.viewBalanceAsString.hiddenHeadingMsg
-                        </span>
-                        @authRowModel.viewBalanceAsString.displayValue
+                        <br/>
+                        @authRowModel.companyName.map { companyModel =>
+                            <span class="@companyModel.spanClassValue" aria-hidden="true">
+                                @companyModel.hiddenHeadingMsg
+                            </span>
+                            @companyModel.displayValue
+                        }
                     </td>
                     <td class="@authRowModel.viewLink.classValue">
                         @if(authRowModel.viewLink.isAccountStatusNonClosed) {

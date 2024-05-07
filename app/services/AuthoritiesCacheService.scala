@@ -56,6 +56,8 @@ class AuthoritiesCacheService @Inject()(repository: AuthoritiesRepository,
     }
   }
 
+  def retrieveAuthoritiesForId(id: InternalId): Future[Option[AuthoritiesWithId]] = repository.get(id.value)
+
   def getAccountAndAuthority(internalId: InternalId,
                              authorityId: String,
                              accountId: String)
