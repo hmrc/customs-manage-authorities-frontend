@@ -20,7 +20,7 @@ cf.error.not-found.heading=Page not found
 cf.error.not-found.message.address-typed-wrong=If you typed the web address, check it is correct.
 cf.error.not-found.message.address-pasted-wrong=If you pasted the web address, check you copied the entire address.
 cf.error.not-found.message.go-to-home-page-text1=You can go
-cf.error.not-found.message.go-to-home-page-text2=Back to manage your account authorities
+cf.error.not-found.message.go-to-home-page-text2=back to manage import duties and VAT accounts
 cf.accounts.view-customs-account=manage import duties and VAT accounts
 
 footer.accessibility   = Accessibility statement
