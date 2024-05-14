@@ -280,7 +280,7 @@ addConfirmation.body.today.plural=Mae’r cwmni hwn bellach ag awdurdod i ddefny
 addConfirmation.body.setDate=Yn dechrau ar {0}
 addConfirmation.p1.today=Gofynnwch i’r cwmni neu’r person wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos.
 addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i’r cwmni neu’r person wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau.
-addConfirmation.returnLink=Yn ôli reoli tollau mewnforio a chyfrifon TAW
+addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 editConfirmation.title=Awdurdod wedi newid
 editConfirmation.heading=Awdurdod wedi newid
@@ -291,7 +291,7 @@ editConfirmation.body.today.singular=Gall ddefnyddio’ch cyfrif nawr
 editConfirmation.body.today.plural=Gall ddefnyddio’ch cyfrifon nawr
 editConfirmation.body.setDate=Yn dechrau ar {0}
 editConfirmation.p1.setDate=Dylech roi gwybod i’r cwmni eich bod wedi newid yr awdurdod hwn.
-editConfirmation.returnLink=Yn ôli reoli tollau mewnforio a chyfrifon TAW
+editConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
 remove.title=A ydych yn si?r eich bod am ddileu awdurdod y cyfrif hwn?
 remove.heading=A ydych yn si?r eich bod am dynnu mynediad ar gyfer defnyddiwr {0}?
@@ -314,7 +314,7 @@ remove.error.confirmation.required=Dewiswch i gadarnhau eich bod am dynnu mynedi
 removeConfirmation.title=Awdurdod wedi dynnu
 removeConfirmation.heading={0} wedi’i dynnu yn llwyddiannus
 removeConfirmation.p1=Efallai y byddwch am roi gwybod i’r cwmni fod ei awdurdod wedi’i dynnu.
-removeConfirmation.returnLink=Yn ôli reoli tollau mewnforio a chyfrifon TAW
+removeConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 removeConfirmation.authorityRemoved=Awdurdod wedi’i dynnu
 removeConfirmation.companyName=Enw’r cwmni:
 removeConfirmation.eoriNumber=Rhif EORI:
