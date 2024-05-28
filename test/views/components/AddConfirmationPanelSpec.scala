@@ -105,8 +105,7 @@ class AddConfirmationPanelSpec extends SpecBase {
 
     val view: Document
 
-    lazy val bodyElements: Elements =
-      view.getElementsByClass("govuk-panel__body-s")
+    lazy val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
     lazy val firstElement = bodyElements.get(0)
   }
 }
