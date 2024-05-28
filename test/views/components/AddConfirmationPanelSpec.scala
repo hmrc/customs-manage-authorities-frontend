@@ -30,52 +30,71 @@ class AddConfirmationPanelSpec extends SpecBase {
   "AddConfirmationPanel view" should {
     "display the correct title, header, and company name when all fields are provided" in new Setup {
 
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[addConfirmationPanel].apply(
-          message = Some("Success"),
-          companyName = Some("TestCompany"),
-          eori = Some("GB123456789000"),
-          startDate = Some("01-01-2021"),
-          divClass = Some("custom-div-class"),
-          h1Class = Some("custom-h1-class")
-        ).body
+      override val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[addConfirmationPanel]
+          .apply(
+            message = Some("Success"),
+            companyName = Some("TestCompany"),
+            eori = Some("GB123456789000"),
+            startDate = Some("01-01-2021"),
+            divClass = Some("custom-div-class"),
+            h1Class = Some("custom-h1-class")
+          )
+          .body
       )
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe "Success"
 
-        val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
+        firstElement.getElementsByTag("p").get(0).html() must include(
+          messages(app)("addConfirmation.body.eori.number")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(0)
+          .html() mustBe "GB123456789000"
 
-        bodyElements.get(0).getElementsByTag("p").get(0).html() must include(messages(app)("addConfirmation.body.eori.number"))
-        bodyElements.get(0).getElementsByTag("strong").get(0).html() mustBe "GB123456789000"
+        firstElement.getElementsByTag("p").get(1).html() must include(
+          messages(app)("addConfirmation.body.company.name")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(1)
+          .html() mustBe "TestCompany"
 
-        bodyElements.get(0).getElementsByTag("p").get(1).html() must include(messages(app)("addConfirmation.body.company.name"))
-        bodyElements.get(0).getElementsByTag("strong").get(1).html() mustBe "TestCompany"
-
-        bodyElements.get(0).getElementsByTag("p").get(2).html() must include(messages(app)("addConfirmation.body.setDate", "01-01-2021"))
+        firstElement.getElementsByTag("p").get(2).html() must include(
+          messages(app)("addConfirmation.body.setDate", "01-01-2021")
+        )
       }
     }
 
     "display the correct title, header without company name and start date when they are not provided" in new Setup {
 
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[addConfirmationPanel].apply(
-          message = Some("Success"),
-          companyName = None,
-          eori = Some("GB123456789000"),
-          startDate = None,
-          divClass = Some("custom-div-class"),
-          h1Class = Some("custom-h1-class")
-        ).body
+      override val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[addConfirmationPanel]
+          .apply(
+            message = Some("Success"),
+            companyName = None,
+            eori = Some("GB123456789000"),
+            startDate = None,
+            divClass = Some("custom-div-class"),
+            h1Class = Some("custom-h1-class")
+          )
+          .body
       )
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe "Success"
 
-        val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
-
-        bodyElements.get(0).getElementsByTag("p").get(0).html() must include(messages(app)("addConfirmation.body.eori.number"))
-        bodyElements.get(0).getElementsByTag("strong").get(0).html() mustBe "GB123456789000"
+        firstElement.getElementsByTag("p").get(0).html() must include(
+          messages(app)("addConfirmation.body.eori.number")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(0)
+          .html() mustBe "GB123456789000"
       }
     }
   }
@@ -83,5 +102,11 @@ class AddConfirmationPanelSpec extends SpecBase {
   trait Setup {
     val app: Application = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
+
+    val view: Document
+
+    lazy val bodyElements: Elements =
+      view.getElementsByClass("govuk-panel__body-s")
+    lazy val firstElement = bodyElements.get(0)
   }
 }

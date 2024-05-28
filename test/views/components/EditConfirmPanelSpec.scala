@@ -30,44 +30,63 @@ class EditConfirmPanelSpec extends SpecBase {
   "EditConfirmPanel view" should {
     "display the correct title, header and company name when company name is provided" in new SetUp {
 
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[editConfirmPanel].apply(
-          Option("TestCompany"),
-          Option("GB123456789000")).body)
+      override val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[editConfirmPanel]
+          .apply(Option("TestCompany"), Option("GB123456789000"))
+          .body
+      )
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe
           messages(app)("editConfirmation.heading")
 
-        val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
+        firstElement.getElementsByTag("p").get(0).html() must include(
+          messages(app)("editConfirmation.body.eori.number")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(0)
+          .html() mustBe "GB123456789000"
 
-        bodyElements.get(0).getElementsByTag("p").get(0).html() must include(messages(app)("editConfirmation.body.eori.number"))
-        bodyElements.get(0).getElementsByTag("strong").get(0).html() mustBe "GB123456789000"
+        firstElement.getElementsByTag("p").get(1).html() must include(
+          messages(app)("editConfirmation.body.company.name")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(1)
+          .html() mustBe "TestCompany"
 
-        bodyElements.get(0).getElementsByTag("p").get(1).html() must include(messages(app)("editConfirmation.body.company.name"))
-        bodyElements.get(0).getElementsByTag("strong").get(1).html() mustBe "TestCompany"
-
-        bodyElements.get(0).getElementsByTag("p").last().html() must include(messages(app)("editConfirmation.body.changes"))
+        firstElement.getElementsByTag("p").last().html() must include(
+          messages(app)("editConfirmation.body.changes")
+        )
       }
     }
 
     "display the correct title, header without company name when company name is not provided" in new SetUp {
 
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[editConfirmPanel].apply(
-          None,
-          Option("GB123456789000")).body)
+      override val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[editConfirmPanel]
+          .apply(None, Option("GB123456789000"))
+          .body
+      )
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe
           messages(app)("editConfirmation.heading")
 
-        val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
+        firstElement.getElementsByTag("p").get(0).html() must include(
+          messages(app)("editConfirmation.body.eori.number")
+        )
+        firstElement
+          .getElementsByTag("strong")
+          .get(0)
+          .html() mustBe "GB123456789000"
 
-        bodyElements.get(0).getElementsByTag("p").get(0).html() must include(messages(app)("editConfirmation.body.eori.number"))
-        bodyElements.get(0).getElementsByTag("strong").get(0).html() mustBe "GB123456789000"
-
-        bodyElements.get(0).getElementsByTag("p").last().html() must include(messages(app)("editConfirmation.body.changes"))
+        firstElement.getElementsByTag("p").last().html() must include(
+          messages(app)("editConfirmation.body.changes")
+        )
       }
     }
   }
@@ -75,5 +94,11 @@ class EditConfirmPanelSpec extends SpecBase {
   trait SetUp {
     val app: Application = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
+
+    val view: Document
+
+    lazy val bodyElements: Elements =
+      view.getElementsByClass("govuk-panel__body-s")
+    lazy val firstElement = bodyElements.get(0)
   }
 }

@@ -29,10 +29,10 @@
             <strong>@eori</strong>
         </p>
 
-        @if(companyName.nonEmpty) {
+        @companyName.map { name =>
             <p class="govuk-!-font-size-27">
                 @messages("editConfirmation.body.company.name")<br>
-                <strong>@companyName</strong>
+                <strong>@name</strong>
             </p>
         }
 
