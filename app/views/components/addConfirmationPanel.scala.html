@@ -33,16 +33,20 @@
         @message
     </h1>
     <div class="govuk-panel__body-s">
-        @if(companyName.nonEmpty) {
-        <p class="govuk-!-font-size-27">@messages("addConfirmation.body.company.name")<br>
-            <strong>@companyName</strong>
-        </p>
-        }
-        <p class="govuk-!-font-size-27">@messages("addConfirmation.body.eori.number") <br>
+        <p class="govuk-!-font-size-27">
+            @messages("addConfirmation.body.eori.number") <br>
             <strong>@eori</strong>
         </p>
-        @if(startDate.nonEmpty) {
-            <p>@messages("addConfirmation.body.setDate", startDate.get)</p>
+
+        @companyName.map { name =>
+            <p class="govuk-!-font-size-27">
+                @messages("addConfirmation.body.company.name")<br>
+                <strong>@name</strong>
+            </p>
+        }
+
+        @startDate.map { date =>
+            <p>@messages("addConfirmation.body.setDate", date)</p>
         }
     </div>
 </div>
