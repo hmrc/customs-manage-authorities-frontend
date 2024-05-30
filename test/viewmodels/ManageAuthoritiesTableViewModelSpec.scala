@@ -153,16 +153,6 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
 
-        formattedFromDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.startDate"), dateAsdMMMyyyy(START_DATE_1)),
-
-        formattedToDate =
-          AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), dateAsdMMMyyyy(END_DATE_1)),
-
-        viewBalanceAsString = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.balance"),
-          messages("manageAuthorities.table.viewBalance.no")),
-
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
           s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
@@ -174,18 +164,6 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       ),
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-
-        formattedFromDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.startDate"),
-          dateAsdMMMyyyy(START_DATE_2)),
-
-        formattedToDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.endDate"),
-          dateAsdMMMyyyy(END_DATE_2)),
-
-        viewBalanceAsString = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.balance"),
-          messages("manageAuthorities.table.viewBalance.no")),
 
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
@@ -207,19 +185,10 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
         companyName =
           if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
-            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
+            Some(AuthorityRowColumnViewModel(
+              messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
+            )
           } else { None },
-
-        formattedFromDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.startDate"),
-          dateAsdMMMyyyy(START_DATE_1)),
-
-        formattedToDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.endDate"),
-          dateAsdMMMyyyy(END_DATE_1)),
-
-        viewBalanceAsString = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.balance"), messages("manageAuthorities.table.viewBalance.no")),
 
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
@@ -236,20 +205,10 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
         companyName =
           if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
-            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER)))
+            Some(AuthorityRowColumnViewModel(
+              messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
+            )
           } else { None },
-
-        formattedFromDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.startDate"),
-          dateAsdMMMyyyy(START_DATE_1)),
-
-        formattedToDate = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.endDate"),
-          dateAsdMMMyyyy(END_DATE_1)),
-
-        viewBalanceAsString = AuthorityRowColumnViewModel(
-          messages("manageAuthorities.table.heading.balance"),
-          messages("manageAuthorities.table.viewBalance.yes")),
 
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),

@@ -16,14 +16,13 @@
 
 package viewmodels
 
-import models.domain.{AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
-  AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority}
+import models.domain.{AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended,
+  AccountType, AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.DateUtils
 import utils.StringUtils.emptyString
 
-import java.time.LocalDate
 import scala.collection.immutable.ListMap
 
 case class AuthorityHeaderRowViewModel(authCompanyId: String,
@@ -46,9 +45,6 @@ case class AuthorityRowColumnViewModel(hiddenHeadingMsg: String,
 
 case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
                                  companyName: Option[AuthorityRowColumnViewModel] = None,
-                                 formattedFromDate: AuthorityRowColumnViewModel,
-                                 formattedToDate: AuthorityRowColumnViewModel,
-                                 viewBalanceAsString: AuthorityRowColumnViewModel,
                                  viewLink: AuthorityRowColumnViewModel)
 
 case class ManageAuthoritiesTableViewModel(idString: String,
@@ -134,13 +130,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
           } else {
             None
           },
-        formattedFromDate =
-          AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.startDate"),
-            dateAsdMMMyyyy(authority.authorisedFromDate)),
-        formattedToDate =
-          authRowColumnViewForAuthorisedToDate(authority.authorisedToDate),
-        viewBalanceAsString =
-          authRowColumnViewForViewBalance(authority.viewBalance),
         viewLink =
           authRowColumnViewForLink(
             accountId,
@@ -153,24 +142,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     }
 
     authRows.toSeq
-  }
-
-  private def authRowColumnViewForAuthorisedToDate(authorisedToDate: Option[LocalDate])
-                                                  (implicit messages: Messages): AuthorityRowColumnViewModel = {
-    val displayValue = authorisedToDate.fold(messages("manageAuthorities.table.endDate.empty"))(dateAsdMMMyyyy)
-
-    AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), displayValue)
-  }
-
-  private def authRowColumnViewForViewBalance(viewBalance: Boolean)
-                                             (implicit messages: Messages): AuthorityRowColumnViewModel = {
-    val displayValue = if (viewBalance) {
-      messages("manageAuthorities.table.viewBalance.yes")
-    } else {
-      messages("manageAuthorities.table.viewBalance.no")
-    }
-
-    AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.balance"), displayValue)
   }
 
   private def authRowColumnViewForLink(accountId: String,
