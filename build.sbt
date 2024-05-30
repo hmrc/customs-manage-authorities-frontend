@@ -24,6 +24,8 @@ lazy val scalastyleSettings = Seq(
   (Test / scalastyleConfig) := baseDirectory.value/ testDirectory / testScalaStyleConfigFile
 )
 
+addCommandAlias("runAllChecks", ";clean;compile;coverage;test;it/test;scalastyle;Test/scalastyle;coverageReport")
+
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
