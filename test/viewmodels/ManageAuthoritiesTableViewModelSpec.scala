@@ -18,7 +18,6 @@ package viewmodels
 
 import utils.TestData._
 import utils.ViewTestHelper
-import viewmodels.ManageAuthoritiesViewModel._
 
 class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
@@ -89,17 +88,6 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
       }
     }
 
-    "contain correct authority header row" when {
-
-      "CdsGeneralGuaranteeAccount status is open" in {
-        val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
-
-        val expectedRowViewModel: AuthorityHeaderRowViewModel = authorityHeaderRowViewModel
-
-        viewModelOb.authHeaderRowViewModel mustBe expectedRowViewModel
-      }
-    }
-
     "contain correct authority rows" when {
 
       "account status is open" in {
@@ -131,21 +119,6 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         viewModelOb.authRows mustBe expectedAuthRowsView
       }
     }
-  }
-
-  private def authorityHeaderRowViewModel = {
-    AuthorityHeaderRowViewModel(
-      authCompanyId = s"account-authorities-table-user-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-      authCompanyHeaderValue = messages("manageAuthorities.table.heading.user"),
-      startDateId = s"account-authorities-table-start-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-      startDateHeader = messages("manageAuthorities.table.heading.startDate"),
-      endDateId = s"account-authorities-table-end-date-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-      endDateHeader = messages("manageAuthorities.table.heading.endDate"),
-      viewBalanceId = s"account-authorities-table-view-balance-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-      viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
-      hiddenActionsId = s"account-authorities-table-actions-heading-CdsGeneralGuaranteeAccount-$ACCOUNT_NUMBER",
-      hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
-    )
   }
 
   private def authRowViewModelForOpenAccount: Seq[AuthorityRowViewModel] = {
@@ -184,11 +157,13 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
 
         companyName =
-          if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+          if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
             Some(AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
             )
-          } else { None },
+          } else {
+            None
+          },
 
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
@@ -208,7 +183,9 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
             Some(AuthorityRowColumnViewModel(
               messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
             )
-          } else { None },
+          } else {
+            None
+          },
 
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
