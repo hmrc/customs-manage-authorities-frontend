@@ -37,6 +37,6 @@ tests may result in the build failing.
 
 ## All tests and checks
 
-This is an sbt command alias specific to this project. It will run a scala style check, run unit tests, run integration
+This is a sbt command alias specific to this project. It will run a scala style check, run unit tests, run integration
 tests and produce a coverage report: 
 > `sbt runAllChecks`
