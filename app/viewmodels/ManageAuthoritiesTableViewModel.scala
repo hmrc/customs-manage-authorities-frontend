@@ -16,26 +16,15 @@
 
 package viewmodels
 
-import models.domain.{AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
-  AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority}
+import models.domain.{
+  AccountNumber, AccountStatusClosed, AccountStatusPending, AccountStatusSuspended, AccountType,
+  AccountWithAuthoritiesWithId, CDSAccountStatus, CdsDutyDefermentAccount, StandingAuthority
+}
 import play.api.i18n.Messages
 import play.api.mvc.Call
 import utils.DateUtils
-import utils.StringUtils.emptyString
 
-import java.time.LocalDate
 import scala.collection.immutable.ListMap
-
-case class AuthorityHeaderRowViewModel(authCompanyId: String,
-                                       authCompanyHeaderValue: String,
-                                       startDateId: String,
-                                       startDateHeader: String,
-                                       endDateId: String,
-                                       endDateHeader: String,
-                                       viewBalanceId: String,
-                                       viewBalanceHeaderValue: String,
-                                       hiddenActionsId: String,
-                                       hiddenActionsHeaderValue: String = emptyString)
 
 case class AuthorityRowColumnViewModel(hiddenHeadingMsg: String,
                                        displayValue: String,
@@ -46,14 +35,10 @@ case class AuthorityRowColumnViewModel(hiddenHeadingMsg: String,
 
 case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
                                  companyName: Option[AuthorityRowColumnViewModel] = None,
-                                 formattedFromDate: AuthorityRowColumnViewModel,
-                                 formattedToDate: AuthorityRowColumnViewModel,
-                                 viewBalanceAsString: AuthorityRowColumnViewModel,
                                  viewLink: AuthorityRowColumnViewModel)
 
 case class ManageAuthoritiesTableViewModel(idString: String,
                                            accountHeadingMsg: String,
-                                           authHeaderRowViewModel: AuthorityHeaderRowViewModel,
                                            authRows: Seq[AuthorityRowViewModel])
 
 object ManageAuthoritiesTableViewModel extends DateUtils {
@@ -73,7 +58,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     ManageAuthoritiesTableViewModel(
       idString,
       accountHeadingMsg,
-      authorityHeaderRowViewModel(account),
       prepareAuthRowsView(accountId, account, authorisedEoriAndCompanyMap)
     )
   }
@@ -99,20 +83,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
         }
     }
 
-  private def authorityHeaderRowViewModel(account: AccountWithAuthoritiesWithId)(implicit messages: Messages) =
-    AuthorityHeaderRowViewModel(
-      authCompanyId = s"account-authorities-table-user-heading-${account.accountType}-${account.accountNumber}",
-      authCompanyHeaderValue = messages("manageAuthorities.table.heading.user"),
-      startDateId = s"account-authorities-table-start-date-heading-${account.accountType}-${account.accountNumber}",
-      startDateHeader = messages("manageAuthorities.table.heading.startDate"),
-      endDateId = s"account-authorities-table-end-date-heading-${account.accountType}-${account.accountNumber}",
-      endDateHeader = messages("manageAuthorities.table.heading.endDate"),
-      viewBalanceId = s"account-authorities-table-view-balance-heading-${account.accountType}-${account.accountNumber}",
-      viewBalanceHeaderValue = messages("manageAuthorities.table.heading.balance"),
-      hiddenActionsId = s"account-authorities-table-actions-heading-${account.accountType}-${account.accountNumber}",
-      hiddenActionsHeaderValue = messages("manageAuthorities.table.heading.actions")
-    )
-
   private def prepareAuthRowsView(accountId: String,
                                   account: AccountWithAuthoritiesWithId,
                                   authorisedEoriAndCompanyMap: Map[String, String])
@@ -134,13 +104,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
           } else {
             None
           },
-        formattedFromDate =
-          AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.startDate"),
-            dateAsdMMMyyyy(authority.authorisedFromDate)),
-        formattedToDate =
-          authRowColumnViewForAuthorisedToDate(authority.authorisedToDate),
-        viewBalanceAsString =
-          authRowColumnViewForViewBalance(authority.viewBalance),
         viewLink =
           authRowColumnViewForLink(
             accountId,
@@ -155,24 +118,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     authRows.toSeq
   }
 
-  private def authRowColumnViewForAuthorisedToDate(authorisedToDate: Option[LocalDate])
-                                                  (implicit messages: Messages): AuthorityRowColumnViewModel = {
-    val displayValue = authorisedToDate.fold(messages("manageAuthorities.table.endDate.empty"))(dateAsdMMMyyyy)
-
-    AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.endDate"), displayValue)
-  }
-
-  private def authRowColumnViewForViewBalance(viewBalance: Boolean)
-                                             (implicit messages: Messages): AuthorityRowColumnViewModel = {
-    val displayValue = if (viewBalance) {
-      messages("manageAuthorities.table.viewBalance.yes")
-    } else {
-      messages("manageAuthorities.table.viewBalance.no")
-    }
-
-    AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.balance"), displayValue)
-  }
-
   private def authRowColumnViewForLink(accountId: String,
                                        authorityId: String,
                                        authority: StandingAuthority,
@@ -180,7 +125,6 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
                                        accountNumber: AccountNumber,
                                        accountType: AccountType)
                                       (implicit messages: Messages): AuthorityRowColumnViewModel = {
-
     val displayValue = s"${
       messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, accountNumber)
     } ${
