@@ -60,7 +60,7 @@ class InputTextSpec extends SpecBase {
 
       val detailsHintElement: Element = view.getElementById("value-hint-details")
 
-      detailsHintElement.getElementsByClass("govuk-heading-s").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
       detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         detailsText

@@ -35,7 +35,7 @@ class InputTextHintSpec extends SpecBase {
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
       val hintLabelElement: Element = view.getElementById(s"$id-hint-text")
 
-      detailsHintElement.getElementsByClass("govuk-heading-s").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
       detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         detailsText
@@ -50,7 +50,7 @@ class InputTextHintSpec extends SpecBase {
 
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
 
-      detailsHintElement.getElementsByClass("govuk-heading-s").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
       detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         detailsText
