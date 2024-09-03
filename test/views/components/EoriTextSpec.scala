@@ -26,40 +26,34 @@ import views.html.components.eori_text
 
 class EoriTextSpec extends SpecBase {
 
-	"EoriText" should {
+  "EoriText" should {
+    "render correctly with a provided ID" in new Setup {
+      val html: HtmlFormat.Appendable = view(
+        "test.title",
+        Html("Test content"),
+        Some("test-id")
+      )
 
-		"render correctly with a provided ID" in new Setup {
-			val html: HtmlFormat.Appendable = view(
-				"test.title",
-				Html("Test content"),
-				Some("test-id")
-			)
+      val document: Document = Jsoup.parse(html.toString())
+      document.select("div").attr("id") mustBe "test-id"
+      document.select("p.govuk-heading-s").text() mustBe msg("test.title")
+      document.select("p.govuk-body").text() mustBe "Test content"
+    }
 
-			val document: Document = Jsoup.parse(html.toString())
+    "render correctly without a provided ID" in new Setup {
+      val html: HtmlFormat.Appendable = view("test.title", Html("Test content"), None)
+      val document: Document = Jsoup.parse(html.toString())
 
-			document.select("div").attr("id") mustBe "test-id"
+      document.select("div").hasAttr("id") mustBe false
+      document.select("p.govuk-heading-s").text() mustBe msg("test.title")
+      document.select("p.govuk-body").text() mustBe "Test content"
+    }
+  }
 
-			document.select("p.govuk-heading-s").text() mustBe msg("test.title")
+  trait Setup {
+    val app: Application = applicationBuilder().build()
+    implicit val msg: Messages = messages(app)
 
-			document.select("p.govuk-body").text() mustBe "Test content"
-		}
-
-		"render correctly without a provided ID" in new Setup {
-			val html: HtmlFormat.Appendable = view("test.title", Html("Test content"), None)
-			val document: Document = Jsoup.parse(html.toString())
-
-			document.select("div").hasAttr("id") mustBe false
-
-			document.select("p.govuk-heading-s").text() mustBe msg("test.title")
-
-			document.select("p.govuk-body").text() mustBe "Test content"
-		}
-	}
-
-	trait Setup {
-		val app: Application = applicationBuilder().build()
-		implicit val msg: Messages = messages(app)
-
-		val view = app.injector.instanceOf[eori_text]
-	}
+    val view = app.injector.instanceOf[eori_text]
+  }
 }
