@@ -35,9 +35,9 @@ class InputTextHintSpec extends SpecBase {
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
       val hintLabelElement: Element = view.getElementById(s"$id-hint-text")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         detailsText
 
       hintLabelElement.html() mustBe labelText
@@ -50,9 +50,9 @@ class InputTextHintSpec extends SpecBase {
 
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         detailsText
 
       intercept[RuntimeException] {

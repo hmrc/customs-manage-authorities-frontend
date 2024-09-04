@@ -39,17 +39,17 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
   "EoriNumberView" should {
     "display the correct guidance in Normal mode with XI Eori Enabled" in new Setup {
       normalModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      normalModeView().getElementsByClass("govuk-details__summary-text").html() mustBe
+      normalModeView().getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      normalModeView().getElementsByClass("govuk-details__text").html() mustBe
+      normalModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       val detailsHintElement: Element =  normalModeView().getElementById("value-hint-details")
       val hintLabelElement: Elements =  normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       hintLabelElement.html() mustBe "eoriNumber.hint.xi"
@@ -59,17 +59,17 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
 
     "display the correct guidance in Check mode with XI Eori Enabled" in new Setup {
       checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      checkModeView().getElementsByClass("govuk-details__summary-text").html() mustBe
+      checkModeView().getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      checkModeView().getElementsByClass("govuk-details__text").html() mustBe
+      checkModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
       val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       hintLabelElement.html() mustBe "eoriNumber.hint.xi"
@@ -87,17 +87,17 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
         app.injector.instanceOf[EoriNumberView].apply(form,CheckMode,checkModeBackLinkRoute, xiEoriEnabled).body)
 
       normalModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      normalModeView().getElementsByClass("govuk-details__summary-text").html() mustBe
+      normalModeView().getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      normalModeView().getElementsByClass("govuk-details__text").html() mustBe
+      normalModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       val detailsHintElement: Element =  normalModeView().getElementById("value-hint-details")
       val hintLabelElement: Elements =  normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       hintLabelElement.html() mustBe "eoriNumber.hint"
@@ -114,17 +114,17 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
         app.injector.instanceOf[EoriNumberView].apply(form,CheckMode,checkModeBackLinkRoute, xiEoriEnabled).body)
 
       checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      checkModeView().getElementsByClass("govuk-details__summary-text").html() mustBe
+      checkModeView().getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      checkModeView().getElementsByClass("govuk-details__text").html() mustBe
+      checkModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
       val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
-      detailsHintElement.getElementsByClass("govuk-details__summary-text").html() mustBe
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-details__text").html() mustBe
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
       hintLabelElement.html() mustBe "eoriNumber.hint"

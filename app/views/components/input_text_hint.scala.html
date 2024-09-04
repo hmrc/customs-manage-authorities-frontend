@@ -16,23 +16,22 @@
 
 @import views.ViewUtils.{DetailsHint,LabelHint}
 
-@this(govukDetails: GovukDetails,
-      govukHint: GovukHint)
+@this(
+    govukHint: GovukHint,
+    eoriText: eori_text
+)
 
-@(detailsHint: Option[DetailsHint] = None,
+@(
+    detailsHint: Option[DetailsHint] = None,
     labelHint: Option[LabelHint] = None,
-    id: String)(implicit messages: Messages)
+    id: String)(implicit messages: Messages
+)
 
 @detailsHint.map { dh =>
-    @govukDetails(
-        Details(
-            summary = Text(messages(dh.summaryText)),
-            content = HtmlContent(messages(dh.text)),
-            id = Some(s"$id-hint-details"),
-            classes = dh.classes,
-            attributes = dh.attributes,
-            open = dh.open
-        )
+    @eoriText(
+        title = dh.summaryText,
+        content = Html(messages(dh.text)),
+        id = Some(s"$id-hint-details")
     )
 }
 
