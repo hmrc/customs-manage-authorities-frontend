@@ -54,6 +54,6 @@ class EoriTextSpec extends SpecBase {
     val app: Application = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
-    val view = app.injector.instanceOf[eori_text]
+    val view: eori_text = app.injector.instanceOf[eori_text]
   }
 }

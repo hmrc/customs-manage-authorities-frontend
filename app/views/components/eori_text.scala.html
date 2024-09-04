@@ -16,7 +16,7 @@
 
 @this()
 
-@(title: String, content: Html, id: Option[String]= None)(implicit messages: Messages)
+@(title: String, content: Html, id: Option[String] = None)(implicit messages: Messages)
 
 <div @{id.fold("")(id => s"id=$id")}>
     <p id="value-hint-title" class="govuk-heading-s">@messages(title)</p>
