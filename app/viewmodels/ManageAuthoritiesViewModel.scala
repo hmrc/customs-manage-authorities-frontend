@@ -16,9 +16,14 @@
 
 package viewmodels
 
+import config.FrontendAppConfig
+import models.NormalMode
 import models.domain.{AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts}
+import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
 import utils.DateUtils
 import viewmodels.ManageAuthoritiesViewModel.accountWithAuthoritiesOrdering
+import views.html.components.link_twoLinks
 
 import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
@@ -37,6 +42,16 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
 
   def niIndicator(acc: String): Boolean =
     accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
+
+  def generateLinks()(implicit messages: Messages, appConfig: FrontendAppConfig): HtmlFormat.Appendable = {
+    new link_twoLinks().apply(
+      firstLinkMessage = "manageAuthorities.addAuthority",
+      firstLinkHref = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url,
+      firstLinkId = Some("start-link"),
+      secondLinkMessage = "cf.account.authorized-to-view.title",
+      secondLinkHref = appConfig.authorizedToViewUrl,
+      secondLinkId = Some("authorised-to-view-link"))
+  }
 }
 
 object ManageAuthoritiesViewModel extends DateUtils {

@@ -44,21 +44,19 @@
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())),
         backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), isFullWidth = viewModel.hasAccounts) {
 
-    @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
+    @h1(id=Some("manageAuthorities.heading"),
+        msg = "manageAuthorities.title",
+        classes="govuk-heading-xl govuk-!-margin-bottom-6")
+
+    <div class="govuk-form-group">
+      @viewModel.generateLinks()
+    </div>
 
     @if(viewModel.hasNoAccounts) {
 
         @p(content = Html(messages("manageAuthorities.notification.noAuthorities")), id = Some("no-authorities"),
             classes = "govuk-body govuk-!-margin-bottom-6")
-
-        @inset(msg = messages("manageAuthorities.notification.cdsAuthorities"), id=Some("cds-authorities"),
-                classes = "govuk-inset-text govuk-!-margin-top-0 govuk-!-margin-bottom-9")
     }
-
-    <div class="govuk-form-group">
-        @button(msg = "manageAuthorities.addAuthority", href =
-        Some(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url), id = Some("start-link"))
-    </div>
 
     @if(viewModel.hasAccounts) {
 
