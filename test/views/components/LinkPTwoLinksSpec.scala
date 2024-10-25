@@ -22,11 +22,11 @@ import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import views.html.components.link_twoLinks
+import views.html.components.link_p_twoLinks
 
-class LinkTwoLinksSpec extends SpecBase {
+class LinkPTwoLinksSpec extends SpecBase {
 
-  "link_twoLinks" should {
+  "link_p_twoLinks" should {
 
     "render correctly two links with correct IDs and attributes" in new Setup {
       val html: HtmlFormat.Appendable = view(
@@ -53,6 +53,6 @@ class LinkTwoLinksSpec extends SpecBase {
     val app: Application = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
-    val view: link_twoLinks = app.injector.instanceOf[link_twoLinks]
+    val view: link_p_twoLinks = app.injector.instanceOf[link_p_twoLinks]
   }
 }

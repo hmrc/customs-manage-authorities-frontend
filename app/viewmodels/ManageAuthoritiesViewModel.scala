@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import utils.DateUtils
 import viewmodels.ManageAuthoritiesViewModel.accountWithAuthoritiesOrdering
-import views.html.components.link_twoLinks
+import views.html.components.link_p_twoLinks
 
 import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
@@ -44,7 +44,7 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
     accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
 
   def generateLinks()(implicit messages: Messages, appConfig: FrontendAppConfig): HtmlFormat.Appendable = {
-    new link_twoLinks().apply(
+    new link_p_twoLinks().apply(
       firstLinkMessage = "manageAuthorities.addAuthority",
       firstLinkHref = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url,
       firstLinkId = Some("start-link"),
