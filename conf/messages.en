@@ -89,6 +89,9 @@ manageAuthorities.notification.cdsAuthorities = Authorities you add here will on
 manageAuthorities.addAuthority = Add an authority
 manageAuthorities.error=Sorry, we can''t display these right now. Please try again later.
 
+# Authorized To View
+cf.account.authorized-to-view.title = Find accounts you have authority to use
+
 manageAuthorities.table.heading.account.CdsCashAccount = Cash account: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Duty deferment (Northern Ireland): {0}

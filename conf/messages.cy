@@ -90,6 +90,9 @@ manageAuthorities.notification.cdsAuthorities=Bydd awdurdodau rydych yn eu hychw
 manageAuthorities.addAuthority=Ychwanegu awdurdod
 manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 
+# Authorized To View
+cf.account.authorized-to-view.title = Dod o hyd i gyfrifon y mae gennych awdurdod i’w defnyddio
+
 manageAuthorities.table.heading.account.CdsCashAccount=Cyfrif arian parod: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount=Gohirio tollau: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Gohirio tollau (Gogledd Iwerddon): {0}

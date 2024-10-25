@@ -226,7 +226,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     "API call fails" must {
 
       "redirect to 'unavailable' page" in new Setup {
-
         val mockRepository = mock[AuthoritiesRepository]
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 

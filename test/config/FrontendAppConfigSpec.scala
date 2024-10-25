@@ -40,6 +40,12 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
       }
     }
+
+    "return authorizedToViewUrl" in new Setup {
+      running(app) {
+        appConfig.authorizedToViewUrl mustBe "http://localhost:9876/customs/payment-records/authorized-to-view"
+      }
+    }
   }
 
   trait Setup {
