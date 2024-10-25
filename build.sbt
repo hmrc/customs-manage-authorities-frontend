@@ -39,7 +39,7 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
 )
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
+  .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaSettings *)
   .settings(defaultSettings() *)
