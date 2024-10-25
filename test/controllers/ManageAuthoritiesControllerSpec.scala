@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
+
 import models.domain.{
   AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
   AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
@@ -68,9 +69,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesRoute)
-
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[NoAccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -104,6 +103,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+
         when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
 
@@ -120,18 +120,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesRoute)
-
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(
-              ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap)
-            )(request, messages(application), appConfig).toString
+            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap))(
+              request, messages(application), appConfig).toString
         }
       }
 
@@ -169,18 +166,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesRoute)
-
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(
-              ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap)
-            )(request, messages(application), appConfig).toString
+            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap))(
+              request, messages(application), appConfig).toString
         }
       }
 
@@ -194,7 +188,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockAccountsCacheService = mock[AccountsCacheService]
         val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
         val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
-
         val mockAuthCacheService = mock[AuthoritiesCacheService]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
@@ -228,7 +221,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
               request, messages(application), appConfig).toString
         }
       }
-
     }
 
     "API call fails" must {
@@ -249,7 +241,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesRoute)
-
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -263,9 +254,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         running(application) {
 
           val request = fakeRequest(GET, manageAuthoritiesUnavailableRoute)
-
           val result = route(application, request).value
-
           val view = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -519,19 +508,23 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-    val standingAuthority01: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-    val standingAuthority02: StandingAuthority = StandingAuthority("EORI2", startDate, Some(endDate), viewBalance = false)
+    val standingAuthority01: StandingAuthority = StandingAuthority(
+      "EORI", startDate, Some(endDate), viewBalance = false)
+
+    val standingAuthority02: StandingAuthority = StandingAuthority(
+      "EORI2", startDate, Some(endDate), viewBalance = false)
 
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-      "a" ->
-        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority01))
+      "a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(
+        AccountStatusOpen), Map("b" -> standingAuthority01))
     ))
 
     val authoritiesWithId02: AuthoritiesWithId = AuthoritiesWithId(Map(
-      "a" ->
-        AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority01)),
-      "c" ->
-        AccountWithAuthoritiesWithId(CdsCashAccount, "123456", Some(AccountStatusClosed), Map("d" -> standingAuthority02))
+      "a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(
+        AccountStatusOpen), Map("b" -> standingAuthority01)),
+
+      "c" -> AccountWithAuthoritiesWithId(CdsCashAccount, "123456", Some(
+        AccountStatusClosed), Map("d" -> standingAuthority02))
     ))
   }
 }
