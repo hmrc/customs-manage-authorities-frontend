@@ -325,7 +325,6 @@ removeConfirmation.removalAuthority = Bydd yr awdurdod hwn cael ei ddileu ar unw
 
 manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
-manageAuthorities.noAccountsAvailable.label = Dod o hyd i gyfrifon y mae gennych awdurdod i’w defnyddio
 
 # Authorised User
 

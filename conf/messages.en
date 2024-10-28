@@ -339,7 +339,6 @@ removeConfirmation.removalAuthority = The removal of this authority is immediate
 
 manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferment or general guarantee account yet.
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
-manageAuthorities.noAccountsAvailable.label = Find accounts you have authority to use
 
 # Authorised User
 
