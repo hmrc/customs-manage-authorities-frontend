@@ -28,9 +28,9 @@ import views.html.NoAccountsView
 
 class NoAccountsViewSpec extends SpecBase {
 
-  "AccountsView" should {
+  "NoAccountsView" should {
     "return to home page when back link is clicked" in new Setup {
-      view().getElementsByClass("govuk-back-link").attr("href") mustBe s"$host/"
+      view().getElementsByClass("govuk-back-link").attr("href") mustBe s"$homeUrl/"
     }
 
     "display header" in new Setup {
@@ -43,7 +43,7 @@ class NoAccountsViewSpec extends SpecBase {
     }
 
     "goto find accounts you have auth to use when the link is clicked" in new Setup {
-      view().getElementById("manageAuthorities-noAccounts-link").attr("href") mustBe s"$host/authorized-to-view"
+      view().getElementById("manageAuthorities-noAccounts-link").attr("href") mustBe s"$homeUrl/authorized-to-view"
     }
 
   }
@@ -55,7 +55,7 @@ class NoAccountsViewSpec extends SpecBase {
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    val host: String = "http://localhost:9876/customs/payment-records"
+    val homeUrl: String = "http://localhost:9876/customs/payment-records"
 
     def view(): Document = Jsoup.parse(app.injector.instanceOf[NoAccountsView].apply().body)
   }
