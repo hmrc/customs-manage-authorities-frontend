@@ -323,8 +323,8 @@ removeConfirmation.companyName=Enw’r cwmni:
 removeConfirmation.eoriNumber=Rhif EORI:
 removeConfirmation.removalAuthority = Bydd yr awdurdod hwn cael ei ddileu ar unwaith.
 
-manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, gohirio tollau na gwarant gyffredinol eto.
-manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o'r rhain, byddwch yn gallu ychwanegu awdurdod er mwyn i rywun ei ddefnyddio ar ddatganiad mewnforio CDS.
+manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod, cyfrif gohirio tollau na chyfrif gwarant gyffredinol ar hyn o bryd.
+manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o’r rhain, byddwch yn gallu ychwanegu awdurdod i rywun eu defnyddio ar ddatganiad mewnforio’r Gwasanaeth Datganiadau Tollau (CDS).
 
 # Authorised User
 
