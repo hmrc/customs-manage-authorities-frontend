@@ -34,7 +34,8 @@
 )
 
 @(
-    viewModel: ManageAuthoritiesViewModel
+    viewModel: ManageAuthoritiesViewModel,
+    maybeMessageBannerPartial: Option[HtmlFormat.Appendable]
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -42,7 +43,9 @@
 )
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())),
-        backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), isFullWidth = viewModel.hasAccounts) {
+        backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl), 
+        isFullWidth = viewModel.hasAccounts,
+        maybeMessageBannerPartial = maybeMessageBannerPartial) {
 
     @h1(id=Some("manageAuthorities.heading"),
         msg = "manageAuthorities.title",

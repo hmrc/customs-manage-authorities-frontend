@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.CustomsDataStoreConnector
+import connectors.{CustomsDataStoreConnector, SecureMessageConnector}
 import controllers.actions._
 import models.domain.{AuthoritiesWithId, CDSAccounts, EORI}
 import models.requests.IdentifierRequest
@@ -42,6 +42,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                             accountsCacheService: AccountsCacheService,
                                             authEoriAndCompanyInfoService:AuthorisedEoriAndCompanyInfoService,
                                             dataStoreConnector: CustomsDataStoreConnector,
+                                            secureMessageConnector: SecureMessageConnector,
                                             noAccountsView: NoAccountsView,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: ManageAuthoritiesView,
@@ -55,6 +56,8 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
 
+      val returnToUrl = appConfig.customsSecureMessagingBannerEndpoint + routes.ManageAuthoritiesController.onPageLoad.url
+
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
         accountsFromCache <- accountsCacheService.retrieveAccountsForId(request.internalId)
@@ -63,15 +66,16 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         authorities <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
         authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
           authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs))
-      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty))
+        messageBanner <- secureMessageConnector.getMessageCountBanner(returnToUrl)
+      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner)
 
       response.map {
-        case (Some(authorities), accounts, authEoriAndCompanyInfo) =>
-          Ok(view(ManageAuthoritiesViewModel(
-            authorities,
-            accounts,
-            authEoriAndCompanyInfo)))
-        case (None, _, _) =>
+        case (Some(authorities), accounts, authEoriAndCompanyInfo, messageBanner) =>
+          Ok(view(
+            ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo),
+            messageBanner.map(_.successfulContentOrEmpty)
+          ))
+        case (None, _, _, _) =>
           Ok(noAccountsView())
       }.recover {
         case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
