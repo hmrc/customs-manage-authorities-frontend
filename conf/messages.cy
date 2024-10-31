@@ -89,6 +89,7 @@ manageAuthorities.notification.noAuthorities=Nid ydych wedi rhoi caniatâd i unr
 manageAuthorities.notification.cdsAuthorities=Bydd awdurdodau rydych yn eu hychwanegu yma dim ond yn ddilys i’w defnyddio ar y Gwasanaeth Datgan Tollau.
 manageAuthorities.addAuthority=Ychwanegu awdurdod
 manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
+manageAuthorities.error.display = Mae problem gyda dangos y cyfrifon rydych eisoes wedi’u hawdurdodi.
 
 # Authorized To View
 cf.account.authorized-to-view.title = Dod o hyd i gyfrifon y mae gennych awdurdod i’w defnyddio

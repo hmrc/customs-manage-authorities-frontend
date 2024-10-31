@@ -14,18 +14,15 @@
  * limitations under the License.
  *@
 
-@import views.html.partials._
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
 
 @this(
     layout: Layout,
-    formHelper: FormWithCSRF,
-    errorSummary: components.errorSummary,
-    button: components.button,
-    inputText: components.inputText,
     h1: components.h1,
-    inset: components.inset
+    h2: components.h2,
+    p: components.p,
+    link: components.link
 )
 
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -35,6 +32,11 @@
 
     @h1(id=Some("manageAuthorities.heading"), msg = "manageAuthorities.title", classes="govuk-heading-xl")
 
-    @inset(msg = messages("manageAuthorities.error"), id=Some("problem-with-service-text"),
-            classes = "govuk-inset-text govuk-!-margin-top-9 govuk-!-margin-bottom-9")
+    @link(location = appConfig.authorizedToViewUrl,
+        linkMessage = "cf.account.authorized-to-view.title",
+        linkId = Some("manageAuthorities-noAccounts-link"))
+
+    @h2(Html(messages("manageAuthorities.accounts.authorised")))
+
+    @p(Html(messages("manageAuthorities.error.display")))
 }

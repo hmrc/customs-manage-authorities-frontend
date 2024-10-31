@@ -88,6 +88,7 @@ manageAuthorities.notification.noAuthorities = You have not given anyone permiss
 manageAuthorities.notification.cdsAuthorities = Authorities you add here will only be valid for use on the Customs Declaration Service (CDS).
 manageAuthorities.addAuthority = Add an authority
 manageAuthorities.error=Sorry, we can''t display these right now. Please try again later.
+manageAuthorities.error.display=There is a problem displaying the accounts you have already authorised. Please try again later.
 
 # Authorized To View
 cf.account.authorized-to-view.title = Find accounts you have authority to use
