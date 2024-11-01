@@ -74,5 +74,3 @@ class SecureMessageConnectorSpec extends SpecBase {
     ).build()
   }
 }
-
-

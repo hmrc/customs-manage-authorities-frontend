@@ -127,7 +127,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap))(
+            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
         }
       }
@@ -173,7 +173,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap))(
+            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
         }
       }
@@ -217,7 +217,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(emptyAuthoritiesWithId, accounts))(
+            view(ManageAuthoritiesViewModel(emptyAuthoritiesWithId, accounts), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
         }
       }
