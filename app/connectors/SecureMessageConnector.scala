@@ -21,7 +21,7 @@ import javax.inject.Inject
 import play.api.http.Status
 import play.api.mvc.RequestHeader
 import play.api.{Logger, Logging}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import scala.concurrent.{ExecutionContext, Future}
