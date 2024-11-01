@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SecureMessageConnector}
 
 import models.domain.{
   AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
@@ -52,17 +52,20 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
         val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+        val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
 
         val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
-            bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+            bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -77,6 +80,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
           contentAsString(result) mustEqual
             view()(request, messages(application), appConfig).toString
+          
+          verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
       }
 
@@ -92,7 +97,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-        val mockAuthEoriAndCompanyService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+        val mockAuthEoriAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+        val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
@@ -104,8 +110,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
-        when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
+        when(mockAuthEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
+        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
 
         val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
@@ -113,7 +120,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
             bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-            bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyService)
+            bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyInfoService),
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -129,6 +137,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           contentAsString(result) mustEqual
             view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
+          
+          verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
       }
 
