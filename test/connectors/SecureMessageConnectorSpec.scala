@@ -16,61 +16,66 @@
 
 package connectors
 
-import play.api.test.Helpers._
-import play.twirl.api.Html
+import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import base.SpecBase
+import play.api.test.Helpers._
+import play.api.{Application, inject}
+import play.twirl.api.Html
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import uk.gov.hmrc.play.partials.HtmlPartial
-import play.api.{inject, Application}
-import scala.concurrent.Future
-import scala.util.Try
 import utils.StringUtils.emptyString
-import play.api.mvc.RequestHeader
+
+import scala.concurrent.Future
 
 class SecureMessageConnectorSpec extends SpecBase {
 
   "getMessageCountBanner" should {
 
     "return a valid message banner when the upstream call returns OK" in new Setup {
-      when(mockConnector.getMessageCountBanner(any[String])(any[RequestHeader]))
-        .thenReturn(Future.successful(Some(HtmlPartial.Success(Some("Hello"), Html(emptyString)))))
+
+      when[Future[HtmlPartial]](mockHttpClient.GET(any, any, any)(any, any, any))
+        .thenReturn(Future.successful(HtmlPartial.Success(Some("Hello"), Html(emptyString))))
 
       running(app) {
-        val result = await(mockConnector.getMessageCountBanner(returnTo)(fakeRequest()))
+        val result = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
         result.get mustEqual HtmlPartial.Success(Some("Hello"), Html(emptyString))
       }
     }
 
+    "return None when the upstream call return HtmlPartial failure" in new Setup {
+      when[Future[HtmlPartial]](mockHttpClient.GET(any, any, any)(any, any, any))
+        .thenReturn(Future.successful(HtmlPartial.Failure()))
+
+      running(app) {
+        val result: Option[HtmlPartial] = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
+        result mustBe empty
+      }
+    }
+
     "return None when the upstream call throws an Exception" in new Setup {
-      when(mockConnector.getMessageCountBanner(any[String])(any[RequestHeader]))
-        .thenReturn(Future.failed(new Exception("ahh")))
+      when[Future[HttpResponse]](mockHttpClient.GET(any, any, any)(any, any, any))
+        .thenReturn(Future.failed(new RuntimeException("exception occurred")))
 
       running(app) {
-        val result = Try(await(mockConnector.getMessageCountBanner(returnTo)(fakeRequest()))).toOption
-        result.isEmpty mustEqual true
+        val result: Option[HtmlPartial] = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
+        result mustBe empty
       }
     }
 
-    "return None when the upstream call returns an unhappy response" in new Setup {
-      when(mockConnector.getMessageCountBanner(any[String])(any[RequestHeader]))
-        .thenReturn(Future.successful(None))
-
-      running(app) {
-        val result = await(mockConnector.getMessageCountBanner(returnTo)(fakeRequest()))
-        result mustBe None
-      }
-    }
   }
 
   trait Setup {
-    val mockConnector: SecureMessageConnector = mock[SecureMessageConnector]
+
+    val mockHttpClient: HttpClient = mock[HttpClient]
 
     protected val returnTo = "gov.uk"
 
     val app: Application = applicationBuilder().overrides(
-      inject.bind[SecureMessageConnector].toInstance(mockConnector)
+      inject.bind[HttpClient].toInstance(mockHttpClient)
     ).build()
+
+    val connector: SecureMessageConnector = app.injector.instanceOf[SecureMessageConnector]
   }
 }
