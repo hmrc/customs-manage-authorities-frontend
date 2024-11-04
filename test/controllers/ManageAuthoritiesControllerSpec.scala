@@ -112,7 +112,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockAuthEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
-
         when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
 
         val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
