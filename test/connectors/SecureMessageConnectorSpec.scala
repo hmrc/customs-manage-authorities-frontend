@@ -23,7 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import base.SpecBase
 import uk.gov.hmrc.play.partials.HtmlPartial
-import play.api.inject
+import play.api.{inject, Application}
 import scala.concurrent.Future
 import scala.util.Try
 import utils.StringUtils.emptyString
@@ -59,7 +59,7 @@ class SecureMessageConnectorSpec extends SpecBase {
 
       running(app) {
         val result = await(mockConnector.getMessageCountBanner(returnTo)(fakeRequest()))
-        result mustEqual None
+        result mustBe None
       }
     }
   }
@@ -69,8 +69,9 @@ class SecureMessageConnectorSpec extends SpecBase {
 
     protected val returnTo = "gov.uk"
 
-    val app = applicationBuilder().overrides(
+    val app: Application = applicationBuilder().overrides(
       inject.bind[SecureMessageConnector].toInstance(mockConnector)
     ).build()
+    
   }
 }
