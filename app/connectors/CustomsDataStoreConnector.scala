@@ -17,7 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{CompanyInformation, EmailResponse, EmailResponses, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse}
+import models.{
+  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse,
+  EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse
+}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
@@ -29,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
                                           httpClient: HttpClient
-                                          )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
+                                         )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   val log = Logger(this.getClass)
 
@@ -72,4 +75,13 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
     }
   }
+
+  def isEmailUnverified(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    httpClient.GET[EmailUnverifiedResponse](appConfig.customsDataStore + "/subscriptions/unverified-email-display")
+      .map(res => res.unVerifiedEmail)
+  }
+
+  def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =
+    httpClient.GET[EmailVerifiedResponse](appConfig.customsDataStore + "/subscriptions/email-display")
+
 }

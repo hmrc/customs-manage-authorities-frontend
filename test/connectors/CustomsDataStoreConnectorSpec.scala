@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.FrontendAppConfig
-import models.{UndeliverableEmail, UnverifiedEmail}
+import models.{UndeliverableEmail, UnverifiedEmail, EmailVerifiedResponse}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
@@ -299,7 +299,36 @@ class CustomsDataStoreConnectorSpec extends SpecBase
     }
   }
 
+  "retrieve unverified email" must {
+    "return success response" in new Setup {
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
+            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
+        val result = connector.isEmailUnverified(hc).futureValue
+        result mustBe Some("unverified@email.com")
+      }
+    }
+  }
+
+  "verifiedEmail" must {
+    "return correct email" in new Setup {
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
+            .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
+        val result = connector.verifiedEmail(hc).futureValue
+        result mustBe emailVerifiedRes
+      }
+    }
+  }
+
   trait Setup {
+
+    val emailValue: String = "test@test.com"
+    val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
 
     private def application: Application =
       new GuiceApplicationBuilder()

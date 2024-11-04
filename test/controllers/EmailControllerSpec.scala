@@ -17,14 +17,14 @@
 package controllers
 
 import base.SpecBase
-import connectors.CustomsFinancialsConnector
+import connectors.CustomsDataStoreConnector
 import models.{EmailUnverifiedResponse, EmailVerifiedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.OK
-import play.api.inject
+import play.api.{Application, inject}
 import play.api.test.Helpers.{GET, await, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -37,7 +37,7 @@ class EmailControllerSpec extends SpecBase {
       when(mockConnector.isEmailUnverified(any)).thenReturn(Future.successful(Some("unverifiedEmail")))
 
       running(application) {
-        val connector = application.injector.instanceOf[CustomsFinancialsConnector]
+        val connector: CustomsDataStoreConnector = application.injector.instanceOf[CustomsDataStoreConnector]
 
         val result: Future[Option[String]] = connector.isEmailUnverified(hc)
         await(result) mustBe expectedResult
@@ -45,7 +45,7 @@ class EmailControllerSpec extends SpecBase {
     }
 
     "return unverified email response" in new Setup {
-       when(mockConnector.isEmailUnverified(any)).thenReturn(Future.successful(Some("test@test.com")))
+      when(mockConnector.isEmailUnverified(any)).thenReturn(Future.successful(Some("test@test.com")))
 
       running(application) {
         val request = fakeRequest(GET, routes.EmailController.showUnverified().url)
@@ -58,28 +58,28 @@ class EmailControllerSpec extends SpecBase {
 
   "showUndeliverable" must {
     "display undeliverableEmail page" in new Setup {
-        when(mockConnector.verifiedEmail(any)).thenReturn(Future.successful(emailVerifiedResponse))
+      when(mockConnector.verifiedEmail(any)).thenReturn(Future.successful(emailVerifiedResponse))
 
-        running(application){
-          val request = fakeRequest(GET, routes.EmailController.showUndeliverable().url)
-          val result = route(application, request).value
+      running(application) {
+        val request = fakeRequest(GET, routes.EmailController.showUndeliverable().url)
+        val result = route(application, request).value
 
-          status(result) shouldBe OK
-        }
+        status(result) shouldBe OK
+      }
     }
   }
 
 
   trait Setup {
-    val expectedResult = Some("unverifiedEmail")
+    val expectedResult: Option[String] = Some("unverifiedEmail")
     implicit val hc: HeaderCarrier = HeaderCarrier()
-    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    val mockConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    val response = EmailUnverifiedResponse(Some("unverifiedEmail"))
+    val response: EmailUnverifiedResponse = EmailUnverifiedResponse(Some("unverifiedEmail"))
     val emailVerifiedResponse: EmailVerifiedResponse = EmailVerifiedResponse(Some("test@test.com"))
 
-    val application = applicationBuilder().overrides(
-      inject.bind[CustomsFinancialsConnector].toInstance(mockConnector)
+    val application: Application = applicationBuilder().overrides(
+      inject.bind[CustomsDataStoreConnector].toInstance(mockConnector)
     ).build()
   }
 
