@@ -58,7 +58,8 @@
 }
 
 @beforeContent = {
-    @if(maybeMessageBannerPartial.isDefined) { @maybeMessageBannerPartial }
+    @maybeMessageBannerPartial.map(identity).getOrElse(HtmlFormat.empty)
+    @hmrcLanguageSelectHelper()
 }
 
 @additionalHead = {
@@ -89,7 +90,7 @@
     serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
     signOutUrl = Some(controllers.routes.LogoutController.logout.url),
     backLinkUrl = backLink,
-    beforeContentBlock =if (maybeMessageBannerPartial.isDefined) Some(beforeContent) else None,
+    beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent),
     additionalHeadBlock = Some(additionalHead),
     phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
     isWelshTranslationAvailable = welshToggle,

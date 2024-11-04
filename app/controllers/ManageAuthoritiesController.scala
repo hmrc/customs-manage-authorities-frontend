@@ -56,7 +56,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
 
-      val returnToUrl = appConfig.customsSecureMessagingBannerEndpoint + routes.ManageAuthoritiesController.onPageLoad.url
+      val returnToUrl = s"${appConfig.manageAuthoritiesServiceUrl}${routes.ManageAuthoritiesController.onPageLoad.url}"
 
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)

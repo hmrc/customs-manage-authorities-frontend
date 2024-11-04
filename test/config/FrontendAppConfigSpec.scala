@@ -52,6 +52,12 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.customsSecureMessagingBannerEndpoint mustBe "http://localhost:9842/customs/secure-messaging/banner"
       }
     }
+
+    "return manageAuthoritiesServiceUrl" in new Setup {
+      running(app) {
+        appConfig.manageAuthoritiesServiceUrl mustBe "http://localhost:9000/customs/manage-authorities"
+      }
+    }
   }
 
   trait Setup {
