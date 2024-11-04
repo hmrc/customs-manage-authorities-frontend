@@ -72,6 +72,5 @@ class SecureMessageConnectorSpec extends SpecBase {
     val app: Application = applicationBuilder().overrides(
       inject.bind[SecureMessageConnector].toInstance(mockConnector)
     ).build()
-    
   }
 }

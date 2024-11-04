@@ -80,7 +80,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
           contentAsString(result) mustEqual
             view()(request, messages(application), appConfig).toString
-          
+
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
       }
@@ -112,6 +112,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockAuthEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
+
         when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
 
         val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -137,7 +138,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           contentAsString(result) mustEqual
             view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
-          
+
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
       }
