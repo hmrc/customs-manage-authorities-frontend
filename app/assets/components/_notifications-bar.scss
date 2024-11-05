@@ -1,0 +1,16 @@
+.notifications-bar {
+    ul {
+      margin: 0;
+      font-size: 1rem;
+      li {
+        display: inline;
+      }
+    }
+    a {
+      margin: 0 .8rem;
+    }
+  }
+  
+  .notifications-bar a:first-child {
+    margin: 0 .8rem 0 0;
+  }

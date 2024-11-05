@@ -46,6 +46,18 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.authorizedToViewUrl mustBe "http://localhost:9876/customs/payment-records/authorized-to-view"
       }
     }
+
+    "return customsSecureMessagingBannerEndpoint" in new Setup {
+      running(app) {
+        appConfig.customsSecureMessagingBannerEndpoint mustBe "http://localhost:9842/customs/secure-messaging/banner"
+      }
+    }
+
+    "return manageAuthoritiesServiceUrl" in new Setup {
+      running(app) {
+        appConfig.manageAuthoritiesServiceUrl mustBe "http://localhost:9000/customs/manage-authorities"
+      }
+    }
   }
 
   trait Setup {

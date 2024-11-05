@@ -39,6 +39,7 @@
         deskpro: Boolean = true,
         welshToggle: Boolean = true,
         userResearchBanner: Boolean = true,
+        maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
         isFullWidth: Boolean = false
 )(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
@@ -54,6 +55,11 @@
         case Some(text) => Some(text)
         case _ => Some(s"${messages("service.name")} - GOV.UK")
     }
+}
+
+@beforeContent = {
+    @maybeMessageBannerPartial.map(identity).getOrElse(HtmlFormat.empty)
+    @hmrcLanguageSelectHelper()
 }
 
 @additionalHead = {
@@ -84,7 +90,7 @@
     serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
     signOutUrl = Some(controllers.routes.LogoutController.logout.url),
     backLinkUrl = backLink,
-    beforeContentBlock = None,
+    beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent),
     additionalHeadBlock = Some(additionalHead),
     phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
     isWelshTranslationAvailable = welshToggle,
