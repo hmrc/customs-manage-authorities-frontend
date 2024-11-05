@@ -29,9 +29,8 @@ import utils.StringUtils.emptyString
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsFinancialsConnector @Inject()(
-                                            config: Configuration,
-                                            httpClient: HttpClient
+class CustomsFinancialsConnector @Inject()(config: Configuration,
+                                           httpClient: HttpClient
                                           )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   private val baseUrl = config.get[Service]("microservice.services.customs-financials-api")
@@ -52,14 +51,14 @@ class CustomsFinancialsConnector @Inject()(
   def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest,
                               eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.POST[AddAuthorityRequest, HttpResponse](
-      baseUrl.toString + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
+        baseUrl.toString + context + s"/$eori/account-authorities/grant", addAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
   def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest,
                                eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
     httpClient.POST[RevokeAuthorityRequest, HttpResponse](
-      baseUrl.toString + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
+        baseUrl.toString + context + s"/$eori/account-authorities/revoke", revokeAuthorityRequest)
       .map(_.status == Status.NO_CONTENT).recover { case _ => false }
   }
 
@@ -72,9 +71,9 @@ class CustomsFinancialsConnector @Inject()(
           case _ => Left(EORIValidationError)
         }
       }).recover {
-      case _: NotFoundException => Right(false)
-      case _ => Left(EORIValidationError)
-    }
+        case _: NotFoundException => Right(false)
+        case _ => Left(EORIValidationError)
+      }
   }
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {

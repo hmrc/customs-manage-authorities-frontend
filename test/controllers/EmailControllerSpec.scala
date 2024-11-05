@@ -69,7 +69,6 @@ class EmailControllerSpec extends SpecBase {
     }
   }
 
-
   trait Setup {
     val expectedResult: Option[String] = Some("unverifiedEmail")
     implicit val hc: HeaderCarrier = HeaderCarrier()
