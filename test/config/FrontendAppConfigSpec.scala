@@ -55,7 +55,7 @@ class FrontendAppConfigSpec extends SpecBase {
 
     "return manageAuthoritiesServiceUrl" in new Setup {
       running(app) {
-        appConfig.manageAuthoritiesServiceUrl mustBe "http://localhost:9000/customs/manage-authorities"
+        appConfig.manageAuthoritiesServiceUrl mustBe "http://localhost:9000"
       }
     }
   }
