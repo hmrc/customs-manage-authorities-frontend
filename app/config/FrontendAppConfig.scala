@@ -62,7 +62,6 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
     s"${configuration.get[String]("microservice.services.customs-financials-secure-messaging-frontend.banner-endpoint")}"
 
   val manageAuthoritiesServiceUrl: String =
-    s"${servicesConfig.baseUrl("customs-manage-authorities-frontend")}" +
-    s"${configuration.get[String]("microservice.services.customs-manage-authorities-frontend.context")}"
+    configuration.get[String]("microservice.services.customs-manage-authorities-frontend.url")
 
 }
