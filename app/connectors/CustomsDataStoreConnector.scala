@@ -17,7 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{CompanyInformation, EmailResponse, EmailResponses, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse}
+import models.{
+  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse,
+  EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse
+}
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
@@ -29,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
                                           httpClient: HttpClient
-                                          )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
+                                         )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   val log = Logger(this.getClass)
 
   def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/company-information"
+    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/company-information"
     httpClient.GET[CompanyInformation](dataStoreEndpoint).map(response => {
       response.consent match {
         case "1" => Some(response.name)
@@ -47,7 +50,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
   }
 
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/xieori-information"
+    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
     if (isXiEoriEnabled) {
@@ -63,7 +66,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
   }
 
   def getEmail(eori: String)(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
-    val dataStoreEndpoint = appConfig.customsDataStore + s"/eori/$eori/verified-email"
+    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/verified-email"
     httpClient.GET[EmailResponse](dataStoreEndpoint).map {
       case EmailResponse(Some(address), _, None) => Right(Email(address))
       case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
@@ -72,4 +75,13 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
     }
   }
+
+  def unverifiedEmail(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    httpClient.GET[EmailUnverifiedResponse](s"${appConfig.customsDataStore}/subscriptions/unverified-email-display")
+      .map(res => res.unVerifiedEmail)
+  }
+
+  def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =
+    httpClient.GET[EmailVerifiedResponse](s"${appConfig.customsDataStore}/subscriptions/email-display")
+
 }

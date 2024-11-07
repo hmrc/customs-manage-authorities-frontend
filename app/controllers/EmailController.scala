@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.CustomsFinancialsConnector
+import connectors.CustomsDataStoreConnector
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,22 +31,22 @@ import scala.concurrent.ExecutionContext
 class EmailController @Inject()(authenticate: IdentifierAction,
                                 verifyEmailView: verify_your_email,
                                 undeliverableEmailView: undeliverable_email,
-                                customsFinancialsApiConnector: CustomsFinancialsConnector,
+                                dataStoreConnector: CustomsDataStoreConnector,
                                 implicit val mcc: MessagesControllerComponents)
                                (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext)
   extends FrontendController(mcc) with I18nSupport {
 
   val log: LoggerLike = Logger(this.getClass)
 
-  def showUnverified():Action[AnyContent] = authenticate async { implicit request =>
-    customsFinancialsApiConnector.isEmailUnverified.map {
+  def showUnverified(): Action[AnyContent] = authenticate async { implicit request =>
+    dataStoreConnector.unverifiedEmail.map {
       case email => Ok(verifyEmailView(appConfig.emailFrontendUrl, email))
     }
   }
 
   def showUndeliverable(): Action[AnyContent] = authenticate async {
     implicit request =>
-      customsFinancialsApiConnector.verifiedEmail.map {
+      dataStoreConnector.verifiedEmail.map {
         emailVerifiedRes => Ok(undeliverableEmailView(appConfig.emailFrontendUrl, emailVerifiedRes.verifiedEmail))
       }
   }

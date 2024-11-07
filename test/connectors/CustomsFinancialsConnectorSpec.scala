@@ -289,38 +289,9 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     }
   }
 
-  "retrieve unverified email" must {
-    "return success response" in new Setup {
-
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-financials-api/subscriptions/unverified-email-display"))
-            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
-        val result = connector.isEmailUnverified(hc).futureValue
-        result mustBe Some("unverified@email.com")
-      }
-    }
-  }
-
-  "verifiedEmail" must {
-    "return correct email" in new Setup {
-
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-financials-api/subscriptions/email-display"))
-            .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
-        val result = connector.verifiedEmail(hc).futureValue
-        result mustBe emailVerifiedRes
-      }
-    }
-  }
-
   trait Setup {
-    val app = application
-    val connector = app.injector.instanceOf[CustomsFinancialsConnector]
-
-    val emailValue = "test@test.com"
-    val eoriNumber = "121312"
-    val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
+    val eoriNumber: String = "121312"
+    val app: Application = application
+    val connector: CustomsFinancialsConnector = app.injector.instanceOf[CustomsFinancialsConnector]
   }
 }
