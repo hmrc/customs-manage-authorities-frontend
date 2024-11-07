@@ -39,7 +39,7 @@ class EmailController @Inject()(authenticate: IdentifierAction,
   val log: LoggerLike = Logger(this.getClass)
 
   def showUnverified(): Action[AnyContent] = authenticate async { implicit request =>
-    dataStoreConnector.isEmailUnverified.map {
+    dataStoreConnector.unverifiedEmail.map {
       case email => Ok(verifyEmailView(appConfig.emailFrontendUrl, email))
     }
   }

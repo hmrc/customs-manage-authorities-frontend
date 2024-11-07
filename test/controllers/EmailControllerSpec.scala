@@ -34,18 +34,18 @@ class EmailControllerSpec extends SpecBase {
 
   "showUnverified" must {
     "return unverified email" in new Setup {
-      when(mockConnector.isEmailUnverified(any)).thenReturn(Future.successful(Some("unverifiedEmail")))
+      when(mockConnector.unverifiedEmail(any)).thenReturn(Future.successful(Some("unverifiedEmail")))
 
       running(application) {
         val connector: CustomsDataStoreConnector = application.injector.instanceOf[CustomsDataStoreConnector]
 
-        val result: Future[Option[String]] = connector.isEmailUnverified(hc)
+        val result: Future[Option[String]] = connector.unverifiedEmail(hc)
         await(result) mustBe expectedResult
       }
     }
 
     "return unverified email response" in new Setup {
-      when(mockConnector.isEmailUnverified(any)).thenReturn(Future.successful(Some("test@test.com")))
+      when(mockConnector.unverifiedEmail(any)).thenReturn(Future.successful(Some("test@test.com")))
 
       running(application) {
         val request = fakeRequest(GET, routes.EmailController.showUnverified().url)

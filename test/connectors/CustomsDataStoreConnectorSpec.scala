@@ -299,26 +299,42 @@ class CustomsDataStoreConnectorSpec extends SpecBase
     }
   }
 
-  "retrieve unverified email" must {
+  "unverifiedEmail" must {
+
     "return success response" in new Setup {
 
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
             .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
-        val result = connector.isEmailUnverified(hc).futureValue
+
+        val result = connector.unverifiedEmail(hc).futureValue
         result mustBe Some("unverified@email.com")
+      }
+    }
+
+    "return failure response of None" in new Setup {
+
+      running(app) {
+        server.stubFor(
+          get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
+            .willReturn(ok("""{}""")))
+
+        val result = connector.unverifiedEmail(hc).futureValue
+        result mustBe None
       }
     }
   }
 
   "verifiedEmail" must {
+
     "return correct email" in new Setup {
 
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
             .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
+
         val result = connector.verifiedEmail(hc).futureValue
         result mustBe emailVerifiedRes
       }
