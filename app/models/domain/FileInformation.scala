@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package models.domain
 
-object StringUtils {
-  val emptyString = ""
-  val singleSpace = " "
-  val nIEORIPrefix = "XI"
-  val gbEORIPrefix = "GB"
-  val htmlSingleLineBreak = "<br>"
-  val comma = ","
-  val hyphenWithSpaces = " - "
-  val hyphen = "-"
+import play.api.libs.json._
 
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
+import javax.inject.Inject
 
-  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
+case class FileInformation(filename: String,
+                           downloadURL: String,
+                           fileSize: Long,
+                           metadata: Metadata)
 
-  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
+@Inject
+object FileInformation {
+  implicit val fileInformationFormats: Format[FileInformation] = Json.format[FileInformation]
 }

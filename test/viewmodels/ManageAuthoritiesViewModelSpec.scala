@@ -25,10 +25,22 @@ import org.jsoup.nodes.{Document, Element}
 import play.api.Application
 import play.api.i18n.{DefaultMessagesApi, Messages}
 import play.twirl.api.HtmlFormat
+import utils.DateUtils
+import utils.TestData.START_DATE_1
 
 import java.time.LocalDate
 
-class ManageAuthoritiesViewModelSpec extends SpecBase {
+class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
+
+  implicit lazy val app: Application = applicationBuilder().build()
+  implicit val msg: Messages = messages(app)
+  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+
+  val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
+  val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
+
+  val authoritiesFilesNotificationViewModel: AuthoritiesFilesNotificationViewModel =
+    AuthoritiesFilesNotificationViewModel(Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1), filesExist = true)
 
   override val messagesApi = new DefaultMessagesApi(
     Map("en" ->
@@ -84,14 +96,16 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
       ))
 
       "there is at least one authority" in {
-        val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
+        val viewModel = ManageAuthoritiesViewModel(
+          authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
 
         viewModel.hasAccounts mustBe true
         viewModel.hasNoAccounts mustBe false
       }
 
       "there are no authorities" in {
-        val viewModel = ManageAuthoritiesViewModel(AuthoritiesWithId(Seq.empty), cdsAccounts)
+        val viewModel = ManageAuthoritiesViewModel(
+          authorities = AuthoritiesWithId(Seq.empty), accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
 
         viewModel.hasAccounts mustBe false
         viewModel.hasNoAccounts mustBe true
@@ -104,7 +118,8 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
       ))
 
-      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
+      val viewModel = ManageAuthoritiesViewModel(
+        authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
     }
 
@@ -116,15 +131,20 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
       ))
 
-      val viewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts, authEoriAndCompanyDetails)
+      val viewModel = ManageAuthoritiesViewModel(
+        authorities = authorities,
+        accounts = cdsAccounts,
+        auhorisedEoriAndCompanyMap = authEoriAndCompanyDetails,
+        filesNotificationViewModel = authoritiesFilesNotificationViewModel)
       viewModel.auhorisedEoriAndCompanyMap mustBe authEoriAndCompanyDetails
     }
 
-    "return correct links with appropriate messages and IDs" in new Setup {
+    "return correct links with appropriate messages and IDs" in {
       val cdsAccounts: CDSAccounts = CDSAccounts("GB123456789012", List(
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
 
-      val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(authorities, cdsAccounts)
+      val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
+        authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
       val result: HtmlFormat.Appendable = viewModel.generateLinks()(msg, appConfig)
       val resultString: String = result.toString()
 
@@ -140,11 +160,5 @@ class ManageAuthoritiesViewModelSpec extends SpecBase {
       authorisedLink.attr("href") mustBe appConfig.authorizedToViewUrl
       authorisedLink.text() must include(msg("cf.account.authorized-to-view.title"))
     }
-  }
-
-  trait Setup {
-    implicit lazy val app: Application = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   }
 }

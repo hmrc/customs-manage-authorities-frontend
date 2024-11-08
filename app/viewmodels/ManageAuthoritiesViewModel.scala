@@ -31,7 +31,8 @@ import scala.collection.immutable.ListMap
 
 case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
                                       accounts: CDSAccounts,
-                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty) {
+                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty,
+                                      filesNotificationViewModel: AuthoritiesFilesNotificationViewModel) {
 
   def hasAccounts: Boolean = authorities.accounts.nonEmpty
 
@@ -53,6 +54,8 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
       secondLinkId = Some("authorised-to-view-link"))
   }
 }
+
+case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String, filesExist: Boolean)
 
 object ManageAuthoritiesViewModel extends DateUtils {
 

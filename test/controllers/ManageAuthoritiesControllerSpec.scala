@@ -18,12 +18,9 @@ package controllers
 
 import base.SpecBase
 import config.FrontendAppConfig
-import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SecureMessageConnector}
-
-import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountWithAuthoritiesWithId,
-  AuthoritiesWithId, CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, StandingAuthority
-}
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SdesConnector, SecureMessageConnector}
+import models.domain.FileFormat.Csv
+import models.domain._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,14 +30,15 @@ import play.api.test.Helpers._
 import repositories.{AccountsRepository, AuthorisedEoriAndCompanyInfoRepository, AuthoritiesRepository}
 import services.{AccountsCacheService, AuthorisedEoriAndCompanyInfoService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
-import utils.TestData.{COMPANY_NAME, EORI_NUMBER, XI_EORI, testEmail}
-import viewmodels.ManageAuthoritiesViewModel
+import utils.DateUtils
+import utils.TestData._
+import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
 import views.html.{ManageAuthoritiesApiFailureView, ManageAuthoritiesView, NoAccountsView}
 
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
+class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with DateUtils {
 
   "ManageAuthorities Controller" when {
 
@@ -53,19 +51,22 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
         val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
+        val mockSdesConnector: SdesConnector = mock[SdesConnector]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
         when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
-        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
             bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
-            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector),
+            bind[SdesConnector].toInstance(mockSdesConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -75,11 +76,11 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
           val view = application.injector.instanceOf[NoAccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+          
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view()(request, messages(application), appConfig).toString
+            view(filesNotificationViewModel(application))(request, messages(application), appConfig).toString
 
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
@@ -99,6 +100,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
         val mockAuthEoriAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
         val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
+        val mockSdesConnector: SdesConnector = mock[SdesConnector]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
@@ -113,15 +115,17 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
         when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
-        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
             bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
             bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyInfoService),
-            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector),
+            bind[SdesConnector].toInstance(mockSdesConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -131,11 +135,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+          
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
+            view(ManageAuthoritiesViewModel(
+              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
 
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
@@ -154,6 +159,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val mockAccountsRepository: AccountsRepository = mock[AccountsRepository]
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
         val mockAuthEoriAndCompanyService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+        val mockSdesConnector: SdesConnector = mock[SdesConnector]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
@@ -163,13 +169,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
+        when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
-        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockAuthRepository),
             bind[AccountsRepository].toInstance(mockAccountsRepository),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
-            bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyService)
+            bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyService),
+            bind[SdesConnector].toInstance(mockSdesConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -179,11 +187,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+          
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(authoritiesWithId, accounts, eoriAndCompanyInfoMap), maybeMessageBannerPartial = None)(
+            view(ManageAuthoritiesViewModel(
+              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)), maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
         }
       }
@@ -199,6 +208,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
         val emptyAuthoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(emptyMap)
         val mockAuthCacheService = mock[AuthoritiesCacheService]
+        val mockSdesConnector: SdesConnector = mock[SdesConnector]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
@@ -208,12 +218,14 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+        when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
-            bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+            bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
+            bind[SdesConnector].toInstance(mockSdesConnector)
           ).configure("features.edit-journey" -> true)
           .build()
 
@@ -223,11 +235,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+          
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(ManageAuthoritiesViewModel(emptyAuthoritiesWithId, accounts), maybeMessageBannerPartial = None)(
+            view(ManageAuthoritiesViewModel(
+              authorities = emptyAuthoritiesWithId,
+              accounts = accounts,
+              filesNotificationViewModel = filesNotificationViewModel(application)),
+              maybeMessageBannerPartial = None)(
               request, messages(application), appConfig).toString
         }
       }
@@ -241,7 +257,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
 
         val failingConnector = mock[CustomsFinancialsConnector]
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[CustomsFinancialsConnector].toInstance(failingConnector),
             bind[AuthoritiesRepository].toInstance(mockRepository)
@@ -259,7 +275,13 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "serve unavailable page on a separate route" in new Setup {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        val mockSdesConnector: SdesConnector = mock[SdesConnector]
+
+        when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
+
+        private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
+          bind[SdesConnector].toInstance(mockSdesConnector)
+        ).build()
 
         running(application) {
 
@@ -267,11 +289,11 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+          
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view()(request, messages(application), appConfig).toString
+            view(filesNotificationViewModel(application))(request, messages(application), appConfig).toString
         }
       }
     }
@@ -290,7 +312,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
           .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", statusCode)))
 
-        val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AccountsCacheService].toInstance(mockAccountsCacheService)
           ).build()
@@ -335,7 +357,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
         .thenReturn(Future.successful(Some(eoriAndCompanyMap)))
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
@@ -378,7 +400,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
       when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
@@ -418,7 +440,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
       when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
@@ -463,7 +485,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getCompanyName(any())(any())).thenReturn(Future.failed(new RuntimeException("Failed")))
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AuthoritiesRepository].toInstance(mockRepository),
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
@@ -489,7 +511,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
         .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
           bind[AccountsCacheService].toInstance(mockAccountsCacheService)
         ).build()
@@ -518,10 +540,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-    val standingAuthority01: StandingAuthority = StandingAuthority(
+    val standingAuthority01: StandingAuthority = models.domain.StandingAuthority(
       "EORI", startDate, Some(endDate), viewBalance = false)
 
-    val standingAuthority02: StandingAuthority = StandingAuthority(
+    val standingAuthority02: StandingAuthority = models.domain.StandingAuthority(
       "EORI2", startDate, Some(endDate), viewBalance = false)
 
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
@@ -536,5 +558,29 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar {
       "c" -> AccountWithAuthoritiesWithId(CdsCashAccount, "123456", Some(
         AccountStatusClosed), Map("d" -> standingAuthority02))
     ))
+
+    private val gbStanAuthFile153Url = "https://test.co.uk/GB123456789012/SA_000000000153_csv.csv"
+    private val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
+    private val xiStanAuthFile153Url = "https://test.co.uk/XI123456789012/SA_000000000153_XI_csv.csv"
+    private val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
+
+    private val standAuthMetadata: StandingAuthorityMetadata =
+      StandingAuthorityMetadata(START_DATE_1.getYear, START_DATE_1.getMonthValue, START_DATE_1.getDayOfMonth, Csv, models.domain.FileRole.StandingAuthority)
+
+    private val gbStandingAuth1: StandingAuthorityFile = StandingAuthorityFile(
+      "SA_000000000153_csv.csv", gbStanAuthFile153Url, FILE_SIZE_500, standAuthMetadata, EORI_NUMBER)
+    private val gbStandingAuth2: StandingAuthorityFile = StandingAuthorityFile(
+      "SA_000000000154_csv.csv", gbStanAuthFile154Url, FILE_SIZE_500, standAuthMetadata, EORI_NUMBER)
+
+    private val xiStandingAuth1: StandingAuthorityFile = StandingAuthorityFile(
+      "SA_XI_000000000153_csv.csv", xiStanAuthFile153Url, FILE_SIZE_500, standAuthMetadata, XI_EORI)
+    private val xiStandingAuth2: StandingAuthorityFile = StandingAuthorityFile(
+      "SA_XI_000000000154_XI_csv.csv", xiStanAuthFile154Url, FILE_SIZE_500, standAuthMetadata, XI_EORI)
+
+    protected val authCsvFiles: Seq[StandingAuthorityFile] =
+      Seq(gbStandingAuth1, gbStandingAuth2, xiStandingAuth1, xiStandingAuth2)
+
+    protected def filesNotificationViewModel(app: Application): AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
+      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1)(messages(app)), filesExist = true)
   }
 }

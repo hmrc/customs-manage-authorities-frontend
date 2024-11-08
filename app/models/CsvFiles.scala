@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package models
 
-object StringUtils {
-  val emptyString = ""
-  val singleSpace = " "
-  val nIEORIPrefix = "XI"
-  val gbEORIPrefix = "GB"
-  val htmlSingleLineBreak = "<br>"
-  val comma = ","
-  val hyphenWithSpaces = " - "
-  val hyphen = "-"
+import models.domain.StandingAuthorityFile
 
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
+case class CsvFiles(gbCsvFiles: Seq[StandingAuthorityFile], xiCsvFiles: Seq[StandingAuthorityFile])
 
-  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
+object CsvFiles {
+  val xiCsvFileNameRegEx = "SA_XI_[\\w]+_csv.csv$"
 
-  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
+  def partitionAsXiAndGb(csvFiles: Seq[StandingAuthorityFile],
+                         fileNamePattern: String = xiCsvFileNameRegEx): CsvFiles = {
+    val partitionedList = csvFiles.partition(stanAuth => stanAuth.filename.matches(fileNamePattern))
+    CsvFiles(partitionedList._2, partitionedList._1)
+  }
 }

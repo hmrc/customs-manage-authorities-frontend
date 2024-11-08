@@ -14,21 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package config
 
-object StringUtils {
-  val emptyString = ""
-  val singleSpace = " "
-  val nIEORIPrefix = "XI"
-  val gbEORIPrefix = "GB"
-  val htmlSingleLineBreak = "<br>"
-  val comma = ","
-  val hyphenWithSpaces = " - "
-  val hyphen = "-"
-
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
-
-  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
-
-  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
+object Headers {
+  val X_CLIENT_ID = "x-client-id"
+  val X_SDES_KEY = "X-SDES-Key"
 }

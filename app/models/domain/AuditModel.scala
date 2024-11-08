@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package utils
+package models.domain
 
-object StringUtils {
-  val emptyString = ""
-  val singleSpace = " "
-  val nIEORIPrefix = "XI"
-  val gbEORIPrefix = "GB"
-  val htmlSingleLineBreak = "<br>"
-  val comma = ","
-  val hyphenWithSpaces = " - "
-  val hyphen = "-"
+import play.api.libs.json.{JsValue, Json, Writes}
 
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
+case class AuditModel(auditType: String, transactionName: String, detail: JsValue)
 
-  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
+case class DownloadStatementAuditData(auditData: Map[String, String])
 
-  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
+object DownloadStatementAuditData {
+
+  def apply(metadata: SdesFileMetadata, eori: EORI): DownloadStatementAuditData = {
+    val auditData = metadata.toMap
+
+    DownloadStatementAuditData(auditData + ("eori" -> eori))
+  }
+
+  implicit val downloadStatementAuditDataWrites: Writes[DownloadStatementAuditData] =
+    Json.writes[DownloadStatementAuditData]
 }

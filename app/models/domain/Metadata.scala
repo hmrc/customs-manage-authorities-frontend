@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package utils
+package models.domain
 
-object StringUtils {
-  val emptyString = ""
-  val singleSpace = " "
-  val nIEORIPrefix = "XI"
-  val gbEORIPrefix = "GB"
-  val htmlSingleLineBreak = "<br>"
-  val comma = ","
-  val hyphenWithSpaces = " - "
-  val hyphen = "-"
+import play.api.libs.json._
 
-  def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
+case class Metadata(items: Seq[MetadataItem]) {
+  val asMap: Map[String, String] = items.map(item => (item.key, item.value)).toMap
+}
 
-  def removeSpaceAndConvertToUpperCase(str: String): String = removeSpacesFromString(str).toUpperCase
-
-  def isXIEori(eori: String): Boolean = eori.startsWith(nIEORIPrefix)
+object Metadata {
+  implicit val metadataReads: Reads[Metadata] = __.read[List[MetadataItem]].map(Metadata.apply)
+  implicit val metadataWrites: Writes[Metadata] = (o: Metadata) => JsArray(o.items.map(
+    item => Json.obj(("metadata", item.key), ("value", item.value))))
 }

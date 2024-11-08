@@ -17,20 +17,24 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{CustomsDataStoreConnector, SecureMessageConnector}
+import connectors.{CustomsDataStoreConnector, SdesConnector, SecureMessageConnector}
 import controllers.actions._
-import models.domain.{AuthoritiesWithId, CDSAccounts, EORI}
+import models.CsvFiles
+import models.CsvFiles.partitionAsXiAndGb
+import models.domain.{AuthoritiesWithId, CDSAccounts, EORI, StandingAuthorityFile}
 import models.requests.IdentifierRequest
 import play.api.Logging
 import play.api.i18n._
 import play.api.mvc._
 import services._
-import uk.gov.hmrc.http.UpstreamErrorResponse
+import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateUtils
 import utils.StringUtils.emptyString
-import viewmodels.ManageAuthoritiesViewModel
+import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
 import views.html._
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent._
 import scala.util.control.NonFatal
@@ -43,6 +47,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                             authEoriAndCompanyInfoService:AuthorisedEoriAndCompanyInfoService,
                                             dataStoreConnector: CustomsDataStoreConnector,
                                             secureMessageConnector: SecureMessageConnector,
+                                            sdesConnector: SdesConnector,
                                             noAccountsView: NoAccountsView,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: ManageAuthoritiesView,
@@ -51,7 +56,8 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
   extends FrontendBaseController
     with I18nSupport
-    with Logging {
+    with Logging
+    with DateUtils {
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
@@ -67,16 +73,17 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
         authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
           authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs))
         messageBanner <- secureMessageConnector.getMessageCountBanner(returnToUrl)
-      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner)
+        filesNotification <- authoritiesFilesNotification
+      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner, filesNotification)
 
       response.map {
-        case (Some(authorities), accounts, authEoriAndCompanyInfo, messageBanner) =>
+        case (Some(authorities), accounts, authEoriAndCompanyInfo, messageBanner, filesNotification) =>
           Ok(view(
-            ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo),
+            ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo, filesNotification),
             messageBanner.map(_.successfulContentOrEmpty)
           ))
-        case (None, _, _, _) =>
-          Ok(noAccountsView())
+        case (None, _, _, _, filesNotification) =>
+          Ok(noAccountsView(filesNotification))
       }.recover {
         case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
           logger.warn(s"[FetchAccountAuthorities API] Failed with JSON Validation error")
@@ -163,6 +170,25 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
     } yield authorities
   }
 
+  private def getCsvFile(eori: EORI)(implicit hc: HeaderCarrier): Future[Seq[StandingAuthorityFile]] = {
+    sdesConnector.getAuthoritiesCsvFiles(eori)
+      .map(_.sortWith(_.startDate isAfter _.startDate).sortBy(_.filename).sortWith(_.filename > _.filename))
+  }
+
+  private def authoritiesFilesNotification(implicit request: IdentifierRequest[AnyContent]) = for {
+    standingAuthorityFiles: Seq[StandingAuthorityFile] <- getCsvFile(request.eoriNumber)
+  } yield {
+    val filesExist = standingAuthorityFiles.nonEmpty
+    val gbAndXiCsvFiles: CsvFiles = partitionAsXiAndGb(standingAuthorityFiles)
+
+    val gbAuthUrl = gbAndXiCsvFiles.gbCsvFiles.headOption.map(_.downloadURL)
+    val xiAuthUrl = gbAndXiCsvFiles.xiCsvFiles.headOption.map(_.downloadURL)
+    val date = dateAsDayMonthAndYear(
+      Some(gbAndXiCsvFiles.gbCsvFiles.headOption.map(_.startDate).getOrElse(LocalDate.now)).get)
+
+    AuthoritiesFilesNotificationViewModel(gbAuthUrl, xiAuthUrl, date, filesExist)
+  }
+
   private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])
                                                    (implicit request: IdentifierRequest[AnyContent]): Future[Unit] = {
     authWithId.map {
@@ -178,7 +204,9 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
   def unavailable(): Action[AnyContent] = identify.async {
     implicit request =>
-      Future.successful(Ok(failureView()))
+      authoritiesFilesNotification.map { notification =>
+        Ok(failureView(notification))
+      }
   }
 
   def validationFailure(): Action[AnyContent] = identify.async {

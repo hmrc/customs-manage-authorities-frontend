@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
+import models.domain.FileRole
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -30,6 +31,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
 
   lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
+  lazy val xClientIdHeader: String = configuration.get[String]("microservice.services.sdes.x-client-id")
   lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
   lazy val xiEoriEnabled: Boolean = configuration.get[Boolean]("features.xi-eori-enabled")
   lazy val timeout: Int = configuration.get[Int]("timeout.timeout")
@@ -64,4 +66,8 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
   val manageAuthoritiesServiceUrl: String =
     configuration.get[String]("microservice.services.customs-manage-authorities-frontend.url")
 
+  lazy val sdesApi: String = servicesConfig.baseUrl("sdes") +
+    configuration.get[String]("microservice.services.sdes.context")
+
+  def filesUrl(fileRole: FileRole): String = s"$sdesApi/files-available/list/${fileRole.name}"
 }
