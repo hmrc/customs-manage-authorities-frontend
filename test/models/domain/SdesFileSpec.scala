@@ -51,15 +51,6 @@ class SdesFileSpec extends SpecBase {
       }
     }
 
-    "return correct output for unapply method" in new Setup {
-      val fileRoleName: String = FileRole("StandingAuthority") match {
-        case FileRole(name) => name
-        case _ => emptyString
-      }
-
-      fileRoleName mustBe "StandingAuthority"
-    }
-
     "return correct output for Reads" in new Setup {
 
       import models.domain.FileRole.fileRoleFormat
@@ -70,19 +61,6 @@ class SdesFileSpec extends SpecBase {
     "return correct output for Writes" in new Setup {
       Json.toJson(FileRole("StandingAuthority")) mustBe JsString("StandingAuthority")
     }
-
-    "bind correct value for pathBinder" in {
-      import models.domain.FileRole.pathBinder
-
-      pathBinder.bind(emptyString, "authorities") mustBe Right(models.domain.FileRole.StandingAuthority)
-      pathBinder.bind(emptyString, "unknown") mustBe Left(s"unknown file role: unknown")
-    }
-
-    "unbind correct value for pathBinder" in {
-      import models.domain.FileRole.pathBinder
-
-      pathBinder.unbind(emptyString, models.domain.FileRole.StandingAuthority) mustBe "authorities"
-    }
   }
 
 
@@ -91,15 +69,6 @@ class SdesFileSpec extends SpecBase {
       FileFormat("PDF") mustBe Pdf
       FileFormat("CSV") mustBe Csv
       FileFormat("UNKNOWN FILE FORMAT") mustBe UnknownFileFormat
-    }
-
-    "return correct value for unapply method" in new Setup {
-      val pdfFileFormatName: String = FileFormat("PDF") match {
-        case FileFormat(name) => name
-        case _ => emptyString
-      }
-
-      pdfFileFormatName mustBe "PDF"
     }
   }
 

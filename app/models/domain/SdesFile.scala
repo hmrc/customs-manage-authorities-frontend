@@ -17,13 +17,11 @@
 package models.domain
 
 import play.api.libs.json._
-import play.api.mvc.PathBindable
 import play.api.{Logger, LoggerLike}
 
 import java.time.LocalDate
 import scala.collection.immutable.SortedSet
 
-// scalastyle:off number.of.types
 sealed abstract class FileFormat(val name: String) extends Ordered[FileFormat] {
   val order: Int
 
@@ -62,8 +60,6 @@ object FileFormat {
       UnknownFileFormat
   }
 
-  def unapply(arg: FileFormat): Option[String] = Some(arg.name)
-
   implicit val fileFormatFormat: Format[FileFormat] = new Format[FileFormat] {
     def reads(json: JsValue): JsSuccess[FileFormat] = JsSuccess(apply(json.as[String]))
 
@@ -88,28 +84,10 @@ object FileRole {
     case _ => throw new Exception(s"Unknown file role: $name")
   }
 
-  def unapply(fileRole: FileRole): Option[String] = Some(fileRole.name)
-
   implicit val fileRoleFormat: Format[FileRole] = new Format[FileRole] {
     def reads(json: JsValue): JsSuccess[FileRole] = JsSuccess(apply(json.as[String]))
 
     def writes(obj: FileRole): JsString = JsString(obj.name)
-  }
-
-  implicit val pathBinder: PathBindable[FileRole] = new PathBindable[FileRole] {
-    override def bind(key: String, value: String): Either[String, FileRole] = {
-      value match {
-        case "authorities" => Right(StandingAuthority)
-        case fileRole => Left(s"unknown file role: ${fileRole}")
-      }
-    }
-
-    override def unbind(key: String, fileRole: FileRole): String = {
-      fileRole match {
-        case StandingAuthority => "authorities"
-        case _ => "unsupported-file-role"
-      }
-    }
   }
 
 }
