@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val result = route(application, request).value
           val view = application.injector.instanceOf[NoAccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          
+
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
@@ -135,7 +135,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          
+
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
