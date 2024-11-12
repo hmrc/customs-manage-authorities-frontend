@@ -83,13 +83,6 @@ object FileRole {
     case "StandingAuthority" => StandingAuthority
     case _ => throw new Exception(s"Unknown file role: $name")
   }
-
-  implicit val fileRoleFormat: Format[FileRole] = new Format[FileRole] {
-    def reads(json: JsValue): JsSuccess[FileRole] = JsSuccess(apply(json.as[String]))
-
-    def writes(obj: FileRole): JsString = JsString(obj.name)
-  }
-
 }
 
 trait SdesFileMetadata {

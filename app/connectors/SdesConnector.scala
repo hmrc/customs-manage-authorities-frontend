@@ -57,7 +57,8 @@ class SdesConnector @Inject()(httpClient: HttpClient,
                                      hc: HeaderCarrier): Future[Seq[B]] = {
 
     metricsReporterService.withResponseTimeLogging(metricsName) {
-      httpClient.GET[HttpResponse](url, headers = Seq(X_CLIENT_ID -> appConfig.xClientIdHeader, X_SDES_KEY -> eori))(reads, HeaderCarrier(), implicitly)
+      httpClient.GET[HttpResponse](url,
+          headers = Seq(X_CLIENT_ID -> appConfig.xClientIdHeader, X_SDES_KEY -> eori))(reads, HeaderCarrier(), implicitly)
         .map(readSeq.read("GET", url, _))
         .map(transform)
         .map { files =>

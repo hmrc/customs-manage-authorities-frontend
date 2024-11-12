@@ -289,6 +289,18 @@ class CustomsFinancialsConnectorSpec extends SpecBase
     }
   }
 
+  "delete notifications should return a boolean based on the result" in new Setup {
+
+    running(app) {
+
+      server.stubFor(
+        delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
+          .willReturn(ok()))
+      val result = connector.deleteNotification(eoriNumber, FileRole.StandingAuthority)(hc).futureValue
+      result mustBe true
+    }
+  }
+
   trait Setup {
     val eoriNumber: String = "121312"
     val app: Application = application

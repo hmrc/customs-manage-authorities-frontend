@@ -17,10 +17,11 @@
 package controllers
 
 import config.FrontendAppConfig
-import connectors.{CustomsDataStoreConnector, SdesConnector, SecureMessageConnector}
+import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SdesConnector, SecureMessageConnector}
 import controllers.actions._
 import models.CsvFiles
 import models.CsvFiles.partitionAsXiAndGb
+import models.domain.FileRole.StandingAuthority
 import models.domain.{AuthoritiesWithId, CDSAccounts, EORI, StandingAuthorityFile}
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -48,6 +49,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
                                             dataStoreConnector: CustomsDataStoreConnector,
                                             secureMessageConnector: SecureMessageConnector,
                                             sdesConnector: SdesConnector,
+                                            customsFinancialsConnector: CustomsFinancialsConnector,
                                             noAccountsView: NoAccountsView,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: ManageAuthoritiesView,
@@ -61,6 +63,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
+      customsFinancialsConnector.deleteNotification(request.eoriNumber, StandingAuthority)
 
       val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad.url
 

@@ -21,8 +21,7 @@ import models.domain.FileFormat.{Csv, Pdf, UnknownFileFormat}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsString, JsSuccess, Json}
 import play.api.test.Helpers.stubMessages
-import utils.StringUtils.emptyString
-import utils.TestData.{LENGTH_11, LENGTH_27, YEAR_2017, YEAR_2022, YEAR_2023}
+import utils.TestData._
 
 class SdesFileSpec extends SpecBase {
 
@@ -50,19 +49,7 @@ class SdesFileSpec extends SpecBase {
         FileRole("Unknown")
       }
     }
-
-    "return correct output for Reads" in new Setup {
-
-      import models.domain.FileRole.fileRoleFormat
-
-      Json.fromJson(JsString("StandingAuthority")) mustBe JsSuccess(FileRole("StandingAuthority"))
-    }
-
-    "return correct output for Writes" in new Setup {
-      Json.toJson(FileRole("StandingAuthority")) mustBe JsString("StandingAuthority")
-    }
   }
-
 
   "FileFormat" should {
     "return correct value for apply method" in new Setup {
