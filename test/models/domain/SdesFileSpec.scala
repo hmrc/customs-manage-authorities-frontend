@@ -22,7 +22,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsString, JsSuccess, Json}
 import play.api.test.Helpers.stubMessages
 import utils.StringUtils.emptyString
-import utils.TestData.{LENGTH_11, LENGTH_27, YEAR_2017}
+import utils.TestData.{LENGTH_11, LENGTH_27, YEAR_2017, YEAR_2022, YEAR_2023}
 
 class SdesFileSpec extends SpecBase {
 
@@ -31,11 +31,11 @@ class SdesFileSpec extends SpecBase {
     "be correctly ordered by start date" in new Setup {
 
       val file1: StandingAuthorityFile = standingAuthorityFile.copy(
-        metadata = StandingAuthorityMetadata(2022, 5, 15, Pdf, models.domain.FileRole.StandingAuthority)
+        metadata = StandingAuthorityMetadata(YEAR_2022, month, day, Pdf, models.domain.FileRole.StandingAuthority)
       )
 
       val file2: StandingAuthorityFile = standingAuthorityFile.copy(
-        metadata = StandingAuthorityMetadata(2023, 3, 10, Csv, models.domain.FileRole.StandingAuthority)
+        metadata = StandingAuthorityMetadata(YEAR_2023, month, day, Csv, models.domain.FileRole.StandingAuthority)
       )
 
       List(file2, file1).sorted mustBe List(file1, file2)
