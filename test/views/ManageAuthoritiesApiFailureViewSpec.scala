@@ -48,10 +48,15 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
       override val viewModel: AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
         gbAuthUrl = Some("https://example.com/GBFile.csv"),
         xiAuthUrl = Some("https://example.com/XIFile.csv"),
-        date = "01 January 2023",
-        filesExist = true
+        date = "01 January 2023"
       )
       view().select("div.notifications-panel").size mustBe 1
+    }
+
+    "not display the notification panel if no files provided" in new Setup {
+      override val viewModel: AuthoritiesFilesNotificationViewModel =
+        AuthoritiesFilesNotificationViewModel(None, None, date = "01 January 2023")
+      view().getElementsByClass("notifications-panel") mustBe empty
     }
 
     "display the authorized accounts heading" in new Setup {
@@ -74,8 +79,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     val viewModel: AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
       gbAuthUrl = None,
       xiAuthUrl = None,
-      date = "",
-      filesExist = false
+      date = ""
     )
 
     def view(): Document = {

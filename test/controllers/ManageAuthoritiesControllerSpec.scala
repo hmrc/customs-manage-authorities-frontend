@@ -581,6 +581,6 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       Seq(gbStandingAuth1, gbStandingAuth2, xiStandingAuth1, xiStandingAuth2)
 
     protected def filesNotificationViewModel(app: Application): AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
-      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1)(messages(app)), filesExist = true)
+      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1)(messages(app)))
   }
 }

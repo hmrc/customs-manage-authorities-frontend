@@ -178,7 +178,6 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
   private def authoritiesFilesNotification(implicit request: IdentifierRequest[AnyContent]) = for {
     standingAuthorityFiles: Seq[StandingAuthorityFile] <- getCsvFile(request.eoriNumber)
   } yield {
-    val filesExist = standingAuthorityFiles.nonEmpty
     val gbAndXiCsvFiles: CsvFiles = partitionAsXiAndGb(standingAuthorityFiles)
 
     val gbAuthUrl = gbAndXiCsvFiles.gbCsvFiles.headOption.map(_.downloadURL)
@@ -186,7 +185,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
     val date = dateAsDayMonthAndYear(
       Some(gbAndXiCsvFiles.gbCsvFiles.headOption.map(_.startDate).getOrElse(LocalDate.now)).get)
 
-    AuthoritiesFilesNotificationViewModel(gbAuthUrl, xiAuthUrl, date, filesExist)
+    AuthoritiesFilesNotificationViewModel(gbAuthUrl, xiAuthUrl, date)
   }
 
   private def fetchCompanyDetailsForAuthorisedEORIs(authWithId: Future[Option[AuthoritiesWithId]])

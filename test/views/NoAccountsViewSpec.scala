@@ -46,7 +46,7 @@ class NoAccountsViewSpec extends SpecBase {
 
     "not display the notification panel if no files provided" in new Setup {
       override val standingAuthorityFilesViewModel: AuthoritiesFilesNotificationViewModel =
-        AuthoritiesFilesNotificationViewModel(None, None, dateAsDayMonthAndYear(START_DATE_1), filesExist = false)
+        AuthoritiesFilesNotificationViewModel(None, None, dateAsDayMonthAndYear(START_DATE_1))
       view().getElementsByClass("notifications-panel") mustBe empty
     }
 
@@ -72,7 +72,7 @@ class NoAccountsViewSpec extends SpecBase {
     val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
 
     val standingAuthorityFilesViewModel = AuthoritiesFilesNotificationViewModel(
-      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1), filesExist = true)
+      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1))
 
     val homeUrl: String = "http://localhost:9876/customs/payment-records"
 

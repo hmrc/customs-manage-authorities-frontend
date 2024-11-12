@@ -22,7 +22,7 @@
 
 @(viewModel: AuthoritiesFilesNotificationViewModel)(implicit messages: Messages)
 
-@if(viewModel.filesExist) {
+@if(viewModel.gbAuthUrl.isDefined || viewModel.xiAuthUrl.isDefined) {
 <div id="notification-panel" class="notifications-panel govuk-!-margin-top-8">
   <p class="govuk-body">@messages("manageAuthorities.notificationPanel.p1")</p>
 

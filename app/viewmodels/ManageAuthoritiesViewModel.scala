@@ -55,7 +55,7 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
   }
 }
 
-case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String, filesExist: Boolean)
+case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String)
 
 object ManageAuthoritiesViewModel extends DateUtils {
 

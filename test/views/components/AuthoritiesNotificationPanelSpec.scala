@@ -30,7 +30,7 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
 
   "AuthoritiesNotificationPanel view" should {
     "display the correct guidance when only GB authority file exists" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date, true)
+      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
       val view: Document = Jsoup.parse(
         app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
@@ -48,7 +48,7 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "display the correct guidance when both GB and XI authorities' file exist" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), Option("xiURL"), date, true)
+      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), Option("xiURL"), date)
       val view: Document = Jsoup.parse(
         app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
@@ -70,7 +70,7 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "not display the guidance when file does not exists" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel( None, None, date, false)
+      val viewModel = AuthoritiesFilesNotificationViewModel( None, None, date)
       val view: Document = Jsoup.parse(
         app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
