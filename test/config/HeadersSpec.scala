@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
-package models.domain
+package config
 
-import play.api.libs.json._
+import base.SpecBase
+import config.Headers.{X_CLIENT_ID, X_SDES_KEY}
 
-case class FileInformation(filename: String,
-                           downloadURL: String,
-                           fileSize: Long,
-                           metadata: Metadata)
+class HeadersSpec extends SpecBase {
 
-object FileInformation {
-  implicit val fileInformationFormats: Format[FileInformation] = Json.format[FileInformation]
+  "X_CLIENT_ID" should {
+    "return correct constant value" in {
+      X_CLIENT_ID.trim mustBe "x-client-id"
+    }
+  }
+
+  "X_SDES_KEY" should {
+    "return correct constant value" in {
+      X_SDES_KEY.trim mustBe "X-SDES-Key"
+    }
+  }
 }

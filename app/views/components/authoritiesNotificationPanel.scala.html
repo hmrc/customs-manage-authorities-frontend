@@ -15,39 +15,41 @@
  *@
 
 @import viewmodels.AuthoritiesFilesNotificationViewModel
+@import components.{link, p}
 
 @this(
-  link: components.link
+  link: link,
+  p: p
 )
 
 @(viewModel: AuthoritiesFilesNotificationViewModel)(implicit messages: Messages)
 
-@if(viewModel.gbAuthUrl.isDefined || viewModel.xiAuthUrl.isDefined) {
-<div id="notification-panel" class="notifications-panel govuk-!-margin-top-8">
-  <p class="govuk-body">@messages("manageAuthorities.notificationPanel.p1")</p>
+@if(viewModel.isGbOrXiAuthUrlDefined) {
+  <div id="notification-panel" class="notifications-panel govuk-!-margin-top-8">
+    @p(Html(messages("manageAuthorities.notificationPanel.p1")))
 
-  <ul class="govuk-list">
-    @viewModel.gbAuthUrl.map { url =>
-    <li>
-      @link("manageAuthorities.notificationPanel.a.gb-authority",
-      url,
-      linkId = Some("gb-csv-authority-link"),
-      pWrapped = false
-      )
-    </li>
-    }
+    <ul class="govuk-list">
+      @viewModel.gbAuthUrl.map { url =>
+        <li>
+          @link("manageAuthorities.notificationPanel.a.gb-authority",
+            url,
+            linkId = Some("gb-csv-authority-link"),
+            pWrapped = false
+          )
+        </li>
+      }
 
-    @viewModel.xiAuthUrl.map { url =>
-    <li>
-      @link("manageAuthorities.notificationPanel.a.xi-authority",
-      url,
-      linkId = Some("xi-csv-authority-link"),
-      pWrapped = false
-      )
-    </li>
-    }
-  </ul>
+      @viewModel.xiAuthUrl.map { url =>
+        <li>
+          @link("manageAuthorities.notificationPanel.a.xi-authority",
+            url,
+            linkId = Some("xi-csv-authority-link"),
+            pWrapped = false
+          )
+        </li>
+      }
+    </ul>
 
-  <p class="govuk-body">@messages("manageAuthorities.notificationPanel.p2", viewModel.date)</p>
-</div>
+    @p(Html(messages("manageAuthorities.notificationPanel.p2", viewModel.date)))
+  </div>
 }

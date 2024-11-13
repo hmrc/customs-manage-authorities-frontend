@@ -26,6 +26,7 @@ object CsvFiles {
   def partitionAsXiAndGb(csvFiles: Seq[StandingAuthorityFile],
                          fileNamePattern: String = xiCsvFileNameRegEx): CsvFiles = {
     val partitionedList = csvFiles.partition(stanAuth => stanAuth.filename.matches(fileNamePattern))
+
     CsvFiles(partitionedList._2, partitionedList._1)
   }
 }

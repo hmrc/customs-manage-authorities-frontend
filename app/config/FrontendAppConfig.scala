@@ -66,8 +66,7 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
   val manageAuthoritiesServiceUrl: String =
     configuration.get[String]("microservice.services.customs-manage-authorities-frontend.url")
 
-  lazy val sdesApi: String = servicesConfig.baseUrl("sdes") +
-    configuration.get[String]("microservice.services.sdes.context")
+  lazy val sdesApi: String = s"${servicesConfig.baseUrl("sdes")}${configuration.get[String]("microservice.services.sdes.context")}"
 
   def filesUrl(fileRole: FileRole): String = s"$sdesApi/files-available/list/${fileRole.name}"
 }

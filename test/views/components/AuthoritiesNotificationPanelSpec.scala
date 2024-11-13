@@ -28,7 +28,8 @@ import views.html.components.authoritiesNotificationPanel
 
 class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
 
-  "AuthoritiesNotificationPanel view" should {
+  "AuthoritiesNotificationPanel" should {
+
     "display the correct guidance when only GB authority file exists" in new Setup {
       val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
       val view: Document = Jsoup.parse(
@@ -70,7 +71,7 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "not display the guidance when file does not exists" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel( None, None, date)
+      val viewModel = AuthoritiesFilesNotificationViewModel(None, None, date)
       val view: Document = Jsoup.parse(
         app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 

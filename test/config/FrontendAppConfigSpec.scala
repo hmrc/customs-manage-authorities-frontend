@@ -50,7 +50,8 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.sdesApi mustBe "http://localhost:9754/customs-financials-sdes-stub"
 
         val fileRole = FileRole("StandingAuthority")
-        appConfig.filesUrl(fileRole) mustBe "http://localhost:9754/customs-financials-sdes-stub/files-available/list/StandingAuthority"
+        appConfig.filesUrl(fileRole) mustBe
+          "http://localhost:9754/customs-financials-sdes-stub/files-available/list/StandingAuthority"
       }
     }
   }

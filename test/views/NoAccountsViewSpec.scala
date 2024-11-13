@@ -47,6 +47,7 @@ class NoAccountsViewSpec extends SpecBase {
     "not display the notification panel if no files provided" in new Setup {
       override val standingAuthorityFilesViewModel: AuthoritiesFilesNotificationViewModel =
         AuthoritiesFilesNotificationViewModel(None, None, dateAsDayMonthAndYear(START_DATE_1))
+
       view().getElementsByClass("notifications-panel") mustBe empty
     }
 

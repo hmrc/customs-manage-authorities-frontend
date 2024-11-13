@@ -29,6 +29,7 @@ import utils.TestData.{DAY_1, FILE_SIZE_DEFAULT, MONTH_6, YEAR_2022}
 class SdesGatekeeperServiceSpec extends SpecBase {
 
   implicit val messages: Messages = Helpers.stubMessages()
+
   "SdesGatekeeperService" should {
 
     "create StandingAuthorityFile from FileInformation" in {

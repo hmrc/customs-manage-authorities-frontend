@@ -40,7 +40,11 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
   val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
 
   val authoritiesFilesNotificationViewModel: AuthoritiesFilesNotificationViewModel =
-    AuthoritiesFilesNotificationViewModel(Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1))
+    AuthoritiesFilesNotificationViewModel(
+      Some(gbStanAuthFile154Url),
+      Some(xiStanAuthFile154Url),
+      dateAsDayMonthAndYear(START_DATE_1)
+    )
 
   override val messagesApi = new DefaultMessagesApi(
     Map("en" ->

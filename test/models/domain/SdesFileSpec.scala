@@ -21,6 +21,7 @@ import models.domain.FileFormat.{Csv, Pdf, UnknownFileFormat}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsString, JsSuccess, Json}
 import play.api.test.Helpers.stubMessages
+import utils.StringUtils.emptyString
 import utils.TestData._
 
 class SdesFileSpec extends SpecBase {
@@ -108,7 +109,10 @@ class SdesFileSpec extends SpecBase {
       StandingAuthorityMetadata(startYear, month, day, Pdf, models.domain.FileRole.StandingAuthority)
 
     val standingAuthorityFile: StandingAuthorityFile = StandingAuthorityFile(
-      "", "", size, StandingAuthorityMetadata(YEAR_2017, LENGTH_11, LENGTH_27, Pdf, models.domain.FileRole.StandingAuthority), eori)
+      emptyString, emptyString, size, StandingAuthorityMetadata(
+        YEAR_2017, LENGTH_11, LENGTH_27, Pdf, models.domain.FileRole.StandingAuthority
+      ), eori
+    )
   }
 
 }

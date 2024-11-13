@@ -48,4 +48,49 @@ class MetadataSpec extends SpecBase {
       json.validate[Metadata].asOpt must be(Some(expectedMetadata))
     }
   }
+
+  "asMap" should {
+
+    "convert a sequence of MetadataItems into a map" in {
+      val items = Seq(
+        MetadataItem("key1", "value1"),
+        MetadataItem("key2", "value2"),
+        MetadataItem("key3", "value3")
+      )
+
+      val metadata = Metadata(items)
+
+      // Expected map
+      val expectedMap = Map(
+        "key1" -> "value1",
+        "key2" -> "value2",
+        "key3" -> "value3"
+      )
+
+      metadata.asMap mustBe expectedMap
+    }
+
+    "return an empty map when there are no items" in {
+      val metadata = Metadata(Seq.empty)
+
+      metadata.asMap mustBe empty
+    }
+
+    "only keep the last occurrence of duplicate keys" in {
+      val items = Seq(
+        MetadataItem("key1", "value1"),
+        MetadataItem("key2", "value2"),
+        MetadataItem("key1", "new_value1")
+      )
+
+      val metadata = Metadata(items)
+
+      val expectedMap = Map(
+        "key1" -> "new_value1",
+        "key2" -> "value2"
+      )
+
+      metadata.asMap mustBe expectedMap
+    }
+  }
 }

@@ -23,6 +23,7 @@ import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import utils.StringUtils.emptyString
 import viewmodels.AuthoritiesFilesNotificationViewModel
 import views.html.ManageAuthoritiesApiFailureView
 
@@ -39,7 +40,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     }
 
     "display the authorized-to-view link" in new Setup {
-      val link = view().getElementById("manageAuthorities-noAccounts-link")
+      private val link = view().getElementById("manageAuthorities-noAccounts-link")
       link.attr("href") mustBe appConfig.authorizedToViewUrl
       link.text mustBe messages(app)("cf.account.authorized-to-view.title")
     }
@@ -75,11 +76,10 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-
     val viewModel: AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
       gbAuthUrl = None,
       xiAuthUrl = None,
-      date = ""
+      date = emptyString
     )
 
     def view(): Document = {

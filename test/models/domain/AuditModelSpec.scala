@@ -19,9 +19,9 @@ package models.domain
 import base.SpecBase
 import utils.TestData._
 
-class DownloadStatementAuditDataSpec extends SpecBase {
+class AuditModelSpec extends SpecBase {
 
-  "DownloadStatementAuditDataSpec.apply" should {
+  "apply" should {
 
     "correctly map StandingAuthorityFileMetadata and include the eori" in {
       val standingAuthorityFileMetadata = StandingAuthorityMetadata(

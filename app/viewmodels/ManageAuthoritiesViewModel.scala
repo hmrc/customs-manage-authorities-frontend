@@ -55,7 +55,9 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
   }
 }
 
-case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String)
+case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String) {
+  val isGbOrXiAuthUrlDefined: Boolean = gbAuthUrl.isDefined || xiAuthUrl.isDefined
+}
 
 object ManageAuthoritiesViewModel extends DateUtils {
 

@@ -67,8 +67,14 @@ class AuditingServiceSpec extends SpecBase {
     val AUDIT_STANDING_AUTHORITIES_TRANSACTION_NAME = "Display standing authorities csv"
 
     private val gbStanAuthFile153Url = "https://test.co.uk/GB123456789012/SA_000000000153_csv.csv"
-    private val standAuthMetadata: StandingAuthorityMetadata =
-      StandingAuthorityMetadata(START_DATE_1.getYear, START_DATE_1.getMonthValue, START_DATE_1.getDayOfMonth, Csv, models.domain.FileRole.StandingAuthority)
+    private val standAuthMetadata: StandingAuthorityMetadata = StandingAuthorityMetadata(
+      START_DATE_1.getYear,
+      START_DATE_1.getMonthValue,
+      START_DATE_1.getDayOfMonth,
+      Csv,
+      models.domain.FileRole.StandingAuthority
+    )
+
     protected val gbStandingAuth1: StandingAuthorityFile = StandingAuthorityFile(
       "SA_000000000153_csv.csv", gbStanAuthFile153Url, FILE_SIZE_500, standAuthMetadata, EORI_NUMBER)
 

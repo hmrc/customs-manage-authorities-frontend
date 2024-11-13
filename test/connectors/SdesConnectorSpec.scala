@@ -39,84 +39,80 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SdesConnectorSpec extends SpecBase {
 
-  "HttpSdesConnector" should {
+  "getAuthoritiesCsvFiles" should {
 
-    implicit val fileInformationListWrites: Writes[List[FileInformation]] = Writes.list(Json.writes[FileInformation])
+    "make a GET request to sdesStandingAuthorityFilesUrl" in new Setup {
+      val url: String = sdesStandingAuthorityFileUrl
 
-    "getAuthoritiesCsvFiles" should {
+      val app: Application = applicationBuilder().overrides(
+        inject.bind[HttpClient].toInstance(mockHttpClient),
+        inject.bind[RequestBuilder].toInstance(requestBuilder)
+      ).build()
 
-      "make a GET request to sdesStandingAuthorityFilesUrl" in new Setup {
-        val url: String = sdesStandingAuthorityFileUrl
+      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
-        val app: Application = applicationBuilder().overrides(
-          inject.bind[HttpClient].toInstance(mockHttpClient),
-          inject.bind[RequestBuilder].toInstance(requestBuilder)
-        ).build()
+      when(requestBuilder.execute(any[HttpReads[HttpResponse]], any[ExecutionContext]))
+        .thenReturn(Future.successful(HttpResponse(Status.OK, JsArray(Nil).toString())))
 
-        val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
+      when(requestBuilder.setHeader(any[(String, String)]())).thenReturn(requestBuilder)
 
-        when(requestBuilder.execute(any[HttpReads[HttpResponse]], any[ExecutionContext]))
-          .thenReturn(Future.successful(HttpResponse(Status.OK, JsArray(Nil).toString())))
+      when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
+        .thenReturn(Future.successful(HttpResponse(Status.OK, JsArray(Nil).toString())))
 
-        when(requestBuilder.setHeader(any[(String, String)]())).thenReturn(requestBuilder)
+      await(sdesService.getAuthoritiesCsvFiles(someEori)(hc))
 
-        when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
-          .thenReturn(Future.successful(HttpResponse(Status.OK, JsArray(Nil).toString())))
+      verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
+    }
 
-        await(sdesService.getAuthoritiesCsvFiles(someEori)(hc))
+    "converts Sdes response to List[StandingAuthorityFile]" in new Setup {
+      val url: String = sdesStandingAuthorityFileUrl
+      val numberOfStatements: Int = standingAuthoritiesFilesSdesResponse.length
 
-        verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
-      }
+      when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
+        .thenReturn(Future.successful(HttpResponse(Status.OK,
+          Json.toJson(standingAuthoritiesFilesSdesResponse).toString())))
 
-      "converts Sdes response to List[StandingAuthorityFile]" in new Setup {
-        val url: String = sdesStandingAuthorityFileUrl
-        val numberOfStatements: Int = standingAuthoritiesFilesSdesResponse.length
+      when(sdesGatekeeperServiceSpy.convertTo(any())).thenCallRealMethod()
 
-        when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
-          .thenReturn(Future.successful(HttpResponse(Status.OK,
-            Json.toJson(standingAuthoritiesFilesSdesResponse).toString())))
+      val app: Application = applicationBuilder().overrides(
+        inject.bind[HttpClient].toInstance(mockHttpClient),
+        inject.bind[RequestBuilder].toInstance(requestBuilder),
+        inject.bind[SdesGatekeeperService].toInstance(sdesGatekeeperServiceSpy)
+      ).build()
 
-        when(sdesGatekeeperServiceSpy.convertTo(any())).thenCallRealMethod()
+      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
-        val app: Application = applicationBuilder().overrides(
-          inject.bind[HttpClient].toInstance(mockHttpClient),
-          inject.bind[RequestBuilder].toInstance(requestBuilder),
-          inject.bind[SdesGatekeeperService].toInstance(sdesGatekeeperServiceSpy)
-        ).build()
+      await(sdesService.getAuthoritiesCsvFiles(someEori)(hc))
+      verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
+      verify(sdesGatekeeperServiceSpy, times(numberOfStatements)).convertToStandingAuthoritiesFile(any)
+    }
 
-        val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
+    "filter out unknown file types" in new Setup {
+      val url: String = sdesStandingAuthorityFileUrl
 
-        await(sdesService.getAuthoritiesCsvFiles(someEori)(hc))
-        verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
-        verify(sdesGatekeeperServiceSpy, times(numberOfStatements)).convertToStandingAuthoritiesFile(any)
-      }
+      val app: Application = applicationBuilder().overrides(
+        inject.bind[HttpClient].toInstance(mockHttpClient),
+        inject.bind[RequestBuilder].toInstance(requestBuilder)
+      ).build()
 
-      "filter out unknown file types" in new Setup {
-        val url: String = sdesStandingAuthorityFileUrl
+      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
-        val app: Application = applicationBuilder().overrides(
-          inject.bind[HttpClient].toInstance(mockHttpClient),
-          inject.bind[RequestBuilder].toInstance(requestBuilder)
-        ).build()
+      when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
+        .thenReturn(Future.successful(HttpResponse(Status.OK,
+          Json.toJson(standingAuthoritiesFilesWithUnknownFiletypesSdesResponse).toString())))
 
-        val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
+      val result: Seq[StandingAuthorityFile] =
+        await(sdesService.getAuthoritiesCsvFiles(someEoriWithUnknownFileTypes)(hc))
 
-        when[Future[HttpResponse]](mockHttpClient.GET(eqTo(url), any, any)(any, any, any))
-          .thenReturn(Future.successful(HttpResponse(Status.OK,
-            Json.toJson(standingAuthoritiesFilesWithUnknownFiletypesSdesResponse).toString())))
-
-        val result: Seq[StandingAuthorityFile] =
-          await(sdesService.getAuthoritiesCsvFiles(someEoriWithUnknownFileTypes)(hc))
-
-        result mustBe standingAuthorityFiles
-        verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
-      }
+      result mustBe standingAuthorityFiles
+      verify(mockHttpClient).GET(eqTo(url), any, any)(any, any, any)
     }
   }
 
   trait Setup {
     val hc: HeaderCarrier = HeaderCarrier()
     implicit val messages: Messages = stubMessages()
+    implicit val fileInformationListWrites: Writes[List[FileInformation]] = Writes.list(Json.writes[FileInformation])
     val someEori = "12345678"
     val someEoriWithUnknownFileTypes = "EoriFooBar"
     val xClientId = "TheClientId"

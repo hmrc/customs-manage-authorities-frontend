@@ -27,7 +27,9 @@
         link: components.link
 )
 
-@(viewModel: AuthoritiesFilesNotificationViewModel)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@(
+  viewModel: AuthoritiesFilesNotificationViewModel
+)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.heading", None, Seq())),
         backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl)) {

@@ -63,6 +63,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async {
     implicit request =>
+
       customsFinancialsConnector.deleteNotification(request.eoriNumber, StandingAuthority)
 
       val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad.url

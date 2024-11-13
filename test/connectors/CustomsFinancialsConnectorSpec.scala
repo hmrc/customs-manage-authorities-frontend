@@ -296,6 +296,7 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       server.stubFor(
         delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
           .willReturn(ok()))
+
       val result = connector.deleteNotification(eoriNumber, FileRole.StandingAuthority)(hc).futureValue
       result mustBe true
     }

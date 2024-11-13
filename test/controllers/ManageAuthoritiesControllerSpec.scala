@@ -42,6 +42,26 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
   "ManageAuthorities Controller" when {
 
+    "onPageLoad" should {
+
+      "call deleteNotification on the customsFinancialsConnector" in new Setup {
+        private val mockCustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+
+        private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector)
+          )
+          .build()
+
+        running(application) {
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          await(route(application, request).value)
+
+          verify(mockCustomsFinancialsConnector).deleteNotification(any, any)(any)
+        }
+      }
+    }
+
     "API call succeeds" must {
 
       "return OK and the correct view if no accounts associated with a EORI" in new Setup {
@@ -187,7 +207,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          
+
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
@@ -235,7 +255,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          
+
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
@@ -289,7 +309,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val result = route(application, request).value
           val view = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
-          
+
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
