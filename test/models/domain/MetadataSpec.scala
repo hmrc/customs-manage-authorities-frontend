@@ -60,7 +60,6 @@ class MetadataSpec extends SpecBase {
 
       val metadata = Metadata(items)
 
-      // Expected map
       val expectedMap = Map(
         "key1" -> "value1",
         "key2" -> "value2",

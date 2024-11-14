@@ -101,7 +101,9 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
 
       "there is at least one authority" in {
         val viewModel = ManageAuthoritiesViewModel(
-          authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
+          authorities = authorities, accounts = cdsAccounts,
+          filesNotificationViewModel = authoritiesFilesNotificationViewModel
+        )
 
         viewModel.hasAccounts mustBe true
         viewModel.hasNoAccounts mustBe false
@@ -109,7 +111,9 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
 
       "there are no authorities" in {
         val viewModel = ManageAuthoritiesViewModel(
-          authorities = AuthoritiesWithId(Seq.empty), accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
+          authorities = AuthoritiesWithId(Seq.empty), accounts = cdsAccounts,
+          filesNotificationViewModel = authoritiesFilesNotificationViewModel
+        )
 
         viewModel.hasAccounts mustBe false
         viewModel.hasNoAccounts mustBe true
@@ -123,7 +127,9 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
       ))
 
       val viewModel = ManageAuthoritiesViewModel(
-        authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
+        authorities = authorities, accounts = cdsAccounts,
+        filesNotificationViewModel = authoritiesFilesNotificationViewModel
+      )
       viewModel.sortedAccounts.keys.toSeq mustBe Seq("d", "c", "a", "b")
     }
 
@@ -148,7 +154,9 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
 
       val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
-        authorities = authorities, accounts = cdsAccounts, filesNotificationViewModel = authoritiesFilesNotificationViewModel)
+        authorities = authorities, accounts = cdsAccounts,
+        filesNotificationViewModel = authoritiesFilesNotificationViewModel
+      )
       val result: HtmlFormat.Appendable = viewModel.generateLinks()(msg, appConfig)
       val resultString: String = result.toString()
 

@@ -24,7 +24,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
 
   "MetadataItem" should {
 
-    "serialize to JSON correctly" in {
+    "writes to JSON correctly" in {
       val metadataItem = MetadataItem("exampleKey", "exampleValue")
 
       val expectedJson = Json.obj(
@@ -35,7 +35,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
       Json.toJson(metadataItem) shouldEqual expectedJson
     }
 
-    "deserialize from JSON correctly" in {
+    "reads from JSON correctly" in {
       val json = Json.obj(
         "metadata" -> "exampleKey",
         "value" -> "exampleValue"
@@ -46,7 +46,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
       json.validate[MetadataItem] shouldEqual JsSuccess(expectedMetadataItem)
     }
 
-    "fail to deserialize if 'metadata' field is missing" in {
+    "Reads fail if 'metadata' field is missing" in {
       val json = Json.obj(
         "value" -> "exampleValue"
       )
@@ -56,7 +56,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
       }
     }
 
-    "fail to deserialize if 'value' field is missing" in {
+    "Reads fail if 'value' field is missing" in {
       val json = Json.obj(
         "metadata" -> "exampleKey"
       )

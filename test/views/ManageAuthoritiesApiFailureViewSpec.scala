@@ -41,6 +41,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
 
     "display the authorized-to-view link" in new Setup {
       private val link = view().getElementById("manageAuthorities-noAccounts-link")
+
       link.attr("href") mustBe appConfig.authorizedToViewUrl
       link.text mustBe messages(app)("cf.account.authorized-to-view.title")
     }
@@ -51,12 +52,14 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
         xiAuthUrl = Some("https://example.com/XIFile.csv"),
         date = "01 January 2023"
       )
+
       view().select("div.notifications-panel").size mustBe 1
     }
 
     "not display the notification panel if no files provided" in new Setup {
       override val viewModel: AuthoritiesFilesNotificationViewModel =
         AuthoritiesFilesNotificationViewModel(None, None, date = "01 January 2023")
+
       view().getElementsByClass("notifications-panel") mustBe empty
     }
 

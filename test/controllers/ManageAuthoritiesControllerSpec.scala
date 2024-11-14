@@ -118,7 +118,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
         val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
         val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
-        val mockAuthEoriAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+        val mockAuthEoriAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService =
+          mock[AuthorisedEoriAndCompanyInfoService]
         val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
         val mockSdesConnector: SdesConnector = mock[SdesConnector]
 
@@ -160,8 +161,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
           contentAsString(result) mustEqual
             view(ManageAuthoritiesViewModel(
-              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)), maybeMessageBannerPartial = None)(
-              request, messages(application), appConfig).toString
+              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)),
+              maybeMessageBannerPartial = None)(request, messages(application), appConfig).toString
 
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
@@ -212,8 +213,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
           contentAsString(result) mustEqual
             view(ManageAuthoritiesViewModel(
-              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)), maybeMessageBannerPartial = None)(
-              request, messages(application), appConfig).toString
+              authoritiesWithId, accounts, eoriAndCompanyInfoMap, filesNotificationViewModel(application)),
+              maybeMessageBannerPartial = None)(request, messages(application), appConfig).toString
         }
       }
 
@@ -585,7 +586,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     private val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
 
     private val standAuthMetadata: StandingAuthorityMetadata =
-      StandingAuthorityMetadata(START_DATE_1.getYear, START_DATE_1.getMonthValue, START_DATE_1.getDayOfMonth, Csv, models.domain.FileRole.StandingAuthority)
+      StandingAuthorityMetadata(START_DATE_1.getYear, START_DATE_1.getMonthValue, START_DATE_1.getDayOfMonth, Csv,
+        models.domain.FileRole.StandingAuthority)
 
     private val gbStandingAuth1: StandingAuthorityFile = StandingAuthorityFile(
       "SA_000000000153_csv.csv", gbStanAuthFile153Url, FILE_SIZE_500, standAuthMetadata, EORI_NUMBER)
@@ -600,7 +602,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     protected val authCsvFiles: Seq[StandingAuthorityFile] =
       Seq(gbStandingAuth1, gbStandingAuth2, xiStandingAuth1, xiStandingAuth2)
 
-    protected def filesNotificationViewModel(app: Application): AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
-      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1)(messages(app)))
+    protected def filesNotificationViewModel(app: Application): AuthoritiesFilesNotificationViewModel =
+      AuthoritiesFilesNotificationViewModel(
+        Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1)(messages(app))
+      )
   }
 }
