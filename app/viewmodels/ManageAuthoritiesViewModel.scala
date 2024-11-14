@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,8 @@ import scala.collection.immutable.ListMap
 
 case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
                                       accounts: CDSAccounts,
-                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty) {
+                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty,
+                                      filesNotificationViewModel: AuthoritiesFilesNotificationViewModel) {
 
   def hasAccounts: Boolean = authorities.accounts.nonEmpty
 
@@ -52,6 +53,10 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
       secondLinkHref = appConfig.authorizedToViewUrl,
       secondLinkId = Some("authorised-to-view-link"))
   }
+}
+
+case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String) {
+  val isGbOrXiAuthUrlDefined: Boolean = gbAuthUrl.isDefined || xiAuthUrl.isDefined
 }
 
 object ManageAuthoritiesViewModel extends DateUtils {

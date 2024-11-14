@@ -1,5 +1,5 @@
 @*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.{ManageAuthoritiesViewModel, ManageAuthoritiesTableViewModel}
+@import viewmodels.{ManageAuthoritiesViewModel, ManageAuthoritiesTableViewModel, AuthoritiesFilesNotificationViewModel}
 @import views.html.partials._
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -24,6 +24,7 @@
     layout: Layout,
     formHelper: FormWithCSRF,
     errorSummary: components.errorSummary,
+    notificationPanel: components.authoritiesNotificationPanel,
     button: components.button,
     inputText: components.inputText,
     h1: components.h1,
@@ -54,6 +55,8 @@
     <div class="govuk-form-group">
       @viewModel.generateLinks()
     </div>
+
+    @notificationPanel(viewModel.filesNotificationViewModel)
 
     @if(viewModel.hasNoAccounts) {
 

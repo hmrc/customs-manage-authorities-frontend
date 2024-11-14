@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@
 package connectors
 
 import config.Service
-import models.domain.{AccountWithAuthorities, CDSAccounts}
+import models.domain.{AccountWithAuthorities, CDSAccounts, FileRole}
 import models.requests._
 import models.{CompanyName, EORIValidationError, ErrorResponse}
 import play.api.Configuration
 import play.mvc.Http.Status
+import services.MetricsReporterService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, HttpResponse, NotFoundException}
 import utils.StringUtils.emptyString
@@ -29,8 +30,10 @@ import utils.StringUtils.emptyString
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsFinancialsConnector @Inject()(config: Configuration,
-                                           httpClient: HttpClient
+class CustomsFinancialsConnector @Inject()(
+                                            config: Configuration,
+                                            httpClient: HttpClient,
+                                            metricsReporterService: MetricsReporterService
                                           )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   private val baseUrl = config.get[Service]("microservice.services.customs-financials-api")
@@ -78,5 +81,15 @@ class CustomsFinancialsConnector @Inject()(config: Configuration,
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
     httpClient.GET[CompanyName](baseUrl.toString + context + "/subscriptions/company-name")
+  }
+
+  def deleteNotification(eori: String,
+                         fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    metricsReporterService.withResponseTimeLogging("customs-financials-api.delete.notification") {
+      httpClient.DELETE[HttpResponse](s"${baseUrl.toString}$context/eori/$eori/notifications/$fileRole")
+        .flatMap {
+          res => Future.successful(res.status == Status.OK)
+        }
+    }
   }
 }

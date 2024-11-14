@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,41 @@ object TestData {
   val START_DATE_2: LocalDate = LocalDate.parse("2020-04-01")
   val END_DATE_1: LocalDate = LocalDate.parse("2020-04-01")
   val END_DATE_2: LocalDate = LocalDate.parse("2020-05-01")
+
+  val YEAR_1972 = 1972
+  val YEAR_2010 = 2010
+  val YEAR_2017 = 2017
+  val YEAR_2022 = 2022
+  val YEAR_2023 = 2023
+  val YEAR_2027 = 2027
+
+  val MONTH_1 = 1
+  val MONTH_2 = 2
+  val MONTH_5 = 5
+  val MONTH_6 = 6
+  val MONTH_12 = 12
+
+  val DAY_1 = 1
+  val DAY_2 = 2
+  val DAY_20 = 20
+  val DAY_25 = 25
+
+  val LENGTH_8 = 8
+  val LENGTH_11 = 11
+  val LENGTH_27 = 27
+
+  val FILE_SIZE_DEFAULT = 1234L
+  val FILE_SIZE_42 = 42
+  val FILE_SIZE_111 = 111L
+  val FILE_SIZE_115 = 115L
+  val FILE_SIZE_500 = 500L
+  val FILE_SIZE_888 = 888L
+  val FILE_SIZE_1000 = 1000L
+  val FILE_SIZE_2064 = 2064L
+  val FILE_SIZE_2164 = 2164L
+  val FILE_SIZE_999999 = 999999L
+  val FILE_SIZE_1000000 = 1000000L
+  val FILE_SIZE_5430000 = 5430000L
 
   val STANDING_AUTHORITY_1: StandingAuthority =
     StandingAuthority(EORI_NUMBER, START_DATE_1, Some(END_DATE_1), viewBalance = false)

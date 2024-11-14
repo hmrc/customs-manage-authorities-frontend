@@ -4,6 +4,7 @@ $hmrc-assets-path: "/customs/manage-authorities/assets/lib/hmrc-frontend/hmrc/";
 @import "lib/govuk-frontend/dist/govuk/base";
 
 @import "components/table";
+@import "components/notification-panel";
 @import "components/notifications-bar";
 @import "manage-authorities";
 @import "shame";

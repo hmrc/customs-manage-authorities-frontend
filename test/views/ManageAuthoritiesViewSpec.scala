@@ -18,16 +18,18 @@ package views
 
 import base.SpecBase
 import config.FrontendAppConfig
+import models.domain.{AuthoritiesWithId, CDSAccounts}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.Application
 import play.api.i18n.Messages
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.{FakeRequest, Helpers}
-import views.html.ManageAuthoritiesView
-import viewmodels.ManageAuthoritiesViewModel
 import play.twirl.api.HtmlFormat
-import models.domain.{AuthoritiesWithId, CDSAccounts}
+import utils.TestData.START_DATE_1
+import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
+import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
+import views.html.ManageAuthoritiesView
 
 class ManageAuthoritiesViewSpec extends SpecBase {
 
@@ -38,6 +40,17 @@ class ManageAuthoritiesViewSpec extends SpecBase {
 
     "display the heading title" in new Setup {
       view().getElementById("manageAuthorities.heading").text mustBe messages("manageAuthorities.title")
+    }
+
+    "display the notification panel if files provided" in new Setup {
+      view().select("div.notifications-panel").size mustBe 1
+    }
+
+    "not display the notification panel if no files provided" in new Setup {
+      override val standingAuthorityFilesViewModel: AuthoritiesFilesNotificationViewModel =
+        AuthoritiesFilesNotificationViewModel(None, None, dateAsDayMonthAndYear(START_DATE_1))
+
+      view().getElementsByClass("notifications-panel") mustBe empty
     }
 
     "display notifications bar if provided" in new Setup {
@@ -61,10 +74,17 @@ class ManageAuthoritiesViewSpec extends SpecBase {
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages = Helpers.stubMessages()
 
-    val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
+    val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
+    val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
+
+    val standingAuthorityFilesViewModel = AuthoritiesFilesNotificationViewModel(
+      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1))
+
+    lazy val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
       authorities = AuthoritiesWithId(Nil),
       accounts = CDSAccounts("testEori", List.empty),
-      auhorisedEoriAndCompanyMap = Map.empty
+      auhorisedEoriAndCompanyMap = Map.empty,
+      filesNotificationViewModel = standingAuthorityFilesViewModel
     )
     val maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None
 

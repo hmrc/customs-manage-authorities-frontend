@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,13 @@ import utils.Constants.{
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, ZoneId}
+import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, OffsetDateTime, ZoneId, ZoneOffset}
 
 class DateTimeService @Inject()(appConfig: FrontendAppConfig) {
 
   private val defaultZoneId = "Europe/London"
+
+  def getTimeStamp: OffsetDateTime = OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC)
 
   def systemTime(zoneId: ZoneId = ZoneId.systemDefault()): LocalDateTime = {
     if (appConfig.fixedDateTime) {

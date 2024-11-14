@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ object StringUtils {
   val htmlSingleLineBreak = "<br>"
   val comma = ","
   val hyphenWithSpaces = " - "
+  val hyphen = "-"
 
   def removeSpacesFromString(value: String): String = value.replaceAll("\\s", emptyString)
 

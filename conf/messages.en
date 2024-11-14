@@ -87,6 +87,10 @@ manageAuthorities.accounts.authorised = Accounts you have already authorised
 manageAuthorities.notification.noAuthorities = You have not given anyone permission to use any of your accounts yet. You can add authority for someone to use your duty deferment, general guarantee or cash accounts.
 manageAuthorities.notification.cdsAuthorities = Authorities you add here will only be valid for use on the Customs Declaration Service (CDS).
 manageAuthorities.addAuthority = Add an authority
+manageAuthorities.notificationPanel.p1=The list of authorities you requested are available to download:
+manageAuthorities.notificationPanel.a.gb-authority=GB authorities (CSV)
+manageAuthorities.notificationPanel.a.xi-authority=Northern Ireland authorities (CSV)
+manageAuthorities.notificationPanel.p2=Your list was created on {0}. It will be available to view for 10 days.
 manageAuthorities.error=Sorry, we can''t display these right now. Please try again later.
 manageAuthorities.error.display=There is a problem displaying the accounts you have already authorised. Please try again later.
 

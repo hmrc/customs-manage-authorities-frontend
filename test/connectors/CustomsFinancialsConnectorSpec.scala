@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -286,6 +286,19 @@ class CustomsFinancialsConnectorSpec extends SpecBase
         val result = connector.retrieveEoriCompanyName().futureValue
         result.name mustBe Some("ABCD")
       }
+    }
+  }
+
+  "delete notifications should return a boolean based on the result" in new Setup {
+
+    running(app) {
+
+      server.stubFor(
+        delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
+          .willReturn(ok()))
+
+      val result = connector.deleteNotification(eoriNumber, FileRole.StandingAuthority)(hc).futureValue
+      result mustBe true
     }
   }
 

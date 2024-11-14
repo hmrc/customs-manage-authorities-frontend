@@ -88,6 +88,10 @@ manageAuthorities.accounts.authorised = Cyfrifon rydych eisoes wedi’u hawdurdo
 manageAuthorities.notification.noAuthorities=Nid ydych wedi rhoi caniatâd i unrhyw un ddefnyddio unrhyw un o’ch cyfrifon eto. Gallwch ychwanegu awdurdod er mwyn i rywun allu defnyddio’ch cyfrif gohirio tollau, cyfrif gwarant cyffredinol neu gyfrif arian parod.
 manageAuthorities.notification.cdsAuthorities=Bydd awdurdodau rydych yn eu hychwanegu yma dim ond yn ddilys i’w defnyddio ar y Gwasanaeth Datgan Tollau.
 manageAuthorities.addAuthority=Ychwanegu awdurdod
+manageAuthorities.notificationPanel.p1=Mae’r rhestr o awdurdodau y gwnaethoch gais amdanynt ar gael i’w lawrlwytho:
+manageAuthorities.notificationPanel.a.gb-authority=Awdurdodau ym Mhrydain Fawr (CSV)
+manageAuthorities.notificationPanel.a.xi-authority=Awdurdodau yng Ngogledd Iwerddon (CSV)
+manageAuthorities.notificationPanel.p2=Crëwyd eich rhestr ar {0}. Bydd ar gael i’w gweld am 10 diwrnod.
 manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 manageAuthorities.error.display = Mae problem gyda dangos y cyfrifon rydych eisoes wedi’u hawdurdodi.
 
