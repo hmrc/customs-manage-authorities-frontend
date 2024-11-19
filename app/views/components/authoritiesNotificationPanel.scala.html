@@ -22,10 +22,10 @@
   p: p
 )
 
-@(viewModel: AuthoritiesFilesNotificationViewModel)(implicit messages: Messages)
+@(viewModel: AuthoritiesFilesNotificationViewModel, extraClasses: Option[String] = None)(implicit messages: Messages)
 
 @if(viewModel.isGbOrXiAuthUrlDefined) {
-  <div id="notification-panel" class="notifications-panel govuk-!-margin-top-8">
+  <div id="notification-panel" class="notifications-panel govuk-!-margin-top-8 @extraClasses">
     @p(Html(messages("manageAuthorities.notificationPanel.p1")))
 
     <ul class="govuk-list">

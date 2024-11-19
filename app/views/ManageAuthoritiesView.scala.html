@@ -56,7 +56,10 @@
       @viewModel.generateLinks()
     </div>
 
-    @notificationPanel(viewModel.filesNotificationViewModel)
+    @notificationPanel(
+      viewModel.filesNotificationViewModel,
+      if (viewModel.hasAccounts) Some("govuk-!-width-two-thirds") else None
+    )
 
     @if(viewModel.hasNoAccounts) {
 
