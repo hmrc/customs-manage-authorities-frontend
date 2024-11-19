@@ -26,6 +26,8 @@ import utils.ViewTestHelper
 import viewmodels.AuthoritiesFilesNotificationViewModel
 import views.html.components.authoritiesNotificationPanel
 
+import scala.jdk.CollectionConverters.SetHasAsScala
+
 class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
 
   "AuthoritiesNotificationPanel" should {
@@ -78,6 +80,30 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
       Option(view.getElementById("notification-panel")) mustBe None
 
       view.getElementsByClass("govuk-body").size() mustBe 0
+    }
+
+    "apply the correct extra classes when provided" in new Setup {
+      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
+      val view: Document = Jsoup.parse(
+        app.injector.instanceOf[authoritiesNotificationPanel]
+          .apply(viewModel, extraClasses = Some("govuk-!-width-two-thirds"))
+          .body)
+
+      private val notificationPanel = view.getElementsByClass("notifications-panel").first()
+
+      notificationPanel.hasClass("govuk-!-width-two-thirds") mustBe true
+    }
+
+    "not apply extra classes when none are provided" in new Setup {
+      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
+      val view: Document = Jsoup.parse(
+        app.injector.instanceOf[authoritiesNotificationPanel]
+          .apply(viewModel)
+          .body)
+
+      private val notificationPanel = view.getElementsByClass("notifications-panel").first()
+
+      notificationPanel.classNames().asScala mustBe Set("notifications-panel", "govuk-!-margin-top-8")
     }
   }
 
