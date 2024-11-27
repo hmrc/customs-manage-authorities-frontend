@@ -23,22 +23,22 @@ import models.domain.FileRole.StandingAuthority
 import models.domain.{EORI, FileInformation, SdesFile, StandingAuthorityFile}
 import services.{AuditingService, MetricsReporterService, SdesGatekeeperService}
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SdesConnector @Inject()(httpClient: HttpClient,
+class SdesConnector @Inject()(httpClient: HttpClientV2,
                               appConfig: FrontendAppConfig,
                               metricsReporterService: MetricsReporterService,
                               sdesGatekeeperService: SdesGatekeeperService,
                               auditingService: AuditingService
                              )(implicit executionContext: ExecutionContext) {
 
-  import sdesGatekeeperService._
-
   def getAuthoritiesCsvFiles(eori: EORI)(implicit hc: HeaderCarrier): Future[Seq[StandingAuthorityFile]] = {
-    val transform = convertTo[StandingAuthorityFile] andThen filterFileFormats(authorityFileFormats)
+    val transform = sdesGatekeeperService.convertTo(sdesGatekeeperService.convertToStandingAuthoritiesFile) andThen 
+                    (files => filterFileFormats(authorityFileFormats)(files))
 
     getSdesFiles[FileInformation, StandingAuthorityFile](
       appConfig.filesUrl(StandingAuthority),
@@ -52,15 +52,15 @@ class SdesConnector @Inject()(httpClient: HttpClient,
                                              eori: EORI,
                                              metricsName: String,
                                              transform: Seq[A] => Seq[B])
-                                    (implicit reads: HttpReads[HttpResponse],
-                                     readSeq: HttpReads[Seq[A]],
-                                     hc: HeaderCarrier): Future[Seq[B]] = {
+                                            (implicit reads: HttpReads[Seq[A]], hc: HeaderCarrier): Future[Seq[B]] = {
 
     metricsReporterService.withResponseTimeLogging(metricsName) {
       val headers = Seq(X_CLIENT_ID -> appConfig.xClientIdHeader, X_SDES_KEY -> eori)
 
-      httpClient.GET[HttpResponse](url, headers = headers)(reads, HeaderCarrier(), implicitly)
-        .map(readSeq.read("GET", url, _))
+      httpClient
+        .get(url"$url")
+        .setHeader(headers: _*)
+        .execute[Seq[A]]
         .map(transform)
         .map { files =>
           auditingService.auditFiles(files, eori)

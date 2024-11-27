@@ -40,7 +40,7 @@
         backLink = Some(controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorityEndDateController.onSubmit(accountId, authorityId),
-                'autoComplete -> "off") {
+                Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors, None)
 

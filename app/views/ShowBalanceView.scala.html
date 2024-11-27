@@ -40,7 +40,7 @@
 
 @layout(pageTitle = Some(title(form, "showBalance.title", None, Seq())), backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.ShowBalanceController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.ShowBalanceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

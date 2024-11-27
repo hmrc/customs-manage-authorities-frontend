@@ -14,17 +14,18 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLayout
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardPage, HmrcReportTechnicalIssueHelper, HmrcLanguageSelectHelper}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcTimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcReportTechnicalIssueHelper
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcLanguageSelectHelper
 @import views.html.components.fullWidthMainContent
 
 @this(
     appConfig: FrontendAppConfig,
-    hmrcLayout: HmrcLayout,
+    hmrcStandardPage: HmrcStandardPage,
     govukBackLink: GovukBackLink,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
@@ -41,7 +42,7 @@
         userResearchBanner: Boolean = true,
         maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
         isFullWidth: Boolean = false
-)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+)(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
 
 
 @phaseBannerContent = {
@@ -84,16 +85,23 @@
     }
 }
 
-@hmrcLayout(
-    userResearchBannerUrl = if (userResearchBanner) Some(appConfig.helpMakeGovUkBetterUrl) else None,
+@hmrcStandardPage(
+  HmrcStandardPageParams(
     pageTitle = fullPageTitle,
-    serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
-    signOutUrl = Some(controllers.routes.LogoutController.logout.url),
-    backLinkUrl = backLink,
-    beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent),
-    additionalHeadBlock = Some(additionalHead),
-    phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
+		serviceURLs = ServiceURLs(
+			serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
+			signOutUrl = Some(controllers.routes.LogoutController.logout.url),
+			accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
+		),
+    backLink = backLink.filter(_.nonEmpty).map(BackLink(_)),
+		templateOverrides = TemplateOverrides(
+			additionalHeadBlock = Some(additionalHead),
+			beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent)
+		),
+		banners = Banners(
+			phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
+			userResearchBanner = Some(UserResearchBanner(url = appConfig.helpMakeGovUkBetterUrl))
+		),
     isWelshTranslationAvailable = welshToggle,
-    accessibilityStatementUrl = Some("/accessibility-statement/customs-financials"),
-    mainContentLayout = Some(if(isFullWidth) fullWidthMainContent(_) else twoThirdsMainContent(_))
+	)
 )(mainContent)

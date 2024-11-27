@@ -48,7 +48,7 @@
 
 @layout(pageTitle = Some(title(form, "eoriDetails.title", None, Seq())), backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.EoriDetailsCorrectController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.EoriDetailsCorrectController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 
