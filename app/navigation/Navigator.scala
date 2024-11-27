@@ -187,7 +187,7 @@ class Navigator @Inject()() {
   def backLinkRouteForEORINUmberPage(mode: Mode): Call = {
     mode match {
       case CheckMode => controllers.add.routes.AuthorisedUserController.onPageLoad()
-      case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad
+      case NormalMode => controllers.routes.ManageAuthoritiesController.onPageLoad()
     }
   }
 }

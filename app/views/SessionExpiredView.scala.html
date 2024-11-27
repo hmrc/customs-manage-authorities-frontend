@@ -27,13 +27,13 @@
 @()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(Some(titleNoForm("session_expired.title", None, Seq())),
-        backLink = Some(controllers.routes.ManageAuthoritiesController.onPageLoad)) {
+        backLink = Some(controllers.routes.ManageAuthoritiesController.onPageLoad())) {
 
     @h1(messages("session_expired.heading"))
 
     @p(Html(messages("session_expired.guidance")))
 
     @button(msg = "session_expired.action",
-            href = Some(controllers.routes.ManageAuthoritiesController.onPageLoad.url),
+            href = Some(controllers.routes.ManageAuthoritiesController.onPageLoad().url),
             id = Some("start-link"))
 }

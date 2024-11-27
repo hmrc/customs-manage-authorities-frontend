@@ -46,6 +46,6 @@
 
    @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
 
-   @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, linkMessage = "addConfirmation.returnLink")
+   @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, linkMessage = "addConfirmation.returnLink")
 
 }

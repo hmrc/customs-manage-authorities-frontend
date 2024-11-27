@@ -46,7 +46,7 @@ class ViewAuthorityController @Inject()(view: EditOrRemoveView,
       authorityId,
       accountId
     ).flatMap {
-      case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad))
+      case Left(_) => Future.successful(Redirect(routes.ManageAuthoritiesController.onPageLoad()))
       case Right(AccountAndAuthority(account, authority)) =>
         val userAnswers = request.userAnswers.getOrElse(UserAnswers(request.internalId.value))
 

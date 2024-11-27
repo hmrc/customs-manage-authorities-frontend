@@ -20,6 +20,7 @@ import com.mongodb.client.model.Indexes.ascending
 import models.UserAnswers
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
+import org.mongodb.scala.gridfs.ToSingleObservablePublisher
 import play.api.Configuration
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -42,7 +43,7 @@ class DefaultSessionRepository @Inject()(
         ascending("lastUpdated"),
         IndexOptions().name("user-answers-last-updated-index")
           .unique(true)
-          .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
       )
     )
   ) with SessionRepository {

@@ -38,7 +38,7 @@
 )
 
 @layout(Some(titleNoForm("view-authority-heading", None, Seq())),
-        backLink = Some(routes.ManageAuthoritiesController.onPageLoad.url)) {
+        backLink = Some(routes.ManageAuthoritiesController.onPageLoad().url)) {
 
     @h1(id = Some("view-authority-id"), msg = "view-authority-heading", classes="govuk-heading-xl govuk-!-margin-bottom-9")
 

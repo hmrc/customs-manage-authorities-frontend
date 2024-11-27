@@ -66,7 +66,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
 
       customsFinancialsConnector.deleteNotification(request.eoriNumber, StandingAuthority)
 
-      val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad.url
+      val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad().url
 
       val response = for {
         xiEori <- dataStoreConnector.getXiEori(request.eoriNumber)
@@ -94,7 +94,7 @@ class ManageAuthoritiesController @Inject()(override val messagesApi: MessagesAp
           Redirect(routes.ManageAuthoritiesController.validationFailure())
         case NonFatal(e) =>
           logger.warn(s"[FetchAccountAuthorities API] Failed with error: ${e.getMessage}")
-          Redirect(routes.ManageAuthoritiesController.unavailable)
+          Redirect(routes.ManageAuthoritiesController.unavailable())
       }
   }
 

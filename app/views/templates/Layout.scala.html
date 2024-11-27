@@ -35,15 +35,14 @@
 )
 
 @(pageTitle: Option[String] = None,
-        backLink: Option[String] = None,
-        helpAndSupport: Boolean = true,
-        deskpro: Boolean = true,
-        welshToggle: Boolean = true,
-        userResearchBanner: Boolean = true,
-        maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
-        isFullWidth: Boolean = false
+  backLink: Option[String] = None,
+  helpAndSupport: Boolean = true,
+  deskpro: Boolean = true,
+  welshToggle: Boolean = true,
+  userResearchBanner: Boolean = true,
+  maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
+  isFullWidth: Boolean = false
 )(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
-
 
 @phaseBannerContent = {
     @messages("feedback.before")
@@ -86,22 +85,22 @@
 }
 
 @hmrcStandardPage(
-  HmrcStandardPageParams(
-    pageTitle = fullPageTitle,
-		serviceURLs = ServiceURLs(
-			serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
-			signOutUrl = Some(controllers.routes.LogoutController.logout.url),
-			accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
-		),
-    backLink = backLink.filter(_.nonEmpty).map(BackLink(_)),
-		templateOverrides = TemplateOverrides(
-			additionalHeadBlock = Some(additionalHead),
-			beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent)
-		),
-		banners = Banners(
-			phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
-			userResearchBanner = Some(UserResearchBanner(url = appConfig.helpMakeGovUkBetterUrl))
-		),
-    isWelshTranslationAvailable = welshToggle,
-	)
+    HmrcStandardPageParams(
+        pageTitle = fullPageTitle,
+        serviceURLs = ServiceURLs(
+            serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
+            signOutUrl = Some(controllers.routes.LogoutController.logout.url),
+            accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
+        ),
+        backLink = backLink.filter(_.nonEmpty).map(BackLink(_)),
+        templateOverrides = TemplateOverrides(
+            additionalHeadBlock = Some(additionalHead),
+            beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent)
+        ),
+        banners = Banners(
+            phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
+            userResearchBanner = Some(UserResearchBanner(url = appConfig.helpMakeGovUkBetterUrl))
+        ),
+        isWelshTranslationAvailable = welshToggle,
+    )
 )(mainContent)

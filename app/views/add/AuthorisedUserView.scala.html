@@ -74,7 +74,7 @@
         <div class="govuk-button-group">
             @button("checkYourAnswers.confirm.button")
             @link(
-                location = controllers.routes.ManageAuthoritiesController.onPageLoad.url, 
+                location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, 
                 linkMessage = "checkYourAnswers.cancel",
                 ariaHidden = true,
                 ariaLabel = Some(messages("checkYourAnswers.cancelScreenReader"))

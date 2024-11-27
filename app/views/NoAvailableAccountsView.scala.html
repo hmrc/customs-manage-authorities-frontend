@@ -33,6 +33,6 @@
 
  @h1(id=Some("accounts.heading"), msg = messages("accounts.noAvailableAccounts.heading", enteredEori))
 
- @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad.url,
+ @linkP(link = controllers.routes.ManageAuthoritiesController.onPageLoad().url,
         messageKey = "accounts.noAvailableAccounts.link", pMessageKey = "accounts.noAvailableAccounts.p")
 }

@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import models.NormalMode
+import models.{NormalMode, withNameToString}
 import models.requests.DataRequest
 import pages.add.{AccountsPage, EoriNumberPage}
 import play.api.mvc.Results.Redirect

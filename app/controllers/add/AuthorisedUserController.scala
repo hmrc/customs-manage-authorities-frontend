@@ -22,7 +22,7 @@ import controllers.actions._
 import controllers.grantAccountAuthRequestList
 import forms.AuthorisedUserFormProviderWithConsent
 import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, UserAnswers, withNameToString}
 import navigation.Navigator
 import pages.add.AuthorisedUserPage
 import play.api.Logging
