@@ -50,7 +50,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val authorityStartDateRoute = controllers.edit.routes.EditAuthorityStartDateController.onPageLoad("someId", "someId").url
 
-  override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
   private lazy val getRequest: FakeRequest[AnyContentAsEmpty.type] =
     fakeRequest(GET, authorityStartDateRoute)
@@ -85,7 +85,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(EditAuthorityStartDatePage("someId", "someId"), validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId.value).set(EditAuthorityStartDatePage("someId", "someId"), validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
 

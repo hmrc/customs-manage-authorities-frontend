@@ -18,7 +18,7 @@ package forms
 
 import base.SpecBase
 import org.scalatest.Assertion
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.{shouldBe, should}
 import play.api.data.{Form, FormError}
 
 trait FormSpec extends SpecBase {

@@ -62,50 +62,50 @@ class EditConfirmationControllerSpec extends SpecBase {
         }*/
       }
 
-     "Start date is today with single account selected" in {
+    "Start date is today with single account selected" in {
 
-        val mockSessionRepository = mock[SessionRepository]
-        val mockAccountsRepository = mock[AccountsRepository]
-        val mockAuthoritiesRepository = mock[AuthoritiesRepository]
-        val mockConfirmationService = mock[ConfirmationService]
+      val mockSessionRepository = mock[SessionRepository]
+      val mockAccountsRepository = mock[AccountsRepository]
+      val mockAuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockConfirmationService = mock[ConfirmationService]
 
-        when(mockSessionRepository.clear("id")).thenReturn(Future.successful(true))
-        when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
-        when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
-        when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(mockSessionRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
-        when(mockConfirmationService.populateConfirmation(
-          any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+      when(mockConfirmationService.populateConfirmation(
+        any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
 
-        val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
-          .set(AccountsPage, List(cashAccount)).success.value
+      val userAnswers = emptyUserAnswers
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
+        .set(AccountsPage, List(cashAccount)).success.value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          inject.bind[SessionRepository].toInstance(mockSessionRepository),
-          inject.bind[AccountsRepository].toInstance(mockAccountsRepository),
-          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
-          inject.bind[ConfirmationService].toInstance(mockConfirmationService)
-        ).configure("features.edit-journey" -> true).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        inject.bind[SessionRepository].toInstance(mockSessionRepository),
+        inject.bind[AccountsRepository].toInstance(mockAccountsRepository),
+        inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+        inject.bind[ConfirmationService].toInstance(mockConfirmationService)
+      ).configure("features.edit-journey" -> true).build()
 
-        running(application) {
+      running(application) {
 
-          val request = fakeRequest(GET,
-            controllers.edit.routes.EditConfirmationController.onPageLoad(
-              "a", "b").url)
+        val request = fakeRequest(GET,
+          controllers.edit.routes.EditConfirmationController.onPageLoad(
+            "a", "b").url)
 
-          val result = route(application, request).value
+        val result = route(application, request).value
 
-          status(result) mustEqual OK
+        status(result) mustEqual OK
 
-          verify(mockSessionRepository, times(1)).clear("id")
-          verify(mockAccountsRepository, times(1)).clear("id")
-          verify(mockAuthoritiesRepository, times(1)).clear("id")
+        verify(mockSessionRepository, times(1)).clear("id")
+        verify(mockAccountsRepository, times(1)).clear("id")
+        verify(mockAuthoritiesRepository, times(1)).clear("id")
 
-        //  contentAsString(result) mustEqual view("GB123456789012", None, Some("Tony Stark"))(request, messages(application), appConfig).toString
-        }
+      //  contentAsString(result) mustEqual view("GB123456789012", None, Some("Tony Stark"))(request, messages(application), appConfig).toString
       }
     }
+  }
 
     "redirect to session expired if EORI number is missing" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()

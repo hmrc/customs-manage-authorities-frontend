@@ -36,7 +36,7 @@ class IndexControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual routes.ManageAuthoritiesController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.ManageAuthoritiesController.onPageLoad().url
       }
     }
   }

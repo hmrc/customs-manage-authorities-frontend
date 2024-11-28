@@ -24,7 +24,6 @@ import play.api.{Logger, Logging}
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
-import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 

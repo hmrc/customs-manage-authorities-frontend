@@ -22,7 +22,7 @@ import forms.AuthorityEndDateFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.AuthorityEndDatePage
 import play.api.mvc.AnyContentAsEmpty

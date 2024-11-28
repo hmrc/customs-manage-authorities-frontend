@@ -16,21 +16,21 @@
 
 package forms.behaviours
 
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.{shouldBe, shouldEqual}
 import play.api.data.{Form, FormError}
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalacheck.Gen
 
-trait DecimalFieldBehaviours extends FieldBehaviours {
+trait DecimalFieldBehaviours extends FieldBehaviours with ScalaCheckPropertyChecks {
 
   def decimalField(form: Form[_],
                    fieldName: String,
                    nonNumericError: FormError): Unit = {
 
     "not bind non-numeric numbers" in {
-
-      forAll(nonNumerics -> "nonNumeric") {
-        nonNumeric =>
-          val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
-          result.errors shouldEqual Seq(nonNumericError)
+      forAll(nonNumerics) { (nonNumeric: String) =>
+        val result = form.bind(Map(fieldName -> nonNumeric)).apply(fieldName)
+        result.errors shouldEqual Seq(nonNumericError)
       }
     }
   }
@@ -41,11 +41,9 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
                               expectedError: FormError): Unit = {
 
     s"not bind numbers below $minimum" in {
-
-      forAll(decimalsBelowValue(minimum) -> "decimalBelowMin") {
-        number: Double =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors shouldEqual Seq(expectedError)
+      forAll(decimalsBelowValue(minimum)) { (number: Double) =>
+        val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
+        result.errors shouldEqual Seq(expectedError)
       }
     }
   }
@@ -56,11 +54,9 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
                               expectedError: FormError): Unit = {
 
     s"not bind numbers above $maximum" in {
-
-      forAll(decimalsAboveValue(maximum) -> "decimalAboveMax") {
-        number: Double =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors shouldEqual Seq(expectedError)
+      forAll(decimalsAboveValue(maximum)) { (number: Double) =>
+        val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
+        result.errors shouldEqual Seq(expectedError)
       }
     }
   }
@@ -72,11 +68,9 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
                              expectedError: FormError): Unit = {
 
     s"not bind numbers outside the range $minimum to $maximum" in {
-
-      forAll(decimalsOutsideRange(minimum, maximum) -> "intOutsideRange") {
-        number =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors shouldEqual Seq(expectedError)
+      forAll(decimalsOutsideRange(minimum, maximum)) { (number: Double) =>
+        val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
+        result.errors shouldEqual Seq(expectedError)
       }
     }
   }

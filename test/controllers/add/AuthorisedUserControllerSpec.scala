@@ -23,6 +23,7 @@ import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbers
 import forms.AuthorisedUserFormProviderWithConsent
 import models.domain._
 import models.requests.Accounts
+import models.withNameToString
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
@@ -53,7 +54,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
       val app: Application = applicationWithUserAnswersAndEori(userAnswers)
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accountsString, standingAuthority, authorisedUser)))
 
       running(app) {
         val view = app.injector.instanceOf[AuthorisedUserView]
@@ -123,7 +124,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val app: Application = applicationWithUserAnswersAndEori(
         userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accountsString, standingAuthority, authorisedUser)))
+
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
 
@@ -243,7 +245,8 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val app: Application = applicationWithUserAnswersAndEori(
         userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
 
-      when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
+      when(mockValidator.validate(userAnswers)).thenReturn(Some((accountsString, standingAuthority, authorisedUser)))
+
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
 
@@ -269,8 +272,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val gbEori = "GB123456789012"
     val xiEori = "XI9876543210000"
+    val accountsString: String = AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty).toString
     val accounts: Accounts = Accounts(
-      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+      Some(accountsString), Seq.empty, None)
 
     val accountsWithDDCashAndGuarantee: Accounts = Accounts(
       Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),

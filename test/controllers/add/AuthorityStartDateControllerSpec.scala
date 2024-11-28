@@ -50,7 +50,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   private lazy val authorityStartDateRoute = controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode).url
 
-  override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
+  override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
   private lazy val getRequest: FakeRequest[AnyContentAsEmpty.type] =
     fakeRequest(GET, authorityStartDateRoute)
@@ -86,7 +86,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(AuthorityStartDatePage, validAnswer).success.value
+      val userAnswers = UserAnswers(userAnswersId.value).set(AuthorityStartDatePage, validAnswer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

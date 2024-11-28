@@ -69,7 +69,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
       val answer = AuthorisedUser("name", "role")
 
-      val userAnswers = UserAnswers(userAnswersId).set(AuthorityDetailsPage, answer).success.value
+      val userAnswers = UserAnswers(userAnswersId.value).set(AuthorityDetailsPage, answer).success.value
 
       val application = applicationBuilder(Some(userAnswers))
         .overrides()

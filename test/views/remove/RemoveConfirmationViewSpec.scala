@@ -58,7 +58,7 @@ class RemoveConfirmationViewSpec extends ViewTestHelper {
     val linkTag: Elements = view.getElementsByTag("a")
     val anchorTag = linkTag.get(0).toString
 
-    anchorTag.contains(controllers.routes.ManageAuthoritiesController.onPageLoad.url) mustBe true
+    anchorTag.contains(controllers.routes.ManageAuthoritiesController.onPageLoad().url) mustBe true
     anchorTag.contains(messages("removeConfirmation.returnLink")) mustBe true
   }
 

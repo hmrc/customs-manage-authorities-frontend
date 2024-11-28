@@ -348,7 +348,7 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
       }
 
       "backLink should navigate to manage authorities when in normal mode" in {
-        navigator.backLinkRouteForEORINUmberPage(NormalMode) mustBe controllers.routes.ManageAuthoritiesController.onPageLoad
+        navigator.backLinkRouteForEORINUmberPage(NormalMode) mustBe controllers.routes.ManageAuthoritiesController.onPageLoad()
       }
 
       "backLink on showbalance Normal Mode should navigate to AuthorityEnd when Authority Infinite" in {

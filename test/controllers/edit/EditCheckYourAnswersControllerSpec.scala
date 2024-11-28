@@ -28,7 +28,7 @@ import models.domain.{
   AuthoritiesWithId, CdsCashAccount, StandingAuthority
 }
 import models.requests.{Accounts, AddAuthorityRequest}
-import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain}
+import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain, withNameToString}
 import org.mockito.ArgumentMatchers.{any, anyString}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}

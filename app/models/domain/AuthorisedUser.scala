@@ -22,4 +22,7 @@ case class AuthorisedUser(userName: String, userRole: String)
 
 object AuthorisedUser {
   implicit val accountWithAuthoritiesFormats: Format[AuthorisedUser] = Json.format[AuthorisedUser]
+
+  def unapply(authorisedUser: AuthorisedUser): Option[(String, String)] = 
+    Some((authorisedUser.userName, authorisedUser.userRole))
 }
