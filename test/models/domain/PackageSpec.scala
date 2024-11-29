@@ -27,14 +27,18 @@ class PackageSpec extends SpecBase {
       val result: Either[String, Option[LinkId]] = linkPathBindable.bind("test_key", "test_value")
 
       result match {
-        case Left(error) => error mustBe "test_value"
-        case _           => fail("Expected Left but got Right")
+        case Left(error)        => error mustBe "test_value"
+        case Right(Some(linkId)) => linkId mustBe "test_value"
+        case _                  => fail("Unexpected result")
       }
     }
 
     "unbind the key" in {
       val result: String = linkPathBindable.unbind("test_key", Some("test_value"))
       result mustBe "Some(test_value)"
+
+      val resultNone: String = linkPathBindable.unbind("test_key", None)
+      resultNone mustBe "None"
     }
   }
 }
