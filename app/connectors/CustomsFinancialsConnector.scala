@@ -44,27 +44,32 @@ class CustomsFinancialsConnector @Inject()(
     "application/json"
   )
 
-  private val baseUrl = config.get[Service]("microservice.services.customs-financials-api")
+  private val baseUrl = config.get[Service]("microservice.services.customs-financials-api").baseUrl
   private val context = config.get[String]("microservice.services.customs-financials-api.context")
 
+  private val baseApiUrl = s"$baseUrl$context"
+
   def retrieveAccounts(eori: String)(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
+    val retrieveAccountsUrl = s"$baseApiUrl/eori/accounts/"
     val request = AccountsAndBalancesRequestContainer(AccountsAndBalancesRequest(
       AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None)))
 
-    httpClient.post(url"$baseUrl$context/eori/accounts/")
+    httpClient.post(url"$retrieveAccountsUrl")
       .withBody(request)
       .execute[AccountsAndBalancesResponseContainer]
       .map(_.toCdsAccounts(eori))
   }
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
-    httpClient.get(url"$baseUrl$context/$eori/account-authorities")
+    val retrieveAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities"
+    httpClient.get(url"$retrieveAccountAuthoritiesUrl")
       .execute[Seq[AccountWithAuthorities]]
   }
 
   def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest,
                               eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.post(url"$baseUrl$context/$eori/account-authorities/grant")
+    val grantAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/grant"
+    httpClient.post(url"$grantAccountAuthoritiesUrl")
       .withBody(addAuthorityRequest)
       .execute[HttpResponse]
       .map(_.status == Status.NO_CONTENT)
@@ -73,7 +78,8 @@ class CustomsFinancialsConnector @Inject()(
 
   def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest,
                                eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
-    httpClient.post(url"$baseUrl$context/$eori/account-authorities/revoke")
+    val revokeAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/revoke"
+    httpClient.post(url"$revokeAccountAuthoritiesUrl")
       .withBody(revokeAuthorityRequest)
       .execute[HttpResponse]
       .map(_.status == Status.NO_CONTENT)
@@ -81,7 +87,8 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
-    httpClient.get(url"$baseUrl$context/eori/$eori/validate")
+    val validateEoriUrl = s"$baseApiUrl/eori/$eori/validate"
+    httpClient.get(url"$validateEoriUrl")
       .execute[HttpResponse]
       .map(response => {
         response.status match {
@@ -96,14 +103,16 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
-    httpClient.get(url"$baseUrl$context/subscriptions/company-name")
+    val retrieveEoriCompanyNameUrl = s"$baseApiUrl/subscriptions/company-name"
+    httpClient.get(url"$retrieveEoriCompanyNameUrl")
       .execute[CompanyName]
   }
 
   def deleteNotification(eori: String,
                          fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val deleteNotificationUrl = s"$baseApiUrl/eori/$eori/notifications/$fileRole"
     metricsReporterService.withResponseTimeLogging("customs-financials-api.delete.notification") {
-      httpClient.delete(url"$baseUrl$context/eori/$eori/notifications/$fileRole")
+      httpClient.delete(url"$deleteNotificationUrl")
         .execute[HttpResponse]
         .map(_.status == Status.OK)
         .recover { case _ => false }
