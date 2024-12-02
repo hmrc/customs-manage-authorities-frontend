@@ -16,10 +16,9 @@
 
 package forms.behaviours
 
-import org.scalatest.matchers.should.Matchers.{shouldBe, shouldEqual}
+import org.scalatest.matchers.should.Matchers.shouldEqual
 import play.api.data.{Form, FormError}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import org.scalacheck.Gen
 
 trait DecimalFieldBehaviours extends FieldBehaviours with ScalaCheckPropertyChecks {
 
