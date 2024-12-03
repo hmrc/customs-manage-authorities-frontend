@@ -28,6 +28,7 @@ import play.mvc.Http.Status
 import services.MetricsReporterService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
+import utils.StringUtils.emptyString
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringContextOps}
 
 import javax.inject.Inject
@@ -67,7 +68,7 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest,
-                              eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
+                              eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val grantAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/grant"
     httpClient.post(url"$grantAccountAuthoritiesUrl")
       .withBody(addAuthorityRequest)
@@ -77,7 +78,7 @@ class CustomsFinancialsConnector @Inject()(
   }
 
   def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest,
-                               eori: String = "")(implicit hc: HeaderCarrier): Future[Boolean] = {
+                               eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val revokeAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/revoke"
     httpClient.post(url"$revokeAccountAuthoritiesUrl")
       .withBody(revokeAuthorityRequest)

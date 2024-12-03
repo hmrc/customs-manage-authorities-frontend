@@ -28,6 +28,7 @@ import play.api.{Application, inject}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
 import uk.gov.hmrc.play.partials.HtmlPartial
+import utils.StringUtils.emptyString
 
 import java.net.URL
 import scala.concurrent.Future
@@ -40,13 +41,13 @@ class SecureMessageConnectorSpec extends SpecBase {
       val url = new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
 
       when(mockRequestBuilder.execute[HtmlPartial](any, any))
-        .thenReturn(Future.successful(HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(""))))
+        .thenReturn(Future.successful(HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(emptyString))))
 
       when(mockHttpClientV2.get(any[URL])(any)).thenReturn(mockRequestBuilder)
 
       running(app) {
         val result = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
-        result.get mustEqual HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(""))
+        result.get mustEqual HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(emptyString))
       }
 
       val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
