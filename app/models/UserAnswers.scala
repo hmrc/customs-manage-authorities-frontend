@@ -87,19 +87,22 @@ object UserAnswers {
       (__ \ "_id").read[String] and
       (__ \ "data").read[JsObject] and
       (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads)
-    ) (UserAnswers.apply _)
+    )(UserAnswers.apply _)
   }
 
   implicit lazy val writes: OWrites[UserAnswers] = {
-
     import play.api.libs.functional.syntax._
 
     (
       (__ \ "_id").write[String] and
       (__ \ "data").write[JsObject] and
       (__ \ "lastUpdated").write(MongoJavatimeFormats.localDateTimeWrites)
-    ) (unlift(UserAnswers.unapply))
+    )(unlift(UserAnswers.unapply))
   }
+
+  def unapply(userAnswers: UserAnswers): Option[(String, JsObject, LocalDateTime)] =
+    Some((userAnswers.id, userAnswers.data, userAnswers.lastUpdated))
 
   implicit val format: Format[UserAnswers] = Format(reads, writes)
 }
+

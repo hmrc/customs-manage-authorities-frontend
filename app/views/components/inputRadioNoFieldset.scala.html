@@ -26,7 +26,7 @@
 )(implicit messages: Messages)
 
 @govukRadios(Radios(
-    classes = s"${if(inline){"govuk-radios--inline"}}",
+    classes = s"${if (inline) "govuk-radios--inline" else ""}",
     name = "value",
     fieldset = None,
     hint = hint,

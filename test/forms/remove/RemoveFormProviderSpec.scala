@@ -19,7 +19,7 @@ package forms.remove
 import forms.AuthorisedUserFormProvider
 import forms.behaviours.StringFieldBehaviours
 import models.domain.AuthorisedUser
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.{shouldBe, shouldEqual}
 import play.api.data.FormError
 import utils.StringUtils.emptyString
 

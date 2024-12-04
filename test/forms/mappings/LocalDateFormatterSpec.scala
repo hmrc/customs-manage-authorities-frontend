@@ -17,7 +17,7 @@
 package forms.mappings
 
 import base.SpecBase
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.data.FormError
 import utils.StringUtils.emptyString
 

@@ -29,7 +29,7 @@
 
 @layout(pageTitle = Some(title(form, "authorityStartDate.title", None, Seq())),backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.AuthorityStartDateController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.AuthorityStartDateController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors, None)
 

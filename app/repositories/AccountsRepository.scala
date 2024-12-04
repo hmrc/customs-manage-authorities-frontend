@@ -24,6 +24,7 @@ import play.api.Configuration
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import org.mongodb.scala.{SingleObservableFuture, ToSingleObservablePublisher}
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
@@ -45,7 +46,7 @@ class AccountsRepository @Inject()(
         IndexOptions()
           .name("accounts-last-updated-index")
           .unique(true)
-          .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
       )
     )
   ) {

@@ -22,7 +22,7 @@ import forms.AuthorityEndFormProvider
 import models.{AuthorityEnd, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.AuthorityEndPage
 import play.api.http.Status.{BAD_REQUEST, OK, SEE_OTHER}

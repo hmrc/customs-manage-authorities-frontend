@@ -25,63 +25,84 @@ import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpErrorFunctions, UpstreamErrorResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, UpstreamErrorResponse, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
-                                          httpClient: HttpClient
+                                          httpClient: HttpClientV2
                                          )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
 
   val log = Logger(this.getClass)
+  private val baseDataStoreUrl = appConfig.customsDataStore
 
   def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/company-information"
-    httpClient.GET[CompanyInformation](dataStoreEndpoint).map(response => {
-      response.consent match {
-        case "1" => Some(response.name)
-        case _ => None
+    val endpoint = s"$baseDataStoreUrl/eori/$eori/company-information"
+    httpClient
+      .get(url"$endpoint")
+      .execute[CompanyInformation]
+      .map { response =>
+        response.consent match {
+          case "1" => Some(response.name)
+          case _ => None
+        }
       }
-    }).recover { case e =>
-      log.error(s"Call to data stored failed for getCompanyName exception=$e")
-      None
-    }
+      .recover { case e =>
+        log.error(s"Call to data stored failed for getCompanyName exception=$e")
+        None
+      }
   }
 
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/xieori-information"
+    val endpoint = s"$baseDataStoreUrl/eori/$eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
     if (isXiEoriEnabled) {
-      httpClient.GET[XiEoriInformationResponse](dataStoreEndpoint).map(
-        response => if (response.xiEori.isEmpty) None else Some(response.xiEori)
-      ).recover { case e =>
-        log.error(s"Call to data stored failed for getXiEori exception=$e")
-        None
-      }
+      httpClient
+        .get(url"$endpoint")
+        .execute[XiEoriInformationResponse]
+        .map { response =>
+          if (response.xiEori.isEmpty) None else Some(response.xiEori)
+        }
+        .recover { case e =>
+          log.error(s"Call to data stored failed for getXiEori exception=$e")
+          None
+        }
     } else {
       Future.successful(None)
     }
   }
 
   def getEmail(eori: String)(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
-    val dataStoreEndpoint = s"${appConfig.customsDataStore}/eori/$eori/verified-email"
-    httpClient.GET[EmailResponse](dataStoreEndpoint).map {
-      case EmailResponse(Some(address), _, None) => Right(Email(address))
-      case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
-      case _ => Left(UnverifiedEmail)
-    }.recover {
-      case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
-    }
+    val endpoint = s"$baseDataStoreUrl/eori/$eori/verified-email"
+    httpClient
+      .get(url"$endpoint")
+      .execute[EmailResponse]
+      .map {
+        case EmailResponse(Some(address), _, None) => Right(Email(address))
+        case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
+        case _ => Left(UnverifiedEmail)
+      }
+      .recover {
+        case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
+      }
   }
 
   def unverifiedEmail(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    httpClient.GET[EmailUnverifiedResponse](s"${appConfig.customsDataStore}/subscriptions/unverified-email-display")
-      .map(res => res.unVerifiedEmail)
+    val endpoint = s"$baseDataStoreUrl/subscriptions/unverified-email-display"
+    httpClient
+      .get(url"$endpoint")
+      .execute[EmailUnverifiedResponse]
+      .map(_.unVerifiedEmail)
   }
 
-  def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] =
-    httpClient.GET[EmailVerifiedResponse](s"${appConfig.customsDataStore}/subscriptions/email-display")
+  def verifiedEmail(implicit hc: HeaderCarrier): Future[EmailVerifiedResponse] = {
+    val endpoint = s"$baseDataStoreUrl/subscriptions/email-display"
+    httpClient
+      .get(url"$endpoint")
+      .execute[EmailVerifiedResponse]
+  }
 
 }

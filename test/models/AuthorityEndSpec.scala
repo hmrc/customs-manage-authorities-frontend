@@ -20,7 +20,7 @@ import base.SpecBase
 import forms.AuthorityEndFormProvider
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.i18n.Messages
 import play.api.libs.json.{JsError, JsString, Json}

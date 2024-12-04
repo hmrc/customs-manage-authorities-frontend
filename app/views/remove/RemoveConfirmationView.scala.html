@@ -14,14 +14,11 @@
  * limitations under the License.
  *@
 
-@import java.time.LocalDate
 @import config.FrontendAppConfig
 @import views.html.templates.Layout
 
 @this(
     layout: Layout,
-    h1: components.h1,
-    panel: components.panelIndent,
     p: components.p,
     confirmPanel: components.removeConfirmPanel,
     link: components.link
@@ -44,6 +41,6 @@
 
     @p(Html(messages("removeConfirmation.p1")))
 
-    @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url,
+    @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url,
             linkMessage = "removeConfirmation.returnLink")
 }

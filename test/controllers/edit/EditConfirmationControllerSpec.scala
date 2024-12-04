@@ -62,7 +62,7 @@ class EditConfirmationControllerSpec extends SpecBase {
         }*/
       }
 
-     "Start date is today with single account selected" in {
+      "Start date is today with single account selected" in {
 
         val mockSessionRepository = mock[SessionRepository]
         val mockAccountsRepository = mock[AccountsRepository]

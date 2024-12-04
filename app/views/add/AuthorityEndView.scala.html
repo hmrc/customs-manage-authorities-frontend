@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
 @import models.{Mode, AuthorityEnd}
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -31,7 +30,7 @@ button: components.button
 
 @layout(pageTitle = Some(title(form, "authorityEnd.title", None, Seq())),backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.AuthorityEndController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.AuthorityEndController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

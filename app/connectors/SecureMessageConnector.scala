@@ -21,12 +21,13 @@ import javax.inject.Inject
 import play.api.http.Status
 import play.api.mvc.RequestHeader
 import play.api.{Logger, Logging}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecureMessageConnector @Inject()(httpClient: HttpClient,
+class SecureMessageConnector @Inject()(httpClient: HttpClientV2,
                                        appConfig: FrontendAppConfig,
                                        headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter)
                                       (implicit ec: ExecutionContext)
@@ -39,13 +40,17 @@ class SecureMessageConnector @Inject()(httpClient: HttpClient,
 
     val url = s"${appConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnToUrl"
 
-    httpClient.GET[HtmlPartial](url).map {
-      case success@HtmlPartial.Success(_, _) => Some(success)
-      case HtmlPartial.Failure(_, _) => None
-    }.recover {
-      case exc =>
-        log.error(s"Problem loading message banner partial: ${exc.getMessage}")
-        None
-    }
+    httpClient
+      .get(url"$url")
+      .execute[HtmlPartial]
+      .map {
+        case success@HtmlPartial.Success(_, _) => Some(success)
+        case HtmlPartial.Failure(_, _) => None
+      }
+      .recover {
+        case exc =>
+          log.error(s"Problem loading message banner partial: ${exc.getMessage}")
+          None
+      }
   }
 }

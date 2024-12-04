@@ -14,8 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
-@import models.{Mode, AuthorityStart}
+@import models.Mode
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
 @import viewmodels.EoriDetailsCorrectHelper
@@ -28,10 +27,8 @@
         errorSummary: components.errorSummary,
         inputRadio: components.inputRadioNoFieldset,
         summaryList: summaryList,
-        h1: components.h1,
         button: components.button,
         p: components.p,
-        inset: components.inset,
         fieldset: components.fieldset
 )
 
@@ -48,7 +45,7 @@
 
 @layout(pageTitle = Some(title(form, "eoriDetails.title", None, Seq())), backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.EoriDetailsCorrectController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.EoriDetailsCorrectController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

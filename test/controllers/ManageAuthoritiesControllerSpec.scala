@@ -547,8 +547,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
   }
 
   trait Setup {
-    lazy val manageAuthoritiesRoute: String = routes.ManageAuthoritiesController.onPageLoad.url
-    lazy val manageAuthoritiesUnavailableRoute: String = routes.ManageAuthoritiesController.unavailable.url
+    lazy val manageAuthoritiesRoute: String = routes.ManageAuthoritiesController.onPageLoad().url
+    lazy val manageAuthoritiesUnavailableRoute: String = routes.ManageAuthoritiesController.unavailable().url
     lazy val manageAuthoritiesGBNValidationRoute: String = routes.ManageAuthoritiesController.validationFailure().url
 
     val eori1 = "EORI"

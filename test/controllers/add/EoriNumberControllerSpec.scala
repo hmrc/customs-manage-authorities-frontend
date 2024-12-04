@@ -67,7 +67,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "populate the view correctly on a GET when the question has previously been answered" in new SetUp {
 
       val userAnswers: UserAnswers =
-        UserAnswers(userAnswersId).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
+        UserAnswers(userAnswersId.value).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
 
       val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -501,6 +501,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     lazy val eoriNumberCheckModeSubmitRoute: String =
       controllers.add.routes.EoriNumberController.onSubmit(CheckMode).url
 
-    val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
+    val backLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
   }
 }

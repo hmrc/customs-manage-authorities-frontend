@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import viewmodels.{ManageAuthoritiesViewModel, ManageAuthoritiesTableViewModel, AuthoritiesFilesNotificationViewModel}
+@import viewmodels.{ManageAuthoritiesViewModel, ManageAuthoritiesTableViewModel}
 @import views.html.partials._
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -22,14 +22,9 @@
 
 @this(
     layout: Layout,
-    formHelper: FormWithCSRF,
-    errorSummary: components.errorSummary,
     notificationPanel: components.authoritiesNotificationPanel,
-    button: components.button,
-    inputText: components.inputText,
     h1: components.h1,
     h2: components.h2,
-    inset: components.inset,
     p: components.p,
     manageAuthoritiesTable:partials.ManageAuthoritiesTable
 )

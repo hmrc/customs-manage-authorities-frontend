@@ -189,7 +189,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in new Setup {
 
-      val userAnswers = UserAnswers(userAnswersId)
+      val userAnswers = UserAnswers(userAnswersId.value)
         .set(AccountsPage, answerAccounts).success.value
         .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
@@ -219,7 +219,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET in CheckMode when the question has previously been answered" in new Setup {
 
-      val userAnswers: UserAnswers = UserAnswers(userAnswersId)
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId.value)
         .set(AccountsPage, answerAccounts).success.value
         .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 

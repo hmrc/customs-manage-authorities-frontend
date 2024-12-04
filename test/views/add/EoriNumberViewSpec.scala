@@ -156,7 +156,7 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
     private val formProvider = new EoriNumberFormProvider()
     val form = formProvider()
 
-    lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad
+    lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
     lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     val xiEoriEnabled = true

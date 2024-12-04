@@ -21,7 +21,6 @@
     layout: Layout,
     errorSummary: components.errorSummary,
     inputDate: components.inputDate,
-    p: components.p,
     formHelper: FormWithCSRF,
     button: components.button
 )
@@ -40,7 +39,7 @@
         backLink = Some(controllers.edit.routes.EditAuthorityEndController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorityEndDateController.onSubmit(accountId, authorityId),
-                'autoComplete -> "off") {
+                Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors, None)
 

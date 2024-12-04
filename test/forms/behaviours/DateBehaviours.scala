@@ -17,7 +17,7 @@
 package forms.behaviours
 
 import org.scalacheck.Gen
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.{shouldBe, shouldEqual, should}
 import play.api.data.{Form, FormError}
 
 import java.time.LocalDate

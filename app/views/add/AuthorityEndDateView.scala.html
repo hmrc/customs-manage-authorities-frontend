@@ -21,7 +21,6 @@
 layout: Layout,
 errorSummary: components.errorSummary,
 inputDate: components.inputDate,
-p: components.p,
 formHelper: FormWithCSRF,
 button: components.button
 )
@@ -30,7 +29,7 @@ button: components.button
 
 @layout(pageTitle = Some(title(form, "authorityEndDate.title", None, Seq())),backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.AuthorityEndDateController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.AuthorityEndDateController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors, None)
 

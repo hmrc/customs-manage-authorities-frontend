@@ -16,12 +16,12 @@
 
 package forms.behaviours
 
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldEqual
 import play.api.data.{Form, FormError}
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-    def fieldWithMaxLength(form: Form[_],
+  def fieldWithMaxLength(form: Form[_],
                            fieldName: String,
                            maxLength: Int,
                            lengthError: FormError): Unit = {

@@ -18,7 +18,7 @@ package forms.behaviours
 
 import forms.FormSpec
 import models._
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import play.api.data.Form
 import utils.StringUtils.emptyString
 

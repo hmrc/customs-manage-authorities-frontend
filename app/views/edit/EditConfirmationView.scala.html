@@ -14,14 +14,11 @@
  * limitations under the License.
  *@
 
-@import java.time.LocalDate
 @import config.FrontendAppConfig
 @import views.html.templates.Layout
 
 @this(
     layout: Layout,
-    h1: components.h1,
-    panel: components.panelIndent,
     p: components.p,
     confirmPanel: components.editConfirmPanel,
     link: components.link
@@ -43,6 +40,6 @@
 
     @p(Html(messages("editConfirmation.p1.setDate")))
 
-    @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad.url,
+    @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url,
             linkMessage = "editConfirmation.returnLink")
 }

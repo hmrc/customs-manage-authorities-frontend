@@ -26,17 +26,20 @@ import utils.StringUtils.emptyString
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedEoriAndCompanyInfoService @Inject()(repository: AuthorisedEoriAndCompanyInfoRepository,
-                                                    dataStoreConnector: CustomsDataStoreConnector)
-                                                   (implicit executionContext: ExecutionContext) {
+class AuthorisedEoriAndCompanyInfoService @Inject()(
+  repository: AuthorisedEoriAndCompanyInfoRepository,
+  dataStoreConnector: CustomsDataStoreConnector
+)(implicit executionContext: ExecutionContext) {
 
   def retrieveAuthEorisAndCompanyInfoForId(internalId: InternalId): Future[Option[Map[String, String]]] = {
     repository.get(internalId.value)
   }
 
-  def retrieveAuthorisedEoriAndCompanyInfo(internalId: InternalId,
-                                           eoris: Set[EORI])
-                                          (implicit hc: HeaderCarrier):Future[Option[Map[String, String]]] = {
+  def retrieveAuthorisedEoriAndCompanyInfo(
+    internalId: InternalId,
+    eoris: Set[EORI]
+  )(implicit hc: HeaderCarrier): Future[Option[Map[String, String]]] = {
+
     lazy val eoriAndCompanyMap = for {
       eoriSeq: Seq[Option[EORI]] <- Future.sequence(eoris.toSeq.map(dataStoreConnector.getCompanyName(_)))
     } yield {
@@ -47,15 +50,13 @@ class AuthorisedEoriAndCompanyInfoService @Inject()(repository: AuthorisedEoriAn
       case Some(data) => Future.successful(Some(data))
       case _ =>
         for {
-            dataMap <- eoriAndCompanyMap
-          _ <- repository.set(internalId.value, dataMap)
+          dataMap <- eoriAndCompanyMap
+          _       <- repository.set(internalId.value, dataMap)
         } yield Some(dataMap)
     }
-
   }
 
-  def storeAuthEorisAndCompanyInfo(internalId: InternalId,
-                                   data: Map[String, String]): Future[Boolean] = {
+  def storeAuthEorisAndCompanyInfo(internalId: InternalId, data: Map[String, String]): Future[Boolean] = {
     repository.set(internalId.value, data)
   }
 }

@@ -24,7 +24,7 @@ import javax.inject.Singleton
 @Singleton
 class SdesGatekeeperService() {
 
-  implicit def convertToStandingAuthoritiesFile(sdesResponseFile: FileInformation): StandingAuthorityFile = {
+  def convertToStandingAuthoritiesFile(sdesResponseFile: FileInformation): StandingAuthorityFile = {
     val metadata = sdesResponseFile.metadata.asMap
 
     StandingAuthorityFile(
@@ -36,10 +36,13 @@ class SdesGatekeeperService() {
         metadata("PeriodStartMonth").toInt,
         metadata("PeriodStartDay").toInt,
         FileFormat(metadata("FileType")),
-        FileRole(metadata("FileRole"))),
+        FileRole(metadata("FileRole"))
+      ),
       emptyString
     )
   }
 
-  def convertTo[T <: SdesFile](implicit converter: FileInformation => T): Seq[FileInformation] => Seq[T] = _.map(converter)
+  def convertTo[T <: SdesFile](converter: FileInformation => T): Seq[FileInformation] => Seq[T] = { files =>
+    files.map(converter)
+  }
 }

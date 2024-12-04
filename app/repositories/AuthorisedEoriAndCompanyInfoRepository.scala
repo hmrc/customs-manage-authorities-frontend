@@ -19,6 +19,7 @@ package repositories
 import com.mongodb.client.model.Indexes.ascending
 import org.mongodb.scala.model.Filters.equal
 import org.mongodb.scala.model.{IndexModel, IndexOptions, ReplaceOptions}
+import org.mongodb.scala.{SingleObservableFuture, ToSingleObservablePublisher}
 import play.api.Configuration
 import play.api.libs.json._
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
@@ -42,7 +43,7 @@ class AuthorisedEoriAndCompanyInfoRepository @Inject()(val mongoComponent: PlayM
         IndexOptions()
           .name("auth-eori-company-last-updated-index")
           .unique(true)
-          .expireAfter(config.get[Int]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
       )
     )
   ) {

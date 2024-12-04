@@ -24,7 +24,7 @@
         link: components.link
 )
 
-@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+@()(implicit request: RequestHeader, messages: Messages, appConfig: FrontendAppConfig)
 
     @layout(pageTitle = Some(messages("cf.error.not-found.title")), helpAndSupport = false, backLink = None) {
 

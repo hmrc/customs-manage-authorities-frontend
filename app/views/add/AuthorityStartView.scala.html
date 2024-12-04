@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
 @import models.{Mode, AuthorityStart}
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -31,7 +30,7 @@
 
 @layout(pageTitle = Some(title(form, "authorityStart.title", None, Seq())), backLink = Some(call)) {
 
-    @formHelper(action = controllers.add.routes.AuthorityStartController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.add.routes.AuthorityStartController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

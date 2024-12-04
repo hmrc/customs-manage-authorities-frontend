@@ -14,9 +14,6 @@
  * limitations under the License.
  *@
 
-@import viewmodels.CheckYourAnswersHelper
-@import viewmodels.SummaryList
-@import views.html.components.summaryList
 @import viewmodels.RemoveViewModel
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
@@ -25,12 +22,8 @@
         layout: Layout,
         formHelper: FormWithCSRF,
         errorSummary: components.errorSummary,
-        summaryList: summaryList,
-        button: components.button,
         govukButton: GovukButton,
         inputText: components.inputText,
-        inputCheckboxes: components.inputCheckboxes,
-        govukCheckboxes: GovukCheckboxes,
         h1: components.h1,
         h2: components.h2,
         p:  components.p

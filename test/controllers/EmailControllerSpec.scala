@@ -21,7 +21,7 @@ import connectors.CustomsDataStoreConnector
 import models.{EmailUnverifiedResponse, EmailVerifiedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.mockito.MockitoSugar.mock
 import play.api.http.Status.OK
 import play.api.{Application, inject}

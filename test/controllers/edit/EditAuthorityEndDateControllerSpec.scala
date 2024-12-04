@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import forms.AuthorityEndDateFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.edit.EditAuthorityEndDatePage
 import play.api.mvc.AnyContentAsEmpty

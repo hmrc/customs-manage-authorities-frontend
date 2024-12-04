@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import viewmodels.SummaryList
 @import viewmodels.SummaryListRow
 @import views.html.components.summaryList
@@ -24,8 +23,7 @@
 @this(
         layout: Layout,
         summaryList: summaryList,
-        h1: components.h1,
-        formHelper: FormWithCSRF
+        h1: components.h1
 )
 
 @(answers: Seq[SummaryListRow])(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)

@@ -22,7 +22,6 @@
     layout: Layout,
     formHelper: FormWithCSRF,
     errorSummary: components.errorSummary,
-    inputDate: components.conditionalInputDate,
     inputRadio: components.inputRadio,
     button: components.button
 )
@@ -41,7 +40,7 @@
         backLink = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorityStartController.onSubmit(accountId, authorityId),
-                'autoComplete -> "off") {
+                Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 

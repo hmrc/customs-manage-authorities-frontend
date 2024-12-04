@@ -17,7 +17,7 @@
 package models.domain
 
 import base.SpecBase
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.{shouldBe, should}
 
 import java.time.LocalDate
 

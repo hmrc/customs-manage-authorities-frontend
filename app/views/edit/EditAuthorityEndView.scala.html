@@ -14,9 +14,8 @@
  * limitations under the License.
  *@
 
-@import controllers.routes._
 @import config.FrontendAppConfig
-@import models.{Mode, AuthorityEnd}
+@import models.AuthorityEnd
 @import views.html.templates.Layout
 
 @this(
@@ -41,7 +40,7 @@
         backLink = Some(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))) {
 
     @formHelper(action = controllers.edit.routes.EditAuthorityEndController.onSubmit(accountId, authorityId),
-                'autoComplete -> "off") {
+                Symbol("autoComplete") -> "off") {
 
         @errorSummary(form.errors)
 
