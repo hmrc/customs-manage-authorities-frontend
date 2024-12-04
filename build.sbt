@@ -85,7 +85,11 @@ lazy val root = (project in file("."))
   .settings(scalastyleSettings)
   .settings(
     scalacOptions := scalacOptions.value
-      .diff(Seq("-Wunused:all")) ++ Seq("-Wconf:src=routes/.*:s", "-Wconf:msg=Flag.*repeatedly:s"),
+    .diff(Seq("-Wunused:all")) ++ Seq(
+      "-Wconf:src=routes/.*:s",
+      "-Wconf:msg=Flag.*repeatedly:s",
+      "-Wconf:msg=unused import&src=views/.*:s",
+    ),
 
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
