@@ -41,7 +41,7 @@
   userResearchBanner: Boolean = true,
   maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
   isFullWidth: Boolean = false
-)(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
+)(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
 @phaseBannerContent = {
     @messages("feedback.before")
