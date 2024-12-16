@@ -18,9 +18,8 @@ package models
 
 import base.SpecBase
 import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended,
-  CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount,
-  GeneralGuaranteeBalance
+  AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended, CDSAccounts, CDSCashBalance,
+  CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance
 }
 import play.api.libs.json._
 
@@ -57,11 +56,21 @@ class CustomsAccountsSpec extends SpecBase {
 
   "DutyDefermentAccount" should {
     "return correct order after compare while sorting" in {
-      val ddAccn1 = DutyDefermentAccount("123", "XI9876543210000", AccountStatusOpen,
-        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), isNiAccount = true)
+      val ddAccn1 = DutyDefermentAccount(
+        "123",
+        "XI9876543210000",
+        AccountStatusOpen,
+        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)),
+        isNiAccount = true
+      )
 
-      val ddAccn2 = DutyDefermentAccount("124", "XI9876543210000", AccountStatusOpen,
-        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)), isNiAccount = true)
+      val ddAccn2 = DutyDefermentAccount(
+        "124",
+        "XI9876543210000",
+        AccountStatusOpen,
+        DutyDefermentBalance(Some(100.00), Some(100.00), Some(100.00), Some(100.00)),
+        isNiAccount = true
+      )
 
       ddAccn2 > ddAccn1 mustBe true
       ddAccn1.accountType mustBe "dutyDeferment"
@@ -101,7 +110,7 @@ class CustomsAccountsSpec extends SpecBase {
   "CDSAccounts.alreadyAuthorised" should {
     "return the correct output" in {
 
-      val openCashAccount: CashAccount =
+      val openCashAccount: CashAccount   =
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
       val closedCashAccount: CashAccount =
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
@@ -115,7 +124,7 @@ class CustomsAccountsSpec extends SpecBase {
   "CDSAccounts.canAuthoriseAccounts" should {
     "return the correct output" in {
 
-      val openCashAccount: CashAccount =
+      val openCashAccount: CashAccount   =
         CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
       val closedCashAccount: CashAccount =
         CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
@@ -129,11 +138,11 @@ class CustomsAccountsSpec extends SpecBase {
   trait Setup {
     private val traderEori = "12345678"
 
-    val zeroAmount = 0
-    val guaranteeAmtLimit = 1000000
-    val guaranteeAmtAvlBal = 200000
+    val zeroAmount                     = 0
+    val guaranteeAmtLimit              = 1000000
+    val guaranteeAmtAvlBal             = 200000
     val guaranteeAmtAvlBalForZeroLimit = 200001
-    val guaranteeAmtAvlBalForZeroBal = 200002
+    val guaranteeAmtAvlBalForZeroBal   = 200002
 
     val guaranteeAccount: GeneralGuaranteeAccount =
       GeneralGuaranteeAccount(

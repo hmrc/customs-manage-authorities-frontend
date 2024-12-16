@@ -63,18 +63,23 @@ class CustomsAccountSpec extends SpecBase {
   }
 
   trait Setup {
-    val guaranteeLimit: BigDecimal = 2.00
+    val guaranteeLimit: BigDecimal            = 2.00
     val availableGuaranteeBalance: BigDecimal = 1.00
-    val usedFunds: BigDecimal = guaranteeLimit - availableGuaranteeBalance
-    val usedPercentage: BigDecimal = if (guaranteeLimit.compare(zero) == 0) {
-      zero } else { usedFunds / guaranteeLimit * 100 }
+    val usedFunds: BigDecimal                 = guaranteeLimit - availableGuaranteeBalance
+    val usedPercentage: BigDecimal            = if (guaranteeLimit.compare(zero) == 0) {
+      zero
+    } else { usedFunds / guaranteeLimit * 100 }
 
-    val periodGuaranteeLimit: BigDecimal = 1.00
-    val periodAccountLimit: BigDecimal = 1.00
+    val periodGuaranteeLimit: BigDecimal            = 1.00
+    val periodAccountLimit: BigDecimal              = 1.00
     val periodAvailableGuaranteeBalance: BigDecimal = 1.00
-    val periodAvailableAccountBalance: BigDecimal = 1.00
+    val periodAvailableAccountBalance: BigDecimal   = 1.00
 
-    val dutyDefermentBalance: DutyDefermentBalance = DutyDefermentBalance(Some(periodGuaranteeLimit),
-      Some(periodAccountLimit), Some(periodAvailableGuaranteeBalance), Some(periodAvailableAccountBalance))
+    val dutyDefermentBalance: DutyDefermentBalance = DutyDefermentBalance(
+      Some(periodGuaranteeLimit),
+      Some(periodAccountLimit),
+      Some(periodAvailableGuaranteeBalance),
+      Some(periodAvailableAccountBalance)
+    )
   }
 }

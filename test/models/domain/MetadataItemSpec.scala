@@ -28,7 +28,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
       val metadataItem = MetadataItem("exampleKey", "exampleValue")
 
       val expectedJson = Json.obj(
-        "key" -> "exampleKey",
+        "key"   -> "exampleKey",
         "value" -> "exampleValue"
       )
 
@@ -38,7 +38,7 @@ class MetadataItemSpec extends AnyWordSpec with Matchers {
     "reads from JSON correctly" in {
       val json = Json.obj(
         "metadata" -> "exampleKey",
-        "value" -> "exampleValue"
+        "value"    -> "exampleValue"
       )
 
       val expectedMetadataItem = MetadataItem("exampleKey", "exampleValue")

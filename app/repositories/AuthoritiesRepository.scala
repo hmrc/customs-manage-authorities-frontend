@@ -32,23 +32,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthoritiesRepository @Inject()(
-                                       val mongoComponent: PlayMongoComponent,
-                                       val config: Configuration
-                                     )(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[AuthoritiesWithIdCacheEntry](
-    collectionName = "authorities-cache",
-    mongoComponent = mongoComponent,
-    domainFormat = AuthoritiesWithIdCacheEntry.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("lastUpdated"),
-        IndexOptions().name("authorities-last-updated-index")
-          .unique(true)
-          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class AuthoritiesRepository @Inject() (
+  val mongoComponent: PlayMongoComponent,
+  val config: Configuration
+)(implicit val ec: ExecutionContext)
+    extends PlayMongoRepository[AuthoritiesWithIdCacheEntry](
+      collectionName = "authorities-cache",
+      mongoComponent = mongoComponent,
+      domainFormat = AuthoritiesWithIdCacheEntry.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("authorities-last-updated-index")
+            .unique(true)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
   def get(id: String): Future[Option[AuthoritiesWithId]] =
     collection
       .find(equal("_id", id))
@@ -61,7 +62,8 @@ class AuthoritiesRepository @Inject()(
       .replaceOne(
         equal("_id", id),
         AuthoritiesWithIdCacheEntry(id, accounts, LocalDateTime.now()),
-        ReplaceOptions().upsert(true))
+        ReplaceOptions().upsert(true)
+      )
       .toFuture()
       .map(_.wasAcknowledged())
 
@@ -72,12 +74,10 @@ class AuthoritiesRepository @Inject()(
       .map(_.wasAcknowledged())
 }
 
-case class AuthoritiesWithIdCacheEntry(_id: String,
-                                       data: AuthoritiesWithId,
-                                       lastUpdated: LocalDateTime)
+case class AuthoritiesWithIdCacheEntry(_id: String, data: AuthoritiesWithId, lastUpdated: LocalDateTime)
 
 object AuthoritiesWithIdCacheEntry {
-  implicit val lastUpdatedReads: Reads[LocalDateTime] = MongoJavatimeFormats.localDateTimeReads
-  implicit val lastUpdatedWrites: Writes[LocalDateTime] = MongoJavatimeFormats.localDateTimeWrites
+  implicit val lastUpdatedReads: Reads[LocalDateTime]       = MongoJavatimeFormats.localDateTimeReads
+  implicit val lastUpdatedWrites: Writes[LocalDateTime]     = MongoJavatimeFormats.localDateTimeWrites
   implicit val format: OFormat[AuthoritiesWithIdCacheEntry] = Json.format[AuthoritiesWithIdCacheEntry]
 }

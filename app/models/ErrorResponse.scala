@@ -16,15 +16,15 @@
 
 package models
 
-sealed trait ErrorResponse{ val msg: String}
+sealed trait ErrorResponse { val msg: String }
 
-case object EORIValidationError extends ErrorResponse{ val msg = "Failed to get validation for EORI"}
-case object MissingAuthorityError extends ErrorResponse{ val msg = "Missing authority"}
-case object MissingAuthorisedUser extends ErrorResponse { val msg = "Missing authorised user on revoke"}
-case object MissingAccountError extends ErrorResponse { val msg = "Missing account"}
-case object EmptyAccountsError extends ErrorResponse { val msg = "Empty accounts list of ShowBalance page load"}
-case object NoStartDateError extends ErrorResponse { val msg = "No data present for the user's start date"}
-case object UnknownAccountType extends ErrorResponse{ val msg = "Unknown account type"}
-case object ShowBalanceError extends ErrorResponse{ val msg = "No show balance data found"}
-case object SubmissionError extends ErrorResponse{ val msg = "Revoke authority request submission to backend failed"}
-case object StartDateError extends ErrorResponse{ val msg = "No data present for the user's start date"}
+case object EORIValidationError extends ErrorResponse { val msg = "Failed to get validation for EORI" }
+case object MissingAuthorityError extends ErrorResponse { val msg = "Missing authority" }
+case object MissingAuthorisedUser extends ErrorResponse { val msg = "Missing authorised user on revoke" }
+case object MissingAccountError extends ErrorResponse { val msg = "Missing account" }
+case object EmptyAccountsError extends ErrorResponse { val msg = "Empty accounts list of ShowBalance page load" }
+case object NoStartDateError extends ErrorResponse { val msg = "No data present for the user's start date" }
+case object UnknownAccountType extends ErrorResponse { val msg = "Unknown account type" }
+case object ShowBalanceError extends ErrorResponse { val msg = "No show balance data found" }
+case object SubmissionError extends ErrorResponse { val msg = "Revoke authority request submission to backend failed" }
+case object StartDateError extends ErrorResponse { val msg = "No data present for the user's start date" }

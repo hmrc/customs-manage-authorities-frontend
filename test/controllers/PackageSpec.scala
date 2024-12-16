@@ -26,8 +26,10 @@ class PackageSpec extends SpecBase {
   "grantAccountAuthRequestList" should {
     "return list of two requests when accounts has both DD and Cash/Guarantee accounts" in new Setup {
       grantAccountAuthRequestList(authReq, xiEori, gbEori) mustBe
-        List(GrantAccountAuthorityRequest(authReqForDDAccount, xiEori),
-          GrantAccountAuthorityRequest(authReqForCashAndGuaranteeAccount, gbEori))
+        List(
+          GrantAccountAuthorityRequest(authReqForDDAccount, xiEori),
+          GrantAccountAuthorityRequest(authReqForCashAndGuaranteeAccount, gbEori)
+        )
     }
 
     "return request list with only one request when accounts has only duty deferments account" in new Setup {
@@ -42,7 +44,7 @@ class PackageSpec extends SpecBase {
   }
 
   trait Setup {
-    val localDate: LocalDate = LocalDate.now()
+    val localDate: LocalDate   = LocalDate.now()
     val toLocalDate: LocalDate = LocalDate.now().plusDays(1)
 
     val xiEori = "XI123456789012"

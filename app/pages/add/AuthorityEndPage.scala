@@ -28,10 +28,9 @@ case object AuthorityEndPage extends QuestionPage[AuthorityEnd] {
 
   override def toString: String = "authorityEnd"
 
-  override def cleanup(value: Option[AuthorityEnd], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[AuthorityEnd], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(AuthorityEnd.Indefinite) => userAnswers.remove(AuthorityEndDatePage)
-      case _ => Success(userAnswers)
+      case _                             => Success(userAnswers)
     }
-  }
 }

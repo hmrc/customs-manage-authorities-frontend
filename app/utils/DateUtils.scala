@@ -22,12 +22,10 @@ import java.time.LocalDate
 
 trait DateUtils {
 
-  def latestOf(first: LocalDate,
-               rest: LocalDate*): LocalDate =
+  def latestOf(first: LocalDate, rest: LocalDate*): LocalDate =
     rest.fold(first)((a: LocalDate, b: LocalDate) => if (a.isAfter(b)) a else b)
 
-  def earliestOf(first: LocalDate,
-                 rest: LocalDate*): LocalDate =
+  def earliestOf(first: LocalDate, rest: LocalDate*): LocalDate =
     rest.fold(first)((a: LocalDate, b: LocalDate) => if (a.isBefore(b)) a else b)
 
   def dateAsDayMonthAndYear(date: LocalDate)(implicit messages: Messages): String =

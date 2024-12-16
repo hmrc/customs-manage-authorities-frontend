@@ -37,31 +37,56 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
 
   implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
-  val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen,
-    DutyDefermentBalance(None, None, None, None))
-  val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
-    "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+  val cashAccount: CashAccount                  = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val dutyDeferment: DutyDefermentAccount       =
+    DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+  val generalGuarantee: GeneralGuaranteeAccount =
+    GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
 
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
   val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+    .set(AccountsPage, selectedAccounts)
+    .success
+    .value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+    .success
+    .value
+    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+    .success
+    .value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+    .success
+    .value
+    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+    .success
+    .value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+    .success
+    .value
 
   val userAnswersNoCompanyName: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", None)).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
-
+    .set(AccountsPage, selectedAccounts)
+    .success
+    .value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", None))
+    .success
+    .value
+    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+    .success
+    .value
+    .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes)
+    .success
+    .value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+    .success
+    .value
+    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+    .success
+    .value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+    .success
+    .value
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
@@ -70,18 +95,18 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     "produce correct rows" when {
 
       "Plural specific title is set when more than one cashAccount is passed" in {
-        val cashAccount02: CashAccount = CashAccount("12346", "GB123456789013",
-          AccountStatusOpen, CDSCashBalance(Some(101.00)))
-        val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount, cashAccount02)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val cashAccount02: CashAccount =
+          CashAccount("12346", "GB123456789013", AccountStatusOpen, CDSCashBalance(Some(101.00)))
+        val userAnswers                = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount, cashAccount02)).success.value
+        val helper                     = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.plural")
         helper.accountsRows.size mustBe 1
       }
 
       "summaryListRowHelper should give correct values for yesOrNo" in {
-        yesOrNo(true) mustEqual ("site.yes")
-        yesOrNo(false) mustEqual ("site.no")
+        yesOrNo(true) mustEqual "site.yes"
+        yesOrNo(false) mustEqual "site.no"
       }
 
       "accountNumberRow should return valid message if xiEori is true" in {
@@ -90,42 +115,54 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             CdsDutyDefermentAccount,
             "12345",
             Some(AccountStatusOpen),
-            Map("b" -> StandingAuthority("EORI", LocalDate.now().plusMonths(1),
-              Some(LocalDate.parse("2020-04-01")), viewBalance = false)))
+            Map(
+              "b" -> StandingAuthority(
+                "EORI",
+                LocalDate.now().plusMonths(1),
+                Some(LocalDate.parse("2020-04-01")),
+                viewBalance = false
+              )
+            )
+          )
 
         accountNumberRow(cdsAccount, true).get mustBe a[SummaryListRow]
       }
 
       "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
         helper.accountsRows mustBe Seq(
           summaryListRow(
             "accounts.checkYourAnswersLabel.singular",
             "accounts.type.cash: 12345",
             None,
-            Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-              content = span("site.change"),
-              visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
-            )))
-          ))
+            Actions(items =
+              Seq(
+                ActionItem(
+                  href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
+                  content = span("site.change"),
+                  visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
+                )
+              )
+            )
+          )
+        )
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
             "checkYourAnswers.eoriNumber.label",
             "GB123456789012",
             None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
-            )))
+            actions = Actions(items =
+              Seq(
+                ActionItem(
+                  href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
+                  content = span(messages("site.change")),
+                  visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+                )
+              )
+            )
           ),
-          summaryListRow(
-            "view-authority-h2.5",
-            "view-authority-h2.6",
-            None,
-            actions = Actions(items = Seq()))
+          summaryListRow("view-authority-h2.5", "view-authority-h2.6", None, actions = Actions(items = Seq()))
         )
 
         helper.authorityDurationRows mustBe Seq(
@@ -133,31 +170,43 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             "authorityStart.checkYourAnswersLabel",
             s"authorityStart.checkYourAnswersLabel.today ${dateAsDayMonthAndYear(LocalDate.now())}",
             None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-            )))
+            actions = Actions(items =
+              Seq(
+                ActionItem(
+                  href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
+                  content = span(messages("site.change")),
+                  visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
+                )
+              )
+            )
           ),
           summaryListRow(
             "authorityEnd.checkYourAnswersLabel",
             s"checkYourAnswers.authorityEnd.indefinite",
             None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
-            )))
+            actions = Actions(items =
+              Seq(
+                ActionItem(
+                  href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
+                  content = span(messages("site.change")),
+                  visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+                )
+              )
+            )
           ),
           summaryListRow(
             "showBalance.checkYourAnswersLabel",
             "showBalance.checkYourAnswers.yes",
             None,
-            actions = Actions(items = Seq(ActionItem(
-              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-              content = span(messages("site.change")),
-              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-            )))
+            actions = Actions(items =
+              Seq(
+                ActionItem(
+                  href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
+                  content = span(messages("site.change")),
+                  visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
+                )
+              )
+            )
           )
         )
       }
@@ -166,7 +215,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     "produce correct authorisation declaration message" when {
 
       "a single account is selected" in {
-        val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+        val userAnswers: UserAnswers       = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
         helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.singular"
       }
@@ -185,20 +234,33 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
           "GB210987654321",
           AccountStatusOpen,
           DutyDefermentBalance(None, None, None, None),
-          isNiAccount = true)
+          isNiAccount = true
+        )
 
         val cdsAccounts = List(dutyDeferment)
 
         val userAnswersWithNIEoriAndDefermentAccount: UserAnswers = UserAnswers("id")
-          .set(AccountsPage, cdsAccounts).success.value
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+          .set(AccountsPage, cdsAccounts)
+          .success
+          .value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+          .success
+          .value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+          .success
+          .value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+          .success
+          .value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+          .success
+          .value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+          .success
+          .value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         helper.accountsRows.size mustBe 1
         helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
@@ -218,15 +280,27 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
         val cdsAccounts = List(dutyDeferment)
 
         val userAnswersWithNIEoriAndDefermentAccount: UserAnswers = UserAnswers("id")
-          .set(AccountsPage, cdsAccounts).success.value
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+          .set(AccountsPage, cdsAccounts)
+          .success
+          .value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+          .success
+          .value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+          .success
+          .value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+          .success
+          .value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+          .success
+          .value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+          .success
+          .value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
-        val helper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         helper.accountsRows.size mustBe 1
         helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment: 67890"))

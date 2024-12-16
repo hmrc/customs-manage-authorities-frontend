@@ -27,10 +27,10 @@ import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 class AuthorityEndDateFormProviderSpec extends DateBehaviours {
 
-  implicit val msgs: Messages = Helpers.stubMessages()
+  implicit val msgs: Messages              = Helpers.stubMessages()
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-  val form = new AuthorityEndDateFormProvider(mockDateTimeService)(LocalDate.now())
+  val form                                 = new AuthorityEndDateFormProvider(mockDateTimeService)(LocalDate.now())
 
   ".value" should {
 

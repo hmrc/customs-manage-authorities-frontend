@@ -18,10 +18,7 @@ package models.domain
 
 import play.api.libs.json._
 
-case class FileInformation(filename: String,
-                           downloadURL: String,
-                           fileSize: Long,
-                           metadata: Metadata)
+case class FileInformation(filename: String, downloadURL: String, fileSize: Long, metadata: Metadata)
 
 object FileInformation {
   implicit val fileInformationFormats: Format[FileInformation] = Json.format[FileInformation]

@@ -28,9 +28,9 @@ import utils.Constants.DUTY_DEFERMENT_ACCOUNT_TYPE
 import utils.StringUtils.htmlSingleLineBreak
 import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 
-case class CheckYourAnswersHelper(userAnswers: UserAnswers,
-                                  dateTimeService: DateTimeService)(implicit val messages: Messages)
-  extends SummaryListRowHelper {
+case class CheckYourAnswersHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)(implicit
+  val messages: Messages
+) extends SummaryListRowHelper {
 
   private val selectedAccounts: List[CDSAccount] = userAnswers.get(AccountsPage).getOrElse(Nil)
 
@@ -41,47 +41,41 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers,
 
   val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
 
-  def companyDetailsRows: Seq[SummaryListRow] = {
+  def companyDetailsRows: Seq[SummaryListRow] =
     if (companyName.isEmpty) {
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage)),
         companyNameNoConsentRow
       ).flatten
-    }
-    else {
+    } else {
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage)),
         companyNameRow(userAnswers.get(EoriNumberPage))
       ).flatten
     }
-  }
 
-  def accountsRows: Seq[SummaryListRow] = {
+  def accountsRows: Seq[SummaryListRow] =
     Seq(
       Some(accountsRow(selectedAccounts))
     ).flatten
-  }
 
-  def authorityDurationRows: Seq[SummaryListRow] = {
+  def authorityDurationRows: Seq[SummaryListRow] =
     Seq(
       authorityStartRow(userAnswers),
       authorityEndRow(userAnswers),
       showBalanceRow(userAnswers.get(ShowBalancePage))
     ).flatten
-  }
 
-  def authorityDetailsRows: Seq[SummaryListRow] = {
+  def authorityDetailsRows: Seq[SummaryListRow] =
     yourDetailsRows(userAnswers.get(AuthorityDetailsPage))
-  }
 
   private def accountsRow(selectedAccounts: List[CDSAccount]): SummaryListRow = {
-    val list = selectedAccounts.map {
-      account =>
-        if (account.isNiAccount && account.accountType == DUTY_DEFERMENT_ACCOUNT_TYPE) {
-          s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
-        } else {
-          s"${messages("accounts.type." + account.accountType)}: ${account.number}"
-        }
+    val list = selectedAccounts.map { account =>
+      if (account.isNiAccount && account.accountType == DUTY_DEFERMENT_ACCOUNT_TYPE) {
+        s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
+      } else {
+        s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+      }
     }
 
     summaryListRow(
@@ -91,37 +85,38 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers,
         messages("accounts.checkYourAnswersLabel.plural")
       },
       value = list.mkString(htmlSingleLineBreak),
-      actions =
-        Actions(
-          items = Seq(ActionItem(
+      actions = Actions(
+        items = Seq(
+          ActionItem(
             href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
             content = span(messages("site.change")),
-            visuallyHiddenText = Some(messages("checkYourAnswers.accounts.hidden")))
+            visuallyHiddenText = Some(messages("checkYourAnswers.accounts.hidden"))
           )
-        ),
-      secondValue = None)
-  }
-
-  private def eoriNumberRow(number: Option[CompanyDetails]): Option[SummaryListRow] = {
-    number.map(
-      companyDetails =>
-        summaryListRow(
-          messages("checkYourAnswers.eoriNumber.label"),
-          value = HtmlFormat.escape(companyDetails.eori).toString(),
-          actions =
-            Actions(
-              items = Seq(ActionItem(
-                href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
-                content = span(messages("site.change")),
-                visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden")))
-              )
-            ),
-          secondValue = None
         )
+      ),
+      secondValue = None
     )
   }
 
-  private def companyNameRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] = {
+  private def eoriNumberRow(number: Option[CompanyDetails]): Option[SummaryListRow] =
+    number.map(companyDetails =>
+      summaryListRow(
+        messages("checkYourAnswers.eoriNumber.label"),
+        value = HtmlFormat.escape(companyDetails.eori).toString(),
+        actions = Actions(
+          items = Seq(
+            ActionItem(
+              href = controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url,
+              content = span(messages("site.change")),
+              visuallyHiddenText = Some(messages("checkYourAnswers.eoriNumber.hidden"))
+            )
+          )
+        ),
+        secondValue = None
+      )
+    )
+
+  private def companyNameRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] =
     companyDetails.map(x =>
       summaryListRow(
         messages("checkYourAnswers.companyName.label"),
@@ -130,98 +125,116 @@ case class CheckYourAnswersHelper(userAnswers: UserAnswers,
         secondValue = None
       )
     )
-  }
 
-  private def companyNameNoConsentRow: Option[SummaryListRow] = {
-    Some(summaryListRow(
-      messages("view-authority-h2.5"),
-      value = messages("view-authority-h2.6"),
-      actions = Actions(items = Seq()),
-      secondValue = None
-    ))
-  }
-
-  private def yourDetailsRows(authorityDetails: Option[AuthorisedUser]): Seq[SummaryListRow] = {
-    Seq(summaryListRow(
-      messages("checkYourAnswers.fullName.label"),
-      value = HtmlFormat.escape(authorityDetails.get.userName).toString(),
-      actions = Actions(items = Seq(ActionItem(
-        href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
-        content = span(messages("site.change")),
-        visuallyHiddenText = Some(messages("checkYourAnswers.fullName.hidden"))
-      ))),
-      secondValue = None
-    ),
+  private def companyNameNoConsentRow: Option[SummaryListRow] =
+    Some(
       summaryListRow(
-        messages("checkYourAnswers.role.label"),
-        value = HtmlFormat.escape(authorityDetails.get.userRole).toString(),
-        actions = Actions(items = Seq(ActionItem(
-          href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
-          content = span(messages("site.change")),
-          visuallyHiddenText = Some(messages("checkYourAnswers.role.hidden"))
-        ))),
+        messages("view-authority-h2.5"),
+        value = messages("view-authority-h2.6"),
+        actions = Actions(items = Seq()),
         secondValue = None
       )
     )
-  }
 
-  private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
+  private def yourDetailsRows(authorityDetails: Option[AuthorisedUser]): Seq[SummaryListRow] =
+    Seq(
+      summaryListRow(
+        messages("checkYourAnswers.fullName.label"),
+        value = HtmlFormat.escape(authorityDetails.get.userName).toString(),
+        actions = Actions(items =
+          Seq(
+            ActionItem(
+              href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
+              content = span(messages("site.change")),
+              visuallyHiddenText = Some(messages("checkYourAnswers.fullName.hidden"))
+            )
+          )
+        ),
+        secondValue = None
+      ),
+      summaryListRow(
+        messages("checkYourAnswers.role.label"),
+        value = HtmlFormat.escape(authorityDetails.get.userRole).toString(),
+        actions = Actions(items =
+          Seq(
+            ActionItem(
+              href = controllers.add.routes.AuthorityDetailsController.onPageLoad(CheckMode).url,
+              content = span(messages("site.change")),
+              visuallyHiddenText = Some(messages("checkYourAnswers.role.hidden"))
+            )
+          )
+        ),
+        secondValue = None
+      )
+    )
 
-    userAnswers.get(AuthorityStartPage).flatMap {
-      case AuthorityStart.Today =>
-        Some(s"${messages("authorityStart.checkYourAnswersLabel.today")} ${
-          dateAsDayMonthAndYear(
-            dateTimeService.localTime().toLocalDate)
-        }")
+  private def authorityStartRow(userAnswers: UserAnswers): Option[SummaryListRow] =
+    userAnswers
+      .get(AuthorityStartPage)
+      .flatMap {
+        case AuthorityStart.Today =>
+          Some(
+            s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(dateTimeService.localTime().toLocalDate)}"
+          )
 
-      case AuthorityStart.Setdate => userAnswers.get(AuthorityStartDatePage).map(dateAsDayMonthAndYear)
-    }.map(
-      date =>
+        case AuthorityStart.Setdate => userAnswers.get(AuthorityStartDatePage).map(dateAsDayMonthAndYear)
+      }
+      .map(date =>
         summaryListRow(
           messages("authorityStart.checkYourAnswersLabel"),
           value = date,
-          actions = Actions(items = Seq(ActionItem(
-            href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
-            content = span(messages("site.change")),
-            visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
-          ))),
+          actions = Actions(items =
+            Seq(
+              ActionItem(
+                href = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url,
+                content = span(messages("site.change")),
+                visuallyHiddenText = Some(messages("checkYourAnswers.authorityStart.hidden"))
+              )
+            )
+          ),
           secondValue = None
         )
-    )
-  }
+      )
 
-  private def authorityEndRow(userAnswers: UserAnswers): Option[SummaryListRow] = {
-    userAnswers.get(AuthorityEndPage).flatMap {
-      case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
-      case AuthorityEnd.Setdate => userAnswers.get(AuthorityEndDatePage).map(dateAsDayMonthAndYear)
-    }.map(
-      value =>
+  private def authorityEndRow(userAnswers: UserAnswers): Option[SummaryListRow] =
+    userAnswers
+      .get(AuthorityEndPage)
+      .flatMap {
+        case AuthorityEnd.Indefinite => Some(messages("checkYourAnswers.authorityEnd.indefinite"))
+        case AuthorityEnd.Setdate    => userAnswers.get(AuthorityEndDatePage).map(dateAsDayMonthAndYear)
+      }
+      .map(value =>
         summaryListRow(
           messages("authorityEnd.checkYourAnswersLabel"),
           value = value,
-          actions = Actions(items = Seq(ActionItem(
-            href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
-            content = span(messages("site.change")),
-            visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
-          ))),
+          actions = Actions(items =
+            Seq(
+              ActionItem(
+                href = controllers.add.routes.AuthorityEndController.onPageLoad(CheckMode).url,
+                content = span(messages("site.change")),
+                visuallyHiddenText = Some(messages("checkYourAnswers.authorityEnd.hidden"))
+              )
+            )
+          ),
           secondValue = None
         )
-    )
-  }
+      )
 
-  private def showBalanceRow(maybeBalance: Option[ShowBalance]): Option[SummaryListRow] = {
-    maybeBalance.map(
-      value =>
-        summaryListRow(
-          messages("showBalance.checkYourAnswersLabel"),
-          value = messages(s"showBalance.checkYourAnswers.$value"),
-          actions = Actions(items = Seq(ActionItem(
-            href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
-            content = span(messages("site.change")),
-            visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
-          ))),
-          secondValue = None
-        )
+  private def showBalanceRow(maybeBalance: Option[ShowBalance]): Option[SummaryListRow] =
+    maybeBalance.map(value =>
+      summaryListRow(
+        messages("showBalance.checkYourAnswersLabel"),
+        value = messages(s"showBalance.checkYourAnswers.$value"),
+        actions = Actions(items =
+          Seq(
+            ActionItem(
+              href = controllers.add.routes.ShowBalanceController.onPageLoad(CheckMode).url,
+              content = span(messages("site.change")),
+              visuallyHiddenText = Some(messages("checkYourAnswers.showBalance.hidden"))
+            )
+          )
+        ),
+        secondValue = None
+      )
     )
-  }
 }

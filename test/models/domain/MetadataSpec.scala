@@ -25,7 +25,7 @@ class MetadataSpec extends SpecBase {
     "serialize to JSON correctly" in {
       val metadataItem1 = MetadataItem("key1", "value1")
       val metadataItem2 = MetadataItem("key2", "value2")
-      val metadata = Metadata(Seq(metadataItem1, metadataItem2))
+      val metadata      = Metadata(Seq(metadataItem1, metadataItem2))
 
       val expectedJson = Json.arr(
         JsObject(Seq("metadata" -> Json.toJson("key1"), "value" -> Json.toJson("value1"))),
@@ -41,8 +41,8 @@ class MetadataSpec extends SpecBase {
         JsObject(Seq("metadata" -> Json.toJson("key2"), "value" -> Json.toJson("value2")))
       )
 
-      val metadataItem1 = MetadataItem("key1", "value1")
-      val metadataItem2 = MetadataItem("key2", "value2")
+      val metadataItem1    = MetadataItem("key1", "value1")
+      val metadataItem2    = MetadataItem("key2", "value2")
       val expectedMetadata = Metadata(Seq(metadataItem1, metadataItem2))
 
       json.validate[Metadata].asOpt must be(Some(expectedMetadata))

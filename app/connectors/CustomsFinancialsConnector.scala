@@ -34,11 +34,11 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringC
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsFinancialsConnector @Inject()(
-                                            config: Configuration,
-                                            httpClient: HttpClientV2,
-                                            metricsReporterService: MetricsReporterService
-                                          )(implicit ec: ExecutionContext) {
+class CustomsFinancialsConnector @Inject() (
+  config: Configuration,
+  httpClient: HttpClientV2,
+  metricsReporterService: MetricsReporterService
+)(implicit ec: ExecutionContext) {
 
   implicit def jsonBodyWritable[T: Writes]: BodyWritable[T] = BodyWritable(
     json => writeableOf_JsValue.transform(Json.toJson(json)),
@@ -52,10 +52,12 @@ class CustomsFinancialsConnector @Inject()(
 
   def retrieveAccounts(eori: String)(implicit hc: HeaderCarrier): Future[CDSAccounts] = {
     val retrieveAccountsUrl = s"$baseApiUrl/eori/accounts/"
-    val request = AccountsAndBalancesRequestContainer(AccountsAndBalancesRequest(
-      AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None)))
+    val request             = AccountsAndBalancesRequestContainer(
+      AccountsAndBalancesRequest(AccountsRequestCommon.generate, AccountsRequestDetail(eori, None, None, None))
+    )
 
-    httpClient.post(url"$retrieveAccountsUrl")
+    httpClient
+      .post(url"$retrieveAccountsUrl")
       .withBody(request)
       .execute[AccountsAndBalancesResponseContainer]
       .map(_.toCdsAccounts(eori))
@@ -63,24 +65,29 @@ class CustomsFinancialsConnector @Inject()(
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
     val retrieveAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities"
-    httpClient.get(url"$retrieveAccountAuthoritiesUrl")
+    httpClient
+      .get(url"$retrieveAccountAuthoritiesUrl")
       .execute[Seq[AccountWithAuthorities]]
   }
 
-  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest,
-                              eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest, eori: String = emptyString)(implicit
+    hc: HeaderCarrier
+  ): Future[Boolean] = {
     val grantAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/grant"
-    httpClient.post(url"$grantAccountAuthoritiesUrl")
+    httpClient
+      .post(url"$grantAccountAuthoritiesUrl")
       .withBody(addAuthorityRequest)
       .execute[HttpResponse]
       .map(_.status == Status.NO_CONTENT)
       .recover { case _ => false }
   }
 
-  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest,
-                               eori: String = emptyString)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest, eori: String = emptyString)(implicit
+    hc: HeaderCarrier
+  ): Future[Boolean] = {
     val revokeAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/revoke"
-    httpClient.post(url"$revokeAccountAuthoritiesUrl")
+    httpClient
+      .post(url"$revokeAccountAuthoritiesUrl")
       .withBody(revokeAuthorityRequest)
       .execute[HttpResponse]
       .map(_.status == Status.NO_CONTENT)
@@ -89,31 +96,34 @@ class CustomsFinancialsConnector @Inject()(
 
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
     val validateEoriUrl = s"$baseApiUrl/eori/$eori/validate"
-    httpClient.get(url"$validateEoriUrl")
+    httpClient
+      .get(url"$validateEoriUrl")
       .execute[HttpResponse]
-      .map(response => {
+      .map { response =>
         response.status match {
-          case Status.OK => Right(true)
+          case Status.OK        => Right(true)
           case Status.NOT_FOUND => Right(false)
-          case _ => Left(EORIValidationError)
+          case _                => Left(EORIValidationError)
         }
-      }).recover {
+      }
+      .recover {
         case _: NotFoundException => Right(false)
-        case _ => Left(EORIValidationError)
+        case _                    => Left(EORIValidationError)
       }
   }
 
   def retrieveEoriCompanyName()(implicit hc: HeaderCarrier): Future[CompanyName] = {
     val retrieveEoriCompanyNameUrl = s"$baseApiUrl/subscriptions/company-name"
-    httpClient.get(url"$retrieveEoriCompanyNameUrl")
+    httpClient
+      .get(url"$retrieveEoriCompanyNameUrl")
       .execute[CompanyName]
   }
 
-  def deleteNotification(eori: String,
-                         fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
+  def deleteNotification(eori: String, fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
     val deleteNotificationUrl = s"$baseApiUrl/eori/$eori/notifications/$fileRole"
     metricsReporterService.withResponseTimeLogging("customs-financials-api.delete.notification") {
-      httpClient.delete(url"$deleteNotificationUrl")
+      httpClient
+        .delete(url"$deleteNotificationUrl")
         .execute[HttpResponse]
         .map(_.status == Status.OK)
         .recover { case _ => false }

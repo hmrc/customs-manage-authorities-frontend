@@ -26,7 +26,7 @@ class AuthorityStartDateFormProviderSpec extends DateBehaviours {
 
   val mockDateTimeService = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-  val form = new AuthorityStartDateFormProvider(mockDateTimeService)()
+  val form                = new AuthorityStartDateFormProvider(mockDateTimeService)()
 
   ".value" should {
 

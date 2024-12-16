@@ -34,17 +34,19 @@ object AuthorityStart extends Enumerable.Implicits {
 
   def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] =
     values.map {
-      case value@Today => RadioItem(
-        value = Some(value.toString),
-        content = Text(messages(s"authorityStart.${value.toString}")),
-        checked = form("value").value.contains(value.toString)
-      )
+      case value @ Today =>
+        RadioItem(
+          value = Some(value.toString),
+          content = Text(messages(s"authorityStart.${value.toString}")),
+          checked = form("value").value.contains(value.toString)
+        )
 
-      case value@Setdate => RadioItem(
-        value = Some(value.toString),
-        content = Text(messages(s"authorityStart.${value.toString}")),
-        checked = form("value").value.contains(value.toString)
-      )
+      case value @ Setdate =>
+        RadioItem(
+          value = Some(value.toString),
+          content = Text(messages(s"authorityStart.${value.toString}")),
+          checked = form("value").value.contains(value.toString)
+        )
     }
 
   implicit val enumerable: Enumerable[AuthorityStart] =

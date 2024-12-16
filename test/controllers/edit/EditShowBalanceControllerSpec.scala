@@ -39,22 +39,27 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
   private def onwardRoute = Call("GET", "/foo")
 
-  private lazy val showBalanceRoute = controllers.edit.routes.EditShowBalanceController.onPageLoad("someId", "someId").url
+  private lazy val showBalanceRoute =
+    controllers.edit.routes.EditShowBalanceController.onPageLoad("someId", "someId").url
 
   private val formProvider = new ShowBalanceFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
-  val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+  val cashAccount   = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val dutyDeferment =
+    DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
   "EditShowBalance Controller" must {
 
     "return OK and the correct view for a GET" in {
 
       val userAnswers = UserAnswers(userAnswersId.value)
-        .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
+        .set(AccountsPage, List(cashAccount, dutyDeferment))
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -62,7 +67,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[EditShowBalanceView]
+        val view      = application.injector.instanceOf[EditShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
@@ -75,15 +80,18 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId.value)
-        .set(EditShowBalancePage("someId", "someId"), ShowBalance.Yes)(ShowBalance.writes).success.value
+        .set(EditShowBalancePage("someId", "someId"), ShowBalance.Yes)(ShowBalance.writes)
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
         val request = fakeRequest(GET, showBalanceRoute)
 
-        val view = application.injector.instanceOf[EditShowBalanceView]
+        val view      = application.injector.instanceOf[EditShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -107,7 +115,8 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
-          .configure("features.edit-journey" -> true).build()
+          .configure("features.edit-journey" -> true)
+          .build()
 
       running(application) {
 
@@ -124,7 +133,8 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -134,7 +144,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[EditShowBalanceView]
+        val view      = application.injector.instanceOf[EditShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value

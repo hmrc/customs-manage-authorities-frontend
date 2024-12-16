@@ -26,33 +26,40 @@ import utils.DateUtils
 
 import scala.collection.immutable.ListMap
 
-case class AuthorityRowColumnViewModel(hiddenHeadingMsg: String,
-                                       displayValue: String,
-                                       href: Option[Call] = None,
-                                       isAccountStatusNonClosed: Boolean = true,
-                                       classValue: String = "govuk-table__cell",
-                                       spanClassValue: String = "hmrc-responsive-table__heading")
+case class AuthorityRowColumnViewModel(
+  hiddenHeadingMsg: String,
+  displayValue: String,
+  href: Option[Call] = None,
+  isAccountStatusNonClosed: Boolean = true,
+  classValue: String = "govuk-table__cell",
+  spanClassValue: String = "hmrc-responsive-table__heading"
+)
 
-case class AuthorityRowViewModel(authorisedEori: AuthorityRowColumnViewModel,
-                                 companyName: Option[AuthorityRowColumnViewModel] = None,
-                                 viewLink: AuthorityRowColumnViewModel)
+case class AuthorityRowViewModel(
+  authorisedEori: AuthorityRowColumnViewModel,
+  companyName: Option[AuthorityRowColumnViewModel] = None,
+  viewLink: AuthorityRowColumnViewModel
+)
 
-case class ManageAuthoritiesTableViewModel(idString: String,
-                                           accountHeadingMsg: String,
-                                           authRows: Seq[AuthorityRowViewModel])
+case class ManageAuthoritiesTableViewModel(
+  idString: String,
+  accountHeadingMsg: String,
+  authRows: Seq[AuthorityRowViewModel]
+)
 
 object ManageAuthoritiesTableViewModel extends DateUtils {
-  def apply(accountId: String,
-            account: AccountWithAuthoritiesWithId,
-            isNiAccount: Boolean = false,
-            authorisedEoriAndCompanyMap: Map[String, String] = Map.empty)
-           (implicit messages: Messages): ManageAuthoritiesTableViewModel = {
+  def apply(
+    accountId: String,
+    account: AccountWithAuthoritiesWithId,
+    isNiAccount: Boolean = false,
+    authorisedEoriAndCompanyMap: Map[String, String] = Map.empty
+  )(implicit messages: Messages): ManageAuthoritiesTableViewModel = {
 
     val idString = s"${account.accountType}-${account.accountNumber}"
 
     val accountHeadingMsg: String = account.accountStatus match {
       case Some(status) => accountMsgForAccountStatus(status, account, isNiAccount)
-      case _ => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
+      case _            => messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
     }
 
     ManageAuthoritiesTableViewModel(
@@ -62,9 +69,11 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     )
   }
 
-  private def accountMsgForAccountStatus(status: CDSAccountStatus,
-                                         account: AccountWithAuthoritiesWithId,
-                                         isNiAccount: Boolean)(implicit messages: Messages): String =
+  private def accountMsgForAccountStatus(
+    status: CDSAccountStatus,
+    account: AccountWithAuthoritiesWithId,
+    isNiAccount: Boolean
+  )(implicit messages: Messages): String =
     status match {
       case AccountStatusClosed =>
         messages(s"manageAuthorities.table.heading.account.${account.accountType}.closed", account.accountNumber)
@@ -83,53 +92,53 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
         }
     }
 
-  private def prepareAuthRowsView(accountId: String,
-                                  account: AccountWithAuthoritiesWithId,
-                                  authorisedEoriAndCompanyMap: Map[String, String])
-                                 (implicit messages: Messages): Seq[AuthorityRowViewModel] = {
+  private def prepareAuthRowsView(
+    accountId: String,
+    account: AccountWithAuthoritiesWithId,
+    authorisedEoriAndCompanyMap: Map[String, String]
+  )(implicit messages: Messages): Seq[AuthorityRowViewModel] = {
 
     val sortedAuthorities: ListMap[String, StandingAuthority] =
       ListMap(account.authorities.toSeq.sortBy(_._2.authorisedFromDate): _*)
 
     val authRows = for {
       (authorityId, authority) <- sortedAuthorities
-    } yield {
-      AuthorityRowViewModel(
-        authorisedEori =
-          AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authority.authorisedEori),
-        companyName =
-          if (authorisedEoriAndCompanyMap.contains(authority.authorisedEori)) {
-            Some(AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"),
-              authorisedEoriAndCompanyMap(authority.authorisedEori)))
-          } else {
-            None
-          },
-        viewLink =
-          authRowColumnViewForLink(
-            accountId,
-            authorityId,
-            authority,
-            account.accountStatus,
-            account.accountNumber,
-            account.accountType)
+    } yield AuthorityRowViewModel(
+      authorisedEori =
+        AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), authority.authorisedEori),
+      companyName = if (authorisedEoriAndCompanyMap.contains(authority.authorisedEori)) {
+        Some(
+          AuthorityRowColumnViewModel(
+            messages("manageAuthorities.table.heading.user"),
+            authorisedEoriAndCompanyMap(authority.authorisedEori)
+          )
+        )
+      } else {
+        None
+      },
+      viewLink = authRowColumnViewForLink(
+        accountId,
+        authorityId,
+        authority,
+        account.accountStatus,
+        account.accountNumber,
+        account.accountType
       )
-    }
+    )
 
     authRows.toSeq
   }
 
-  private def authRowColumnViewForLink(accountId: String,
-                                       authorityId: String,
-                                       authority: StandingAuthority,
-                                       accountStatus: Option[CDSAccountStatus],
-                                       accountNumber: AccountNumber,
-                                       accountType: AccountType)
-                                      (implicit messages: Messages): AuthorityRowColumnViewModel = {
-    val displayValue = s"${
-      messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, accountNumber)
-    } ${
-      messages(s"manageAuthorities.table.heading.account.$accountType", accountNumber)
-    }"
+  private def authRowColumnViewForLink(
+    accountId: String,
+    authorityId: String,
+    authority: StandingAuthority,
+    accountStatus: Option[CDSAccountStatus],
+    accountNumber: AccountNumber,
+    accountType: AccountType
+  )(implicit messages: Messages): AuthorityRowColumnViewModel = {
+    val displayValue =
+      s"${messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, accountNumber)} ${messages(s"manageAuthorities.table.heading.account.$accountType", accountNumber)}"
 
     val hrefValue = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)
 
@@ -141,6 +150,7 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
       href = Some(hrefValue),
       isAccountStatusNonClosed = isAccStatClosed,
       classValue = "govuk-table__cell view-or-change",
-      spanClassValue = "govuk-visually-hidden")
+      spanClassValue = "govuk-visually-hidden"
+    )
   }
 }

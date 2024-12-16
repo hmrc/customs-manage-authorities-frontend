@@ -18,8 +18,8 @@ package services
 
 import base.SpecBase
 import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId,
-  CDSAccounts, CDSCashBalance, CashAccount, CdsCashAccount, EORI, StandingAuthority
+  AccountStatusClosed, AccountStatusOpen, AccountWithAuthoritiesWithId, AuthoritiesWithId, CDSAccounts, CDSCashBalance,
+  CashAccount, CdsCashAccount, EORI, StandingAuthority
 }
 import models.requests.DataRequest
 import models.{AuthorisedAccounts, InternalId, UserAnswers}
@@ -45,15 +45,14 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
     "return correct AuthorisedAccounts" in new Setup {
       val userAnswers: UserAnswers = emptyUserAnswers.set(AccountsPage, List.empty).success.value
 
-      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
-        Future.successful(authoritiesWithId))
+      when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
 
       when(mockAccCacheService.retrieveAccounts(any, any)(any)).thenReturn(
         Future.successful(accounts)
       )
 
-      authorisedAccountsService.getAuthorisedAccounts(gbEori)(dataRequest(userAnswers, gbEori), hc).map {
-        authAcc => authAcc mustBe authAccounts
+      authorisedAccountsService.getAuthorisedAccounts(gbEori)(dataRequest(userAnswers, gbEori), hc).map { authAcc =>
+        authAcc mustBe authAccounts
       }
     }
   }
@@ -80,7 +79,7 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
 
     val cdsAccounts: Seq[CashAccount] = Seq(cashAccount, cashAccoiuntForNI)
 
-    val openCashAccount: CashAccount =
+    val openCashAccount: CashAccount   =
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
     val closedCashAccount: CashAccount =
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
@@ -90,12 +89,14 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
     val standingAuthority: StandingAuthority =
       StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
 
-    val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-      CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+    val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
+      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
-    val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-      ("a" -> accountsWithAuthoritiesWithId)
-    ))
+    val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(
+      Map(
+        "a" -> accountsWithAuthoritiesWithId
+      )
+    )
 
     val authAccounts: AuthorisedAccounts = AuthorisedAccounts(
       alreadyAuthorisedAccounts = Seq(openCashAccount),
@@ -106,23 +107,23 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
     )
 
     val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockAccCacheService: AccountsCacheService = mock[AccountsCacheService]
+    val mockAccCacheService: AccountsCacheService     = mock[AccountsCacheService]
 
     val app: Application = applicationBuilder().build()
 
     val authorisedAccountsService: AuthorisedAccountsService = app.injector.instanceOf[AuthorisedAccountsService]
 
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest()
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    implicit val hc: HeaderCarrier                            = HeaderCarrier()
 
-    def dataRequest(userAnswers: UserAnswers,
-                    eori: EORI): DataRequest[AnyContentAsEmpty.type] =
+    def dataRequest(userAnswers: UserAnswers, eori: EORI): DataRequest[AnyContentAsEmpty.type] =
       models.requests.DataRequest(
         fakeRequest(),
         InternalId("id"),
         Credentials(emptyString, emptyString),
         Organisation,
-        Some(Name(Some("name"), Some("last"))), Some("email"),
+        Some(Name(Some("name"), Some("last"))),
+        Some("email"),
         eori,
         userAnswers
       )

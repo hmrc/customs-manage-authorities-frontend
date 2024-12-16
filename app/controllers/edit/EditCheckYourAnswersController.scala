@@ -40,74 +40,87 @@ import javax.inject.Inject
 import scala.concurrent._
 import scala.concurrent.duration.Duration
 
-class EditCheckYourAnswersController @Inject()(override val messagesApi: MessagesApi,
-                                               service: AuthoritiesCacheService,
-                                               connector: CustomsFinancialsConnector,
-                                               identify: IdentifierAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
-                                               dateTimeService: DateTimeService,
-                                               editAuthorityValidationService: EditAuthorityValidationService,
-                                               view: EditCheckYourAnswersView,
-                                               navigator: Navigator,
-                                               implicit val controllerComponents: MessagesControllerComponents,
-                                               dataStore: CustomsDataStoreConnector
-                                              )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class EditCheckYourAnswersController @Inject() (
+  override val messagesApi: MessagesApi,
+  service: AuthoritiesCacheService,
+  connector: CustomsFinancialsConnector,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  dateTimeService: DateTimeService,
+  editAuthorityValidationService: EditAuthorityValidationService,
+  view: EditCheckYourAnswersView,
+  navigator: Navigator,
+  implicit val controllerComponents: MessagesControllerComponents,
+  dataStore: CustomsDataStoreConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   lazy val commonActions: ActionBuilder[DataRequest, AnyContent] = identify andThen getData andThen requireData
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions.async { implicit request =>
-
     service.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
-      case Left(NoAuthority) => errorPage(MissingAuthorityError)
-      case Left(NoAccount) => errorPage(MissingAccountError)
+      case Left(NoAuthority)                              => errorPage(MissingAuthorityError)
+      case Left(NoAccount)                                => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
-
         val companyName = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
-        val helper = new CheckYourAnswersEditHelper(
-          request.userAnswers, accountId, authorityId, dateTimeService, authority, account, companyName)
+        val helper      = new CheckYourAnswersEditHelper(
+          request.userAnswers,
+          accountId,
+          authorityId,
+          dateTimeService,
+          authority,
+          account,
+          companyName
+        )
 
         Ok(view(helper, accountId, authorityId))
     }
   }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
-    commonActions.async {
-      implicit request =>
+    commonActions.async { implicit request =>
+      service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+        case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
+        case Left(NoAccount)   => Future.successful(errorPage(MissingAccountError))
 
-        service.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
-          case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
-          case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
-
-          case Right(AccountAndAuthority(account, authority)) =>
-            for {
-              xiEori <- dataStore.getXiEori(request.eoriNumber)
-              result <- doSubmission(request.userAnswers, accountId, authorityId,
-                authority.authorisedEori, account, xiEori.getOrElse(emptyString), request.eoriNumber)
-            } yield result
-        }
+        case Right(AccountAndAuthority(account, authority)) =>
+          for {
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
+            result <- doSubmission(
+                        request.userAnswers,
+                        accountId,
+                        authorityId,
+                        authority.authorisedEori,
+                        account,
+                        xiEori.getOrElse(emptyString),
+                        request.eoriNumber
+                      )
+          } yield result
+      }
     }
 
-  private def doSubmission(userAnswers: UserAnswers,
-                           accountId: String,
-                           authorityId: String,
-                           authorisedEori: String,
-                           account: AccountWithAuthoritiesWithId,
-                           xiEori: String,
-                           gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  private def doSubmission(
+    userAnswers: UserAnswers,
+    accountId: String,
+    authorityId: String,
+    authorisedEori: String,
+    account: AccountWithAuthoritiesWithId,
+    xiEori: String,
+    gbEori: String
+  )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = if(authorisedEori.startsWith(nIEORIPrefix)) xiEori else gbEori
+    val ownerEori = if (authorisedEori.startsWith(nIEORIPrefix)) xiEori else gbEori
 
     editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
       case Right(payload) =>
-        if(authorisedEori.startsWith(nIEORIPrefix)) {
+        if (authorisedEori.startsWith(nIEORIPrefix)) {
           processPayloadForXIEori(userAnswers, xiEori, gbEori, payload, accountId, authorityId)
         } else {
           connector.grantAccountAuthorities(payload, ownerEori).map {
-            case true =>
+            case true  =>
               Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
             case false =>
               logger.error("Edit authority request submission to backend failed")
@@ -121,33 +134,31 @@ class EditCheckYourAnswersController @Inject()(override val messagesApi: Message
     }
   }
 
-  /**
-   * Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI )
-   * and Cash/Guarantee accounts (with GB EORI as ownerEORI)
-   * Sends only one call if Accounts has only DD account
-   */
-  private def processPayloadForXIEori(userAnswers: UserAnswers,
-                                      xiEori: String,
-                                      gbEori: String,
-                                      payload: AddAuthorityRequest,
-                                      accountId: String,
-                                      authorityId: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  /** Sends two calls to grant authority if Accounts has both DD (with XI ownerEORI ) and Cash/Guarantee accounts (with
+    * GB EORI as ownerEORI) Sends only one call if Accounts has only DD account
+    */
+  private def processPayloadForXIEori(
+    userAnswers: UserAnswers,
+    xiEori: String,
+    gbEori: String,
+    payload: AddAuthorityRequest,
+    accountId: String,
+    authorityId: String
+  )(implicit hc: HeaderCarrier): Future[Result] = {
     val grantAccAuthRequests: Seq[GrantAccountAuthorityRequest] = grantAccountAuthRequestList(payload, xiEori, gbEori)
 
     for {
-      result <- Future.sequence(grantAccAuthRequests.map {
-        req => connector.grantAccountAuthorities(req.payload, req.ownerEori)
-      })
-    } yield {
+      result <- Future.sequence(grantAccAuthRequests.map { req =>
+                  connector.grantAccountAuthorities(req.payload, req.ownerEori)
+                })
+    } yield
       if (result.contains(false)) {
         logger.error("Edit authority request submission to backend failed")
         Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
       } else {
         Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
       }
-    }
   }
-
 
   private def errorPage(error: ErrorResponse): Result = {
     logger.error(error.msg)

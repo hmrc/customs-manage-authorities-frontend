@@ -62,16 +62,16 @@ class DateUtilsSpec extends SpecBase {
 }
 
 trait Setup {
-  val year2023 = 2023
-  val fifthMonthOfTheYear = 5
-  val fifteenthDayOfMonth = 15
-  val twentiethDayOfMonth = 20
+  val year2023               = 2023
+  val fifthMonthOfTheYear    = 5
+  val fifteenthDayOfMonth    = 15
+  val twentiethDayOfMonth    = 20
   val twentySecondDayOfMonth = 22
 
-  val olderDate: LocalDate = LocalDate.of(year2023, fifthMonthOfTheYear, fifteenthDayOfMonth)
-  val newerDate: LocalDate = LocalDate.of(year2023, fifthMonthOfTheYear, twentiethDayOfMonth)
+  val olderDate: LocalDate  = LocalDate.of(year2023, fifthMonthOfTheYear, fifteenthDayOfMonth)
+  val newerDate: LocalDate  = LocalDate.of(year2023, fifthMonthOfTheYear, twentiethDayOfMonth)
   val newestDate: LocalDate = LocalDate.of(year2023, fifthMonthOfTheYear, twentySecondDayOfMonth)
-  val date: LocalDate = LocalDate.of(year2023, fifthMonthOfTheYear, fifteenthDayOfMonth)
+  val date: LocalDate       = LocalDate.of(year2023, fifthMonthOfTheYear, fifteenthDayOfMonth)
 
   implicit val messages: Messages = Helpers.stubMessages()
 }

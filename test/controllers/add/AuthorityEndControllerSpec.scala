@@ -41,12 +41,12 @@ import scala.concurrent.Future
 class AuthorityEndControllerSpec extends SpecBase {
   "onPageLoad" must {
     "return OK with pre-populated values if form has some values" in new SetUp {
-      val app: Application = applicationBuilder(emptyUserAnswers.set(
-        AuthorityEndPage, AuthorityEnd.Setdate).toOption).build()
+      val app: Application =
+        applicationBuilder(emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate).toOption).build()
 
-      val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
-      val view: AuthorityEndView = app.injector.instanceOf[AuthorityEndView]
+      val view: AuthorityEndView         = app.injector.instanceOf[AuthorityEndView]
 
       running(app) {
         val result = route(app, getRequest).value
@@ -55,35 +55,38 @@ class AuthorityEndControllerSpec extends SpecBase {
         contentAsString(result) mustBe view(
           form().fill(AuthorityEnd.Setdate),
           NormalMode,
-          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode))(
-          getRequest, messages(app), appConfig).toString()
+          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+        )(getRequest, messages(app), appConfig).toString()
       }
     }
 
     "return OK without pre-populated values if form has no values" in new SetUp {
       val app: Application = applicationBuilder(Option(emptyUserAnswers)).build()
 
-      val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
-      val view: AuthorityEndView = app.injector.instanceOf[AuthorityEndView]
+      val view: AuthorityEndView         = app.injector.instanceOf[AuthorityEndView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(),
+        contentAsString(result) mustBe view(
+          form(),
           NormalMode,
-          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode))(
-          getRequest, messages(app), appConfig).toString()
+          controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+        )(getRequest, messages(app), appConfig).toString()
       }
     }
   }
 
   "onSubmit" must {
     "redirect to next page if form has no error" in new SetUp {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[SessionRepository].toInstance(mockSessionRepository)
-      ).build()
+      val app: Application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -109,11 +112,9 @@ class AuthorityEndControllerSpec extends SpecBase {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
     val getRequest: FakeRequest[AnyContentAsEmpty.type] =
-      fakeRequest(GET,
-        controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode).url)
+      fakeRequest(GET, controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode).url)
 
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
-      fakeRequest(POST,
-        controllers.add.routes.AuthorityEndController.onSubmit(NormalMode).url)
+      fakeRequest(POST, controllers.add.routes.AuthorityEndController.onSubmit(NormalMode).url)
   }
 }

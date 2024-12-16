@@ -48,7 +48,7 @@ class MappingsSpec extends SpecBase with Mappings {
     }
 
     "return a custom error message" in {
-      val form = Form("value" -> text("custom.error"))
+      val form   = Form("value" -> text("custom.error"))
       val result = form.bind(Map("value" -> emptyString))
       result.errors must contain(FormError("value", "custom.error"))
     }

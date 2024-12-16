@@ -26,13 +26,13 @@ class AuthorityStartFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" must {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "authorityStart.error.required"
 
     behave like optionsField[AuthorityStart](
       form,
       fieldName,
-      validValues  = AuthorityStart.values,
+      validValues = AuthorityStart.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

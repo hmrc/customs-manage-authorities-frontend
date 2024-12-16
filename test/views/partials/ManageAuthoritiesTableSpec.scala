@@ -77,75 +77,88 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     }
   }
 
-  private def viewAsDoc(accountId: String,
-                        account: AccountWithAuthoritiesWithId,
-                        isNiAccount: Boolean = false,
-                        authEoriAndCompanyMap: Map[String, String] = Map.empty): Document =
-    Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesTable].apply(
-      ManageAuthoritiesTableViewModel(accountId, account, isNiAccount, authEoriAndCompanyMap)
-    ).body)
+  private def viewAsDoc(
+    accountId: String,
+    account: AccountWithAuthoritiesWithId,
+    isNiAccount: Boolean = false,
+    authEoriAndCompanyMap: Map[String, String] = Map.empty
+  ): Document =
+    Jsoup.parse(
+      app.injector
+        .instanceOf[ManageAuthoritiesTable]
+        .apply(
+          ManageAuthoritiesTableViewModel(accountId, account, isNiAccount, authEoriAndCompanyMap)
+        )
+        .body
+    )
 
-  private def shouldContainCorrectAccountStatusMsgForStatusOpen(view: Document,
-                                                                account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForStatusOpen(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
-  private def shouldContainCorrectAccountStatusMsgForStatusClosed(view: Document,
-                                                                  account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForStatusClosed(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.closed", account.accountNumber)
 
-  private def shouldContainCorrectAccountStatusMsgForStatusSuspended(view: Document,
-                                                                     account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForStatusSuspended(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.suspended", account.accountNumber)
 
-  private def shouldContainCorrectAccountStatusMsgForStatusPending(view: Document,
-                                                                   account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForStatusPending(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.pending", account.accountNumber)
 
-  private def shouldContainCorrectAccountStatusMsgForStatusNone(view: Document,
-                                                                account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForStatusNone(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
-  private def shouldContainCorrectAccountStatusMsgForDDNonNIAccount(view: Document,
-                                                                    account: AccountWithAuthoritiesWithId): Assertion =
-    view.getElementById(s"${
-      account.accountType
-    }-${account.accountNumber}-heading").text() mustBe
+  private def shouldContainCorrectAccountStatusMsgForDDNonNIAccount(
+    view: Document,
+    account: AccountWithAuthoritiesWithId
+  ): Assertion =
+    view.getElementById(s"${account.accountType}-${account.accountNumber}-heading").text() mustBe
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
 
-  private def shouldContainCorrectElementValuesForAuthorityRows(view: Document,
-                                                                account: AccountWithAuthoritiesWithId,
-                                                                authEoriAndCompanyMap: Map[String, String] = Map.empty): Assertion = {
+  private def shouldContainCorrectElementValuesForAuthorityRows(
+    view: Document,
+    account: AccountWithAuthoritiesWithId,
+    authEoriAndCompanyMap: Map[String, String] = Map.empty
+  ): Assertion = {
 
     val tableRowHtml = view.getElementsByClass("govuk-table__row").html()
 
     tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
 
-    if(authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+    if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
       tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
     }
 
     if (account.accountStatus.fold(true)(status => status != AccountStatusClosed)) {
       tableRowHtml.contains(messages("manageAuthorities.table.view-or-change")) mustBe true
 
-      view.getElementsByClass("govuk-table__cell view-or-change").html()
+      view
+        .getElementsByClass("govuk-table__cell view-or-change")
+        .html()
         .contains(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B).toString) mustBe true
 
-      view.getElementsByClass("govuk-table__cell view-or-change").html()
+      view
+        .getElementsByClass("govuk-table__cell view-or-change")
+        .html()
         .contains(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C).toString) mustBe true
     } else {
       tableRowHtml.contains(messages("manageAuthorities.table.view-or-change")) mustBe false

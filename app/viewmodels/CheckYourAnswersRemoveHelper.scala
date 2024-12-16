@@ -29,37 +29,37 @@ import utils.StringUtils.nIEORIPrefix
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
-class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
-                                   val accountId: String,
-                                   val authorityId: String,
-                                   authorisedUser: AuthorisedUser,
-                                   val standingAuthority: StandingAuthority,
-                                   account: AccountWithAuthoritiesWithId,
-                                   dataStore: CustomsDataStoreConnector)
-                                  (implicit val messages: Messages, hc: HeaderCarrier) extends SummaryListRowHelper {
+class CheckYourAnswersRemoveHelper(
+  val userAnswers: UserAnswers,
+  val accountId: String,
+  val authorityId: String,
+  authorisedUser: AuthorisedUser,
+  val standingAuthority: StandingAuthority,
+  account: AccountWithAuthoritiesWithId,
+  dataStore: CustomsDataStoreConnector
+)(implicit val messages: Messages, hc: HeaderCarrier)
+    extends SummaryListRowHelper {
 
-  val companyName: Option[String] = Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
-  private val isXiEori: Boolean = standingAuthority.authorisedEori.startsWith(nIEORIPrefix)
+  val companyName: Option[String] =
+    Await.result(dataStore.getCompanyName(standingAuthority.authorisedEori), Duration.Inf)
+  private val isXiEori: Boolean   = standingAuthority.authorisedEori.startsWith(nIEORIPrefix)
 
-  def authorisedCompanyDetailsRows: Seq[SummaryListRow] = {
+  def authorisedCompanyDetailsRows: Seq[SummaryListRow] =
     Seq(
       eoriNumberRow(Some(standingAuthority.authorisedEori)),
       companyNameRow(companyName)
     ).flatten
-  }
 
-  def accountNumberRows: Seq[SummaryListRow] = {
+  def accountNumberRows: Seq[SummaryListRow] =
     Seq(accountNumberRow(account, isXiEori)).flatten
-  }
 
-  def authorisedUserDetailsRows: Seq[SummaryListRow] = {
+  def authorisedUserDetailsRows: Seq[SummaryListRow] =
     Seq(
       Some(authorisedUserNameRow(authorisedUser)),
       Some(authorisedUserRoleRow(authorisedUser))
     ).flatten
-  }
 
-  private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] = {
+  private def eoriNumberRow(number: Option[String]): Option[SummaryListRow] =
     number.map(x =>
       summaryListRow(
         messages("checkYourAnswers.eoriNumber.label"),
@@ -68,50 +68,59 @@ class CheckYourAnswersRemoveHelper(val userAnswers: UserAnswers,
         secondValue = None
       )
     )
-  }
 
-  private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] = {
-
+  private def companyNameRow(companyName: Option[String]): Option[SummaryListRow] =
     companyName match {
-      case Some(x) => Some(summaryListRow(
-        messages("remove-cya-h2.4"),
-        value = HtmlFormat.escape(x).toString(),
-        actions = Actions(items = Seq()),
-        secondValue = None
-      ))
+      case Some(x) =>
+        Some(
+          summaryListRow(
+            messages("remove-cya-h2.4"),
+            value = HtmlFormat.escape(x).toString(),
+            actions = Actions(items = Seq()),
+            secondValue = None
+          )
+        )
 
-      case _ => Some(summaryListRow(
-        messages("remove-cya-h2.4"),
-        value = messages("remove-cya-h2.5"),
-        actions = Actions(items = Seq()),
-        secondValue = None
-      ))
+      case _ =>
+        Some(
+          summaryListRow(
+            messages("remove-cya-h2.4"),
+            value = messages("remove-cya-h2.5"),
+            actions = Actions(items = Seq()),
+            secondValue = None
+          )
+        )
     }
-  }
 
-  private def authorisedUserNameRow(authorisedUser: AuthorisedUser): SummaryListRow = {
+  private def authorisedUserNameRow(authorisedUser: AuthorisedUser): SummaryListRow =
     summaryListRow(
       messages("remove-cya-name"),
       value = authorisedUser.userName,
-      actions = Actions(items = Seq(ActionItem(
-        href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
-        content = span(messages("site.change")),
-        visuallyHiddenText = Some(messages("remove-cya-visually-hidden-name"))
-      ))),
+      actions = Actions(items =
+        Seq(
+          ActionItem(
+            href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+            content = span(messages("site.change")),
+            visuallyHiddenText = Some(messages("remove-cya-visually-hidden-name"))
+          )
+        )
+      ),
       secondValue = None
     )
-  }
 
-  private def authorisedUserRoleRow(authorisedUser: AuthorisedUser): SummaryListRow = {
+  private def authorisedUserRoleRow(authorisedUser: AuthorisedUser): SummaryListRow =
     summaryListRow(
       messages("remove-cya-role"),
       value = authorisedUser.userRole,
-      actions = Actions(items = Seq(ActionItem(
-        href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
-        content = span(messages("site.change")),
-        visuallyHiddenText = Some(messages("remove-cya-visually-hidden-role"))
-      ))),
+      actions = Actions(items =
+        Seq(
+          ActionItem(
+            href = controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad(accountId, authorityId).url,
+            content = span(messages("site.change")),
+            visuallyHiddenText = Some(messages("remove-cya-visually-hidden-role"))
+          )
+        )
+      ),
       secondValue = None
     )
-  }
 }

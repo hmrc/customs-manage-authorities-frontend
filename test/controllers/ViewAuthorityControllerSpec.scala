@@ -50,17 +50,18 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
     "return OK when called with correct values" in new Setup {
 
-      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
-      ).build()
+      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        )
+        .build()
 
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(application) {
-        val request = FakeRequest(
-          GET, controllers.routes.ViewAuthorityController.onPageLoad(
-            accountId, authorityId).url)
+        val request =
+          FakeRequest(GET, controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url)
 
         val result = route(application, request).value
 
@@ -70,17 +71,18 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
     "return 303 when AuthoritiesCacheErrorResponse is received" in new Setup {
 
-      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
-      ).build()
+      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        )
+        .build()
 
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Left(NoAuthority)))
 
       running(application) {
-        val request = FakeRequest(
-          GET, controllers.routes.ViewAuthorityController.onPageLoad(
-            accountId, authorityId).url)
+        val request =
+          FakeRequest(GET, controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url)
 
         val result = route(application, request).value
 
@@ -95,21 +97,27 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
     val startDate: LocalDate = LocalDate.now().plusMonths(oneMonth)
 
-    val cashAccount: CashAccount = CashAccount(
-      "12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val cashAccount: CashAccount =
+      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
-    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
-      "67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val dutyDeferment: DutyDefermentAccount =
+      DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
     val userAnswers: UserAnswers = emptyUserAnswers
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
-      .set(AuthorityStartDatePage, startDate).success.value
-      .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name")))
+      .success
+      .value
+      .set(AuthorityStartDatePage, startDate)
+      .success
+      .value
+      .set(AccountsPage, List(cashAccount, dutyDeferment))
+      .success
+      .value
 
-    val stDate: LocalDate = LocalDate.parse("2020-03-01")
+    val stDate: LocalDate  = LocalDate.parse("2020-03-01")
     val endDate: LocalDate = LocalDate.parse("2020-04-01")
 
-    val accountId = "test_account"
+    val accountId   = "test_account"
     val authorityId = "test_id"
 
     val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)

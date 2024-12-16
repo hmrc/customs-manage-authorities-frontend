@@ -69,12 +69,12 @@ class AccountsCacheServiceSpec extends SpecBase {
     }
 
     "merging account cache service must return flat account in merged list" in new Setup {
-      val cashAccount: CashAccount = CashAccount(
-        "12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+      val cashAccount: CashAccount =
+        CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
       val compare: CDSAccounts = CDSAccounts(emptyString, List(cashAccount))
 
-      val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
+      val service          = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
       val res: CDSAccounts = service.merge(Seq(notCachedAccounts))
 
       res mustBe compare
@@ -90,34 +90,44 @@ class AccountsCacheServiceSpec extends SpecBase {
 
       val result: Future[Option[CDSAccounts]] = accountCacheService.retrieveAccountsForId(InternalId("cachedId"))
 
-      result.map {
-        accounts => accounts mustBe Some(cachedAccounts)
+      result.map { accounts =>
+        accounts mustBe Some(cachedAccounts)
       }
     }
   }
 
   trait Setup {
 
-    val notCachedAccounts: CDSAccounts = CDSAccounts("GB123456789012",
-      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
+    val notCachedAccounts: CDSAccounts = CDSAccounts(
+      "GB123456789012",
+      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
+    )
 
-    val cachedAccounts: CDSAccounts = CDSAccounts("GB098765432109",
-      List(CashAccount("54321", "GB098765432109", AccountStatusOpen, CDSCashBalance(Some(100.00)))))
+    val cachedAccounts: CDSAccounts = CDSAccounts(
+      "GB098765432109",
+      List(CashAccount("54321", "GB098765432109", AccountStatusOpen, CDSCashBalance(Some(100.00))))
+    )
 
-    val closedAccount: CDSAccounts = CDSAccounts("GB098765432109",
-      List(CashAccount("54321", "GB098765432109", AccountStatusClosed, CDSCashBalance(Some(100.00)))))
+    val closedAccount: CDSAccounts = CDSAccounts(
+      "GB098765432109",
+      List(CashAccount("54321", "GB098765432109", AccountStatusClosed, CDSCashBalance(Some(100.00))))
+    )
 
-    val suspendedAccount: CDSAccounts = CDSAccounts("GB098765432109",
-      List(CashAccount("54321", "GB098765432109", AccountStatusSuspended, CDSCashBalance(Some(100.00)))))
+    val suspendedAccount: CDSAccounts = CDSAccounts(
+      "GB098765432109",
+      List(CashAccount("54321", "GB098765432109", AccountStatusSuspended, CDSCashBalance(Some(100.00))))
+    )
 
-    val pendingAccount: CDSAccounts = CDSAccounts("GB098765432109",
-      List(CashAccount("54321", "GB098765432109", AccountStatusPending, CDSCashBalance(Some(100.00)))))
+    val pendingAccount: CDSAccounts = CDSAccounts(
+      "GB098765432109",
+      List(CashAccount("54321", "GB098765432109", AccountStatusPending, CDSCashBalance(Some(100.00))))
+    )
 
-    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+    implicit lazy val hc: HeaderCarrier                = HeaderCarrier()
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-    var mockRepository: AccountsRepository = mock[AccountsRepository]
-    val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+    var mockRepository: AccountsRepository             = mock[AccountsRepository]
+    val mockConnector: CustomsFinancialsConnector      = mock[CustomsFinancialsConnector]
     val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
 
     when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(cachedAccounts)))
@@ -126,10 +136,12 @@ class AccountsCacheServiceSpec extends SpecBase {
 
     when(mockConnector.retrieveAccounts(any())(any())).thenReturn(Future.successful(notCachedAccounts))
 
-    val app: Application = applicationBuilder().overrides(
-      inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-      inject.bind[AccountsRepository].toInstance(mockRepository)
-    ).build()
+    val app: Application = applicationBuilder()
+      .overrides(
+        inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+        inject.bind[AccountsRepository].toInstance(mockRepository)
+      )
+      .build()
 
     val accountCacheService: AccountsCacheService = app.injector.instanceOf[AccountsCacheService]
   }

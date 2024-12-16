@@ -22,7 +22,6 @@ import play.api.mvc.Result
 
 import scala.concurrent.{ExecutionContext, Future}
 
-
 class FakeVerifyAccountNumbersAction(usersAnswers: UserAnswers) extends VerifyAccountNumbersAction {
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     Future.successful(
@@ -35,7 +34,8 @@ class FakeVerifyAccountNumbersAction(usersAnswers: UserAnswers) extends VerifyAc
           request.name,
           request.email,
           request.eoriNumber,
-          usersAnswers)
+          usersAnswers
+        )
       )
     )
 

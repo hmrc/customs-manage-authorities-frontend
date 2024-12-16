@@ -56,7 +56,7 @@ class ManageAuthoritiesViewSpec extends SpecBase {
     "display notifications bar if provided" in new Setup {
       override val maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = Some(
         HtmlFormat.raw(
-            """
+          """
             <div class='notifications-bar'>Content</div>
             """
         )
@@ -72,15 +72,18 @@ class ManageAuthoritiesViewSpec extends SpecBase {
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
     val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
 
     val standingAuthorityFilesViewModel = AuthoritiesFilesNotificationViewModel(
-      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1))
+      Some(gbStanAuthFile154Url),
+      Some(xiStanAuthFile154Url),
+      dateAsDayMonthAndYear(START_DATE_1)
+    )
 
-    lazy val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
+    lazy val viewModel: ManageAuthoritiesViewModel               = ManageAuthoritiesViewModel(
       authorities = AuthoritiesWithId(Nil),
       accounts = CDSAccounts("testEori", List.empty),
       auhorisedEoriAndCompanyMap = Map.empty,
@@ -89,7 +92,8 @@ class ManageAuthoritiesViewSpec extends SpecBase {
     val maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None
 
     def view(): Document = {
-      val htmlContent = app.injector.instanceOf[ManageAuthoritiesView]
+      val htmlContent = app.injector
+        .instanceOf[ManageAuthoritiesView]
         .apply(viewModel, maybeMessageBannerPartial)(csrfRequest, messages, appConfig)
         .body
       Jsoup.parse(htmlContent)

@@ -32,40 +32,43 @@ class ShowBalanceViewSpec extends SpecBase {
 
   "view" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link")
+      normalModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/end"
     }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link")
+      checkModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
   }
 
-  trait Setup  {
+  trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     private val formProvider = new ShowBalanceFormProvider()
-    private val form = formProvider()
+    private val form         = formProvider()
 
-    private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
-    private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
+    private lazy val normalModeBackLinkRoute: Call =
+      controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+    private lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     def normalModeView(): Document =
       Jsoup.parse(
-        app.injector.instanceOf[ShowBalanceView].apply(form,
-          accountsLength = 2,
-          NormalMode,
-          normalModeBackLinkRoute).body
+        app.injector
+          .instanceOf[ShowBalanceView]
+          .apply(form, accountsLength = 2, NormalMode, normalModeBackLinkRoute)
+          .body
       )
-    def checkModeView(): Document =
+    def checkModeView(): Document  =
       Jsoup.parse(
-        app.injector.instanceOf[ShowBalanceView].apply(form,accountsLength = 2,CheckMode,checkModeBackLinkRoute).body
+        app.injector.instanceOf[ShowBalanceView].apply(form, accountsLength = 2, CheckMode, checkModeBackLinkRoute).body
       )
   }
 }

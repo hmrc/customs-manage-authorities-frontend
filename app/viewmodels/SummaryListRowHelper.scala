@@ -25,14 +25,11 @@ import utils.StringUtils.emptyString
 
 trait SummaryListRowHelper {
 
-  def summaryListRow(label: String,
-                     value: String,
-                     secondValue: Option[String],
-                     actions: Actions): SummaryListRow =
+  def summaryListRow(label: String, value: String, secondValue: Option[String], actions: Actions): SummaryListRow =
     SummaryListRow(
       key = Key(content = Text(label)),
       value = Value(content = HtmlContent(value)),
-      secondValue = secondValue.map { value => Value(content = HtmlContent(value)) },
+      secondValue = secondValue.map(value => Value(content = HtmlContent(value))),
       classes = emptyString,
       actions = Some(actions)
     )
@@ -42,8 +39,9 @@ trait SummaryListRowHelper {
 
   def span(contents: String): HtmlContent = HtmlContent(Html(s"""$contents"""))
 
-  def accountNumberRow(account: AccountWithAuthoritiesWithId,
-                       xiEori: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] = {
+  def accountNumberRow(account: AccountWithAuthoritiesWithId, xiEori: Boolean = false)(implicit
+    messages: Messages
+  ): Option[SummaryListRow] = {
 
     val displayText = if (xiEori && account.accountType == CdsDutyDefermentAccount) {
       messages(s"manageAuthorities.table.heading.account.${account.accountType}.Ni", account.accountNumber)
@@ -51,11 +49,13 @@ trait SummaryListRowHelper {
       messages(s"manageAuthorities.table.heading.account.${account.accountType}", account.accountNumber)
     }
 
-    Some(summaryListRow(
-      messages("edit-cya-account-number"),
-      value = HtmlFormat.escape(displayText).toString,
-      actions = Actions(items = Seq.empty),
-      secondValue = None
-    ))
+    Some(
+      summaryListRow(
+        messages("edit-cya-account-number"),
+        value = HtmlFormat.escape(displayText).toString,
+        actions = Actions(items = Seq.empty),
+        secondValue = None
+      )
+    )
   }
 }

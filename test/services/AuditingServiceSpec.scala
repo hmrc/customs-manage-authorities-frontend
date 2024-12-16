@@ -39,9 +39,12 @@ class AuditingServiceSpec extends SpecBase {
   "AuditingService" should {
 
     "create the correct audit event for SDES file retrieval" in new Setup {
-      val auditData = DownloadStatementAuditData.apply(gbStandingAuth1.metadata, eori)
+      val auditData  = DownloadStatementAuditData.apply(gbStandingAuth1.metadata, eori)
       val auditModel = AuditModel(
-        AUDIT_STANDING_AUTHORITIES, gbStandingAuth1.metadata.fileRole.transactionName, Json.toJson(auditData))
+        AUDIT_STANDING_AUTHORITIES,
+        gbStandingAuth1.metadata.fileRole.transactionName,
+        Json.toJson(auditData)
+      )
 
       await(auditingService.audit(auditModel))
 
@@ -50,9 +53,9 @@ class AuditingServiceSpec extends SpecBase {
 
       val dataEvent: ExtendedDataEvent = dataEventCaptor.getValue
 
-      dataEvent.auditSource must be(expectedAuditSource)
-      dataEvent.auditType must be(AUDIT_STANDING_AUTHORITIES)
-      dataEvent.detail must be(Json.toJson(auditData))
+      dataEvent.auditSource     must be(expectedAuditSource)
+      dataEvent.auditType       must be(AUDIT_STANDING_AUTHORITIES)
+      dataEvent.detail          must be(Json.toJson(auditData))
       dataEvent.tags.toString() must include(AUDIT_STANDING_AUTHORITIES_TRANSACTION_NAME)
     }
   }
@@ -61,12 +64,12 @@ class AuditingServiceSpec extends SpecBase {
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val expectedAuditSource = "customs-manage-authorities-frontend"
-    val eori = "EORI"
-    val AUDIT_STANDING_AUTHORITIES = "DisplayStandingAuthoritiesCSV"
+    val expectedAuditSource                         = "customs-manage-authorities-frontend"
+    val eori                                        = "EORI"
+    val AUDIT_STANDING_AUTHORITIES                  = "DisplayStandingAuthoritiesCSV"
     val AUDIT_STANDING_AUTHORITIES_TRANSACTION_NAME = "Display standing authorities csv"
 
-    private val gbStanAuthFile153Url = "https://test.co.uk/GB123456789012/SA_000000000153_csv.csv"
+    private val gbStanAuthFile153Url                         = "https://test.co.uk/GB123456789012/SA_000000000153_csv.csv"
     private val standAuthMetadata: StandingAuthorityMetadata = StandingAuthorityMetadata(
       START_DATE_1.getYear,
       START_DATE_1.getMonthValue,
@@ -76,7 +79,12 @@ class AuditingServiceSpec extends SpecBase {
     )
 
     protected val gbStandingAuth1: StandingAuthorityFile = StandingAuthorityFile(
-      "SA_000000000153_csv.csv", gbStanAuthFile153Url, FILE_SIZE_500, standAuthMetadata, EORI_NUMBER)
+      "SA_000000000153_csv.csv",
+      gbStanAuthFile153Url,
+      FILE_SIZE_500,
+      standAuthMetadata,
+      EORI_NUMBER
+    )
 
     val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
     when(mockConfig.appName).thenReturn("customs-manage-authorities-frontend")

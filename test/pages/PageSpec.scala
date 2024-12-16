@@ -24,7 +24,7 @@ class PageSpec extends SpecBase {
   "Page" must {
     "Pages defined toString converts page to string" in {
       val page = AccountsPage
-      val res = Page.toString(page)
+      val res  = Page.toString(page)
       res mustBe page.toString
     }
   }
@@ -32,7 +32,7 @@ class PageSpec extends SpecBase {
   "AuthorisedUserPage" must {
     "AuthorisedUserPage defined toString converts page to string" in {
       val page = AuthorisedUserPage
-      val res = page.toString
+      val res  = page.toString
       res mustBe "authorisedUser"
     }
   }

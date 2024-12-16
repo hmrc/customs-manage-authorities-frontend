@@ -17,19 +17,19 @@
 package utils
 
 object Constants {
-  val MDG_ACK_REF_LENGTH = 32
+  val MDG_ACK_REF_LENGTH           = 32
   val RANDOM_GENERATION_INT_LENGTH = 10
 
-  val CASH_ACCOUNT_TYPE = "cash"
+  val CASH_ACCOUNT_TYPE              = "cash"
   val GENERAL_GUARANTEE_ACCOUNT_TYPE = "generalGuarantee"
-  val DUTY_DEFERMENT_ACCOUNT_TYPE = "dutyDeferment"
+  val DUTY_DEFERMENT_ACCOUNT_TYPE    = "dutyDeferment"
 
-  val FIXED_DATE_TIME_YEAR = 2027
+  val FIXED_DATE_TIME_YEAR          = 2027
   val FIXED_DATE_TIME_MONTH_OF_YEAR = 12
-  val FIXED_DATE_TIME_DAY_OF_MONTH = 20
-  val FIXED_DATE_TIME_HOUR_OF_DAY = 12
-  val FIXED_DATE_TIME_MIN_OF_HOUR = 30
+  val FIXED_DATE_TIME_DAY_OF_MONTH  = 20
+  val FIXED_DATE_TIME_HOUR_OF_DAY   = 12
+  val FIXED_DATE_TIME_MIN_OF_HOUR   = 30
 
-  val ENROLMENT_KEY = "HMRC-CUS-ORG"
+  val ENROLMENT_KEY        = "HMRC-CUS-ORG"
   val ENROLMENT_IDENTIFIER = "EORINumber"
 }

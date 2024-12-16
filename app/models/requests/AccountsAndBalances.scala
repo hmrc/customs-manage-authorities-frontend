@@ -16,7 +16,6 @@
 
 package models.requests
 
-
 import models.domain
 import models.domain.{AccountStatusOpen, CDSAccount, CDSAccountStatus, GeneralGuaranteeBalance}
 import play.api.libs.json.{Json, OFormat, Reads}
@@ -28,10 +27,12 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import scala.util.Random
 
-case class AccountsRequestDetail(EORINo: String,
-                                 accountType: Option[String],
-                                 accountNumber: Option[String],
-                                 referenceDate: Option[String])
+case class AccountsRequestDetail(
+  EORINo: String,
+  accountType: Option[String],
+  accountNumber: Option[String],
+  referenceDate: Option[String]
+)
 
 case class AccountsAndBalancesRequest(requestCommon: AccountsRequestCommon, requestDetail: AccountsRequestDetail)
 
@@ -50,35 +51,37 @@ object AccountsAndBalancesRequestContainer {
 
 }
 
-case class AccountsRequestCommon(PID: Option[String],
-                                 originatingSystem: Option[String],
-                                 receiptDate: String,
-                                 acknowledgementReference: String,
-                                 regime: String)
+case class AccountsRequestCommon(
+  PID: Option[String],
+  originatingSystem: Option[String],
+  receiptDate: String,
+  acknowledgementReference: String,
+  regime: String
+)
 
 object AccountsRequestCommon {
 
   def generate: AccountsRequestCommon = {
     val (pid, originatingSystem) = (None, None)
 
-    val isoLocalDateTime = DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS))
+    val isoLocalDateTime  = DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS))
     val acknowledgmentRef = generateStringOfRandomDigits(MDG_ACK_REF_LENGTH)
-    val regime = "CDS"
+    val regime            = "CDS"
 
     AccountsRequestCommon(pid, originatingSystem, isoLocalDateTime, acknowledgmentRef, regime)
   }
 
-  private def generateStringOfRandomDigits(length: Int): String = {
+  private def generateStringOfRandomDigits(length: Int): String =
     (1 to length).map(_ => Random.nextInt(Constants.RANDOM_GENERATION_INT_LENGTH)).mkString
-  }
 }
 
-case class AccountWithStatus(number: String,
-                             `type`: String,
-                             owner: String,
-                             accountStatus: CDSAccountStatus = AccountStatusOpen,
-                             viewBalanceIsGranted: Boolean = false
-                            )
+case class AccountWithStatus(
+  number: String,
+  `type`: String,
+  owner: String,
+  accountStatus: CDSAccountStatus = AccountStatusOpen,
+  viewBalanceIsGranted: Boolean = false
+)
 
 case class Limits(periodGuaranteeLimit: String, periodAccountLimit: String)
 
@@ -86,17 +89,20 @@ case class DefermentBalances(periodAvailableGuaranteeBalance: String, periodAvai
 
 case class ReturnParameters(paramName: String, paramValue: String)
 
-case class DutyDefermentAccount(account: AccountWithStatus,
-                                isNiAccount: Option[Boolean] = Some(false),
-                                isIomAccount: Option[Boolean] = Some(false),
-                                limits: Option[Limits],
-                                balances: Option[DefermentBalances]) {
+case class DutyDefermentAccount(
+  account: AccountWithStatus,
+  isNiAccount: Option[Boolean] = Some(false),
+  isIomAccount: Option[Boolean] = Some(false),
+  limits: Option[Limits],
+  balances: Option[DefermentBalances]
+) {
   def toDomain: domain.DutyDefermentAccount = {
     val balance = domain.DutyDefermentBalance(
       limits.map(limit => BigDecimal(limit.periodGuaranteeLimit)),
       limits.map(limit => BigDecimal(limit.periodAccountLimit)),
       balances.map(balance => BigDecimal(balance.periodAvailableGuaranteeBalance)),
-      balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance)))
+      balances.map(balance => BigDecimal(balance.periodAvailableAccountBalance))
+    )
 
     domain.DutyDefermentAccount(
       account.number,
@@ -109,13 +115,15 @@ case class DutyDefermentAccount(account: AccountWithStatus,
   }
 }
 
-case class GeneralGuaranteeAccount(account: AccountWithStatus,
-                                   guaranteeLimit: Option[String],
-                                   availableGuaranteeBalance: Option[String]) {
+case class GeneralGuaranteeAccount(
+  account: AccountWithStatus,
+  guaranteeLimit: Option[String],
+  availableGuaranteeBalance: Option[String]
+) {
   def toDomain: domain.GeneralGuaranteeAccount = {
     val balance = (guaranteeLimit, availableGuaranteeBalance) match {
       case (Some(limit), Some(balance)) => Some(GeneralGuaranteeBalance(BigDecimal(limit), BigDecimal(balance)))
-      case _ => None
+      case _                            => None
     }
 
     domain.GeneralGuaranteeAccount(account.number, account.owner, account.accountStatus, balance)
@@ -130,19 +138,25 @@ case class CdsCashAccount(account: AccountWithStatus, availableAccountBalance: O
   }
 }
 
-case class AccountResponseDetail(EORINo: Option[String],
-                                 referenceDate: Option[String],
-                                 dutyDefermentAccount: Option[Seq[DutyDefermentAccount]],
-                                 generalGuaranteeAccount: Option[Seq[GeneralGuaranteeAccount]],
-                                 cdsCashAccount: Option[Seq[CdsCashAccount]])
+case class AccountResponseDetail(
+  EORINo: Option[String],
+  referenceDate: Option[String],
+  dutyDefermentAccount: Option[Seq[DutyDefermentAccount]],
+  generalGuaranteeAccount: Option[Seq[GeneralGuaranteeAccount]],
+  cdsCashAccount: Option[Seq[CdsCashAccount]]
+)
 
-case class AccountResponseCommon(status: String,
-                                 statusText: Option[String],
-                                 processingDate: String,
-                                 returnParameters: Option[Seq[ReturnParameters]])
+case class AccountResponseCommon(
+  status: String,
+  statusText: Option[String],
+  processingDate: String,
+  returnParameters: Option[Seq[ReturnParameters]]
+)
 
-case class AccountsAndBalancesResponse(responseCommon: Option[AccountResponseCommon],
-                                       responseDetail: AccountResponseDetail)
+case class AccountsAndBalancesResponse(
+  responseCommon: Option[AccountResponseCommon],
+  responseDetail: AccountResponseDetail
+)
 
 case class AccountsAndBalancesResponseContainer(accountsAndBalancesResponse: AccountsAndBalancesResponse) {
   def toCdsAccounts(eori: String): domain.CDSAccounts = {
@@ -163,12 +177,12 @@ object AccountsAndBalancesResponseContainer {
   implicit val returnParametersReads: Reads[ReturnParameters] = Json.reads[ReturnParameters]
 
   implicit val accountWithStatusReads: Reads[AccountWithStatus] = Json.reads[AccountWithStatus]
-  implicit val limitsReads: Reads[Limits] = Json.reads[Limits]
-  implicit val balancesReads: Reads[DefermentBalances] = Json.reads[DefermentBalances]
+  implicit val limitsReads: Reads[Limits]                       = Json.reads[Limits]
+  implicit val balancesReads: Reads[DefermentBalances]          = Json.reads[DefermentBalances]
 
-  implicit val dutyDefermentAccountReads: Reads[DutyDefermentAccount] = Json.reads[DutyDefermentAccount]
+  implicit val dutyDefermentAccountReads: Reads[DutyDefermentAccount]       = Json.reads[DutyDefermentAccount]
   implicit val generalGuaranteeAccountReads: Reads[GeneralGuaranteeAccount] = Json.reads[GeneralGuaranteeAccount]
-  implicit val cashAccountReads: Reads[CdsCashAccount] = Json.reads[CdsCashAccount]
+  implicit val cashAccountReads: Reads[CdsCashAccount]                      = Json.reads[CdsCashAccount]
 
   implicit val accountResponseDetailReads: Reads[AccountResponseDetail] = Json.reads[AccountResponseDetail]
   implicit val accountResponseCommonReads: Reads[AccountResponseCommon] = Json.reads[AccountResponseCommon]

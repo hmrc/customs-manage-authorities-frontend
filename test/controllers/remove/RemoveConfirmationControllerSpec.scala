@@ -33,16 +33,22 @@ import scala.concurrent.Future
 
 class RemoveConfirmationControllerSpec extends SpecBase {
 
-  val startDate = LocalDate.parse("2020-03-01")
-  val endDate = LocalDate.parse("2020-04-01")
+  val startDate         = LocalDate.parse("2020-03-01")
+  val endDate           = LocalDate.parse("2020-04-01")
   val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-  val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
-  val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val accounts          = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
+  val cashAccount       = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
-
-  val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(Map(
-    ("a" -> AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
-      Some(AccountStatusOpen), Map("b" -> standingAuthority)))))
+  val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(
+    Map(
+      "a" -> AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Map("b" -> standingAuthority)
+      )
+    )
+  )
 
   "RemoveConfirmation Controller" must {
     "throw an exception" when {
@@ -52,12 +58,14 @@ class RemoveConfirmationControllerSpec extends SpecBase {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
         val application = applicationBuilder()
-          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository)).build()
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository))
+          .build()
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("missing", "b").url)
-          val result = route(application, request).value
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("missing", "b").url)
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -69,12 +77,14 @@ class RemoveConfirmationControllerSpec extends SpecBase {
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
         val application = applicationBuilder()
-          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository)).build()
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository))
+          .build()
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "missing").url)
-          val result = route(application, request).value
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "missing").url)
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -83,27 +93,33 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
       "return Ok for a GET" in {
         val mockAuthoritiesRepository = mock[AuthoritiesRepository]
-        val mockConfirmationService = mock[ConfirmationService]
+        val mockConfirmationService   = mock[ConfirmationService]
 
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-        when(mockConfirmationService.populateConfirmation(
-          any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark"))).success.value
-          .set(AccountsPage, List(cashAccount)).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount))
+          .success
+          .value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
-          inject.bind[ConfirmationService].toInstance(mockConfirmationService)
-        ).configure("features.edit-journey" -> true).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+            inject.bind[ConfirmationService].toInstance(mockConfirmationService)
+          )
+          .configure("features.edit-journey" -> true)
+          .build()
 
         running(application) {
 
-          val request = fakeRequest(GET,
-            controllers.remove.routes.RemoveConfirmationController.onPageLoad(
-              "a", "b").url)
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
 
           val result = route(application, request).value
 

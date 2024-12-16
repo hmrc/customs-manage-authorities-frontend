@@ -33,15 +33,16 @@ import utils.WireMockHelper
 
 import java.time.LocalDate
 
-class CustomsFinancialsConnectorSpec extends SpecBase
-  with WireMockHelper
-  with ScalaFutures
-  with IntegrationPatience
-  with EitherValues
-  with OptionValues
-  with MockitoSugar {
+class CustomsFinancialsConnectorSpec
+    extends SpecBase
+    with WireMockHelper
+    with ScalaFutures
+    with IntegrationPatience
+    with EitherValues
+    with OptionValues
+    with MockitoSugar {
 
-  implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit private lazy val hc: HeaderCarrier        = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   private def application: Application =
@@ -101,9 +102,14 @@ class CustomsFinancialsConnectorSpec extends SpecBase
 
   ".retrieveAccountAuthorities" must {
     "return account authorities" in new Setup {
-      val accountAuthorities = Seq(AccountWithAuthorities(
-        domain.CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty
-      ))
+      val accountAuthorities = Seq(
+        AccountWithAuthorities(
+          domain.CdsCashAccount,
+          "12345",
+          Some(AccountStatusOpen),
+          Seq.empty
+        )
+      )
 
       val response =
         """
@@ -116,7 +122,6 @@ class CustomsFinancialsConnectorSpec extends SpecBase
           |   }
           |]
           |""".stripMargin
-
 
       running(app) {
         server.stubFor(
@@ -153,7 +158,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
-            .willReturn(noContent()))
+            .willReturn(noContent())
+        )
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe true
       }
@@ -164,7 +170,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
-            .willReturn(serverError()))
+            .willReturn(serverError())
+        )
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
@@ -175,7 +182,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
-            .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK)))
+            .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
+        )
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
@@ -196,7 +204,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
-            .willReturn(noContent()))
+            .willReturn(noContent())
+        )
         val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
         result mustBe true
       }
@@ -279,10 +288,11 @@ class CustomsFinancialsConnectorSpec extends SpecBase
 
       running(app) {
 
-        val json = """{"name" : "ABCD", "consent":"1"}"""
+        val json   = """{"name" : "ABCD", "consent":"1"}"""
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/subscriptions/company-name"))
-            .willReturn(ok(json)))
+            .willReturn(ok(json))
+        )
         val result = connector.retrieveEoriCompanyName().futureValue
         result.name mustBe Some("ABCD")
       }
@@ -295,7 +305,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
 
       server.stubFor(
         delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
-          .willReturn(ok()))
+          .willReturn(ok())
+      )
 
       val result = connector.deleteNotification(eoriNumber, FileRole.StandingAuthority)(hc).futureValue
       result mustBe true
@@ -303,8 +314,8 @@ class CustomsFinancialsConnectorSpec extends SpecBase
   }
 
   trait Setup {
-    val eoriNumber: String = "121312"
-    val app: Application = application
+    val eoriNumber: String                    = "121312"
+    val app: Application                      = application
     val connector: CustomsFinancialsConnector = app.injector.instanceOf[CustomsFinancialsConnector]
   }
 }

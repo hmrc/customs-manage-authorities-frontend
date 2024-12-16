@@ -28,12 +28,19 @@ class InputTextHintSpec extends SpecBase {
 
   "InputTextHint" should {
     "display correct view when details and label hint are present" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[input_text_hint].apply(
-        Option(DetailsHint(detailsSummaryText, detailsText)), Option(LabelHint(labelText)), id
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[input_text_hint]
+          .apply(
+            Option(DetailsHint(detailsSummaryText, detailsText)),
+            Option(LabelHint(labelText)),
+            id
+          )
+          .body
+      )
 
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
-      val hintLabelElement: Element = view.getElementById(s"$id-hint-text")
+      val hintLabelElement: Element   = view.getElementById(s"$id-hint-text")
 
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         detailsSummaryText
@@ -44,9 +51,15 @@ class InputTextHintSpec extends SpecBase {
     }
 
     "display correct view when only details hint is present" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[input_text_hint].apply(
-        detailsHint = Option(DetailsHint(detailsSummaryText, detailsText)), id = id
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[input_text_hint]
+          .apply(
+            detailsHint = Option(DetailsHint(detailsSummaryText, detailsText)),
+            id = id
+          )
+          .body
+      )
 
       val detailsHintElement: Element = view.getElementById(s"$id-hint-details")
 
@@ -61,9 +74,15 @@ class InputTextHintSpec extends SpecBase {
     }
 
     "display correct view when only label hint is present" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[input_text_hint].apply(
-        labelHint = Option(LabelHint(labelText)), id = id
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[input_text_hint]
+          .apply(
+            labelHint = Option(LabelHint(labelText)),
+            id = id
+          )
+          .body
+      )
 
       val labelHintElement: Element = view.getElementById(s"$id-hint-text")
 
@@ -75,8 +94,7 @@ class InputTextHintSpec extends SpecBase {
     }
 
     "display correct view when no hint is present" in new Setup {
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[input_text_hint].apply(id = id).body)
+      val view: Document = Jsoup.parse(app.injector.instanceOf[input_text_hint].apply(id = id).body)
 
       intercept[RuntimeException] {
         view.getElementById(s"$id-hint-details").html()
@@ -89,12 +107,12 @@ class InputTextHintSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
-    val id = "value"
+    val id                 = "value"
     val detailsSummaryText = "summaryText"
-    val detailsText = "text"
-    val labelText = "labelText"
+    val detailsText        = "text"
+    val labelText          = "labelText"
   }
 }

@@ -27,11 +27,13 @@ import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class SecureMessageConnector @Inject()(httpClient: HttpClientV2,
-                                       appConfig: FrontendAppConfig,
-                                       headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter)
-                                      (implicit ec: ExecutionContext)
-  extends Logging with Status {
+class SecureMessageConnector @Inject() (
+  httpClient: HttpClientV2,
+  appConfig: FrontendAppConfig,
+  headerCarrierForPartialsConverter: HeaderCarrierForPartialsConverter
+)(implicit ec: ExecutionContext)
+    extends Logging
+    with Status {
 
   private val log = Logger(this.getClass)
 
@@ -44,13 +46,12 @@ class SecureMessageConnector @Inject()(httpClient: HttpClientV2,
       .get(url"$url")
       .execute[HtmlPartial]
       .map {
-        case success@HtmlPartial.Success(_, _) => Some(success)
-        case HtmlPartial.Failure(_, _) => None
+        case success @ HtmlPartial.Success(_, _) => Some(success)
+        case HtmlPartial.Failure(_, _)           => None
       }
-      .recover {
-        case exc =>
-          log.error(s"Problem loading message banner partial: ${exc.getMessage}")
-          None
+      .recover { case exc =>
+        log.error(s"Problem loading message banner partial: ${exc.getMessage}")
+        None
       }
   }
 }

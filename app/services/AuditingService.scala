@@ -30,16 +30,17 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
+class AuditingService @Inject() (appConfig: FrontendAppConfig, auditConnector: AuditConnector) {
 
   val log: LoggerLike = Logger(this.getClass)
 
   private val referrer: HeaderCarrier => String = _.headers(Seq(HeaderNames.REFERER)).headOption.fold(hyphen)(_._2)
 
-  def auditFiles[T <: SdesFile](files: Seq[T], eori: EORI)(
-    implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Seq[AuditResult]] = {
-    Future.sequence(files.map { file => audit(file.auditModelFor(eori)) })
-  }
+  def auditFiles[T <: SdesFile](files: Seq[T], eori: EORI)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Seq[AuditResult]] =
+    Future.sequence(files.map(file => audit(file.auditModelFor(eori))))
 
   def audit(auditModel: AuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuditResult] = {
     val dataEvent = toExtendedDataEvent(appConfig.appName, auditModel, referrer(hc))
@@ -47,12 +48,13 @@ class AuditingService @Inject()(appConfig: FrontendAppConfig, auditConnector: Au
     auditConnector.sendExtendedEvent(dataEvent)
   }
 
-  private def toExtendedDataEvent(appName: String,
-                                  auditModel: AuditModel,
-                                  path: String)(implicit hc: HeaderCarrier): ExtendedDataEvent =
+  private def toExtendedDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit
+    hc: HeaderCarrier
+  ): ExtendedDataEvent =
     ExtendedDataEvent(
       auditSource = appName,
       auditType = auditModel.auditType,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
-      detail = auditModel.detail)
+      detail = auditModel.detail
+    )
 }

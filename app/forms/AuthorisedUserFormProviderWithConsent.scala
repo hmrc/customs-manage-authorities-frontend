@@ -28,12 +28,12 @@ class AuthorisedUserFormProviderWithConsent @Inject() extends Mappings {
   def apply(): Form[AuthorisedUser] =
     Form(
       mapping(
-      "fullName" -> text("authorisedUser.error.fullName.required")
-        .verifying(maxLength(fullNameMaxLength, "authorisedUser.error.fullName.length"))
-        .verifying(regexp(textFieldRegex, "authorisedUser.error.fullName.malicious")),
-      "jobRole" -> text("authorisedUser.error.jobRole.required")
-        .verifying(maxLength(jobRoleMaxLength, "authorisedUser.error.jobRole.length"))
-        .verifying(regexp(textFieldRegex, "authorisedUser.error.jobRole.malicious")),
+        "fullName"     -> text("authorisedUser.error.fullName.required")
+          .verifying(maxLength(fullNameMaxLength, "authorisedUser.error.fullName.length"))
+          .verifying(regexp(textFieldRegex, "authorisedUser.error.fullName.malicious")),
+        "jobRole"      -> text("authorisedUser.error.jobRole.required")
+          .verifying(maxLength(jobRoleMaxLength, "authorisedUser.error.jobRole.length"))
+          .verifying(regexp(textFieldRegex, "authorisedUser.error.jobRole.malicious")),
         "confirmation" -> checked("authorisedUser.error.confirmation.required")
       )((name, role, _) => AuthorisedUser.apply(name, role))(user => Some((user.userName, user.userRole, false)))
     )

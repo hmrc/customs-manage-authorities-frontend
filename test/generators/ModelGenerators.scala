@@ -57,13 +57,13 @@ trait ModelGenerators {
     }
 
   val genCashAccount: Gen[CashAccount] = {
-    val max1000 = 10000
+    val max1000         = 10000
     val min100000000000 = 100000000000L
     val max999999999999 = 999999999999L
 
     for {
-      number <- Gen.choose(1, max1000)
-      owner <- Gen.choose(min100000000000, max999999999999)
+      number  <- Gen.choose(1, max1000)
+      owner   <- Gen.choose(min100000000000, max999999999999)
       balance <- arbitrary[BigDecimal]
     } yield CashAccount(number.toString, s"GB$owner", AccountStatusOpen, CDSCashBalance(Some(balance)))
   }

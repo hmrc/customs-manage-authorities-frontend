@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.FrontendAppConfig
-import models.{UndeliverableEmail, UnverifiedEmail, EmailVerifiedResponse}
+import models.{EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail}
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
@@ -31,15 +31,16 @@ import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
 
-class CustomsDataStoreConnectorSpec extends SpecBase
-  with WireMockHelper
-  with ScalaFutures
-  with IntegrationPatience
-  with EitherValues
-  with OptionValues
-  with MockitoSugar {
+class CustomsDataStoreConnectorSpec
+    extends SpecBase
+    with WireMockHelper
+    with ScalaFutures
+    with IntegrationPatience
+    with EitherValues
+    with OptionValues
+    with MockitoSugar {
 
-  implicit private lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit private lazy val hc: HeaderCarrier        = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
   ".getCompanyName" must {
@@ -70,7 +71,6 @@ class CustomsDataStoreConnectorSpec extends SpecBase
         result mustBe expectedResult
       }
     }
-
 
     "return None when consent is defined as 0(False)" in new Setup {
       val response: String =
@@ -306,7 +306,8 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
-            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}""")))
+            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}"""))
+        )
 
         val result = connector.unverifiedEmail(hc).futureValue
         result mustBe Some("unverified@email.com")
@@ -318,7 +319,8 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
-            .willReturn(ok("""{}""")))
+            .willReturn(ok("""{}"""))
+        )
 
         val result = connector.unverifiedEmail(hc).futureValue
         result mustBe None
@@ -333,7 +335,8 @@ class CustomsDataStoreConnectorSpec extends SpecBase
       running(app) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
-            .willReturn(ok("""{"verifiedEmail": "test@test.com"}""")))
+            .willReturn(ok("""{"verifiedEmail": "test@test.com"}"""))
+        )
 
         val result = connector.verifiedEmail(hc).futureValue
         result mustBe emailVerifiedRes
@@ -343,7 +346,7 @@ class CustomsDataStoreConnectorSpec extends SpecBase
 
   trait Setup {
 
-    val emailValue: String = "test@test.com"
+    val emailValue: String                      = "test@test.com"
     val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
 
     private def application: Application =
@@ -351,9 +354,8 @@ class CustomsDataStoreConnectorSpec extends SpecBase
         .configure("microservice.services.customs-data-store.port" -> server.port)
         .build()
 
-    val expected: Option[Nothing] = None
-    val app: Application = application
+    val expected: Option[Nothing]            = None
+    val app: Application                     = application
     val connector: CustomsDataStoreConnector = app.injector.instanceOf[CustomsDataStoreConnector]
   }
 }
-
