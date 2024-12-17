@@ -138,7 +138,8 @@ object ManageAuthoritiesTableViewModel extends DateUtils {
     accountType: AccountType
   )(implicit messages: Messages): AuthorityRowColumnViewModel = {
     val displayValue =
-      s"${messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, accountNumber)} ${messages(s"manageAuthorities.table.heading.account.$accountType", accountNumber)}"
+      s"${messages("manageAuthorities.table.row.viewLink", authority.authorisedEori, accountNumber)} " +
+        s"${messages(s"manageAuthorities.table.heading.account.$accountType", accountNumber)}"
 
     val hrefValue = controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId)
 

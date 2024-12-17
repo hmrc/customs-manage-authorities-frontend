@@ -36,9 +36,8 @@ class DateTimeServiceSpec() extends SpecBase {
     "return iso local datetime" in new Setup {
       val service = new DateTimeService(appConfig)
 
-      LocalDateTime.parse(
-        service.isoLocalDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")) mustBe a[LocalDateTime
-      ]
+      LocalDateTime.parse(service.isoLocalDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")) mustBe
+        a[LocalDateTime]
     }
 
     "return local date when fixed-systemdate-for-tests feature is disabled" in new Setup {
