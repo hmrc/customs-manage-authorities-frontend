@@ -106,4 +106,5 @@ lazy val root = (project in file("."))
     scalafmtFailOnErrors := true
   )
 
-addCommandAlias("runAllChecks", ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")
+addCommandAlias("runAllChecks",
+  ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")
