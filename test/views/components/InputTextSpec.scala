@@ -30,14 +30,19 @@ class InputTextSpec extends SpecBase {
 
   "InputText" should {
     "display the correct view" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[inputText].apply(
-        form = validForm,
-        id = "value",
-        name = "value",
-        label = "eoriNumber.heading",
-        isPageHeading = false,
-        hint = None
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[inputText]
+          .apply(
+            form = validForm,
+            id = "value",
+            name = "value",
+            label = "eoriNumber.heading",
+            isPageHeading = false,
+            hint = None
+          )
+          .body
+      )
 
       view.getElementsByTag("label").html() mustBe messages(app)("eoriNumber.heading")
       view.getElementById("value").`val`() mustBe "GB123456789012"
@@ -48,15 +53,20 @@ class InputTextSpec extends SpecBase {
     }
 
     "display the correct hint" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[inputText].apply(
-        form = validForm,
-        id = "value",
-        name = "value",
-        label = "eoriNumber.heading",
-        isPageHeading = false,
-        hint = Option(InputTextHint(
-          Option(DetailsHint(detailsSummaryText, detailsText)), Option(LabelHint(labelText))))
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[inputText]
+          .apply(
+            form = validForm,
+            id = "value",
+            name = "value",
+            label = "eoriNumber.heading",
+            isPageHeading = false,
+            hint =
+              Option(InputTextHint(Option(DetailsHint(detailsSummaryText, detailsText)), Option(LabelHint(labelText))))
+          )
+          .body
+      )
 
       val detailsHintElement: Element = view.getElementById("value-hint-details")
 
@@ -67,14 +77,19 @@ class InputTextSpec extends SpecBase {
     }
 
     "display error if form has any error" in new Setup {
-      val view: Document = Jsoup.parse(app.injector.instanceOf[inputText].apply(
-        form = invalidForm,
-        id = "value",
-        name = "value",
-        label = "eoriNumber.heading",
-        isPageHeading = false,
-        hint = None
-      ).body)
+      val view: Document = Jsoup.parse(
+        app.injector
+          .instanceOf[inputText]
+          .apply(
+            form = invalidForm,
+            id = "value",
+            name = "value",
+            label = "eoriNumber.heading",
+            isPageHeading = false,
+            hint = None
+          )
+          .body
+      )
 
       view.getElementById("value-error").childNodes().size() must be > 0
       view.getElementsByClass("govuk-visually-hidden").html() mustBe "Error:"
@@ -82,14 +97,14 @@ class InputTextSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
-    val validForm: Form[String] = new EoriNumberFormProvider().apply().bind(Map("value" -> "GB123456789012"))
+    val validForm: Form[String]   = new EoriNumberFormProvider().apply().bind(Map("value" -> "GB123456789012"))
     val invalidForm: Form[String] = new EoriNumberFormProvider().apply().bind(Map("value" -> "3456789012"))
 
     val detailsSummaryText = "summaryText"
-    val detailsText = "text"
-    val labelText = "labelText"
+    val detailsText        = "text"
+    val labelText          = "labelText"
   }
 }

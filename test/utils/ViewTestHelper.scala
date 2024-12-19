@@ -27,16 +27,14 @@ import play.api.test.FakeRequest
 
 trait ViewTestHelper extends SpecBase {
 
-  implicit lazy val app: Application = applicationBuilder().build()
-  implicit val messages: Messages = messages(app)
-  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val app: Application                        = applicationBuilder().build()
+  implicit val messages: Messages                           = messages(app)
+  implicit val appConfig: FrontendAppConfig                 = app.injector.instanceOf[FrontendAppConfig]
   implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest()
 
-  def titleShouldBeCorrect(view: Document,
-                           titleMsgKey: String): Assertion =
+  def titleShouldBeCorrect(view: Document, titleMsgKey: String): Assertion =
     view.title() mustBe s"${messages(titleMsgKey)} - ${messages("service.name")} - GOV.UK"
 
-  def shouldContainBackLinkUrl(view: Document,
-                               url: String): Assertion =
+  def shouldContainBackLinkUrl(view: Document, url: String): Assertion =
     view.html().contains(url) mustBe true
 }

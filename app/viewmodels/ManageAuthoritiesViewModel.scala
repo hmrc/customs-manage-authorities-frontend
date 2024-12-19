@@ -29,10 +29,12 @@ import java.time.LocalDate
 import java.time.chrono.ChronoLocalDate
 import scala.collection.immutable.ListMap
 
-case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
-                                      accounts: CDSAccounts,
-                                      auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty,
-                                      filesNotificationViewModel: AuthoritiesFilesNotificationViewModel) {
+case class ManageAuthoritiesViewModel(
+  authorities: AuthoritiesWithId,
+  accounts: CDSAccounts,
+  auhorisedEoriAndCompanyMap: Map[String, String] = Map.empty,
+  filesNotificationViewModel: AuthoritiesFilesNotificationViewModel
+) {
 
   def hasAccounts: Boolean = authorities.accounts.nonEmpty
 
@@ -44,15 +46,15 @@ case class ManageAuthoritiesViewModel(authorities: AuthoritiesWithId,
   def niIndicator(acc: String): Boolean =
     accounts.accounts.filter(_.number == acc).map(_.isNiAccount).headOption.getOrElse(false)
 
-  def generateLinks()(implicit messages: Messages, appConfig: FrontendAppConfig): HtmlFormat.Appendable = {
+  def generateLinks()(implicit messages: Messages, appConfig: FrontendAppConfig): HtmlFormat.Appendable =
     new link_p_twoLinks().apply(
       firstLinkMessage = "manageAuthorities.addAuthority",
       firstLinkHref = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url,
       firstLinkId = Some("start-link"),
       secondLinkMessage = "cf.account.authorized-to-view.title",
       secondLinkHref = appConfig.authorizedToViewUrl,
-      secondLinkId = Some("authorised-to-view-link"))
-  }
+      secondLinkId = Some("authorised-to-view-link")
+    )
 }
 
 case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAuthUrl: Option[String], date: String) {
@@ -61,6 +63,6 @@ case class AuthoritiesFilesNotificationViewModel(gbAuthUrl: Option[String], xiAu
 
 object ManageAuthoritiesViewModel extends DateUtils {
 
-  implicit val localDateOrdering: Ordering[LocalDate] = Ordering.by(identity[ChronoLocalDate])
+  implicit val localDateOrdering: Ordering[LocalDate]                                 = Ordering.by(identity[ChronoLocalDate])
   implicit val accountWithAuthoritiesOrdering: Ordering[AccountWithAuthoritiesWithId] = Ordering.by(_.toString)
 }

@@ -35,56 +35,72 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, CLOSED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.closed", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsCashAccount.closed",
+          ACCOUNT_NUMBER
+        )
       }
 
       "account status is pending" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, PENDING_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.pending", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsCashAccount.pending",
+          ACCOUNT_NUMBER
+        )
       }
 
       "account status is suspended" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, SUSPENDED_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount.suspended", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsCashAccount.suspended",
+          ACCOUNT_NUMBER
+        )
       }
 
       "account is of Northern Ireland and account type is Duty Deferment" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID, isNiAccount = true)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni",
+          ACCOUNT_NUMBER
+        )
       }
 
       "account is non Northern Ireland and account type is Duty Deferment" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount",
+          ACCOUNT_NUMBER
+        )
       }
 
       "account status is None" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, NONE_DD_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsDutyDefermentAccount",
+          ACCOUNT_NUMBER
+        )
       }
 
       "CdsCashAccount status is open" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_CASH_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsCashAccount", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsCashAccount",
+          ACCOUNT_NUMBER
+        )
       }
 
       "CdsGeneralGuaranteeAccount status is open" in {
         val viewModelOb = ManageAuthoritiesTableViewModel(ACCOUNT_ID, OPEN_GG_ACC_WITH_AUTH_WITH_ID)
 
         viewModelOb.accountHeadingMsg mustBe messages(
-          "manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
+          "manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount",
+          ACCOUNT_NUMBER
+        )
       }
     }
 
@@ -108,11 +124,12 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
 
       "authorisedEoriAndCompanyMap in not empty" in {
         val authEorisAndCompanyMap = Map(EORI_NUMBER -> "test_company")
-        val viewModelOb = ManageAuthoritiesTableViewModel(
+        val viewModelOb            = ManageAuthoritiesTableViewModel(
           ACCOUNT_ID,
           CLOSED_GG_ACC_WITH_AUTH_WITH_ID,
           isNiAccount = false,
-          authEorisAndCompanyMap)
+          authEorisAndCompanyMap
+        )
 
         val expectedAuthRowsView: Seq[AuthorityRowViewModel] = authRowViewModelForClosedAccount(authEorisAndCompanyMap)
 
@@ -121,81 +138,79 @@ class ManageAuthoritiesTableViewModelSpec extends ViewTestHelper {
     }
   }
 
-  private def authRowViewModelForOpenAccount: Seq[AuthorityRowViewModel] = {
+  private def authRowViewModelForOpenAccount: Seq[AuthorityRowViewModel] =
     Seq(
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
-          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-          }",
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} " +
+            s"${messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)}",
           href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
           classValue = "govuk-table__cell view-or-change",
-          spanClassValue = "govuk-visually-hidden")
+          spanClassValue = "govuk-visually-hidden"
+        )
       ),
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
-          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-          }",
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} " +
+            s"${messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)}",
           href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
           classValue = "govuk-table__cell view-or-change",
-          spanClassValue = "govuk-visually-hidden")
+          spanClassValue = "govuk-visually-hidden"
+        )
       )
     )
-  }
 
-  private def authRowViewModelForClosedAccount(authEoriAndCompanyMap: Map[String, String] = Map.empty
-                                              ): Seq[AuthorityRowViewModel] = {
+  private def authRowViewModelForClosedAccount(
+    authEoriAndCompanyMap: Map[String, String] = Map.empty
+  ): Seq[AuthorityRowViewModel] =
     Seq(
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-
-        companyName =
-          if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
-            Some(AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
+        companyName = if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+          Some(
+            AuthorityRowColumnViewModel(
+              messages("manageAuthorities.table.heading.user"),
+              authEoriAndCompanyMap(EORI_NUMBER)
             )
-          } else {
-            None
-          },
-
+          )
+        } else {
+          None
+        },
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
-          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-          }",
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} " +
+            s"${messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)}",
           href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B)),
           isAccountStatusNonClosed = false,
           classValue = "govuk-table__cell view-or-change",
-          spanClassValue = "govuk-visually-hidden")
+          spanClassValue = "govuk-visually-hidden"
+        )
       ),
       AuthorityRowViewModel(
         authorisedEori = AuthorityRowColumnViewModel(messages("manageAuthorities.table.heading.user"), EORI_NUMBER),
-
-        companyName =
-          if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
-            Some(AuthorityRowColumnViewModel(
-              messages("manageAuthorities.table.heading.user"), authEoriAndCompanyMap(EORI_NUMBER))
+        companyName = if (authEoriAndCompanyMap.contains(EORI_NUMBER)) {
+          Some(
+            AuthorityRowColumnViewModel(
+              messages("manageAuthorities.table.heading.user"),
+              authEoriAndCompanyMap(EORI_NUMBER)
             )
-          } else {
-            None
-          },
-
+          )
+        } else {
+          None
+        },
         viewLink = AuthorityRowColumnViewModel(
           messages("manageAuthorities.table.view-or-change"),
-          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} ${
-            messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)
-          }",
+          s"${messages("manageAuthorities.table.row.viewLink", EORI_NUMBER, ACCOUNT_NUMBER)} " +
+            s"${messages(s"manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount", ACCOUNT_NUMBER)}",
           href = Some(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C)),
           isAccountStatusNonClosed = false,
           classValue = "govuk-table__cell view-or-change",
-          spanClassValue = "govuk-visually-hidden"))
+          spanClassValue = "govuk-visually-hidden"
+        )
+      )
     )
-  }
 }

@@ -32,12 +32,14 @@ class AuthorityStartViewSpec extends SpecBase {
   "AuthorityStartView" should {
 
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link")
+      normalModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/accounts"
     }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link")
+      checkModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
   }
@@ -49,13 +51,13 @@ class AuthorityStartViewSpec extends SpecBase {
     val app = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     private val formProvider = new AuthorityStartFormProvider()
-    private val form = formProvider()
+    private val form         = formProvider()
 
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
-    private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
+    private lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     def normalModeView(): Document =
       Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form, NormalMode, normalModeBackLinkRoute).body)

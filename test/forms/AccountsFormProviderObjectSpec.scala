@@ -66,9 +66,15 @@ class AccountsFormProviderObjectSpec extends SpecBase {
   "accountsHeadingKey" must {
     val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
 
-    val authAccounts = AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-    ), Seq.empty, "GB9876543210000")
+    val authAccounts = AuthorisedAccounts(
+      Seq.empty,
+      answerAccounts,
+      Seq(
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ),
+      Seq.empty,
+      "GB9876543210000"
+    )
 
     "return accounts.heading.singleAccount when only one available account " in {
       AccountsFormProvider.accountsHeadingKey(authAccounts) mustBe "accounts.heading.singleAccount"
@@ -82,9 +88,15 @@ class AccountsFormProviderObjectSpec extends SpecBase {
   "accountsTitleKey" must {
     val answerAccounts = List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
 
-    val authAccounts = AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
-    ), Seq.empty, "GB9876543210000")
+    val authAccounts = AuthorisedAccounts(
+      Seq.empty,
+      answerAccounts,
+      Seq(
+        CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+      ),
+      Seq.empty,
+      "GB9876543210000"
+    )
 
     "return accounts.title.singleAccount when only one available account " in {
       AccountsFormProvider.accountsTitleKey(authAccounts) mustBe "accounts.title.singleAccount"

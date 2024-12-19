@@ -39,22 +39,34 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val currentDate = LocalDate.now()
 
       val userAnswers = completeUserAnswers
-        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
-        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes).success.value
-        .set(AuthorityStartDatePage, currentDate).success.value
-        .set(AuthorityEndDatePage, currentDate.plusDays(1)).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes)
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(AuthorityEndPage, AuthorityEnd.Indefinite)(AuthorityEnd.writes)
+        .success
+        .value
+        .set(AuthorityStartDatePage, currentDate)
+        .success
+        .value
+        .set(AuthorityEndDatePage, currentDate.plusDays(1))
+        .success
+        .value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+        .success
+        .value
 
-      val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
+      val accounts          = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority =
-        StandingAuthority(
-          "GB123456789012",
-          LocalDate.now(),
-          None,
-          viewBalance = false)
+        StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = false)
 
-      service.validate(userAnswers).value mustEqual(accounts, standingAuthority, AuthorisedUser(emptyString, emptyString))
+      service.validate(userAnswers).value mustEqual (
+        accounts,
+        standingAuthority,
+        AuthorisedUser(emptyString, emptyString)
+      )
     }
 
     "validate should return None when authorityEndDateLage is null and AuthorityEnd is Setdate" in new Setup {
@@ -63,11 +75,21 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val currentDate = LocalDate.now()
 
       val userAnswers = completeUserAnswers
-        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
-        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        .set(AuthorityStartDatePage, currentDate).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes)
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes)
+        .success
+        .value
+        .set(AuthorityStartDatePage, currentDate)
+        .success
+        .value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+        .success
+        .value
 
       service.validate(userAnswers) mustBe None
     }
@@ -78,52 +100,76 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val currentDate = LocalDate.now()
 
       val userAnswers = completeUserAnswers
-        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes).success.value
-        .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes).success.value
-        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes).success.value
-        .set(AuthorityStartDatePage, currentDate).success.value
-        .set(AuthorityEndDatePage, currentDate.plusDays(1)).success.value
-        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+        .set(ShowBalancePage, ShowBalance.No)(ShowBalance.writes)
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Setdate)(AuthorityStart.writes)
+        .success
+        .value
+        .set(AuthorityEndPage, AuthorityEnd.Setdate)(AuthorityEnd.writes)
+        .success
+        .value
+        .set(AuthorityStartDatePage, currentDate)
+        .success
+        .value
+        .set(AuthorityEndDatePage, currentDate.plusDays(1))
+        .success
+        .value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+        .success
+        .value
 
-      val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
+      val accounts          = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
       val standingAuthority =
-        StandingAuthority(
-          "GB123456789012",
-          LocalDate.now(),
-          Option(currentDate.plusDays(1)),
-          viewBalance = false)
+        StandingAuthority("GB123456789012", LocalDate.now(), Option(currentDate.plusDays(1)), viewBalance = false)
 
-      service.validate(userAnswers).value mustEqual(accounts, standingAuthority, AuthorisedUser(emptyString, emptyString))
+      service.validate(userAnswers).value mustEqual (
+        accounts,
+        standingAuthority,
+        AuthorisedUser(emptyString, emptyString)
+      )
     }
 
     "reject submission missing Accounts" in new Setup {
       val userAnswers = completeUserAnswers
-        .remove(AccountsPage).success.value
+        .remove(AccountsPage)
+        .success
+        .value
       service.validate(userAnswers) mustBe None
     }
 
     "reject submission missing Eori number" in new Setup {
       val userAnswers = completeUserAnswers
-        .remove(EoriNumberPage).success.value
+        .remove(EoriNumberPage)
+        .success
+        .value
       service.validate(userAnswers) mustBe None
     }
 
     "reject submission missing Authority start" in new Setup {
       val userAnswers = completeUserAnswers
-        .remove(AuthorityStartPage).success.value
+        .remove(AuthorityStartPage)
+        .success
+        .value
       service.validate(userAnswers) mustBe None
     }
 
     "reject submission missing Authority start date when set date is chosen" in new Setup {
       val userAnswers = completeUserAnswers
-        .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
-        .remove(AuthorityStartDatePage).success.value
+        .set(AuthorityStartPage, AuthorityStart.Setdate)
+        .success
+        .value
+        .remove(AuthorityStartDatePage)
+        .success
+        .value
       service.validate(userAnswers) mustBe None
     }
 
     "reject submission missing Show balance" in new Setup {
       val userAnswers = completeUserAnswers
-        .remove(ShowBalancePage).success.value
+        .remove(ShowBalancePage)
+        .success
+        .value
       service.validate(userAnswers) mustBe None
     }
 
@@ -143,7 +189,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
       service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
     }
-*/
+     */
     /* "validate complete submission with only one account" in {
       val userAnswer = completeUserAnswers
         .set(AccountsPage, List(dutyDeferment)).success.value
@@ -182,7 +228,7 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
       val standingAuthority = StandingAuthority("GB123456789012", startDate, Some(endDate), viewBalance = true)
       service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
     }
-*/
+     */
   }
 
   trait Setup {
@@ -203,10 +249,18 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
     val completeUserAnswers: UserAnswers = UserAnswers("id")
-      .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-      .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
+      .set(AccountsPage, selectedAccounts)
+      .success
+      .value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+      .success
+      .value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+      .success
+      .value
+      .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+      .success
+      .value
 
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
   }

@@ -28,13 +28,13 @@ class EditConfirmationViewSpec extends ViewTestHelper {
   "view" should {
 
     "display correct text and guidance" in {
-      val eori = "test_eori"
+      val eori        = "test_eori"
       val companyName = "test_company"
 
       val viewDoc: Document =
         Jsoup.parse(app.injector.instanceOf[EditConfirmationView].apply(eori, None, Some(companyName)).body)
 
-      val pageElements = viewDoc.getElementsByClass("govuk-grid-column-two-thirds")
+      val pageElements                     = viewDoc.getElementsByClass("govuk-grid-column-two-thirds")
       implicit val elementsAsDoc: Document = Jsoup.parse(pageElements.html())
 
       titleShouldBeCorrect(viewDoc, titleMsgKey = "editConfirmation.title")
@@ -45,8 +45,9 @@ class EditConfirmationViewSpec extends ViewTestHelper {
     }
   }
 
-  private def shouldContainCorrectConfirmationPanelGuidance(eori: String,
-                                                            companyName: String)(implicit view: Document): Assertion = {
+  private def shouldContainCorrectConfirmationPanelGuidance(eori: String, companyName: String)(implicit
+    view: Document
+  ): Assertion = {
     view.getElementsByTag("h1").text() mustBe messages("editConfirmation.heading")
     view.html().contains(messages("editConfirmation.body.company.name")) mustBe true
     view.html().contains(messages("editConfirmation.body.eori.number")) mustBe true
@@ -58,7 +59,7 @@ class EditConfirmationViewSpec extends ViewTestHelper {
 
   private def shouldContainLinkToGoBackToAuthoritiesPage(implicit view: Document): Assertion = {
     val linkTag: Elements = view.getElementsByTag("a")
-    val anchorTag = linkTag.get(0).toString
+    val anchorTag         = linkTag.get(0).toString
 
     anchorTag.contains(controllers.routes.ManageAuthoritiesController.onPageLoad().url) mustBe true
     anchorTag.contains(messages("editConfirmation.returnLink")) mustBe true

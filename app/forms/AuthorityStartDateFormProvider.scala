@@ -23,7 +23,7 @@ import services.DateTimeService
 import java.time.LocalDate
 import javax.inject.Inject
 
-class AuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService) extends Mappings {
+class AuthorityStartDateFormProvider @Inject() (dateTimeService: DateTimeService) extends Mappings {
 
   def apply(): Form[LocalDate] =
     Form(
@@ -36,7 +36,8 @@ class AuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService)
         minDate(
           dateTimeService.localTime().toLocalDate,
           minimumMsg = "authorityStartDate.error.minimum",
-          yearMsg = "authorityStartDate.error.year.length")
+          yearMsg = "authorityStartDate.error.year.length"
+        )
       )
     )
 }

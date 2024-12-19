@@ -18,20 +18,24 @@ import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
 
 package object controllers {
 
-  def grantAccountAuthRequestList(payload: AddAuthorityRequest,
-                                  xiEori: String,
-                                  gbEori: String): List[GrantAccountAuthorityRequest] = {
+  def grantAccountAuthRequestList(
+    payload: AddAuthorityRequest,
+    xiEori: String,
+    gbEori: String
+  ): List[GrantAccountAuthorityRequest] = {
     val accounts = payload.accounts
 
     accounts match {
       case accn if accn.hasOnlyDutyDefermentsAccount => List(GrantAccountAuthorityRequest(payload, xiEori))
       case accn if accn.isDutyDefermentsAccountEmpty => List(GrantAccountAuthorityRequest(payload, gbEori))
-      case _ =>
-        val ddAccountAuthReq = payload.copy(accounts = accounts.copy(cash = None, guarantee = None))
+      case _                                         =>
+        val ddAccountAuthReq                   = payload.copy(accounts = accounts.copy(cash = None, guarantee = None))
         val cashAndGuaranteeAccountAuthRequest = payload.copy(accounts = accounts.copy(dutyDeferments = Seq()))
 
-        List(GrantAccountAuthorityRequest(ddAccountAuthReq, xiEori),
-          GrantAccountAuthorityRequest(cashAndGuaranteeAccountAuthRequest, gbEori))
+        List(
+          GrantAccountAuthorityRequest(ddAccountAuthReq, xiEori),
+          GrantAccountAuthorityRequest(cashAndGuaranteeAccountAuthRequest, gbEori)
+        )
     }
   }
 }

@@ -16,5 +16,5 @@
 
 package object forms {
   val fullNameMaxLength = 255
-  val jobRoleMaxLength = 255
+  val jobRoleMaxLength  = 255
 }

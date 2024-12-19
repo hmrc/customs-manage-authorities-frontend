@@ -21,11 +21,11 @@ import utils.StringUtils._
 
 class StringUtilsSpec extends SpecBase {
 
-  val stringWithLeadingSpace = "  LeadingSpaceStr"
-  val stringWithTrailingSpace = "TrailingSpaceStr   "
-  val stringWithLeadingAndTrailingSpace = "  TrailingAndLeading1234Str   "
+  val stringWithLeadingSpace                      = "  LeadingSpaceStr"
+  val stringWithTrailingSpace                     = "TrailingSpaceStr   "
+  val stringWithLeadingAndTrailingSpace           = "  TrailingAndLeading1234Str   "
   val stringWithSpacesIncludingLeadingAndTrailing = "  Spaces inc leading and trailing spaces  "
-  val stringWithNoSpace = "No_Spaces_Str_123"
+  val stringWithNoSpace                           = "No_Spaces_Str_123"
 
   "emptyString" should {
     "return empty string with no space" in {

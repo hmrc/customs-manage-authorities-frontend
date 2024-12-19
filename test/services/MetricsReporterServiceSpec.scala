@@ -127,9 +127,9 @@ class MetricsReporterServiceSpec extends SpecBase {
 
   trait Setup {
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
-    val startTimestamp: OffsetDateTime = OffsetDateTime.parse("2018-11-09T17:15:30+01:00")
-    val endTimestamp: OffsetDateTime = OffsetDateTime.parse("2018-11-09T17:15:35+01:00")
-    val elapsedTimeInMillis = 5000L
+    val startTimestamp: OffsetDateTime       = OffsetDateTime.parse("2018-11-09T17:15:30+01:00")
+    val endTimestamp: OffsetDateTime         = OffsetDateTime.parse("2018-11-09T17:15:35+01:00")
+    val elapsedTimeInMillis                  = 5000L
 
     when(mockDateTimeService.getTimeStamp).thenReturn(startTimestamp, endTimestamp)
 
@@ -141,15 +141,18 @@ class MetricsReporterServiceSpec extends SpecBase {
     val mockMetrics: Metrics = mock[Metrics]
     when(mockMetrics.defaultRegistry).thenReturn(mockRegistry)
 
-    val app: Application = GuiceApplicationBuilder().overrides(
-      inject.bind[DateTimeService].toInstance(mockDateTimeService),
-      inject.bind[Histogram].toInstance(mockHistogram),
-      inject.bind[Metrics].toInstance(mockMetrics)
-    ).configure(
-      "microservice.metrics.enabled" -> false,
-      "metrics.enabled" -> false,
-      "auditing.enabled" -> false
-    ).build()
+    val app: Application = GuiceApplicationBuilder()
+      .overrides(
+        inject.bind[DateTimeService].toInstance(mockDateTimeService),
+        inject.bind[Histogram].toInstance(mockHistogram),
+        inject.bind[Metrics].toInstance(mockMetrics)
+      )
+      .configure(
+        "microservice.metrics.enabled" -> false,
+        "metrics.enabled"              -> false,
+        "auditing.enabled"             -> false
+      )
+      .build()
 
     val service: MetricsReporterService = app.injector.instanceOf[MetricsReporterService]
   }

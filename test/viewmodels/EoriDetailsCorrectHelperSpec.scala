@@ -43,20 +43,44 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
   val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
   val userAnswersTodayToIndefinite: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+    .set(AccountsPage, selectedAccounts)
+    .success
+    .value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+    .success
+    .value
+    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+    .success
+    .value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+    .success
+    .value
+    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+    .success
+    .value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+    .success
+    .value
 
   val userAnswersNoCompanyName: UserAnswers = UserAnswers("id")
-    .set(AccountsPage, selectedAccounts).success.value
-    .set(EoriNumberPage, CompanyDetails("GB123456789012", None)).success.value
-    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+    .set(AccountsPage, selectedAccounts)
+    .success
+    .value
+    .set(EoriNumberPage, CompanyDetails("GB123456789012", None))
+    .success
+    .value
+    .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+    .success
+    .value
+    .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+    .success
+    .value
+    .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+    .success
+    .value
+    .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+    .success
+    .value
 
   val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
@@ -68,7 +92,7 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
 
       "a EORI number and company name is displayed" in {
         val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
-        val helper = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
+        val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
             "eoriDetail.eoriNumber.label",
@@ -87,14 +111,15 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
 
       "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
-        val helper = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
+        val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
             "eoriDetail.eoriNumber.label",
             "GB123456789012",
             None,
             actions = Actions(items = Seq())
-          ))
+          )
+        )
       }
     }
   }

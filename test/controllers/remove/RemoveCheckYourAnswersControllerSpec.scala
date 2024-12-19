@@ -149,8 +149,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to error page if revoke failed" in new Setup {
       private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(
-        userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
+      val app: Application =
+        applicationWithUserAnswersAndEori(userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -168,8 +168,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to confirmation page when successful" in new Setup {
       private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(
-        userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
+      val app: Application =
+        applicationWithUserAnswersAndEori(userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -188,111 +188,122 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsCashAccount" in new Setup {
-      val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
+        val userAnswers: UserAnswers =
+          emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(
-        userAnswers, gbEori, Some(mockCustomsFinancialsConnector), Some(mockDataStoreConnector))
-
-      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
-        .thenReturn(Future.successful(
-          Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityWithXIEori)))
+        val app: Application = applicationWithUserAnswersAndEori(
+          userAnswers,
+          gbEori,
+          Some(mockCustomsFinancialsConnector),
+          Some(mockDataStoreConnector)
         )
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq(gbEori))(any())).thenReturn(Future.successful(true))
+        when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+          .thenReturn(
+            Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityWithXIEori)))
+          )
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
+          .thenReturn(Future.successful(true))
 
-      running(app) {
-        val result = route(app, postRequest).value
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe
-          controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+        running(app) {
+          val result = route(app, postRequest).value
 
-        verify(mockCustomsFinancialsConnector,
-          Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe
+            controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+        }
       }
-    }
 
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsGeneralGuaranteeAccount" in new Setup {
-      val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
+        val userAnswers: UserAnswers =
+          emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(
-        userAnswers, gbEori, Some(mockCustomsFinancialsConnector), Some(mockDataStoreConnector))
-
-      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
-        .thenReturn(Future.successful(
-          Right(AccountAndAuthority(cdsGuaranteeAccWithAuthoritiesWithId, standingAuthorityWithXIEori)))
+        val app: Application = applicationWithUserAnswersAndEori(
+          userAnswers,
+          gbEori,
+          Some(mockCustomsFinancialsConnector),
+          Some(mockDataStoreConnector)
         )
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq(gbEori))(any())).thenReturn(Future.successful(true))
+        when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+          .thenReturn(
+            Future.successful(
+              Right(AccountAndAuthority(cdsGuaranteeAccWithAuthoritiesWithId, standingAuthorityWithXIEori))
+            )
+          )
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
+          .thenReturn(Future.successful(true))
 
-      running(app) {
-        val result = route(app, postRequest).value
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe
-          controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+        running(app) {
+          val result = route(app, postRequest).value
 
-        verify(mockCustomsFinancialsConnector,
-          Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe
+            controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+        }
       }
-    }
 
     "redirect to confirmation page and use XI Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsDutyDefermentAccount" in new Setup {
-      val userAnswers: UserAnswers =
-        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
+        val userAnswers: UserAnswers =
+          emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationBuilder(Some(userAnswers), gbEori).overrides(
-        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-        inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
-        inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-      ).build()
+        val app: Application = applicationBuilder(Some(userAnswers), gbEori)
+          .overrides(
+            inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+            inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
+            inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+          )
+          .build()
 
-      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
-        .thenReturn(Future.successful(
-          Right(AccountAndAuthority(cdsDDAccountsWithAuthoritiesWithId, standingAuthorityWithXIEori)))
-        )
+        when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+          .thenReturn(
+            Future.successful(
+              Right(AccountAndAuthority(cdsDDAccountsWithAuthoritiesWithId, standingAuthorityWithXIEori))
+            )
+          )
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(
-        any(), ArgumentMatchers.eq(xiEori))(any())).thenReturn(Future.successful(true))
+        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(xiEori))(any()))
+          .thenReturn(Future.successful(true))
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
-      running(app) {
-        val result = route(app, postRequest).value
+        running(app) {
+          val result = route(app, postRequest).value
 
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe
-          controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustBe
+            controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
 
-        verify(mockCustomsFinancialsConnector,
-          Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+        }
       }
-    }
   }
 
   trait Setup {
-    val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+    val mockAuthoritiesCacheService: AuthoritiesCacheService       = mock[AuthoritiesCacheService]
     val mockCustomsFinancialsConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
-    val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+    val mockDataStoreConnector: CustomsDataStoreConnector          = mock[CustomsDataStoreConnector]
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
-    val endDate: LocalDate = LocalDate.parse("2020-04-01")
+    val endDate: LocalDate   = LocalDate.parse("2020-04-01")
 
-    val gbEori = "GB123456789012"
-    val xiEori = "XI123456789012"
+    val gbEori                   = "GB123456789012"
+    val xiEori                   = "XI123456789012"
     val authUser: AuthorisedUser = AuthorisedUser("test", "test")
 
-    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+    val standingAuthority: StandingAuthority           = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val standingAuthorityWithXIEori: StandingAuthority =
       StandingAuthority(xiEori, startDate, Some(endDate), viewBalance = false)
 
@@ -300,37 +311,50 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
     val cdsGuaranteeAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsGeneralGuaranteeAccount,
-        "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsGeneralGuaranteeAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Map("b" -> standingAuthority)
+      )
 
     val cdsDDAccountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsDutyDefermentAccount,
-        "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsDutyDefermentAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Map("b" -> standingAuthority)
+      )
 
     val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
 
-    val getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    val getRequest: FakeRequest[AnyContentAsEmpty.type]  =
       fakeRequest(GET, controllers.remove.routes.RemoveCheckYourAnswers.onPageLoad("a", "b").url)
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(POST, controllers.remove.routes.RemoveCheckYourAnswers.onSubmit("a", "b").url)
 
-    def applicationWithUserAnswersAndEori(userAnswer: UserAnswers = emptyUserAnswers,
-                                          requestEori: String = emptyString,
-                                          financialConnector: Option[CustomsFinancialsConnector] = None,
-                                          dataStoreConnector: Option[CustomsDataStoreConnector] = None): Application = {
+    def applicationWithUserAnswersAndEori(
+      userAnswer: UserAnswers = emptyUserAnswers,
+      requestEori: String = emptyString,
+      financialConnector: Option[CustomsFinancialsConnector] = None,
+      dataStoreConnector: Option[CustomsDataStoreConnector] = None
+    ): Application = {
       val moduleList: Seq[GuiceableModule] =
         (financialConnector, dataStoreConnector) match {
           case (None, None) => Seq(inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
 
           case (Some(finConn), _) =>
-            Seq(inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-              inject.bind[CustomsFinancialsConnector].toInstance(finConn))
+            Seq(
+              inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              inject.bind[CustomsFinancialsConnector].toInstance(finConn)
+            )
 
           case _ =>
             Seq(
               inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
               inject.bind[CustomsFinancialsConnector].toInstance(financialConnector.get),
-              inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get))
+              inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get)
+            )
         }
 
       applicationBuilder(Some(userAnswer), requestEori).overrides(moduleList: _*).build()

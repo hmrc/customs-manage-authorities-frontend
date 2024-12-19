@@ -79,7 +79,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
     }
 
     "redirect the requests to undeliverable email page when dataStoreService returns undeliverable email" in new Setup {
-      val action = new Harness()
+      val action  = new Harness()
       val emailId = "test@test.com"
 
       when(
@@ -96,7 +96,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
 
   trait Setup {
     val mockDataStoreConnector: CustomsDataStoreConnector =
-    mock[CustomsDataStoreConnector]
+      mock[CustomsDataStoreConnector]
 
     def identifierRequest(): IdentifierRequest[AnyContentAsEmpty.type] = IdentifierRequest(
       fakeRequest(),

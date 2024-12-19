@@ -24,65 +24,59 @@ import java.time.LocalDate
 
 trait Constraints {
   lazy val textFieldRegex: String = """^[^(){}$<>\[\]\\\/]*$"""
-  lazy val gbnEoriRegex: String = "GBN\\d{11}"
-  lazy val eoriRegex: String = "GB\\d{12}"
-  lazy val xiEoriRegex: String = "XI\\d{12}"
+  lazy val gbnEoriRegex: String   = "GBN\\d{11}"
+  lazy val eoriRegex: String      = "GB\\d{12}"
+  lazy val xiEoriRegex: String    = "XI\\d{12}"
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
-    Constraint {
-      input =>
-        constraints
-          .map(_.apply(input))
-          .find(_ != Valid)
-          .getOrElse(Valid)
+    Constraint { input =>
+      constraints
+        .map(_.apply(input))
+        .find(_ != Valid)
+        .getOrElse(Valid)
     }
 
   protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
+    Constraint { input =>
 
-        import ev._
+      import ev._
 
-        if (input >= minimum) {
-          Valid
-        } else {
-          Invalid(errorKey, minimum)
-        }
+      if (input >= minimum) {
+        Valid
+      } else {
+        Invalid(errorKey, minimum)
+      }
     }
 
   protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
+    Constraint { input =>
 
-        import ev._
+      import ev._
 
-        if (input <= maximum) {
-          Valid
-        } else {
-          Invalid(errorKey, maximum)
-        }
+      if (input <= maximum) {
+        Valid
+      } else {
+        Invalid(errorKey, maximum)
+      }
     }
 
-  protected def inRange[A](minimum: A,
-                           maximum: A,
-                           errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
-    Constraint {
-      input =>
+  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+    Constraint { input =>
 
-        import ev._
+      import ev._
 
-        if (input >= minimum && input <= maximum) {
-          Valid
-        } else {
-          Invalid(errorKey, minimum, maximum)
-        }
+      if (input >= minimum && input <= maximum) {
+        Valid
+      } else {
+        Invalid(errorKey, minimum, maximum)
+      }
     }
 
   protected def regexp(regex: String, errorKey: String): Constraint[String] =
     Constraint {
       case str if str.matches(regex) =>
         Valid
-      case _ =>
+      case _                         =>
         Invalid(errorKey, regex)
     }
 
@@ -90,40 +84,38 @@ trait Constraints {
     Constraint {
       case str if str.length <= maximum =>
         Valid
-      case _ =>
+      case _                            =>
         Invalid(errorKey, maximum)
     }
 
-  protected def maxDate(maximum: LocalDate,
-                        errorKey: String,
-                        args: Any*): Constraint[LocalDate] =
+  protected def maxDate(maximum: LocalDate, errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint {
       case date if date.isAfter(maximum) =>
         Invalid(errorKey, args: _*)
-      case _ =>
+      case _                             =>
         Valid
     }
 
-  protected def maybeMaxDate(maybeMaximum: Option[LocalDate],
-                             errorKey: String,
-                             args: Any*): Constraint[LocalDate] =
+  protected def maybeMaxDate(maybeMaximum: Option[LocalDate], errorKey: String, args: Any*): Constraint[LocalDate] =
     Constraint { date =>
       maybeMaximum match {
         case Some(value) if date.isAfter(value) => Invalid(errorKey, args: _*)
-        case Some(_) => Valid
-        case None => Valid
+        case Some(_)                            => Valid
+        case None                               => Valid
       }
     }
 
-  protected def maybeMinDate(maybeMaximum: Option[LocalDate],
-                             errorKey: String,
-                             args: Any*): Constraint[AuthorityStart] =
+  protected def maybeMinDate(
+    maybeMaximum: Option[LocalDate],
+    errorKey: String,
+    args: Any*
+  ): Constraint[AuthorityStart] =
     Constraint { authorityStart =>
       maybeMaximum match {
         case Some(value) if authorityStart == AuthorityStart.Today && LocalDate.now().isAfter(value) =>
           Invalid(errorKey, args: _*)
-        case Some(_) => Valid
-        case None => Valid
+        case Some(_)                                                                                 => Valid
+        case None                                                                                    => Valid
       }
     }
 
@@ -142,16 +134,16 @@ trait Constraints {
     Constraint {
       case list if list.nonEmpty =>
         Valid
-      case _ =>
+      case _                     =>
         Invalid(errorKey)
     }
 
   protected def checkEORI(invalidFormatErrorKey: String): Constraint[String] =
     Constraint {
       case str if formatEORINumber(str).matches(gbnEoriRegex) => Valid
-      case str if formatEORINumber(str).matches(eoriRegex) => Valid
-      case str if formatEORINumber(str).matches(xiEoriRegex) => Valid
-      case _ => Invalid(invalidFormatErrorKey,eoriRegex)
+      case str if formatEORINumber(str).matches(eoriRegex)    => Valid
+      case str if formatEORINumber(str).matches(xiEoriRegex)  => Valid
+      case _                                                  => Invalid(invalidFormatErrorKey, eoriRegex)
     }
 
   protected def formatEORINumber(str: String): String =

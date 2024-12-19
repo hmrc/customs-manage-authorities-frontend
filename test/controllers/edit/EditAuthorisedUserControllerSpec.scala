@@ -37,25 +37,31 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   "onPageLoad" should {
     "return OK with pre-populated form if answers present" in new Setup {
-      val app: Application = applicationBuilder(emptyUserAnswers.set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test2")).toOption).build()
-      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      val app: Application = applicationBuilder(
+        emptyUserAnswers.set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test2")).toOption
+      ).build()
+      val appConfig        = app.injector.instanceOf[FrontendAppConfig]
 
       val form: AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
-      val view: EditAuthorisedUserView = app.injector.instanceOf[EditAuthorisedUserView]
+      val view: EditAuthorisedUserView     = app.injector.instanceOf[EditAuthorisedUserView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        contentAsString(result) mustBe view(form().fill(AuthorisedUser("test", "test2")), "a", "b")(getRequest, messages(app), appConfig).toString()
+        contentAsString(result) mustBe view(form().fill(AuthorisedUser("test", "test2")), "a", "b")(
+          getRequest,
+          messages(app),
+          appConfig
+        ).toString()
       }
     }
 
     "return OK without pre-populated form if answers not present" in new Setup {
       val app: Application = applicationBuilder(Some(emptyUserAnswers)).build()
-      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig        = app.injector.instanceOf[FrontendAppConfig]
 
       val form: AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
-      val view: EditAuthorisedUserView = app.injector.instanceOf[EditAuthorisedUserView]
+      val view: EditAuthorisedUserView     = app.injector.instanceOf[EditAuthorisedUserView]
 
       running(app) {
         val result = route(app, getRequest).value
@@ -79,14 +85,17 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     "return SEE_OTHER on valid submission" in new Setup {
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[SessionRepository].toInstance(mockSessionRepository)
-      ).build()
+      val app: Application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody("fullName" -> "testing", "jobRole" -> "testing2")).value
+        val result =
+          route(app, postRequest.withFormUrlEncodedBody("fullName" -> "testing", "jobRole" -> "testing2")).value
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe routes.EditCheckYourAnswersController.onPageLoad("a", "b").url
       }

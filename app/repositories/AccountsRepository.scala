@@ -32,24 +32,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AccountsRepository @Inject()(
-                                    val mongoComponent: PlayMongoComponent,
-                                    val config: Configuration
-                                  )(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[AccountsRepositoryCacheEntry](
-    collectionName = "accounts-cache",
-    mongoComponent = mongoComponent,
-    domainFormat = AccountsRepositoryCacheEntry.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("lastUpdated"),
-        IndexOptions()
-          .name("accounts-last-updated-index")
-          .unique(true)
-          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class AccountsRepository @Inject() (
+  val mongoComponent: PlayMongoComponent,
+  val config: Configuration
+)(implicit val ec: ExecutionContext)
+    extends PlayMongoRepository[AccountsRepositoryCacheEntry](
+      collectionName = "accounts-cache",
+      mongoComponent = mongoComponent,
+      domainFormat = AccountsRepositoryCacheEntry.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("accounts-last-updated-index")
+            .unique(true)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
   def get(id: String): Future[Option[CDSAccounts]] =
     collection
       .find(equal("_id", id))
@@ -62,7 +62,8 @@ class AccountsRepository @Inject()(
       .replaceOne(
         equal("_id", id),
         AccountsRepositoryCacheEntry(id, accounts, LocalDateTime.now()),
-        ReplaceOptions().upsert(true))
+        ReplaceOptions().upsert(true)
+      )
       .toFuture()
       .map(_.wasAcknowledged())
 
@@ -73,19 +74,19 @@ class AccountsRepository @Inject()(
       .map(_.wasAcknowledged())
 }
 
-case class AccountsRepositoryCacheEntry(_id: String,
-                                        data: CDSAccounts,
-                                        lastUpdated: LocalDateTime)
+case class AccountsRepositoryCacheEntry(_id: String, data: CDSAccounts, lastUpdated: LocalDateTime)
 
 trait MongoJavatimeFormats {
   outer =>
 
   final val localDateTimeReads: Reads[LocalDateTime] =
-    Reads.at[String](__ \ "$date" \ "$numberLong")
+    Reads
+      .at[String](__ \ "$date" \ "$numberLong")
       .map(dateTime => Instant.ofEpochMilli(dateTime.toLong).atZone(ZoneOffset.UTC).toLocalDateTime)
 
   final val localDateTimeWrites: Writes[LocalDateTime] =
-    Writes.at[String](__ \ "$date" \ "$numberLong")
+    Writes
+      .at[String](__ \ "$date" \ "$numberLong")
       .contramap(_.toInstant(ZoneOffset.UTC).toEpochMilli.toString)
 
   final val localDateTimeFormat: Format[LocalDateTime] =
@@ -101,7 +102,7 @@ trait MongoJavatimeFormats {
 object MongoJavatimeFormats extends MongoJavatimeFormats
 
 object AccountsRepositoryCacheEntry {
-  implicit val lastUpdatedReads: Reads[LocalDateTime] = MongoJavatimeFormats.localDateTimeReads
-  implicit val lastUpdatedWrites: Writes[LocalDateTime] = MongoJavatimeFormats.localDateTimeWrites
+  implicit val lastUpdatedReads: Reads[LocalDateTime]        = MongoJavatimeFormats.localDateTimeReads
+  implicit val lastUpdatedWrites: Writes[LocalDateTime]      = MongoJavatimeFormats.localDateTimeWrites
   implicit val format: OFormat[AccountsRepositoryCacheEntry] = Json.format[AccountsRepositoryCacheEntry]
 }

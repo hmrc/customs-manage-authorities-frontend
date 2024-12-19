@@ -37,7 +37,7 @@ class NoAccountsViewSpec extends SpecBase {
     }
 
     "display header" in new Setup {
-      view().getElementById("manageAuthorities.heading").text mustBe  messages("manageAuthorities.heading")
+      view().getElementById("manageAuthorities.heading").text mustBe messages("manageAuthorities.heading")
     }
 
     "display the notification panel if files provided" in new Setup {
@@ -65,18 +65,22 @@ class NoAccountsViewSpec extends SpecBase {
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    val app: Application                      = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
     val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
 
     val standingAuthorityFilesViewModel = AuthoritiesFilesNotificationViewModel(
-      Some(gbStanAuthFile154Url), Some(xiStanAuthFile154Url), dateAsDayMonthAndYear(START_DATE_1))
+      Some(gbStanAuthFile154Url),
+      Some(xiStanAuthFile154Url),
+      dateAsDayMonthAndYear(START_DATE_1)
+    )
 
     val homeUrl: String = "http://localhost:9876/customs/payment-records"
 
-    def view(): Document = Jsoup.parse(app.injector.instanceOf[NoAccountsView].apply(standingAuthorityFilesViewModel).body)
+    def view(): Document =
+      Jsoup.parse(app.injector.instanceOf[NoAccountsView].apply(standingAuthorityFilesViewModel).body)
   }
 }

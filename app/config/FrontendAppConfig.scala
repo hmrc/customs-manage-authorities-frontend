@@ -22,7 +22,7 @@ import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: ServicesConfig) {
+class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
   lazy val host: String = configuration.get[String]("host")
 
@@ -32,19 +32,19 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
   lazy val helpMakeGovUkBetterUrl: String = configuration.get[String]("urls.helpMakeGovUkBetterUrl")
 
   lazy val xClientIdHeader: String = configuration.get[String]("microservice.services.sdes.x-client-id")
-  lazy val fixedDateTime: Boolean = configuration.get[Boolean]("features.fixed-system-time")
-  lazy val xiEoriEnabled: Boolean = configuration.get[Boolean]("features.xi-eori-enabled")
-  lazy val timeout: Int = configuration.get[Int]("timeout.timeout")
+  lazy val fixedDateTime: Boolean  = configuration.get[Boolean]("features.fixed-system-time")
+  lazy val xiEoriEnabled: Boolean  = configuration.get[Boolean]("features.xi-eori-enabled")
+  lazy val timeout: Int            = configuration.get[Int]("timeout.timeout")
 
   lazy val countdown: Int = configuration.get[Int]("timeout.countdown")
 
-  lazy val signOutUrl: String = configuration.get[String]("urls.signOut")
-  lazy val govukHome: String = configuration.get[String]("urls.govUkHome")
-  lazy val loginUrl: String = configuration.get[String]("urls.login")
+  lazy val signOutUrl: String       = configuration.get[String]("urls.signOut")
+  lazy val govukHome: String        = configuration.get[String]("urls.govUkHome")
+  lazy val loginUrl: String         = configuration.get[String]("urls.login")
   lazy val loginContinueUrl: String = configuration.get[String]("urls.loginContinue")
 
   lazy val subscribeCdsUrl: String = configuration.get[String]("urls.cdsSubscribeUrl")
-  lazy val appName: String = configuration.get[String]("appName")
+  lazy val appName: String         = configuration.get[String]("appName")
 
   val customsFinancialsFrontendHomepageUrl: String =
     configuration.get[String]("microservice.services.customs-financials-frontend.homepage")
@@ -60,13 +60,14 @@ class FrontendAppConfig @Inject()(configuration: Configuration, servicesConfig: 
 
   val customsSecureMessagingBannerEndpoint: String =
     s"${servicesConfig.baseUrl("customs-financials-secure-messaging-frontend")}" +
-    s"${configuration.get[String]("microservice.services.customs-financials-secure-messaging-frontend.context")}" +
-    s"${configuration.get[String]("microservice.services.customs-financials-secure-messaging-frontend.banner-endpoint")}"
+      s"${configuration.get[String]("microservice.services.customs-financials-secure-messaging-frontend.context")}" +
+      s"${configuration.get[String]("microservice.services.customs-financials-secure-messaging-frontend.banner-endpoint")}"
 
   val manageAuthoritiesServiceUrl: String =
     configuration.get[String]("microservice.services.customs-manage-authorities-frontend.url")
 
-  lazy val sdesApi: String = s"${servicesConfig.baseUrl("sdes")}${configuration.get[String]("microservice.services.sdes.context")}"
+  lazy val sdesApi: String =
+    s"${servicesConfig.baseUrl("sdes")}${configuration.get[String]("microservice.services.sdes.context")}"
 
   def filesUrl(fileRole: FileRole): String = s"$sdesApi/files-available/list/${fileRole.name}"
 }

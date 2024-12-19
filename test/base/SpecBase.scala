@@ -48,38 +48,41 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
   def messages(app: Application): Messages =
     app.injector.instanceOf[MessagesApi].preferred(fakeRequest(emptyString, emptyString))
 
-  def fakeRequest(method: String = emptyString,
-                  path: String = emptyString): FakeRequest[AnyContentAsEmpty.type] =
+  def fakeRequest(method: String = emptyString, path: String = emptyString): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(method, path).withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
 
-  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
-                                   requestEoriNUmber: String = emptyString): GuiceApplicationBuilder =
+  protected def applicationBuilder(
+    userAnswers: Option[UserAnswers] = None,
+    requestEoriNUmber: String = emptyString
+  ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, requestEoriNUmber)),
         bind[Metrics].toInstance(new FakeMetrics)
-      ).configure(
+      )
+      .configure(
         "play.filters.csp.nonce.enabled" -> false
       )
 
   val messagesApi = new DefaultMessagesApi(
-    Map("en" ->
-      Map(
-        "month.abbr.1 " -> "Jan",
-        "month.abbr.2 " -> "Feb",
-        "month.abbr.3 " -> "Mar",
-        "month.abbr.4 " -> "Apr",
-        "month.abbr.5 " -> "May",
-        "month.abbr.6 " -> "Jun",
-        "month.abbr.7 " -> "Jul",
-        "month.abbr.8 " -> "Aug",
-        "month.abbr.9 " -> "Sep",
-        "month.abbr.10" -> "Oct",
-        "month.abbr.11" -> "Nov",
-        "month.abbr.12" -> "Dec"
-      )
+    Map(
+      "en" ->
+        Map(
+          "month.abbr.1 " -> "Jan",
+          "month.abbr.2 " -> "Feb",
+          "month.abbr.3 " -> "Mar",
+          "month.abbr.4 " -> "Apr",
+          "month.abbr.5 " -> "May",
+          "month.abbr.6 " -> "Jun",
+          "month.abbr.7 " -> "Jul",
+          "month.abbr.8 " -> "Aug",
+          "month.abbr.9 " -> "Sep",
+          "month.abbr.10" -> "Oct",
+          "month.abbr.11" -> "Nov",
+          "month.abbr.12" -> "Dec"
+        )
     )
   )
 }

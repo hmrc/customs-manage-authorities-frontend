@@ -100,12 +100,12 @@ class AddConfirmationPanelSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
     val view: Document
 
     lazy val bodyElements: Elements = view.getElementsByClass("govuk-panel__body-s")
-    lazy val firstElement = bodyElements.get(0)
+    lazy val firstElement           = bodyElements.get(0)
   }
 }

@@ -23,28 +23,25 @@ import play.twirl.api.HtmlFormat
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 
-case class EoriDetailsCorrectHelper(userAnswers: UserAnswers,
-                                    dateTimeService: DateTimeService)
-                                   (implicit val messages: Messages) extends SummaryListRowHelper {
+case class EoriDetailsCorrectHelper(userAnswers: UserAnswers, dateTimeService: DateTimeService)(implicit
+  val messages: Messages
+) extends SummaryListRowHelper {
 
   val companyName: Option[String] = userAnswers.get(EoriNumberPage).map(x => x.name).get
 
-  def companyDetailsRows: Seq[SummaryListRow] = {
+  def companyDetailsRows: Seq[SummaryListRow] =
     if (companyName.isEmpty) {
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage))
       ).flatten
-    }
-    else {
+    } else {
       Seq(
         eoriNumberRow(userAnswers.get(EoriNumberPage)),
         companyNameRow(userAnswers.get(EoriNumberPage))
-
       ).flatten
     }
-  }
 
-  private def eoriNumberRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] = {
+  private def eoriNumberRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] =
     companyDetails.map(x =>
       summaryListRow(
         messages("eoriDetail.eoriNumber.label"),
@@ -53,9 +50,8 @@ case class EoriDetailsCorrectHelper(userAnswers: UserAnswers,
         secondValue = None
       )
     )
-  }
 
-  private def companyNameRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] = {
+  private def companyNameRow(companyDetails: Option[CompanyDetails]): Option[SummaryListRow] =
     companyDetails.map(x =>
       summaryListRow(
         messages("eoriDetail.companyName.label"),
@@ -64,5 +60,4 @@ case class EoriDetailsCorrectHelper(userAnswers: UserAnswers,
         secondValue = None
       )
     )
-  }
 }

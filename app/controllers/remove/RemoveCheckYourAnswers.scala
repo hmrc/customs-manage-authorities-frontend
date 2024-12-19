@@ -36,94 +36,107 @@ import views.html.remove.RemoveCheckYourAnswersView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RemoveCheckYourAnswers @Inject()(identify: IdentifierAction,
-                                       view: RemoveCheckYourAnswersView,
-                                       authoritiesCacheService: AuthoritiesCacheService,
-                                       customsFinancialsConnector: CustomsFinancialsConnector,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       mcc: MessagesControllerComponents,
-                                       dataStore: CustomsDataStoreConnector
-                                      )(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendController(mcc)
+class RemoveCheckYourAnswers @Inject() (
+  identify: IdentifierAction,
+  view: RemoveCheckYourAnswersView,
+  authoritiesCacheService: AuthoritiesCacheService,
+  customsFinancialsConnector: CustomsFinancialsConnector,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  mcc: MessagesControllerComponents,
+  dataStore: CustomsDataStoreConnector
+)(implicit executionContext: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendController(mcc)
     with Logging
     with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
-
       authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
-        case Left(NoAccount) => errorPage(MissingAccountError)
-        case Left(NoAuthority) => errorPage(MissingAuthorityError)
+        case Left(NoAccount)                                => errorPage(MissingAccountError)
+        case Left(NoAuthority)                              => errorPage(MissingAuthorityError)
         case Right(AccountAndAuthority(account, authority)) =>
           request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
             case Some(authorisedUser) =>
-              Ok(view(new CheckYourAnswersRemoveHelper(
-                request.userAnswers,
-                accountId,
-                authorityId,
-                authorisedUser,
-                authority,
-                account,
-                dataStore
-              )))
-            case None => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
+              Ok(
+                view(
+                  new CheckYourAnswersRemoveHelper(
+                    request.userAnswers,
+                    accountId,
+                    authorityId,
+                    authorisedUser,
+                    authority,
+                    account,
+                    dataStore
+                  )
+                )
+              )
+            case None                 => Redirect(controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId))
           }
       }
     }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async {
+    (identify andThen getData andThen requireData).async { implicit request =>
+      authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
+        case Left(NoAccount)   => Future.successful(errorPage(MissingAccountError))
+        case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
 
-      implicit request =>
-
-        authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).flatMap {
-          case Left(NoAccount) => Future.successful(errorPage(MissingAccountError))
-          case Left(NoAuthority) => Future.successful(errorPage(MissingAuthorityError))
-
-          case Right(AccountAndAuthority(account, authority)) =>
-            for {
-              xiEori <- dataStore.getXiEori(request.eoriNumber)
-              result <- request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)).map {
-                authorisedUser =>
-                  val revokeRequest = RevokeAuthorityRequest(
-                    account.accountNumber,
-                    account.accountType,
-                    authority.authorisedEori,
-                    authorisedUser)
-                  doSubmission(revokeRequest, accountId, authorityId, xiEori.getOrElse(emptyString), request.eoriNumber)
-              }.getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
-            } yield result
-        }
+        case Right(AccountAndAuthority(account, authority)) =>
+          for {
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
+            result <- request.userAnswers
+                        .get(RemoveAuthorisedUserPage(accountId, authorityId))
+                        .map { authorisedUser =>
+                          val revokeRequest = RevokeAuthorityRequest(
+                            account.accountNumber,
+                            account.accountType,
+                            authority.authorisedEori,
+                            authorisedUser
+                          )
+                          doSubmission(
+                            revokeRequest,
+                            accountId,
+                            authorityId,
+                            xiEori.getOrElse(emptyString),
+                            request.eoriNumber
+                          )
+                        }
+                        .getOrElse(Future.successful(errorPage(MissingAuthorisedUser)))
+          } yield result
+      }
     }
 
-  def doSubmission(revokeRequest: RevokeAuthorityRequest,
-                   accountId: String,
-                   authorityId: String,
-                   xiEori: String,
-                   gbEori: String)(implicit hc: HeaderCarrier): Future[Result] = {
+  def doSubmission(
+    revokeRequest: RevokeAuthorityRequest,
+    accountId: String,
+    authorityId: String,
+    xiEori: String,
+    gbEori: String
+  )(implicit hc: HeaderCarrier): Future[Result] = {
 
     val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, gbEori)
 
     customsFinancialsConnector.revokeAccountAuthorities(revokeRequest, ownerEori).map {
-      case true => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
+      case true  => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
       case false => errorPage(SubmissionError)
     }
   }
 
-  private def ownerEoriForAccountType(account: AccountType,
-                                      authorisedEori: String,
-                                      xiEori: String,
-                                      gbEori: String): String = {
+  private def ownerEoriForAccountType(
+    account: AccountType,
+    authorisedEori: String,
+    xiEori: String,
+    gbEori: String
+  ): String =
     if (authorisedEori.startsWith(nIEORIPrefix)) {
       account match {
         case accn if accn == CdsCashAccount || accn == CdsGeneralGuaranteeAccount => gbEori
-        case _ => xiEori
+        case _                                                                    => xiEori
       }
     } else {
       gbEori
     }
-  }
 
   private def errorPage(error: ErrorResponse): Result = {
     logger.error(error.msg)

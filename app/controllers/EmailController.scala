@@ -23,31 +23,32 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.{Logger, LoggerLike}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
-import views.html.email.{verify_your_email, undeliverable_email}
+import views.html.email.{undeliverable_email, verify_your_email}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class EmailController @Inject()(authenticate: IdentifierAction,
-                                verifyEmailView: verify_your_email,
-                                undeliverableEmailView: undeliverable_email,
-                                dataStoreConnector: CustomsDataStoreConnector,
-                                implicit val mcc: MessagesControllerComponents)
-                               (implicit val appConfig: FrontendAppConfig, ec: ExecutionContext)
-  extends FrontendController(mcc) with I18nSupport {
+class EmailController @Inject() (
+  authenticate: IdentifierAction,
+  verifyEmailView: verify_your_email,
+  undeliverableEmailView: undeliverable_email,
+  dataStoreConnector: CustomsDataStoreConnector,
+  implicit val mcc: MessagesControllerComponents
+)(implicit val appConfig: FrontendAppConfig, ec: ExecutionContext)
+    extends FrontendController(mcc)
+    with I18nSupport {
 
   val log: LoggerLike = Logger(this.getClass)
 
   def showUnverified(): Action[AnyContent] = authenticate async { implicit request =>
-    dataStoreConnector.unverifiedEmail.map {
-      case email => Ok(verifyEmailView(appConfig.emailFrontendUrl, email))
+    dataStoreConnector.unverifiedEmail.map { case email =>
+      Ok(verifyEmailView(appConfig.emailFrontendUrl, email))
     }
   }
 
-  def showUndeliverable(): Action[AnyContent] = authenticate async {
-    implicit request =>
-      dataStoreConnector.verifiedEmail.map {
-        emailVerifiedRes => Ok(undeliverableEmailView(appConfig.emailFrontendUrl, emailVerifiedRes.verifiedEmail))
-      }
+  def showUndeliverable(): Action[AnyContent] = authenticate async { implicit request =>
+    dataStoreConnector.verifiedEmail.map { emailVerifiedRes =>
+      Ok(undeliverableEmailView(appConfig.emailFrontendUrl, emailVerifiedRes.verifiedEmail))
+    }
   }
 }

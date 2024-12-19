@@ -32,9 +32,9 @@ class LogoutControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, routes.LogoutController.logout.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
-        redirectLocation(result).value mustEqual s"${expectedSignoutUrl}?continue=%2Ffeedback-continue%2Fsource"
+        redirectLocation(result).value mustEqual s"$expectedSignoutUrl?continue=%2Ffeedback-continue%2Fsource"
       }
     }
   }
@@ -45,7 +45,7 @@ class LogoutControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request = FakeRequest(GET, routes.LogoutController.logoutNoSurvey.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         redirectLocation(result).value mustEqual expectedSignoutUrl
       }

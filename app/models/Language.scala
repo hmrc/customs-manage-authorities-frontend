@@ -39,7 +39,7 @@ object Language {
       value match {
         case Cymraeg.toString => Right(Cymraeg)
         case English.toString => Right(English)
-        case _ => throw new RuntimeException("Unknown language, not supported")
+        case _                => throw new RuntimeException("Unknown language, not supported")
       }
 
     override def unbind(key: String, value: Language): String =

@@ -26,14 +26,13 @@ import utils.StringUtils.emptyString
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedEoriAndCompanyInfoService @Inject()(
+class AuthorisedEoriAndCompanyInfoService @Inject() (
   repository: AuthorisedEoriAndCompanyInfoRepository,
   dataStoreConnector: CustomsDataStoreConnector
 )(implicit executionContext: ExecutionContext) {
 
-  def retrieveAuthEorisAndCompanyInfoForId(internalId: InternalId): Future[Option[Map[String, String]]] = {
+  def retrieveAuthEorisAndCompanyInfoForId(internalId: InternalId): Future[Option[Map[String, String]]] =
     repository.get(internalId.value)
-  }
 
   def retrieveAuthorisedEoriAndCompanyInfo(
     internalId: InternalId,
@@ -42,13 +41,11 @@ class AuthorisedEoriAndCompanyInfoService @Inject()(
 
     lazy val eoriAndCompanyMap = for {
       eoriSeq: Seq[Option[EORI]] <- Future.sequence(eoris.toSeq.map(dataStoreConnector.getCompanyName(_)))
-    } yield {
-      eoris.zip(eoriSeq).toMap.map(keyValue => (keyValue._1, keyValue._2.getOrElse(emptyString)))
-    }
+    } yield eoris.zip(eoriSeq).toMap.map(keyValue => (keyValue._1, keyValue._2.getOrElse(emptyString)))
 
     repository.get(internalId.value).flatMap {
       case Some(data) => Future.successful(Some(data))
-      case _ =>
+      case _          =>
         for {
           dataMap <- eoriAndCompanyMap
           _       <- repository.set(internalId.value, dataMap)
@@ -56,7 +53,6 @@ class AuthorisedEoriAndCompanyInfoService @Inject()(
     }
   }
 
-  def storeAuthEorisAndCompanyInfo(internalId: InternalId, data: Map[String, String]): Future[Boolean] = {
+  def storeAuthEorisAndCompanyInfo(internalId: InternalId, data: Map[String, String]): Future[Boolean] =
     repository.set(internalId.value, data)
-  }
 }

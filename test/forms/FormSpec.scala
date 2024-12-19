@@ -18,31 +18,26 @@ package forms
 
 import base.SpecBase
 import org.scalatest.Assertion
-import org.scalatest.matchers.should.Matchers.{shouldBe, should}
+import org.scalatest.matchers.should.Matchers.{should, shouldBe}
 import play.api.data.{Form, FormError}
 
 trait FormSpec extends SpecBase {
 
-  def checkForError(form: Form[_],
-                    data: Map[String, String],
-                    expectedErrors: Seq[FormError]): Assertion = {
+  def checkForError(form: Form[_], data: Map[String, String], expectedErrors: Seq[FormError]): Assertion =
+    form
+      .bind(data)
+      .fold(
+        formWithErrors => {
+          for (error <- expectedErrors)
+            formWithErrors.errors should
+              contain(FormError(error.key, error.message, error.args))
 
-    form.bind(data).fold(
-      formWithErrors => {
-        for (error <- expectedErrors) formWithErrors.errors should
-          contain(FormError(error.key, error.message, error.args))
+          formWithErrors.errors.size shouldBe expectedErrors.size
+        },
+        _ => fail(message = "Expected a validation error when binding the form, but it was bound successfully.")
+      )
 
-        formWithErrors.errors.size shouldBe expectedErrors.size
-      },
-      _ => {
-        fail(message = "Expected a validation error when binding the form, but it was bound successfully.")
-      }
-    )
-  }
-
-  def error(key: String,
-            value: String,
-            args: Any*): Seq[FormError] = Seq(FormError(key, value, args))
+  def error(key: String, value: String, args: Any*): Seq[FormError] = Seq(FormError(key, value, args))
 
   lazy val emptyForm = Map[String, String]()
 }

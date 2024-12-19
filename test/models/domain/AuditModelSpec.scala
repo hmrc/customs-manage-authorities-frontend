@@ -25,17 +25,21 @@ class AuditModelSpec extends SpecBase {
 
     "correctly map StandingAuthorityFileMetadata and include the eori" in {
       val standingAuthorityFileMetadata = StandingAuthorityMetadata(
-        YEAR_1972, MONTH_2, DAY_20, FileFormat.Csv, FileRole.StandingAuthority
+        YEAR_1972,
+        MONTH_2,
+        DAY_20,
+        FileFormat.Csv,
+        FileRole.StandingAuthority
       )
 
       val sut = DownloadStatementAuditData(standingAuthorityFileMetadata, "12345")
       sut.auditData mustBe Map(
-        "eori" -> "12345",
-        "periodStartYear" -> "1972",
+        "eori"             -> "12345",
+        "periodStartYear"  -> "1972",
         "periodStartMonth" -> "2",
-        "periodStartDay" -> "20",
-        "fileFormat" -> "CSV",
-        "fileRole" -> "StandingAuthority"
+        "periodStartDay"   -> "20",
+        "fileFormat"       -> "CSV",
+        "fileRole"         -> "StandingAuthority"
       )
     }
   }

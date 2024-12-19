@@ -30,16 +30,14 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with Constraints 
 
     for {
       digits <- choose[Long](minValue, maxValue)
-    } yield {
-      s"GB$digits"
-    }
+    } yield s"GB$digits"
   }
 
   val form = new EoriNumberFormProvider()()
 
   ".value" must {
     val requiredKey = "eoriNumber.error.required"
-    val fieldName = "value"
+    val fieldName   = "value"
 
     behave like fieldThatBindsValidData(
       form,

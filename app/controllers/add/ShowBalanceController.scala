@@ -33,77 +33,74 @@ import views.html.ShowBalanceView
 import javax.inject.Inject
 import scala.concurrent._
 
-class ShowBalanceController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       sessionRepository: SessionRepository,
-                                       navigator: Navigator,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
-                                       formProvider: ShowBalanceFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ShowBalanceView
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class ShowBalanceController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: ShowBalanceFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ShowBalanceView
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
 
-      val accountsLength = getAccountsLength(request.userAnswers.get(AccountsPage))
+    val accountsLength = getAccountsLength(request.userAnswers.get(AccountsPage))
 
-      val preparedForm = request.userAnswers.get(ShowBalancePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(ShowBalancePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      accountsLength match {
-        case Right(noOfAccounts) =>
-          Ok(view(
-            preparedForm,
-            noOfAccounts,
-            mode,
-            navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers))
-          )
+    accountsLength match {
+      case Right(noOfAccounts) =>
+        Ok(view(preparedForm, noOfAccounts, mode, navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers)))
 
-        case Left(emptyError) => errorPage(emptyError.msg)
-      }
+      case Left(emptyError) => errorPage(emptyError.msg)
+    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors => {
-          getAccountsLength(request.userAnswers.get(AccountsPage)) match {
-            case Right(noOfAccounts) => Future.successful(
-              BadRequest(
-                view(
-                  formWithErrors,
-                  noOfAccounts,
-                  mode, navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers))
-              )
-            )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            getAccountsLength(request.userAnswers.get(AccountsPage)) match {
+              case Right(noOfAccounts) =>
+                Future.successful(
+                  BadRequest(
+                    view(
+                      formWithErrors,
+                      noOfAccounts,
+                      mode,
+                      navigator.backLinkRouteForShowBalancePage(mode, request.userAnswers)
+                    )
+                  )
+                )
 
-            case Left(emptyError) => Future.successful(errorPage(emptyError.msg))
-          }
-        },
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(ShowBalancePage, value)(ShowBalance.writes))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(ShowBalancePage, mode, updatedAnswers))
-      )
+              case Left(emptyError) => Future.successful(errorPage(emptyError.msg))
+            },
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(ShowBalancePage, value)(ShowBalance.writes))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(ShowBalancePage, mode, updatedAnswers))
+        )
   }
 
-  private def getAccountsLength(maybeAccounts: Option[List[CDSAccount]]): Either[ErrorResponse, Int] = {
+  private def getAccountsLength(maybeAccounts: Option[List[CDSAccount]]): Either[ErrorResponse, Int] =
     maybeAccounts match {
       case Some(accounts) => Right(accounts.size)
-      case None => Left(EmptyAccountsError)
+      case None           => Left(EmptyAccountsError)
     }
-  }
 
   private def errorPage(msg: String): Result = {
     logger.error(msg)

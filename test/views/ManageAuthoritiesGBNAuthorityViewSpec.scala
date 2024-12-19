@@ -42,7 +42,7 @@ class ManageAuthoritiesGBNAuthorityViewSpec extends SpecBase {
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     def view(): Document = Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesGBNAuthorityView].apply().body)
   }

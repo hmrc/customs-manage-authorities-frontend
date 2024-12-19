@@ -23,13 +23,13 @@ import play.api.test.Helpers
 class EditStateSpec extends SpecBase {
   "Changed" should {
     "return the correct output" in new SetUp {
-      Changed.getMessage() mustBe()
+      Changed.getMessage() mustBe ()
     }
   }
 
   "NotChanged" should {
     "return the correct output" in new SetUp {
-      NotChanged.getMessage() mustBe()
+      NotChanged.getMessage() mustBe ()
     }
   }
 
