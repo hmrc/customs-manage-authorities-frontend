@@ -17,7 +17,7 @@
 package forms
 
 import forms.behaviours.CheckboxFieldBehaviours
-import org.scalatest.matchers.should.Matchers.{shouldBe, shouldEqual, should}
+import org.scalatest.matchers.should.Matchers.{should, shouldBe, shouldEqual}
 import play.api.data.FormError
 
 class AccountsFormProviderSpec extends CheckboxFieldBehaviours {
@@ -26,7 +26,7 @@ class AccountsFormProviderSpec extends CheckboxFieldBehaviours {
 
   ".value" must {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "accounts.error.required"
     val validValues = List("account_0", "account_1")
 

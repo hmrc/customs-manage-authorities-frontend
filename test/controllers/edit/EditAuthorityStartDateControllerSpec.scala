@@ -42,13 +42,14 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   private val formProvider = new AuthorityStartDateFormProvider(mockDateTimeService)
-  private def form = formProvider()
+  private def form         = formProvider()
 
   private def onwardRoute = Call("GET", "/foo")
 
   private val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  private lazy val authorityStartDateRoute = controllers.edit.routes.EditAuthorityStartDateController.onPageLoad("someId", "someId").url
+  private lazy val authorityStartDateRoute =
+    controllers.edit.routes.EditAuthorityStartDateController.onPageLoad("someId", "someId").url
 
   override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
@@ -67,13 +68,14 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
         val result = route(application, getRequest).value
 
-        val view = application.injector.instanceOf[EditAuthorityStartDateView]
+        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
@@ -85,13 +87,15 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId.value).set(EditAuthorityStartDatePage("someId", "someId"), validAnswer).success.value
+      val userAnswers =
+        UserAnswers(userAnswersId.value).set(EditAuthorityStartDatePage("someId", "someId"), validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
-        val view = application.injector.instanceOf[EditAuthorityStartDateView]
+        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, getRequest).value
@@ -115,7 +119,8 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
-          .configure("features.edit-journey" -> true).build()
+          .configure("features.edit-journey" -> true)
+          .build()
 
       running(application) {
 
@@ -129,7 +134,8 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -139,7 +145,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[EditAuthorityStartDateView]
+        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value

@@ -44,13 +44,16 @@ class SdesConnectorSpec extends SpecBase {
     "make a GET request to sdesStandingAuthorityFilesUrl" in new Setup {
       val url: String = sdesStandingAuthorityFileUrl
 
-      val app: Application = applicationBuilder().overrides(
-        inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
-      ).build()
+      val app: Application = applicationBuilder()
+        .overrides(
+          inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
+        )
+        .build()
 
       val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
-      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*)).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
+        .thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(Seq.empty))
 
@@ -64,10 +67,11 @@ class SdesConnectorSpec extends SpecBase {
     }
 
     "converts Sdes response to List[StandingAuthorityFile]" in new Setup {
-      val url: String = sdesStandingAuthorityFileUrl
+      val url: String             = sdesStandingAuthorityFileUrl
       val numberOfStatements: Int = standingAuthoritiesFilesSdesResponse.length
 
-      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*)).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
+        .thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(standingAuthoritiesFilesSdesResponse))
 
@@ -75,10 +79,12 @@ class SdesConnectorSpec extends SpecBase {
 
       when(sdesGatekeeperServiceSpy.convertTo(any())).thenCallRealMethod()
 
-      val app: Application = applicationBuilder().overrides(
-        inject.bind[HttpClientV2].toInstance(mockHttpClientV2),
-        inject.bind[SdesGatekeeperService].toInstance(sdesGatekeeperServiceSpy)
-      ).build()
+      val app: Application = applicationBuilder()
+        .overrides(
+          inject.bind[HttpClientV2].toInstance(mockHttpClientV2),
+          inject.bind[SdesGatekeeperService].toInstance(sdesGatekeeperServiceSpy)
+        )
+        .build()
 
       val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
@@ -92,15 +98,18 @@ class SdesConnectorSpec extends SpecBase {
     "filter out unknown file types" in new Setup {
       val url: String = sdesStandingAuthorityFileUrl
 
-      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*)).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
+        .thenReturn(mockRequestBuilder)
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(standingAuthoritiesFilesWithUnknownFiletypesSdesResponse))
 
       when(mockHttpClientV2.get(eqTo(new URL(url)))(any)).thenReturn(mockRequestBuilder)
 
-      val app: Application = applicationBuilder().overrides(
-        inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
-      ).build()
+      val app: Application = applicationBuilder()
+        .overrides(
+          inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
+        )
+        .build()
 
       val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
@@ -115,58 +124,116 @@ class SdesConnectorSpec extends SpecBase {
   }
 
   trait Setup {
-    val hc: HeaderCarrier = HeaderCarrier()
-    implicit val messages: Messages = stubMessages()
+    val hc: HeaderCarrier                                                 = HeaderCarrier()
+    implicit val messages: Messages                                       = stubMessages()
     implicit val fileInformationListWrites: Writes[List[FileInformation]] = Writes.list(Json.writes[FileInformation])
-    val someEori = "12345678"
-    val someEoriWithUnknownFileTypes = "EoriFooBar"
-    val xClientId = "TheClientId"
-    val xClientIdHeader = "x-client-id"
-    val xSDESKey = "X-SDES-Key"
+    val someEori                                                          = "12345678"
+    val someEoriWithUnknownFileTypes                                      = "EoriFooBar"
+    val xClientId                                                         = "TheClientId"
+    val xClientIdHeader                                                   = "x-client-id"
+    val xSDESKey                                                          = "X-SDES-Key"
 
     val sdesStandingAuthorityFileUrl =
       "http://localhost:9754/customs-financials-sdes-stub/files-available/list/StandingAuthority"
 
     val standingAuthorityFiles: List[StandingAuthorityFile] = List(
-      StandingAuthorityFile("name_01", "download_url_01", FILE_SIZE_111,
-        StandingAuthorityMetadata(YEAR_2022, MONTH_6, DAY_1, Csv, StandingAuthority), emptyString),
-      StandingAuthorityFile("name_02", "download_url_02", FILE_SIZE_115,
-        StandingAuthorityMetadata(YEAR_2022, MONTH_5, DAY_25, Csv, StandingAuthority), emptyString)
+      StandingAuthorityFile(
+        "name_01",
+        "download_url_01",
+        FILE_SIZE_111,
+        StandingAuthorityMetadata(YEAR_2022, MONTH_6, DAY_1, Csv, StandingAuthority),
+        emptyString
+      ),
+      StandingAuthorityFile(
+        "name_02",
+        "download_url_02",
+        FILE_SIZE_115,
+        StandingAuthorityMetadata(YEAR_2022, MONTH_5, DAY_25, Csv, StandingAuthority),
+        emptyString
+      )
     )
 
     val standingAuthoritiesFilesSdesResponse: Seq[FileInformation] = Seq(
-      FileInformation("name_01", "download_url_01", FILE_SIZE_111,
-        Metadata(List(MetadataItem("PeriodStartYear", "2022"),
-          MetadataItem("PeriodStartMonth", "6"),
-          MetadataItem("PeriodStartDay", "1"), MetadataItem("FileType", "csv"),
-          MetadataItem("FileRole", "StandingAuthority")))),
-      FileInformation("name_02", "download_url_02", FILE_SIZE_115,
-        Metadata(List(MetadataItem("PeriodStartYear", "2022"),
-          MetadataItem("PeriodStartMonth", "5"),
-          MetadataItem("PeriodStartDay", "25"), MetadataItem("FileType", "csv"),
-          MetadataItem("FileRole", "StandingAuthority"))))
+      FileInformation(
+        "name_01",
+        "download_url_01",
+        FILE_SIZE_111,
+        Metadata(
+          List(
+            MetadataItem("PeriodStartYear", "2022"),
+            MetadataItem("PeriodStartMonth", "6"),
+            MetadataItem("PeriodStartDay", "1"),
+            MetadataItem("FileType", "csv"),
+            MetadataItem("FileRole", "StandingAuthority")
+          )
+        )
+      ),
+      FileInformation(
+        "name_02",
+        "download_url_02",
+        FILE_SIZE_115,
+        Metadata(
+          List(
+            MetadataItem("PeriodStartYear", "2022"),
+            MetadataItem("PeriodStartMonth", "5"),
+            MetadataItem("PeriodStartDay", "25"),
+            MetadataItem("FileType", "csv"),
+            MetadataItem("FileRole", "StandingAuthority")
+          )
+        )
+      )
     )
 
     val standingAuthoritiesFilesWithUnknownFiletypesSdesResponse: Seq[FileInformation] = Seq(
-      FileInformation("name_01", "download_url_01", FILE_SIZE_111,
-        Metadata(List(MetadataItem("PeriodStartYear", "2022"),
-          MetadataItem("PeriodStartMonth", "6"), MetadataItem("PeriodStartDay", "1"),
-          MetadataItem("FileType", "csv"), MetadataItem("FileRole", "StandingAuthority")))),
-      FileInformation("name_02", "download_url_02", FILE_SIZE_115,
-        Metadata(List(MetadataItem("PeriodStartYear", "2022"),
-          MetadataItem("PeriodStartMonth", "5"), MetadataItem("PeriodStartDay", "25"),
-          MetadataItem("FileType", "csv"), MetadataItem("FileRole", "StandingAuthority")))),
-      FileInformation("name_03", "download_url_03", FILE_SIZE_115,
-        Metadata(List(MetadataItem("PeriodStartYear", "2022"),
-          MetadataItem("PeriodStartMonth", "4"), MetadataItem("PeriodStartDay", "25"),
-          MetadataItem("FileType", "pdf"), MetadataItem("FileRole", "StandingAuthority"))))
+      FileInformation(
+        "name_01",
+        "download_url_01",
+        FILE_SIZE_111,
+        Metadata(
+          List(
+            MetadataItem("PeriodStartYear", "2022"),
+            MetadataItem("PeriodStartMonth", "6"),
+            MetadataItem("PeriodStartDay", "1"),
+            MetadataItem("FileType", "csv"),
+            MetadataItem("FileRole", "StandingAuthority")
+          )
+        )
+      ),
+      FileInformation(
+        "name_02",
+        "download_url_02",
+        FILE_SIZE_115,
+        Metadata(
+          List(
+            MetadataItem("PeriodStartYear", "2022"),
+            MetadataItem("PeriodStartMonth", "5"),
+            MetadataItem("PeriodStartDay", "25"),
+            MetadataItem("FileType", "csv"),
+            MetadataItem("FileRole", "StandingAuthority")
+          )
+        )
+      ),
+      FileInformation(
+        "name_03",
+        "download_url_03",
+        FILE_SIZE_115,
+        Metadata(
+          List(
+            MetadataItem("PeriodStartYear", "2022"),
+            MetadataItem("PeriodStartMonth", "4"),
+            MetadataItem("PeriodStartDay", "25"),
+            MetadataItem("FileType", "pdf"),
+            MetadataItem("FileRole", "StandingAuthority")
+          )
+        )
+      )
     )
 
-    val sdesGatekeeperServiceSpy: SdesGatekeeperService = spy(new SdesGatekeeperService())
-    val mockHttpClientV2: HttpClientV2 = mock[HttpClientV2]
-    val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
-    val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
+    val sdesGatekeeperServiceSpy: SdesGatekeeperService    = spy(new SdesGatekeeperService())
+    val mockHttpClientV2: HttpClientV2                     = mock[HttpClientV2]
+    val mockRequestBuilder: RequestBuilder                 = mock[RequestBuilder]
+    val mockAppConfig: FrontendAppConfig                   = mock[FrontendAppConfig]
     val mockMetricsReporterService: MetricsReporterService = mock[MetricsReporterService]
-    val mockAuditingService: AuditingService = mock[AuditingService]
+    val mockAuditingService: AuditingService               = mock[AuditingService]
   }
 }

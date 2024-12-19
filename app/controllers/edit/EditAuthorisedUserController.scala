@@ -34,19 +34,19 @@ import views.html.edit.EditAuthorisedUserView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EditAuthorisedUserController @Inject()(
-                                              override val messagesApi: MessagesApi,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: AuthorityDetailsFormProvider,
-                                              val dateTimeService: DateTimeService,
-                                              sessionRepository: SessionRepository,
-                                              view: EditAuthorisedUserView,
-                                              navigator: Navigator,
-                                              implicit val controllerComponents: MessagesControllerComponents
-                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class EditAuthorisedUserController @Inject() (
+  override val messagesApi: MessagesApi,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AuthorityDetailsFormProvider,
+  val dateTimeService: DateTimeService,
+  sessionRepository: SessionRepository,
+  view: EditAuthorisedUserView,
+  navigator: Navigator,
+  implicit val controllerComponents: MessagesControllerComponents
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
@@ -57,7 +57,7 @@ class EditAuthorisedUserController @Inject()(
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = commonActions { implicit request =>
     val populatedForm = request.userAnswers.get(EditAuthorisedUserPage(accountId, authorityId)) match {
       case Some(value) => form.fill(value)
-      case None => form
+      case None        => form
     }
 
     Ok(view(populatedForm, accountId, authorityId))
@@ -65,18 +65,21 @@ class EditAuthorisedUserController @Inject()(
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] =
     commonActions.async { implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
-        authorisedUser => {
-          for {
-            updatedAnswers <- Future.fromTry(
-              request.userAnswers.set(EditAuthorisedUserPage(accountId, authorityId), authorisedUser)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
+          authorisedUser =>
+            for {
+              updatedAnswers <-
+                Future.fromTry(
+                  request.userAnswers.set(EditAuthorisedUserPage(accountId, authorityId), authorisedUser)
+                )
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(
+              navigator
+                .nextPage(EditAuthorisedUserPage(accountId: String, authorityId: String), NormalMode, updatedAnswers)
             )
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(
-            EditAuthorisedUserPage(accountId: String, authorityId: String), NormalMode, updatedAnswers)
-          )
-        })
+        )
     }
 }

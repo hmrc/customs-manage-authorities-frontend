@@ -23,18 +23,21 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class TechnicalDifficulties @Inject()(
-                                       errorHandler: ErrorHandler,
-                                       mcc: MessagesControllerComponents
-                                     )(implicit ec: ExecutionContext) extends FrontendController(mcc) {
+class TechnicalDifficulties @Inject() (
+  errorHandler: ErrorHandler,
+  mcc: MessagesControllerComponents
+)(implicit ec: ExecutionContext)
+    extends FrontendController(mcc) {
 
   def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    errorHandler.standardErrorTemplate(
-      "service-technical-difficulties.title",
-      "service.technical-difficulties.heading",
-      "service.technical-difficulties.p"
-    ).map { html =>
-      Ok(html)
-    }
+    errorHandler
+      .standardErrorTemplate(
+        "service-technical-difficulties.title",
+        "service.technical-difficulties.heading",
+        "service.technical-difficulties.p"
+      )
+      .map { html =>
+        Ok(html)
+      }
   }
 }

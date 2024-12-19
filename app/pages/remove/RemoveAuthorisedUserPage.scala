@@ -21,6 +21,6 @@ import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case class RemoveAuthorisedUserPage(accountId: String, authorityId: String) extends QuestionPage[AuthorisedUser] {
-  override def path: JsPath = JsPath \ "remove" \ accountId \ authorityId \ toString
+  override def path: JsPath     = JsPath \ "remove" \ accountId \ authorityId \ toString
   override def toString: String = "removeAuthorisedUser"
 }

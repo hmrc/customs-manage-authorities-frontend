@@ -37,16 +37,28 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
   "populateUserAnswers" should {
 
     "update the session with the user's answers for standingAuthority date set to today" in new Setup {
-      val startDate = LocalDate.now()
+      val startDate         = LocalDate.now()
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
-        Some(AccountStatusOpen), Map(authorityId -> standingAuthority))
+      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Map(authorityId -> standingAuthority)
+      )
 
       running(app) {
 
-        val result = await(service.resetUserAnswers(accountId, authorityId, emptyUserAnswers,
-          standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+        val result = await(
+          service.resetUserAnswers(
+            accountId,
+            authorityId,
+            emptyUserAnswers,
+            standingAuthority,
+            accountsWithAuthoritiesWithId,
+            mockDataStoreConnector
+          )(messages(app), hc)
+        )
 
         val userAnswers = result.userAnswers
 
@@ -58,18 +70,30 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
     }
 
     "update the session with the user's answers from the api if no answers present in the session" in new Setup {
-      val wrongYear = 1
-      val wrongMonth = 1
-      val wrongDayOfMonth = 20
-      val startDate = LocalDate.of(wrongYear, wrongMonth, wrongDayOfMonth)
+      val wrongYear         = 1
+      val wrongMonth        = 1
+      val wrongDayOfMonth   = 20
+      val startDate         = LocalDate.of(wrongYear, wrongMonth, wrongDayOfMonth)
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(CdsCashAccount, "12345",
-        Some(AccountStatusOpen), Map(authorityId -> standingAuthority))
+      val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Map(authorityId -> standingAuthority)
+      )
 
       running(app) {
-        val result = await(service.resetUserAnswers(accountId, authorityId, emptyUserAnswers,
-          standingAuthority, accountsWithAuthoritiesWithId, mockDataStoreConnector)(messages(app), hc))
+        val result      = await(
+          service.resetUserAnswers(
+            accountId,
+            authorityId,
+            emptyUserAnswers,
+            standingAuthority,
+            accountsWithAuthoritiesWithId,
+            mockDataStoreConnector
+          )(messages(app), hc)
+        )
         val userAnswers = result.userAnswers
 
         userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).get mustBe startDate
@@ -80,19 +104,20 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
     }
   }
 
-
   trait Setup {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    val mockDateTimeService: DateTimeService = mock[DateTimeService]
-    val accountId = "123"
-    val authorityId = "12345"
+    val mockDateTimeService: DateTimeService     = mock[DateTimeService]
+    val accountId                                = "123"
+    val authorityId                              = "12345"
 
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
-    val app: Application = applicationBuilder().overrides(
-      inject.bind[SessionRepository].toInstance(mockSessionRepository),
-      inject.bind[DateTimeService].toInstance(mockDateTimeService)
-    ).build()
+    val app: Application = applicationBuilder()
+      .overrides(
+        inject.bind[SessionRepository].toInstance(mockSessionRepository),
+        inject.bind[DateTimeService].toInstance(mockDateTimeService)
+      )
+      .build()
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 

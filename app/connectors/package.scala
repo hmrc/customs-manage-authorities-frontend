@@ -20,10 +20,8 @@ import scala.util.Random
 
 package object connectors {
 
-  def generateStringOfRandomDigits(length: Int): String = {
-
+  def generateStringOfRandomDigits(length: Int): String =
     (1 to length).map(_ => Random.nextInt(RANDOM_GENERATION_INT_LENGTH)).mkString
-  }
 
   def acknowledgmentRef(length: Int): String = generateStringOfRandomDigits(length)
 }

@@ -34,12 +34,14 @@ class AccountsViewSpec extends SpecBase {
 
   "AccountsView" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link")
+      normalModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/eori-number"
     }
 
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link")
+      checkModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
 
@@ -55,16 +57,16 @@ class AccountsViewSpec extends SpecBase {
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
-    private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
+    private lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     private val formProvider = new AccountsFormProvider()
-    private val form = formProvider()
-    private val invalidForm = formProvider().bind(Map("value" -> emptyString))
+    private val form         = formProvider()
+    private val invalidForm  = formProvider().bind(Map("value" -> emptyString))
 
-    private val ownerEori = "GB123456789012"
+    private val ownerEori   = "GB123456789012"
     private val enteredEori = "GB9876543210000"
 
     private val bigDecimalAmount = 100.00
@@ -73,43 +75,60 @@ class AccountsViewSpec extends SpecBase {
       List(CashAccount("12345", ownerEori, AccountStatusOpen, CDSCashBalance(Some(bigDecimalAmount))))
 
     def normalModeView(): Document =
-      Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
-        form,
-        AuthorisedAccounts(
-          Seq.empty,
-          answerAccounts,
-          Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
-          Seq.empty,
-          enteredEori),
-        NormalMode,
-        normalModeBackLinkRoute).body
+      Jsoup.parse(
+        app.injector
+          .instanceOf[AccountsView]
+          .apply(
+            form,
+            AuthorisedAccounts(
+              Seq.empty,
+              answerAccounts,
+              Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
+              Seq.empty,
+              enteredEori
+            ),
+            NormalMode,
+            normalModeBackLinkRoute
+          )
+          .body
       )
 
     def checkModeView(): Document =
-      Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
-        form,
-        AuthorisedAccounts(
-          Seq.empty,
-          answerAccounts,
-          Seq(
-            CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
-          Seq.empty,
-          enteredEori),
-        CheckMode,
-        checkModeBackLinkRoute).body
+      Jsoup.parse(
+        app.injector
+          .instanceOf[AccountsView]
+          .apply(
+            form,
+            AuthorisedAccounts(
+              Seq.empty,
+              answerAccounts,
+              Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
+              Seq.empty,
+              enteredEori
+            ),
+            CheckMode,
+            checkModeBackLinkRoute
+          )
+          .body
       )
 
     def invalidModeView(): Document =
-      Jsoup.parse(app.injector.instanceOf[AccountsView].apply(
-        invalidForm,
-        AuthorisedAccounts(
-          Seq.empty,
-          answerAccounts,
-          Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
-          Seq.empty,
-          enteredEori),
-        NormalMode,
-        normalModeBackLinkRoute).body
+      Jsoup.parse(
+        app.injector
+          .instanceOf[AccountsView]
+          .apply(
+            invalidForm,
+            AuthorisedAccounts(
+              Seq.empty,
+              answerAccounts,
+              Seq(CashAccount("23456", ownerEori, AccountStatusClosed, CDSCashBalance(Some(bigDecimalAmount)))),
+              Seq.empty,
+              enteredEori
+            ),
+            NormalMode,
+            normalModeBackLinkRoute
+          )
+          .body
       )
   }
 }

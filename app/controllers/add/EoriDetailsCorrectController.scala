@@ -35,62 +35,79 @@ import views.html.add.EoriDetailsCorrectView
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class EoriDetailsCorrectController @Inject()(override val messagesApi: MessagesApi,
-                                             sessionRepository: SessionRepository,
-                                             navigator: Navigator,
-                                             identify: IdentifierAction,
-                                             getData: DataRetrievalAction,
-                                             requireData: DataRequiredAction,
-                                             formProvider: EoriDetailsCorrectFormProvider,
-                                             val controllerComponents: MessagesControllerComponents,
-                                             view: EoriDetailsCorrectView,
-                                             dateTimeService: DateTimeService
-                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class EoriDetailsCorrectController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: EoriDetailsCorrectFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: EoriDetailsCorrectView,
+  dateTimeService: DateTimeService
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
 
-      val preparedForm = (request.userAnswers.get(EoriDetailsCorrectPage), request.userAnswers.get(EoriNumberPage)) match {
-        case (None, _) => form
-        case (Some(EoriDetailsCorrect.No), _) => form
+    val preparedForm =
+      (request.userAnswers.get(EoriDetailsCorrectPage), request.userAnswers.get(EoriNumberPage)) match {
+        case (None, _)                         => form
+        case (Some(EoriDetailsCorrect.No), _)  => form
         case (Some(EoriDetailsCorrect.Yes), _) => form.fill(EoriDetailsCorrect.Yes)
       }
 
-      Ok(view(preparedForm, mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
-        EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))
+    Ok(
+      view(
+        preparedForm,
+        mode,
+        navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
+        EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)
+      )
+    )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(
-            formWithErrors,
-            mode, navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
-            EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)))),
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(EoriDetailsCorrectPage, value)(EoriDetailsCorrect.writes))
-            updatedAnswersWithRefresheddAccounts <- refreshAccountsSelectionForNoEoriChange(value, updatedAnswers)
-            _ <- sessionRepository.set(updatedAnswersWithRefresheddAccounts)
-          } yield Redirect(navigator.nextPage(EoriDetailsCorrectPage, mode, updatedAnswers))
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.EoriNumberController.onPageLoad(mode)),
+                  EoriDetailsCorrectHelper(request.userAnswers, dateTimeService)
+                )
+              )
+            ),
+          value =>
+            for {
+              updatedAnswers                       <-
+                Future.fromTry(request.userAnswers.set(EoriDetailsCorrectPage, value)(EoriDetailsCorrect.writes))
+              updatedAnswersWithRefresheddAccounts <- refreshAccountsSelectionForNoEoriChange(value, updatedAnswers)
+              _                                    <- sessionRepository.set(updatedAnswersWithRefresheddAccounts)
+            } yield Redirect(navigator.nextPage(EoriDetailsCorrectPage, mode, updatedAnswers))
+        )
   }
 
-  private def refreshAccountsSelectionForNoEoriChange(formValue: EoriDetailsCorrect,
-                                                      userAnswers: UserAnswers): Future[UserAnswers] = {
+  private def refreshAccountsSelectionForNoEoriChange(
+    formValue: EoriDetailsCorrect,
+    userAnswers: UserAnswers
+  ): Future[UserAnswers] = {
     import scala.util.Success
 
     Future(
       if (formValue == No) {
         userAnswers.set(AccountsPage, List()) match {
           case Success(value) => value
-          case _ => userAnswers
+          case _              => userAnswers
         }
       } else {
         userAnswers

@@ -37,65 +37,67 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
   "view" should {
     "show correct elements with right order" in new Setup {
 
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document             = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be >= 2
 
-      val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
+      val companyDetailsRowEoriNumberElement: Element  = summaryElements.get(0)
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
-      val yourAccountRowElement: Element = summaryElements.get(2)
+      val yourAccountRowElement: Element               = summaryElements.get(2)
 
       // Order of the summary rows is also being tested
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("checkYourAnswers.eoriNumber.label")
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+        "checkYourAnswers.eoriNumber.label"
+      )
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListValue).html() mustBe eori
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListValue).html() mustBe eori
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("view-authority-h2.5")
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+        "view-authority-h2.5"
+      )
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListValue).html() mustBe companyName
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListValue).html() mustBe companyName
 
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("edit-cya-account-number")
+      yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+        "edit-cya-account-number"
+      )
 
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListValue).html() mustBe messages(app)(
-        s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+      yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe messages(app)(
+        s"manageAuthorities.table.heading.account.$CdsCashAccount",
+        accNumber
+      )
     }
 
     "Eori Number Label has correct Text" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document             = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
 
       val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("checkYourAnswers.eoriNumber.label")
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+        "checkYourAnswers.eoriNumber.label"
+      )
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListValue).html() mustBe eori
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListValue).html() mustBe eori
     }
 
     "Company Name Row has correct Text" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document             = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
 
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListKey).html() mustBe messages(app)("view-authority-h2.5")
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+        "view-authority-h2.5"
+      )
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListValue).html() mustBe companyName
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListValue).html() mustBe companyName
     }
 
     "Eori Numnber has correct Text" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document             = Jsoup.parse(result.toString())
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 0
 
@@ -104,89 +106,95 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe
         messages(app)("edit-cya-account-number")
       yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe
-        messages(app)(s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+        messages(app)(s"manageAuthorities.table.heading.account.$CdsCashAccount", accNumber)
     }
 
     "Header displays Account authority by Tag" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document      = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h1")
       elements.size() must be > 0
       elements.text() mustBe "Account authority"
     }
 
     "Page ends in help to make better link" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document      = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h2")
       elements.size() must be > 0
       elements.text() mustBe "Help make GOV.UK better Authorised company Account you have authorised Authority details Remove authority Support links"
     }
 
     "Header displays Account authority" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document     = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-id")
       elements.text() mustBe "Account authority"
     }
 
     "Label 1 displays Authorised company" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document     = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.1")
       elements.text() mustBe "Authorised company"
     }
 
     "Label 2 displays Account you have authorised" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document     = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.2")
       elements.text() mustBe "Account you have authorised"
     }
 
     "Label 3 displays Authorised details by Id" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document     = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.3")
       elements.text() mustBe "Authority details"
     }
 
     "Label 4 displays Remove Authority by Id" in new Setup {
-      val doc: Document = Jsoup.parse(result.toString())
+      val doc: Document     = Jsoup.parse(result.toString())
       val elements: Element = doc.getElementById("view-authority-h2.4")
       elements.text() mustBe "Remove authority"
     }
   }
 
   trait Setup {
-    val eori = "test_EORI"
+    val eori        = "test_EORI"
     val companyName = "test_company"
-    val accNumber = "12345"
+    val accNumber   = "12345"
 
-    val classSummaryListRow = "govuk-summary-list__row"
-    val classSummaryListKey = "govuk-summary-list__key"
+    val classSummaryListRow   = "govuk-summary-list__row"
+    val classSummaryListKey   = "govuk-summary-list__key"
     val classSummaryListValue = "govuk-summary-list__value"
 
     val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
-    val endDate: LocalDate = LocalDate.parse("2020-04-01")
+    val endDate: LocalDate   = LocalDate.parse("2020-04-01")
 
-    val standingAuthority: StandingAuthority = StandingAuthority(eori, startDate, Some(endDate), viewBalance = false)
+    val standingAuthority: StandingAuthority                        = StandingAuthority(eori, startDate, Some(endDate), viewBalance = false)
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, accNumber, Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(
-      "GET", "/some/resource/path")
+    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-      inject.bind[DateTimeService].toInstance(mockDateTimeService)).build()
+    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      .overrides(inject.bind[DateTimeService].toInstance(mockDateTimeService))
+      .build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
 
-    val checkAnswersEditHelper = new CheckYourAnswersEditHelper(userAnswers,
-      "123", "456", mockDateTimeService, standingAuthority,
-      accountsWithAuthoritiesWithId, Option(companyName))(messages(app))
+    val checkAnswersEditHelper = new CheckYourAnswersEditHelper(
+      userAnswers,
+      "123",
+      "456",
+      mockDateTimeService,
+      standingAuthority,
+      accountsWithAuthoritiesWithId,
+      Option(companyName)
+    )(messages(app))
 
     val view: EditOrRemoveView = app.injector.instanceOf[EditOrRemoveView]
 
-    val result: HtmlFormat.Appendable = view(
-      checkAnswersEditHelper, "123", "456")(csrfRequest, messages(app), appConfig)
+    val result: HtmlFormat.Appendable =
+      view(checkAnswersEditHelper, "123", "456")(csrfRequest, messages(app), appConfig)
   }
 }

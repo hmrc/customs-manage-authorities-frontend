@@ -33,15 +33,14 @@ object ShowBalance extends Enumerable.Implicits {
     No
   )
 
-  def fromBoolean(viewBalance: Boolean): ShowBalance = {
-    if(viewBalance){
+  def fromBoolean(viewBalance: Boolean): ShowBalance =
+    if (viewBalance) {
       Yes
     } else {
       No
     }
-  }
 
-  def options(form: Form[_], accountsLength: Int)(implicit messages: Messages): Seq[RadioItem] = {
+  def options(form: Form[_], accountsLength: Int)(implicit messages: Messages): Seq[RadioItem] =
     Seq(
       RadioItem(
         value = Some(Yes.toString),
@@ -54,7 +53,6 @@ object ShowBalance extends Enumerable.Implicits {
         checked = form("value").value.contains(No.toString)
       )
     )
-  }
 
   implicit val enumerable: Enumerable[ShowBalance] =
     Enumerable(values.map(v => v.toString -> v): _*)

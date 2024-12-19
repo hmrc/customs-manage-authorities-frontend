@@ -31,43 +31,46 @@ import views.html.edit.EditAuthorityEndView
 import javax.inject.Inject
 import scala.concurrent._
 
-class EditAuthorityEndController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            sessionRepository: SessionRepository,
-                                            navigator: Navigator,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            formProvider: AuthorityEndFormProvider,
-                                            implicit val controllerComponents: MessagesControllerComponents,
-                                            view: EditAuthorityEndView
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class EditAuthorityEndController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AuthorityEndFormProvider,
+  implicit val controllerComponents: MessagesControllerComponents,
+  view: EditAuthorityEndView
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
-    ) { implicit request =>
-      val preparedForm = request.userAnswers.get(EditAuthorityEndPage(accountId, authorityId)) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, accountId, authorityId))
+  ) { implicit request =>
+    val preparedForm = request.userAnswers.get(EditAuthorityEndPage(accountId, authorityId)) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, accountId, authorityId))
   }
 
   def onSubmit(accountId: String, authorityId: String): Action[AnyContent] = (
     identify andThen getData andThen requireData
-    ).async { implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
+  ).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, accountId, authorityId))),
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(
-                                              EditAuthorityEndPage(accountId, authorityId), value)(AuthorityEnd.writes))
-            _ <- sessionRepository.set(updatedAnswers)
+            updatedAnswers <-
+              Future.fromTry(
+                request.userAnswers.set(EditAuthorityEndPage(accountId, authorityId), value)(AuthorityEnd.writes)
+              )
+            _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(EditAuthorityEndPage(accountId, authorityId), NormalMode, updatedAnswers))
       )
   }

@@ -42,13 +42,14 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   private val formProvider = new AuthorityStartDateFormProvider(mockDateTimeService)
-  private def form = formProvider()
+  private def form         = formProvider()
 
   private def onwardRoute = Call("GET", "/foo")
 
   private val validAnswer = LocalDate.now(ZoneOffset.UTC)
 
-  private lazy val authorityStartDateRoute = controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode).url
+  private lazy val authorityStartDateRoute =
+    controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode).url
 
   override val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
@@ -62,7 +63,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         "value.month" -> validAnswer.getMonthValue.toString,
         "value.year"  -> validAnswer.getYear.toString
       )
-  val backLinkRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+  val backLinkRoute: Call                                               = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
 
   "AuthorityStartDate Controller" must {
 
@@ -74,13 +75,13 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, getRequest).value
 
-        val view = application.injector.instanceOf[AuthorityStartDateView]
+        val view      = application.injector.instanceOf[AuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode,backLinkRoute)(getRequest, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -92,7 +93,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val view = application.injector.instanceOf[AuthorityStartDateView]
+        val view      = application.injector.instanceOf[AuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, getRequest).value
@@ -100,7 +101,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(validAnswer), NormalMode,backLinkRoute)(getRequest, messages(application), appConfig).toString
+          view(form.fill(validAnswer), NormalMode, backLinkRoute)(getRequest, messages(application), appConfig).toString
       }
     }
 
@@ -140,7 +141,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[AuthorityStartDateView]
+        val view      = application.injector.instanceOf[AuthorityStartDateView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -148,7 +149,7 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 

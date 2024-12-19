@@ -20,8 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount,
-  DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
+  AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount,
+  DutyDefermentBalance, StandingAuthority
 }
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -53,7 +53,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -68,7 +68,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
           val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -82,12 +82,13 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.failed(new InternalServerException("broken")))
 
         val application = applicationBuilder(Some(userAnswersCompanyDetails))
-          .overrides(bind[AccountsCacheService].toInstance(failingMockService)).build()
+          .overrides(bind[AccountsCacheService].toInstance(failingMockService))
+          .build()
 
         running(application) {
-          val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[ServiceUnavailableView]
+          val request   = fakeRequest(GET, accountsRoute)
+          val result    = route(application, request).value
+          val view      = application.injector.instanceOf[ServiceUnavailableView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual INTERNAL_SERVER_ERROR
@@ -106,22 +107,26 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
 
-          val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[AccountsView]
+          val request   = fakeRequest(GET, accountsRoute)
+          val result    = route(application, request).value
+          val view      = application.injector.instanceOf[AccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(form,
+            view(
+              form,
               AuthorisedAccounts(
                 Seq.empty,
                 answerAccounts,
                 Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
-                Seq.empty, "GB9876543210000"),
+                Seq.empty,
+                "GB9876543210000"
+              ),
               NormalMode,
-              backLinkRoute)(request, messages(application), appConfig).toString
+              backLinkRoute
+            )(request, messages(application), appConfig).toString
         }
       }
 
@@ -133,27 +138,44 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
-          .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty,
-            authorisedAccounts, closedAccountXI, Seq.empty, "XI9876543210000")))
+          .thenReturn(
+            Future.successful(
+              AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccountXI, Seq.empty, "XI9876543210000")
+            )
+          )
 
         running(application) {
 
-          val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[AccountsView]
+          val request   = fakeRequest(GET, accountsRoute)
+          val result    = route(application, request).value
+          val view      = application.injector.instanceOf[AccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
-          contentAsString(result) mustEqual view(form,
+          contentAsString(result) mustEqual view(
+            form,
             AuthorisedAccounts(
-              Seq.empty, answerAccounts, Seq(DutyDefermentAccount(
-                "123",
-                "XI9876543210000",
-                AccountStatusOpen,
-                DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
-                true)),
-              Seq.empty, "XI9876543210000"),
+              Seq.empty,
+              answerAccounts,
+              Seq(
+                DutyDefermentAccount(
+                  "123",
+                  "XI9876543210000",
+                  AccountStatusOpen,
+                  DutyDefermentBalance(
+                    Some(bigDecimal100),
+                    Some(bigDecimal100),
+                    Some(bigDecimal100),
+                    Some(bigDecimal100)
+                  ),
+                  true
+                )
+              ),
+              Seq.empty,
+              "XI9876543210000"
+            ),
             NormalMode,
-            backLinkRoute)(request, messages(application), appConfig).toString
+            backLinkRoute
+          )(request, messages(application), appConfig).toString
         }
       }
     }
@@ -169,14 +191,17 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         val noAvailableAccounts = CDSAccounts("GB123456789012", List.empty)
 
         when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
-          .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty, Seq.empty, Seq.empty, Seq.empty, "GB9876543210000")))
-        when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any())).thenReturn(Future.successful(noAvailableAccounts))
+          .thenReturn(
+            Future.successful(AuthorisedAccounts(Seq.empty, Seq.empty, Seq.empty, Seq.empty, "GB9876543210000"))
+          )
+        when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
+          .thenReturn(Future.successful(noAvailableAccounts))
 
         running(application) {
 
-          val request = fakeRequest(GET, accountsRoute)
-          val result = route(application, request).value
-          val view = application.injector.instanceOf[NoAvailableAccountsView]
+          val request   = fakeRequest(GET, accountsRoute)
+          val result    = route(application, request).value
+          val view      = application.injector.instanceOf[NoAvailableAccountsView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
@@ -190,8 +215,12 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     "populate the view correctly on a GET when the question has previously been answered" in new Setup {
 
       val userAnswers = UserAnswers(userAnswersId.value)
-        .set(AccountsPage, answerAccounts).success.value
-        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
+        .set(AccountsPage, answerAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name")))
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
@@ -203,7 +232,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         val request = fakeRequest(GET, accountsRoute)
 
-        val view = application.injector.instanceOf[AccountsView]
+        val view      = application.injector.instanceOf[AccountsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -211,17 +240,32 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(answer), AuthorisedAccounts(Seq.empty, answerAccounts, Seq(
-            CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
-          ), Seq.empty, "GB9876543210000"), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(
+            form.fill(answer),
+            AuthorisedAccounts(
+              Seq.empty,
+              answerAccounts,
+              Seq(
+                CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
+              ),
+              Seq.empty,
+              "GB9876543210000"
+            ),
+            NormalMode,
+            backLinkRoute
+          )(request, messages(application), appConfig).toString
       }
     }
 
     "populate the view correctly on a GET in CheckMode when the question has previously been answered" in new Setup {
 
       val userAnswers: UserAnswers = UserAnswers(userAnswersId.value)
-        .set(AccountsPage, answerAccounts).success.value
-        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
+        .set(AccountsPage, answerAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name")))
+        .success
+        .value
 
       val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
@@ -231,8 +275,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, accountsRouteInCheckMode)
-        val view = application.injector.instanceOf[AccountsView]
+        val request   = fakeRequest(GET, accountsRouteInCheckMode)
+        val view      = application.injector.instanceOf[AccountsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -246,9 +290,12 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               Seq.empty,
               answerAccounts,
               Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
-              Seq.empty, "GB9876543210000"),
+              Seq.empty,
+              "GB9876543210000"
+            ),
             CheckMode,
-            backLinkRouteInCheckMode)(request, messages(application), appConfig).toString
+            backLinkRouteInCheckMode
+          )(request, messages(application), appConfig).toString
       }
     }
 
@@ -298,7 +345,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
               bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
-            ).build()
+            )
+            .build()
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
@@ -327,7 +375,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
               bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
-            ).build()
+            )
+            .build()
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
@@ -353,7 +402,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
               bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
-            ).build()
+            )
+            .build()
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
@@ -381,7 +431,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               bind[AccountsCacheService].toInstance(mockAccountsCacheService),
               bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
               bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
-            ).build()
+            )
+            .build()
 
         running(application) {
           val request = fakeRequest(POST, accountsSubmitRouteInCheckMode)
@@ -437,7 +488,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[AccountsCacheService].toInstance(mockAccountsCacheService)
-            ).build()
+            )
+            .build()
 
         running(application) {
 
@@ -460,7 +512,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           bind[AccountsCacheService].toInstance(mockAccountsCacheService),
           bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
           bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
-        ).build()
+        )
+        .build()
 
       running(application) {
 
@@ -469,7 +522,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[AccountsView]
+        val view      = application.injector.instanceOf[AccountsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -479,46 +532,47 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(
             boundForm,
-            AuthorisedAccounts(Seq.empty,
+            AuthorisedAccounts(
+              Seq.empty,
               answerAccounts,
               Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
               Seq.empty,
-              "GB9876543210000"),
+              "GB9876543210000"
+            ),
             NormalMode,
-            backLinkRoute)(request, messages(application), appConfig).toString
+            backLinkRoute
+          )(request, messages(application), appConfig).toString
       }
     }
   }
 
   trait Setup {
-    val amount100 = 100
+    val amount100     = 100
     val bigDecimal100 = 100.00
 
     def onwardRoute: Call = Call("GET", "/foo")
 
     lazy val authStartNormalModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
-    lazy val authStartCheckModeRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
+    lazy val authStartCheckModeRoute: Call  = controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode)
 
-    lazy val accountsRoute: String = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
+    lazy val accountsRoute: String            = controllers.add.routes.AccountsController.onPageLoad(NormalMode).url
     lazy val accountsRouteInCheckMode: String = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url
 
-    lazy val accountsSubmitRouteInNormalMode: String = controllers.add.routes.AccountsController.onSubmit(NormalMode).url
-    lazy val accountsSubmitRouteInCheckMode: String = controllers.add.routes.AccountsController.onSubmit(CheckMode).url
+    lazy val accountsSubmitRouteInNormalMode: String =
+      controllers.add.routes.AccountsController.onSubmit(NormalMode).url
+    lazy val accountsSubmitRouteInCheckMode: String  = controllers.add.routes.AccountsController.onSubmit(CheckMode).url
 
-    val formProvider = new AccountsFormProvider()
+    val formProvider             = new AccountsFormProvider()
     val form: Form[List[String]] = formProvider()
 
-    val userAnswersCompanyDetails: UserAnswers = emptyUserAnswers.set(
-      EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
+    val userAnswersCompanyDetails: UserAnswers =
+      emptyUserAnswers.set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
-    val userAnswersCompanyDetailsXI: UserAnswers = emptyUserAnswers.set(
-      EoriNumberPage, CompanyDetails("XI9876543210000", Some("name"))).success.value
+    val userAnswersCompanyDetailsXI: UserAnswers =
+      emptyUserAnswers.set(EoriNumberPage, CompanyDetails("XI9876543210000", Some("name"))).success.value
 
-    val standingAuthority: StandingAuthority = StandingAuthority(
-      "EORI",
-      LocalDate.parse("2020-03-01"),
-      Some(LocalDate.parse("2020-04-01")),
-      viewBalance = false)
+    val standingAuthority: StandingAuthority =
+      StandingAuthority("EORI", LocalDate.parse("2020-03-01"), Some(LocalDate.parse("2020-04-01")), viewBalance = false)
 
     val answer: List[String] = List("account_0")
 
@@ -528,21 +582,26 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val accounts: CDSAccounts =
       CDSAccounts(
         "GB123456789012",
-        List(DutyDefermentAccount(
-          "123",
-          "XI9876543210000",
-          AccountStatusOpen,
-          DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
-          isNiAccount = true),
+        List(
+          DutyDefermentAccount(
+            "123",
+            "XI9876543210000",
+            AccountStatusOpen,
+            DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+            isNiAccount = true
+          ),
           CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))),
           CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
-        ))
+        )
+      )
 
-    val authorisedAccounts: List[CashAccount] = List(CashAccount("12345", "GB123456789012",
-      AccountStatusOpen, CDSCashBalance(Some(amount100))))
+    val authorisedAccounts: List[CashAccount] = List(
+      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(amount100)))
+    )
 
-    private val closedAccount = List(CashAccount("23456", "GB123456789012",
-      AccountStatusClosed, CDSCashBalance(Some(amount100))))
+    private val closedAccount = List(
+      CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(amount100)))
+    )
 
     val closedAccountXI: List[DutyDefermentAccount] =
       List(
@@ -551,21 +610,25 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           "XI9876543210000",
           AccountStatusOpen,
           DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
-          isNiAccount = true)
+          isNiAccount = true
+        )
       )
 
-    val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
-    val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
+    val mockAccountsCacheService: AccountsCacheService          = mock[AccountsCacheService]
+    val mockAuthoritiesCacheService: AuthoritiesCacheService    = mock[AuthoritiesCacheService]
     val mockAuthorisedAccountService: AuthorisedAccountsService = mock[AuthorisedAccountsService]
 
     when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
       .thenReturn(Future.successful(accounts))
 
     when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
-      .thenReturn(Future.successful(AuthorisedAccounts(Seq.empty,
-        authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")))
+      .thenReturn(
+        Future.successful(
+          AuthorisedAccounts(Seq.empty, authorisedAccounts, closedAccount, Seq.empty, "GB9876543210000")
+        )
+      )
 
-    val backLinkRoute: Call = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
+    val backLinkRoute: Call            = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode)
     val backLinkRouteInCheckMode: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
   }
 }

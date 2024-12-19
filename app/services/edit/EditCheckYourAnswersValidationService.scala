@@ -24,21 +24,23 @@ import services.DateTimeService
 
 import scala.util.Try
 
-class EditCheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeService) {
+class EditCheckYourAnswersValidationService @Inject() (dateTimeService: DateTimeService) {
 
-  def validate(userAnswers: UserAnswers,
-               accountId: String,
-               authorityId: String,
-               authorisedEori: String): Option[StandingAuthority] = Try {
+  def validate(
+    userAnswers: UserAnswers,
+    accountId: String,
+    authorityId: String,
+    authorisedEori: String
+  ): Option[StandingAuthority] = Try {
     for {
       authorityStart <- userAnswers.get(EditAuthorityStartPage(accountId, authorityId))
-      authorityEnd <- userAnswers.get(EditAuthorityEndPage(accountId, authorityId))
+      authorityEnd   <- userAnswers.get(EditAuthorityEndPage(accountId, authorityId))
 
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
-        userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId))
-      } else {
-        Some(dateTimeService.localTime().toLocalDate)
-      }
+                              userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId))
+                            } else {
+                              Some(dateTimeService.localTime().toLocalDate)
+                            }
 
       authorityEndDate =
         if (authorityEnd == AuthorityEnd.Setdate) {
@@ -50,15 +52,17 @@ class EditCheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeS
       viewBalance <- userAnswers.get(EditShowBalancePage(accountId, authorityId))
 
       standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
-        None
-      } else {
-        Some(StandingAuthority(
-          authorisedEori,
-          authorisedFromDate,
-          authorityEndDate,
-          viewBalance == ShowBalance.Yes
-        ))
-      }
+                             None
+                           } else {
+                             Some(
+                               StandingAuthority(
+                                 authorisedEori,
+                                 authorisedFromDate,
+                                 authorityEndDate,
+                                 viewBalance == ShowBalance.Yes
+                               )
+                             )
+                           }
 
     } yield standingAuthority
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten

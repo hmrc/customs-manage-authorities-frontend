@@ -33,55 +33,58 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorityStartDateController @Inject()(
-                                              override val messagesApi: MessagesApi,
-                                              sessionRepository: SessionRepository,
-                                              navigator: Navigator,
-                                              identify: IdentifierAction,
-                                              getData: DataRetrievalAction,
-                                              requireData: DataRequiredAction,
-                                              formProvider: AuthorityStartDateFormProvider,
-                                              val controllerComponents: MessagesControllerComponents,
-                                              view: AuthorityStartDateView
-                                            )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class AuthorityStartDateController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AuthorityStartDateFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AuthorityStartDateView
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   private def form: Form[LocalDate] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
 
-      val preparedForm = request.userAnswers.get(AuthorityStartDatePage) match {
-        case None => form
-        case Some(date) => form.fill(date)
-      }
+    val preparedForm = request.userAnswers.get(AuthorityStartDatePage) match {
+      case None       => form
+      case Some(date) => form.fill(date)
+    }
 
-      Ok(view(
+    Ok(
+      view(
         preparedForm,
         mode,
-        navigator.backLinkRoute(mode, controllers.add.routes.AuthorityStartController.onPageLoad(mode)))
+        navigator.backLinkRoute(mode, controllers.add.routes.AuthorityStartController.onPageLoad(mode))
       )
+    )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(
-            BadRequest(
-              view(
-                formWithErrors,
-                mode,
-                navigator.backLinkRoute(mode, controllers.add.routes.AuthorityStartController.onPageLoad(mode)))
-            )
-          ),
-        date =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityStartDatePage, date))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorityStartDatePage, mode, updatedAnswers))
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.AuthorityStartController.onPageLoad(mode))
+                )
+              )
+            ),
+          date =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityStartDatePage, date))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AuthorityStartDatePage, mode, updatedAnswers))
+        )
   }
 }

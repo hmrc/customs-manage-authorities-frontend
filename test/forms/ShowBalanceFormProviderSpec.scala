@@ -26,13 +26,13 @@ class ShowBalanceFormProviderSpec extends OptionFieldBehaviours {
 
   ".value" must {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "showBalance.error.required"
 
     behave like optionsField[ShowBalance](
       form,
       fieldName,
-      validValues  = ShowBalance.values,
+      validValues = ShowBalance.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

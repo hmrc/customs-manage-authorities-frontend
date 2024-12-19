@@ -25,7 +25,7 @@ import utils.DateUtils
 
 import java.time.LocalDate
 
-class AuthorityEndDateFormProvider @Inject()(dateTimeService: DateTimeService) extends Mappings with DateUtils {
+class AuthorityEndDateFormProvider @Inject() (dateTimeService: DateTimeService) extends Mappings with DateUtils {
 
   def apply(startDate: LocalDate)(implicit messages: Messages): Form[LocalDate] = {
     val minimumDate = latestOf(startDate, dateTimeService.localTime().toLocalDate)
@@ -39,7 +39,9 @@ class AuthorityEndDateFormProvider @Inject()(dateTimeService: DateTimeService) e
         minDate(
           minimumDate,
           minimumMsg = "authorityEndDate.error.minimum",
-          yearMsg = "authorityStartDate.error.year.length", dateAsDayMonthAndYear(minimumDate))
+          yearMsg = "authorityStartDate.error.year.length",
+          dateAsDayMonthAndYear(minimumDate)
+        )
       )
     )
   }

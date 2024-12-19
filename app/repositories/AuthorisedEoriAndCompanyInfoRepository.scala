@@ -31,22 +31,24 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthorisedEoriAndCompanyInfoRepository @Inject()(val mongoComponent: PlayMongoComponent,
-                                                       val config: Configuration)(implicit val ec: ExecutionContext)
-  extends PlayMongoRepository[AuthorisedEoriAndCompanyInfoCacheEntry](
-    collectionName = "auth-eori-company-info-cache",
-    mongoComponent = mongoComponent,
-    domainFormat = AuthorisedEoriAndCompanyInfoCacheEntry.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("lastUpdated"),
-        IndexOptions()
-          .name("auth-eori-company-last-updated-index")
-          .unique(true)
-          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class AuthorisedEoriAndCompanyInfoRepository @Inject() (
+  val mongoComponent: PlayMongoComponent,
+  val config: Configuration
+)(implicit val ec: ExecutionContext)
+    extends PlayMongoRepository[AuthorisedEoriAndCompanyInfoCacheEntry](
+      collectionName = "auth-eori-company-info-cache",
+      mongoComponent = mongoComponent,
+      domainFormat = AuthorisedEoriAndCompanyInfoCacheEntry.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("auth-eori-company-last-updated-index")
+            .unique(true)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
   def get(id: String): Future[Option[Map[String, String]]] =
     collection
       .find(equal("_id", id))
@@ -59,7 +61,8 @@ class AuthorisedEoriAndCompanyInfoRepository @Inject()(val mongoComponent: PlayM
       .replaceOne(
         equal("_id", id),
         AuthorisedEoriAndCompanyInfoCacheEntry(id, data, LocalDateTime.now()),
-        ReplaceOptions().upsert(true))
+        ReplaceOptions().upsert(true)
+      )
       .toFuture()
       .map(_.wasAcknowledged())
 
@@ -70,12 +73,10 @@ class AuthorisedEoriAndCompanyInfoRepository @Inject()(val mongoComponent: PlayM
       .map(_.wasAcknowledged())
 }
 
-case class AuthorisedEoriAndCompanyInfoCacheEntry(_id: String,
-                                                  data: Map[String, String],
-                                                  lastUpdated: LocalDateTime)
+case class AuthorisedEoriAndCompanyInfoCacheEntry(_id: String, data: Map[String, String], lastUpdated: LocalDateTime)
 
 object AuthorisedEoriAndCompanyInfoCacheEntry {
-  implicit val lastUpdatedReads: Reads[LocalDateTime] = MongoJavatimeFormats.localDateTimeReads
+  implicit val lastUpdatedReads: Reads[LocalDateTime]   = MongoJavatimeFormats.localDateTimeReads
   implicit val lastUpdatedWrites: Writes[LocalDateTime] = MongoJavatimeFormats.localDateTimeWrites
 
   implicit val format: OFormat[AuthorisedEoriAndCompanyInfoCacheEntry] =

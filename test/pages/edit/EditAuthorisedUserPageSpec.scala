@@ -19,7 +19,6 @@ package pages.edit
 import models.domain.AuthorisedUser
 import pages.behaviours.PageBehaviours
 
-
 class EditAuthorisedUserPageSpec extends PageBehaviours {
 
   "EditAuthorisedUserPage" must {

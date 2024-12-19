@@ -23,9 +23,7 @@ import org.scalatest.OptionValues
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class AuthorityStartSpec extends SpecBase
-  with ScalaCheckPropertyChecks
-  with OptionValues {
+class AuthorityStartSpec extends SpecBase with ScalaCheckPropertyChecks with OptionValues {
 
   "AuthorityStart" must {
 
@@ -33,9 +31,8 @@ class AuthorityStartSpec extends SpecBase
 
       val gen = Gen.oneOf(AuthorityStart.values)
 
-      forAll(gen) {
-        authorityStart =>
-          JsString(authorityStart.toString).validate[AuthorityStart].asOpt.value mustEqual authorityStart
+      forAll(gen) { authorityStart =>
+        JsString(authorityStart.toString).validate[AuthorityStart].asOpt.value mustEqual authorityStart
       }
     }
 
@@ -43,9 +40,8 @@ class AuthorityStartSpec extends SpecBase
 
       val gen = arbitrary[String] suchThat (!AuthorityStart.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-          JsString(invalidValue).validate[AuthorityStart] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[AuthorityStart] mustEqual JsError("error.invalid")
       }
     }
 
@@ -53,9 +49,8 @@ class AuthorityStartSpec extends SpecBase
 
       val gen = Gen.oneOf(AuthorityStart.values)
 
-      forAll(gen) {
-        authorityStart =>
-          Json.toJson(authorityStart)(AuthorityStart.writes) mustEqual JsString(authorityStart.toString)
+      forAll(gen) { authorityStart =>
+        Json.toJson(authorityStart)(AuthorityStart.writes) mustEqual JsString(authorityStart.toString)
       }
     }
   }

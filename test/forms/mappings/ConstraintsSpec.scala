@@ -25,10 +25,7 @@ import utils.StringUtils.emptyString
 
 import java.time.LocalDate
 
-class ConstraintsSpec extends SpecBase
-  with ScalaCheckPropertyChecks
-  with Generators
-  with Constraints {
+class ConstraintsSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with Constraints {
 
   "firstError" must {
 
@@ -160,35 +157,32 @@ class ConstraintsSpec extends SpecBase
     "return Valid for a date before or equal to the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(
-          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
-          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
-        )
+        max  <- datesBetween(
+                  LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+                  LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+                )
         date <- datesBetween(LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth), max)
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-
-          val result = maxDate(max, "error.future")(date)
-          result mustEqual Valid
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future")(date)
+        result mustEqual Valid
       }
     }
 
     "return Invalid for a date after the maximum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        max <- datesBetween(
-          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
-          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
+        max  <- datesBetween(
+                  LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+                  LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+                )
         date <- datesBetween(max.plusDays(oneDay), LocalDate.of(year3000, firstMonthOfTheYear, secondDayOfTheMonth))
       } yield (max, date)
 
-      forAll(gen) {
-        case (max, date) =>
-
-          val result = maxDate(max, "error.future", "foo")(date)
-          result mustEqual Invalid("error.future", "foo")
+      forAll(gen) { case (max, date) =>
+        val result = maxDate(max, "error.future", "foo")(date)
+        result mustEqual Invalid("error.future", "foo")
       }
     }
   }
@@ -198,52 +192,47 @@ class ConstraintsSpec extends SpecBase
     "return Valid for a date after or equal to the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min <- datesBetween(
-          LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
-          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
+        min  <- datesBetween(
+                  LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth),
+                  LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+                )
         date <- datesBetween(min, LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth))
       } yield (min, date)
 
-      forAll(gen) {
-        case (min, date) =>
-
-          val result = minDate(min, minimumMsg = "error.past", yearMsg = "foo")(date)
-          result mustEqual Valid
+      forAll(gen) { case (min, date) =>
+        val result = minDate(min, minimumMsg = "error.past", yearMsg = "foo")(date)
+        result mustEqual Valid
       }
     }
 
     "return Invalid for a date before the minimum" in new Setup {
 
       val gen: Gen[(LocalDate, LocalDate)] = for {
-        min <- datesBetween(
-          LocalDate.of(year2000, firstMonthOfTheYear, secondDayOfTheMonth),
-          LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
-        )
+        min  <- datesBetween(
+                  LocalDate.of(year2000, firstMonthOfTheYear, secondDayOfTheMonth),
+                  LocalDate.of(year3000, firstMonthOfTheYear, firstDayOfTheMonth)
+                )
         date <- datesBetween(LocalDate.of(year2000, firstMonthOfTheYear, firstDayOfTheMonth), min.minusDays(oneDay))
       } yield (min, date)
 
-      forAll(gen) {
-        case (min, date) =>
-          val result = minDate(
-            min,
-            minimumMsg = "authorityStartDate.error.minimum",
-            yearMsg = "authorityStartDate.error.year.length",
-            "foo")(date)
+      forAll(gen) { case (min, date) =>
+        val result = minDate(
+          min,
+          minimumMsg = "authorityStartDate.error.minimum",
+          yearMsg = "authorityStartDate.error.year.length",
+          "foo"
+        )(date)
 
-          result mustEqual Invalid("authorityStartDate.error.minimum", "foo")
+        result mustEqual Invalid("authorityStartDate.error.minimum", "foo")
       }
     }
 
     "return Invalid for a date below the minimum length" in new Setup {
 
       val date = LocalDate.of(year200, firstMonthOfTheYear, secondDayOfTheMonth)
-      val min = LocalDate.of(year200, firstMonthOfTheYear, firstDayOfTheMonth)
+      val min  = LocalDate.of(year200, firstMonthOfTheYear, firstDayOfTheMonth)
 
-      val result = minDate(
-        min,
-        "authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length",
-        "foo")(date)
+      val result = minDate(min, "authorityStartDate.error.minimum", "authorityStartDate.error.year.length", "foo")(date)
 
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
@@ -251,13 +240,9 @@ class ConstraintsSpec extends SpecBase
     "return Invalid for a date above the max length" in new Setup {
 
       val date = LocalDate.of(invalidYear20000, firstMonthOfTheYear, secondDayOfTheMonth)
-      val max = LocalDate.of(invalidYear20000, firstMonthOfTheYear, firstDayOfTheMonth)
+      val max  = LocalDate.of(invalidYear20000, firstMonthOfTheYear, firstDayOfTheMonth)
 
-      val result = minDate(
-        max,
-        "authorityStartDate.error.minimum",
-        "authorityStartDate.error.year.length",
-        "foo")(date)
+      val result = minDate(max, "authorityStartDate.error.minimum", "authorityStartDate.error.year.length", "foo")(date)
 
       result mustEqual Invalid("authorityStartDate.error.year.length", "foo")
     }
@@ -285,20 +270,20 @@ class ConstraintsSpec extends SpecBase
   }
 
   trait Setup {
-    val year2000 = 2000
-    val year200 = 200
-    val year3000 = 3000
+    val year2000            = 2000
+    val year200             = 200
+    val year3000            = 3000
     val firstMonthOfTheYear = 1
-    val firstDayOfTheMonth = 1
+    val firstDayOfTheMonth  = 1
     val secondDayOfTheMonth = 2
 
     val invalidYear20000 = 20000
-    val oneDay = 1
+    val oneDay           = 1
 
-    val maxVal = 10
-    val minVal = 1
+    val maxVal       = 10
+    val minVal       = 1
     val errLengthKey = "error.length"
-    val errRegexKey = "error.regexp"
-    val tdVal12 = 12;
+    val errRegexKey  = "error.regexp"
+    val tdVal12      = 12;
   }
 }

@@ -19,44 +19,35 @@ package services
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import utils.Constants.{
-  FIXED_DATE_TIME_DAY_OF_MONTH, FIXED_DATE_TIME_HOUR_OF_DAY, FIXED_DATE_TIME_MIN_OF_HOUR,
-  FIXED_DATE_TIME_MONTH_OF_YEAR, FIXED_DATE_TIME_YEAR
+  FIXED_DATE_TIME_DAY_OF_MONTH, FIXED_DATE_TIME_HOUR_OF_DAY, FIXED_DATE_TIME_MIN_OF_HOUR, FIXED_DATE_TIME_MONTH_OF_YEAR,
+  FIXED_DATE_TIME_YEAR
 }
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.time.{Instant, LocalDate, LocalDateTime, LocalTime, OffsetDateTime, ZoneId, ZoneOffset}
 
-class DateTimeService @Inject()(appConfig: FrontendAppConfig) {
+class DateTimeService @Inject() (appConfig: FrontendAppConfig) {
 
   private val defaultZoneId = "Europe/London"
 
   def getTimeStamp: OffsetDateTime = OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC)
 
-  def systemTime(zoneId: ZoneId = ZoneId.systemDefault()): LocalDateTime = {
+  def systemTime(zoneId: ZoneId = ZoneId.systemDefault()): LocalDateTime =
     if (appConfig.fixedDateTime) {
       LocalDateTime.of(
-        LocalDate.of(
-          FIXED_DATE_TIME_YEAR,
-          FIXED_DATE_TIME_MONTH_OF_YEAR,
-          FIXED_DATE_TIME_DAY_OF_MONTH),
-
-        LocalTime.of(
-          FIXED_DATE_TIME_HOUR_OF_DAY,
-          FIXED_DATE_TIME_MIN_OF_HOUR)
+        LocalDate.of(FIXED_DATE_TIME_YEAR, FIXED_DATE_TIME_MONTH_OF_YEAR, FIXED_DATE_TIME_DAY_OF_MONTH),
+        LocalTime.of(FIXED_DATE_TIME_HOUR_OF_DAY, FIXED_DATE_TIME_MIN_OF_HOUR)
       )
     } else {
       LocalDateTime.now(zoneId)
     }
-  }
 
-  def localTime(): LocalDateTime = {
+  def localTime(): LocalDateTime =
     systemTime(ZoneId.of(defaultZoneId))
-  }
 
-  def localDate(): LocalDate = {
+  def localDate(): LocalDate =
     systemTime(ZoneId.of(defaultZoneId)).toLocalDate
-  }
 
   def isoLocalDateTime: String = DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS))
 }

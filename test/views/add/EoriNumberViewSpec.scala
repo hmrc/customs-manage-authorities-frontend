@@ -44,8 +44,8 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       normalModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
-      val detailsHintElement: Element =  normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements =  normalModeView().getElementsByClass("govuk-!-margin-top-6")
+      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
+      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
@@ -65,7 +65,7 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
         "eoriNumber.details.text"
 
       val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
+      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
@@ -82,9 +82,11 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       override val xiEoriEnabled = false
 
       override def normalModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form,NormalMode,normalModeBackLinkRoute, xiEoriEnabled).body)
-      override def checkModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form,CheckMode,checkModeBackLinkRoute, xiEoriEnabled).body)
+        app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled).body
+      )
+      override def checkModeView(): Document  = Jsoup.parse(
+        app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled).body
+      )
 
       normalModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
       normalModeView().getElementById("value-hint-title").html() mustBe
@@ -92,8 +94,8 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       normalModeView().getElementsByClass("govuk-body").html() mustBe
         "eoriNumber.details.text"
 
-      val detailsHintElement: Element =  normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements =  normalModeView().getElementsByClass("govuk-!-margin-top-6")
+      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
+      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
@@ -109,9 +111,11 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       override val xiEoriEnabled = false
 
       override def normalModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form,NormalMode,normalModeBackLinkRoute, xiEoriEnabled).body)
-      override def checkModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form,CheckMode,checkModeBackLinkRoute, xiEoriEnabled).body)
+        app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled).body
+      )
+      override def checkModeView(): Document  = Jsoup.parse(
+        app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled).body
+      )
 
       checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
       checkModeView().getElementById("value-hint-title").html() mustBe
@@ -120,7 +124,7 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
         "eoriNumber.details.text"
 
       val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
+      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
 
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
@@ -143,27 +147,29 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
     }
   }
 
-  trait Setup  {
+  trait Setup {
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest("GET", "/some/resource/path")
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    val app: Application                                          = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
+    implicit val messages: Messages                               = Helpers.stubMessages()
 
     private val formProvider = new EoriNumberFormProvider()
-    val form = formProvider()
+    val form                 = formProvider()
 
     lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
-    lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
+    lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     val xiEoriEnabled = true
 
     def normalModeView(): Document = Jsoup.parse(
-      app.injector.instanceOf[EoriNumberView].apply(form,NormalMode,normalModeBackLinkRoute, xiEoriEnabled).body)
-    def checkModeView(): Document = Jsoup.parse(
-      app.injector.instanceOf[EoriNumberView].apply(form,CheckMode,checkModeBackLinkRoute, xiEoriEnabled).body)
+      app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled).body
+    )
+    def checkModeView(): Document  = Jsoup.parse(
+      app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled).body
+    )
   }
 }

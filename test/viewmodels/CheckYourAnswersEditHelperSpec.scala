@@ -19,14 +19,13 @@ package viewmodels
 import base.SpecBase
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
 import models.domain.{
-  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance,
-  CashAccount, CdsCashAccount, CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
+  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CDSCashBalance, CashAccount, CdsCashAccount,
+  CdsDutyDefermentAccount, DutyDefermentAccount, DutyDefermentBalance, StandingAuthority
 }
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{
-  AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage,
-  ShowBalancePage
+  AccountsPage, AuthorityDetailsPage, AuthorityStartPage, EoriDetailsCorrectPage, EoriNumberPage, ShowBalancePage
 }
 import play.api.i18n.Messages
 import services.DateTimeService
@@ -47,11 +46,15 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
         val mockDateTimeService: DateTimeService = mock[DateTimeService]
         when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
-        val startDate = LocalDate.now()
+        val startDate         = LocalDate.now()
         val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
         val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-          CdsDutyDefermentAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+          CdsDutyDefermentAccount,
+          "67890",
+          Some(AccountStatusOpen),
+          Map("b" -> standingAuthority)
+        )
 
         val standAuthority = StandingAuthority(
           "XI123456789012",
@@ -65,31 +68,45 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           "XI210987654321",
           AccountStatusOpen,
           DutyDefermentBalance(None, None, None, None),
-          isNiAccount = true)
+          isNiAccount = true
+        )
 
         val cdsAccounts = List(dutyDeferment)
 
         val userAnswersWithNIEoriAndDefermentAccount: UserAnswers = UserAnswers("id")
-          .set(AccountsPage, cdsAccounts).success.value
-          .set(EoriNumberPage, CompanyDetails("XI123456789012", Some("companyName"))).success.value
-          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+          .set(AccountsPage, cdsAccounts)
+          .success
+          .value
+          .set(EoriNumberPage, CompanyDetails("XI123456789012", Some("companyName")))
+          .success
+          .value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+          .success
+          .value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+          .success
+          .value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+          .success
+          .value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+          .success
+          .value
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
-        val helper = new CheckYourAnswersEditHelper(userAnswers,
+        val helper      = new CheckYourAnswersEditHelper(
+          userAnswers,
           "67890",
           "67890",
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(emptyString))
+          Some(emptyString)
+        )
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
-          Value(HtmlContent(
-            "manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni"))
+          Value(HtmlContent("manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni"))
       }
 
       "EORI is of Northern Ireland and account is not of type Duty deferment" in {
@@ -99,11 +116,11 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
         val mockDateTimeService: DateTimeService = mock[DateTimeService]
         when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
-        val startDate = LocalDate.now()
+        val startDate         = LocalDate.now()
         val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-        val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-          CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+        val accountsWithAuthoritiesWithId =
+          AccountWithAuthoritiesWithId(CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
         val standAuthority = StandingAuthority(
           "XI123456789012",
@@ -112,31 +129,41 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           viewBalance = true
         )
 
-        val cashAccount = CashAccount(
-          "67890",
-          "XI123456789012",
-          AccountStatusOpen,
-          CDSCashBalance(Some(100.00)),
-          isNiAccount = true)
+        val cashAccount =
+          CashAccount("67890", "XI123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)), isNiAccount = true)
 
         val cdsAccounts = List(cashAccount)
 
         val userAnswersWithNIEoriAndCashtAccount: UserAnswers = UserAnswers("id")
-          .set(AccountsPage, cdsAccounts).success.value
-          .set(EoriNumberPage, CompanyDetails("XI123456789012", Some("companyName"))).success.value
-          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+          .set(AccountsPage, cdsAccounts)
+          .success
+          .value
+          .set(EoriNumberPage, CompanyDetails("XI123456789012", Some("companyName")))
+          .success
+          .value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+          .success
+          .value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+          .success
+          .value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+          .success
+          .value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+          .success
+          .value
 
         val userAnswers = userAnswersWithNIEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
-        val helper = new CheckYourAnswersEditHelper(userAnswers,
+        val helper      = new CheckYourAnswersEditHelper(
+          userAnswers,
           "67890",
           "67890",
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(emptyString))
+          Some(emptyString)
+        )
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe
@@ -150,11 +177,11 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
         val mockDateTimeService: DateTimeService = mock[DateTimeService]
         when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
-        val startDate = LocalDate.now()
+        val startDate         = LocalDate.now()
         val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
-        val accountsWithAuthoritiesWithId = AccountWithAuthoritiesWithId(
-          CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+        val accountsWithAuthoritiesWithId =
+          AccountWithAuthoritiesWithId(CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
         val standAuthority = StandingAuthority(
           "GB123456789012",
@@ -163,30 +190,40 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           viewBalance = true
         )
 
-        val cashAccount = CashAccount(
-          "67890",
-          "GB123456789012",
-          AccountStatusOpen,
-          CDSCashBalance(Some(100.00)))
+        val cashAccount = CashAccount("67890", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
         val cdsAccounts = List(cashAccount)
 
         val userAnswersWithGBEoriAndCashtAccount: UserAnswers = UserAnswers("id")
-          .set(AccountsPage, cdsAccounts).success.value
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
-          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes).success.value
-          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString)).success.value
+          .set(AccountsPage, cdsAccounts)
+          .success
+          .value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+          .success
+          .value
+          .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+          .success
+          .value
+          .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+          .success
+          .value
+          .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+          .success
+          .value
+          .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+          .success
+          .value
 
         val userAnswers = userAnswersWithGBEoriAndCashtAccount.set(AccountsPage, List(cashAccount)).success.value
-        val helper = new CheckYourAnswersEditHelper(userAnswers,
+        val helper      = new CheckYourAnswersEditHelper(
+          userAnswers,
           "67890",
           "67890",
           mockDateTimeService,
           standAuthority,
           accountsWithAuthoritiesWithId,
-          Some(emptyString))
+          Some(emptyString)
+        )
 
         helper.yourAccountRow.size mustBe 1
         helper.yourAccountRow.head.value mustBe

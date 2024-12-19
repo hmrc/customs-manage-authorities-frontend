@@ -86,7 +86,8 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     )
 
     def view(): Document = {
-      val htmlContent = app.injector.instanceOf[ManageAuthoritiesApiFailureView]
+      val htmlContent = app.injector
+        .instanceOf[ManageAuthoritiesApiFailureView]
         .apply(viewModel)(csrfRequest, messages(app), appConfig)
         .body
       Jsoup.parse(htmlContent)

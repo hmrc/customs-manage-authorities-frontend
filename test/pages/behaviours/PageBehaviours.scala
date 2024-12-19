@@ -26,11 +26,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.QuestionPage
 import play.api.libs.json._
 
-trait PageBehaviours extends SpecBase
-  with ScalaCheckPropertyChecks
-  with Generators
-  with OptionValues
-  with TryValues {
+trait PageBehaviours extends SpecBase with ScalaCheckPropertyChecks with Generators with OptionValues with TryValues {
 
   class BeRetrievable[A] {
     def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
@@ -42,14 +38,12 @@ trait PageBehaviours extends SpecBase
           "the question has not been answered" in {
 
             val gen = for {
-              page <- genP
+              page        <- genP
               userAnswers <- arbitrary[UserAnswers]
             } yield (page, userAnswers.remove(page).success.value)
 
-            forAll(gen) {
-              case (page, userAnswers) =>
-
-                userAnswers.get(page) mustBe empty
+            forAll(gen) { case (page, userAnswers) =>
+              userAnswers.get(page) mustBe empty
             }
           }
         }
@@ -62,15 +56,13 @@ trait PageBehaviours extends SpecBase
           "the question has been answered" in {
 
             val gen = for {
-              page <- genP
-              savedValue <- arbitrary[A]
+              page        <- genP
+              savedValue  <- arbitrary[A]
               userAnswers <- arbitrary[UserAnswers]
             } yield (page, savedValue, userAnswers.set(page, savedValue).success.value)
 
-            forAll(gen) {
-              case (page, savedValue, userAnswers) =>
-
-                userAnswers.get(page).value mustBe savedValue
+            forAll(gen) { case (page, savedValue, userAnswers) =>
+              userAnswers.get(page).value mustBe savedValue
             }
           }
         }
@@ -79,45 +71,37 @@ trait PageBehaviours extends SpecBase
   }
 
   class BeSettable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
-
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "be able to be set on UserAnswers" in {
 
         val gen = for {
-          page <- genP
-          newValue <- arbitrary[A]
+          page        <- genP
+          newValue    <- arbitrary[A]
           userAnswers <- arbitrary[UserAnswers]
         } yield (page, newValue, userAnswers)
 
-        forAll(gen) {
-          case (page, newValue, userAnswers) =>
-
-            val updatedAnswers = userAnswers.set(page, newValue).success.value
-            updatedAnswers.get(page).value mustBe newValue
+        forAll(gen) { case (page, newValue, userAnswers) =>
+          val updatedAnswers = userAnswers.set(page, newValue).success.value
+          updatedAnswers.get(page).value mustBe newValue
         }
       }
-    }
   }
 
   class BeRemovable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
-
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "be able to be removed from UserAnswers" in {
 
         val gen = for {
-          page <- genP
-          savedValue <- arbitrary[A]
+          page        <- genP
+          savedValue  <- arbitrary[A]
           userAnswers <- arbitrary[UserAnswers]
         } yield (page, userAnswers.set(page, savedValue).success.value)
 
-        forAll(gen) {
-          case (page, userAnswers) =>
-
-            val updatedAnswers = userAnswers.remove(page).success.value
-            updatedAnswers.get(page) must be(empty)
+        forAll(gen) { case (page, userAnswers) =>
+          val updatedAnswers = userAnswers.remove(page).success.value
+          updatedAnswers.get(page) must be(empty)
         }
       }
-    }
   }
 
   def beRetrievable[A]: BeRetrievable[A] = new BeRetrievable[A]

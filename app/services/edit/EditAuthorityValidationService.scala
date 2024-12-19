@@ -18,43 +18,46 @@ package services.edit
 
 import com.google.inject.Inject
 import models.{ErrorResponse, UnknownAccountType, UserAnswers}
-import models.domain.{AccountWithAuthoritiesWithId, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount, UnknownAccount}
+import models.domain.{
+  AccountWithAuthoritiesWithId, CdsCashAccount, CdsDutyDefermentAccount, CdsGeneralGuaranteeAccount, UnknownAccount
+}
 import models.requests.{Accounts, AddAuthorityRequest}
 import pages.edit.EditAuthorisedUserPage
 
-class EditAuthorityValidationService @Inject()(editCyaValidationService: EditCheckYourAnswersValidationService) {
+class EditAuthorityValidationService @Inject() (editCyaValidationService: EditCheckYourAnswersValidationService) {
 
-  def validate(userAnswers: UserAnswers,
-               accountId: String,
-               authorityId: String,
-               authorisedEori: String,
-               account: AccountWithAuthoritiesWithId): Either[ErrorResponse, AddAuthorityRequest] = {
+  def validate(
+    userAnswers: UserAnswers,
+    accountId: String,
+    authorityId: String,
+    authorisedEori: String,
+    account: AccountWithAuthoritiesWithId
+  ): Either[ErrorResponse, AddAuthorityRequest] = {
 
     val maybeAccounts = for {
       standingAuthority <- editCyaValidationService.validate(userAnswers, accountId, authorityId, authorisedEori)
-      authorisedUser <- userAnswers.get(EditAuthorisedUserPage(accountId, authorityId))
+      authorisedUser    <- userAnswers.get(EditAuthorisedUserPage(accountId, authorityId))
 
       accounts = checkAndRetrieveAccounts(account)
-    } yield {
-      accounts match {
-        case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true))
-        case Left(error) => Left(error)
-      }
+    } yield accounts match {
+      case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true))
+      case Left(error)  => Left(error)
     }
 
     maybeAccounts match {
       case Some(authorities) => authorities
-      case None => Left(UnknownAccountType)
+      case None              => Left(UnknownAccountType)
     }
   }
 
-  private def checkAndRetrieveAccounts(account: AccountWithAuthoritiesWithId): Either[UnknownAccountType.type, Accounts] = {
+  private def checkAndRetrieveAccounts(
+    account: AccountWithAuthoritiesWithId
+  ): Either[UnknownAccountType.type, Accounts] =
     account.accountType match {
-      case CdsCashAccount => Right(Accounts(Some(account.accountNumber), Seq.empty, None))
-      case CdsDutyDefermentAccount => Right(Accounts(None, Seq(account.accountNumber), None))
+      case CdsCashAccount             => Right(Accounts(Some(account.accountNumber), Seq.empty, None))
+      case CdsDutyDefermentAccount    => Right(Accounts(None, Seq(account.accountNumber), None))
       case CdsGeneralGuaranteeAccount => Right(Accounts(None, Seq.empty, Some(account.accountNumber)))
-      case UnknownAccount => Left(UnknownAccountType)
+      case UnknownAccount             => Left(UnknownAccountType)
     }
-  }
 
 }

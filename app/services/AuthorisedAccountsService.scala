@@ -25,15 +25,17 @@ import utils.StringUtils.gbEORIPrefix
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorisedAccountsService @Inject()(
-                                           authoritiesCache: AuthoritiesCacheService,
-                                           accountsService: AccountsCacheService)(implicit executionContext: ExecutionContext) {
+class AuthorisedAccountsService @Inject() (
+  authoritiesCache: AuthoritiesCacheService,
+  accountsService: AccountsCacheService
+)(implicit executionContext: ExecutionContext) {
 
-  def getAuthorisedAccounts(enteredEori: EORI)(implicit request: DataRequest[_],
-                                               hc: HeaderCarrier): Future[AuthorisedAccounts] =
+  def getAuthorisedAccounts(
+    enteredEori: EORI
+  )(implicit request: DataRequest[_], hc: HeaderCarrier): Future[AuthorisedAccounts] =
     for {
       authorities <- authoritiesCache.retrieveAuthorities(request.internalId)
-      accounts <- accountsService.retrieveAccounts(request.internalId, Seq(request.eoriNumber))
+      accounts    <- accountsService.retrieveAccounts(request.internalId, Seq(request.eoriNumber))
     } yield {
       val availableAccountNumbers = authorities.authorisedWithEori(enteredEori).map(_.accountNumber)
       AuthorisedAccounts(

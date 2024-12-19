@@ -32,60 +32,64 @@ import views.html.add.AuthorityEndDateView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorityEndDateController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            sessionRepository: SessionRepository,
-                                            navigator: Navigator,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            formProvider: AuthorityEndDateFormProvider,
-                                            dateTimeService: DateTimeService,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: AuthorityEndDateView
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class AuthorityEndDateController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AuthorityEndDateFormProvider,
+  dateTimeService: DateTimeService,
+  val controllerComponents: MessagesControllerComponents,
+  view: AuthorityEndDateView
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
 
-      val startDate = request.userAnswers.get(AuthorityStartDatePage).getOrElse(dateTimeService.localTime().toLocalDate)
-      val form = formProvider(startDate)
+    val startDate = request.userAnswers.get(AuthorityStartDatePage).getOrElse(dateTimeService.localTime().toLocalDate)
+    val form      = formProvider(startDate)
 
-      val preparedForm = request.userAnswers.get(AuthorityEndDatePage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AuthorityEndDatePage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(
-        view(
-          preparedForm,
-          mode,
-          navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode)))
+    Ok(
+      view(
+        preparedForm,
+        mode,
+        navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode))
       )
+    )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val startDate = request.userAnswers.get(AuthorityStartDatePage).getOrElse(dateTimeService.localTime().toLocalDate)
-      val form = formProvider(startDate)
+      val form      = formProvider(startDate)
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(
-            BadRequest(view(
-              formWithErrors,
-              mode,
-              navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode)))
-            )
-          ),
-        date =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityEndDatePage, date))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorityEndDatePage, mode, updatedAnswers))
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.AuthorityEndController.onPageLoad(mode))
+                )
+              )
+            ),
+          date =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityEndDatePage, date))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AuthorityEndDatePage, mode, updatedAnswers))
+        )
   }
 }

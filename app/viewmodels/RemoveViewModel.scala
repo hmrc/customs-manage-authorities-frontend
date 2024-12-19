@@ -20,12 +20,11 @@ import models.domain.{AccountWithAuthoritiesWithId, StandingAuthority}
 import play.api.i18n.Messages
 
 case class RemoveViewModel(
-                            accountId: String,
-                            authorityId: String,
-                            accountWithAuthorities: AccountWithAuthoritiesWithId,
-                            standingAuthority: StandingAuthority
-                          ) {
-  def headingCaptionKey(implicit messages: Messages): String = {
+  accountId: String,
+  authorityId: String,
+  accountWithAuthorities: AccountWithAuthoritiesWithId,
+  standingAuthority: StandingAuthority
+) {
+  def headingCaptionKey(implicit messages: Messages): String =
     messages("remove.heading.caption." + accountWithAuthorities.accountType, accountWithAuthorities.accountNumber)
-  }
 }

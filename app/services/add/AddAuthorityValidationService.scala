@@ -20,9 +20,9 @@ import com.google.inject.Inject
 import models.UserAnswers
 import models.requests.AddAuthorityRequest
 
-class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAnswersValidationService) {
+class AddAuthorityValidationService @Inject() (cyaValidationService: CheckYourAnswersValidationService) {
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] = {
+  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] =
     for {
       (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
     } yield AddAuthorityRequest(
@@ -30,6 +30,5 @@ class AddAuthorityValidationService @Inject()(cyaValidationService: CheckYourAns
       standingAuthority,
       authorisedUser
     )
-  }
 
 }

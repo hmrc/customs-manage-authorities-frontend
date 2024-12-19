@@ -19,7 +19,10 @@ package services
 import base.SpecBase
 import connectors.CustomsFinancialsConnector
 import models.InternalId
-import models.domain.{AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthorities, AccountWithAuthoritiesWithId, AuthoritiesWithId, CdsCashAccount,
+  StandingAuthority
+}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatest.matchers.should.Matchers.shouldBe
@@ -74,17 +77,21 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
 
       private val result: Either[AuthoritiesCacheErrorResponse, AccountAndAuthority] =
-        authCacheServices.getAccountAndAuthority(
-          InternalId("cachedId"),
-          authorityId = authorityIdB,
-          accountId = accountIdA)(hc).futureValue
+        authCacheServices
+          .getAccountAndAuthority(InternalId("cachedId"), authorityId = authorityIdB, accountId = accountIdA)(hc)
+          .futureValue
 
-      result shouldBe Right(AccountAndAuthority(
-        AccountWithAuthoritiesWithId(
-          CdsCashAccount, "12345",
-          Some(AccountStatusOpen),
-          Map(authorityIdB -> standingAuthority)),
-        standingAuthority))
+      result shouldBe Right(
+        AccountAndAuthority(
+          AccountWithAuthoritiesWithId(
+            CdsCashAccount,
+            "12345",
+            Some(AccountStatusOpen),
+            Map(authorityIdB -> standingAuthority)
+          ),
+          standingAuthority
+        )
+      )
 
       verify(mockConnector, times(0)).retrieveAccountAuthorities(eoriNumber)
     }
@@ -95,10 +102,9 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
 
       private val result: Either[AuthoritiesCacheErrorResponse, AccountAndAuthority] =
-        authCacheServices.getAccountAndAuthority(
-          InternalId("cachedId"),
-          authorityId = authorityIdB,
-          accountId = accountIdUnknown)(hc).futureValue
+        authCacheServices
+          .getAccountAndAuthority(InternalId("cachedId"), authorityId = authorityIdB, accountId = accountIdUnknown)(hc)
+          .futureValue
 
       result shouldBe Left(NoAccount)
 
@@ -115,25 +121,25 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
 
       val result: Future[Option[AuthoritiesWithId]] = authCacheServices.retrieveAuthoritiesForId(InternalId("cachedId"))
 
-      result.map {
-        authorities => authorities mustBe Some(InternalId("cachedId"))
+      result.map { authorities =>
+        authorities mustBe Some(InternalId("cachedId"))
       }
     }
   }
 
   trait Setup {
-    implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+    implicit lazy val hc: HeaderCarrier                = HeaderCarrier()
     implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-    val eoriNumber = "GB123456789012"
-    val authorityIdB = "b"
-    val accountIdA = "a"
+    val eoriNumber       = "GB123456789012"
+    val authorityIdB     = "b"
+    val accountIdA       = "a"
     val accountIdUnknown = "unknown"
 
-    val dateString1 = "2020-03-01"
-    val dateString2 = "2020-04-01"
+    val dateString1          = "2020-03-01"
+    val dateString2          = "2020-04-01"
     val startDate: LocalDate = LocalDate.parse(dateString1)
-    val endDate: LocalDate = LocalDate.parse(dateString2)
+    val endDate: LocalDate   = LocalDate.parse(dateString2)
 
     val standingAuthority: StandingAuthority = StandingAuthority(
       "EORI",
@@ -146,21 +152,26 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
       AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
 
     val cachedAuthorities: AuthoritiesWithId = AuthoritiesWithId(
-      Map(accountIdA ->
-        AccountWithAuthoritiesWithId(
-          CdsCashAccount,
-          "12345",
-          Some(AccountStatusOpen),
-          Map(authorityIdB -> standingAuthority))
-      ))
+      Map(
+        accountIdA ->
+          AccountWithAuthoritiesWithId(
+            CdsCashAccount,
+            "12345",
+            Some(AccountStatusOpen),
+            Map(authorityIdB -> standingAuthority)
+          )
+      )
+    )
 
     val mockConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
-    val mockAuthRepo: AuthoritiesRepository = mock[AuthoritiesRepository]
+    val mockAuthRepo: AuthoritiesRepository       = mock[AuthoritiesRepository]
 
-    val app: Application = applicationBuilder().overrides(
-      inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
-      inject.bind[AuthoritiesRepository].toInstance(mockAuthRepo)
-    ).build()
+    val app: Application = applicationBuilder()
+      .overrides(
+        inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+        inject.bind[AuthoritiesRepository].toInstance(mockAuthRepo)
+      )
+      .build()
 
     val authCacheServices: AuthoritiesCacheService = app.injector.instanceOf[AuthoritiesCacheService]
   }

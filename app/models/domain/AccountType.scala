@@ -29,24 +29,24 @@ case object UnknownAccount extends AccountType
 object AccountType {
   val logger: Logger = Logger(this.getClass)
 
-  implicit val AccountTypeReads: Reads[AccountType] = (json: JsValue) => {
+  implicit val AccountTypeReads: Reads[AccountType] = (json: JsValue) =>
     json.as[String] match {
-      case "CDSCash" => JsSuccess(CdsCashAccount)
-      case "DutyDeferment" => JsSuccess(CdsDutyDefermentAccount)
+      case "CDSCash"          => JsSuccess(CdsCashAccount)
+      case "DutyDeferment"    => JsSuccess(CdsDutyDefermentAccount)
       case "GeneralGuarantee" => JsSuccess(CdsGeneralGuaranteeAccount)
       case unknownAccountType =>
         logger.warn(s"Unknown account type received: $unknownAccountType")
         JsSuccess(UnknownAccount)
     }
-  }
 
-  implicit val accountTypeWrites: Writes[AccountType] = (obj: AccountType) => JsString(
-    obj match {
-      case CdsCashAccount => "CDSCash"
-      case CdsDutyDefermentAccount => "DutyDeferment"
-      case CdsGeneralGuaranteeAccount => "GeneralGuarantee"
-      case UnknownAccount => "UnknownAccount"
-    }
-  )
+  implicit val accountTypeWrites: Writes[AccountType] = (obj: AccountType) =>
+    JsString(
+      obj match {
+        case CdsCashAccount             => "CDSCash"
+        case CdsDutyDefermentAccount    => "DutyDeferment"
+        case CdsGeneralGuaranteeAccount => "GeneralGuarantee"
+        case UnknownAccount             => "UnknownAccount"
+      }
+    )
 
 }

@@ -23,8 +23,10 @@ case class CsvFiles(gbCsvFiles: Seq[StandingAuthorityFile], xiCsvFiles: Seq[Stan
 object CsvFiles {
   val xiCsvFileNameRegEx = "SA_XI_[\\w]+_csv.csv$"
 
-  def partitionAsXiAndGb(csvFiles: Seq[StandingAuthorityFile],
-                         fileNamePattern: String = xiCsvFileNameRegEx): CsvFiles = {
+  def partitionAsXiAndGb(
+    csvFiles: Seq[StandingAuthorityFile],
+    fileNamePattern: String = xiCsvFileNameRegEx
+  ): CsvFiles = {
     val partitionedList = csvFiles.partition(stanAuth => stanAuth.filename.matches(fileNamePattern))
 
     CsvFiles(partitionedList._2, partitionedList._1)

@@ -23,9 +23,8 @@ import java.time.{Instant, LocalDateTime, ZoneOffset}
 trait MongoDateTimeFormats {
 
   implicit val localDateTimeRead: Reads[LocalDateTime] =
-    (__ \ "$date").read[Long].map {
-      millis =>
-        LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
+    (__ \ "$date").read[Long].map { millis =>
+      LocalDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.UTC)
     }
 
   implicit val localDateTimeWrite: Writes[LocalDateTime] = new Writes[LocalDateTime] {

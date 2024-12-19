@@ -69,15 +69,15 @@ class InputCheckboxesSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
-    val validForm: Form[String] = new EoriNumberFormProvider()
+    val validForm: Form[String]   = new EoriNumberFormProvider()
       .apply()
       .bind(Map("value" -> "GB123456789012"))
     val invalidForm: Form[String] =
       new EoriNumberFormProvider().apply().bind(Map("value" -> "3456789012"))
-    val items = Seq(
+    val items                     = Seq(
       CheckboxItem(
         name = Some("value[0]"),
         id = Some("value"),

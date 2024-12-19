@@ -23,23 +23,21 @@ import java.time.LocalDate
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-                                            invalidKey: String,
-                                            allRequiredKey: String,
-                                            twoRequiredKey: String,
-                                            requiredKey: String,
-                                            args: Seq[String] = Seq.empty
-                                          ) extends Formatter[LocalDate] with Formatters {
+  invalidKey: String,
+  allRequiredKey: String,
+  twoRequiredKey: String,
+  requiredKey: String,
+  args: Seq[String] = Seq.empty
+) extends Formatter[LocalDate]
+    with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
-  private val maxValidDay = 31
-  private val maxValidMonth = 12
-  private val minAllowedYearValue = 1000
-  private val maxAllowedYearValue = 99999
+  private val maxValidDay             = 31
+  private val maxValidMonth           = 12
+  private val minAllowedYearValue     = 1000
+  private val maxAllowedYearValue     = 99999
 
-  private def toDate(key: String,
-                     day: Int,
-                     month: Int,
-                     year: Int): Either[Seq[FormError], LocalDate] =
+  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(_) => Right(LocalDate.of(year, month, day))
       case Failure(_) => Left(Seq(FormError(updateFormErrorKeys(key, day, month, year), invalidKey, args)))
@@ -55,19 +53,17 @@ private[mappings] class LocalDateFormatter(
     )
 
     for {
-      day <- int.bind(s"$key.day", data)
+      day   <- int.bind(s"$key.day", data)
       month <- int.bind(s"$key.month", data)
-      year <- int.bind(s"$key.year", data)
-      date <- toDate(key, day, month, year)
+      year  <- int.bind(s"$key.year", data)
+      date  <- toDate(key, day, month, year)
     } yield date
   }
 
-  override def bind(key: String,
-                    data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
+  override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val fields = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
+    val fields = fieldKeys.map { field =>
+      field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
     lazy val missingFields = fields
@@ -84,30 +80,21 @@ private[mappings] class LocalDateFormatter(
       case 2 =>
         Left(
           List(
-            FormError(
-              formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data),
-              requiredKey,
-              missingFields ++ args)
+            FormError(formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data), requiredKey, missingFields ++ args)
           )
         )
 
       case 1 =>
         Left(
           List(
-            FormError(
-              formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data),
-              twoRequiredKey,
-              missingFields ++ args)
+            FormError(formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data), twoRequiredKey, missingFields ++ args)
           )
         )
 
       case _ =>
         Left(
           List(
-            FormError(
-              formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data),
-              allRequiredKey,
-              args)
+            FormError(formErrorKeysInCaseOfEmptyOrNonNumericValues(key, data), allRequiredKey, args)
           )
         )
     }
@@ -115,33 +102,29 @@ private[mappings] class LocalDateFormatter(
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"$key.day" -> value.getDayOfMonth.toString,
+      s"$key.day"   -> value.getDayOfMonth.toString,
       s"$key.month" -> value.getMonthValue.toString,
-      s"$key.year" -> value.getYear.toString
+      s"$key.year"  -> value.getYear.toString
     )
 
-  private[mappings] def updateFormErrorKeys(key: String,
-                                            day: Int,
-                                            month: Int,
-                                            year: Int): String =
+  private[mappings] def updateFormErrorKeys(key: String, day: Int, month: Int, year: Int): String =
     (day, month, year) match {
-      case (d, _, _) if d < 1 || d > maxValidDay => s"$key.day"
-      case (_, m, _) if m < 1 || m > maxValidMonth => s"$key.month"
+      case (d, _, _) if d < 1 || d > maxValidDay                           => s"$key.day"
+      case (_, m, _) if m < 1 || m > maxValidMonth                         => s"$key.month"
       case (_, _, y) if y < minAllowedYearValue || y > maxAllowedYearValue => s"$key.year"
-      case _ => s"$key.day"
+      case _                                                               => s"$key.day"
     }
 
-  private[mappings] def formErrorKeysInCaseOfEmptyOrNonNumericValues(key: String,
-                                                                     data: Map[String, String]): String = {
-    val dayValue = data.get(s"$key.day")
+  private[mappings] def formErrorKeysInCaseOfEmptyOrNonNumericValues(key: String, data: Map[String, String]): String = {
+    val dayValue   = data.get(s"$key.day")
     val monthValue = data.get(s"$key.month")
-    val yearValue = data.get(s"$key.year")
+    val yearValue  = data.get(s"$key.year")
 
     (dayValue, monthValue, yearValue) match {
       case (Some(d), _, _) if d.trim.isEmpty || hasConversionToIntFailed(d) => s"$key.day"
       case (_, Some(m), _) if m.trim.isEmpty || hasConversionToIntFailed(m) => s"$key.month"
       case (_, _, Some(y)) if y.trim.isEmpty || hasConversionToIntFailed(y) => s"$key.year"
-      case _ => s"$key.day"
+      case _                                                                => s"$key.day"
     }
   }
 

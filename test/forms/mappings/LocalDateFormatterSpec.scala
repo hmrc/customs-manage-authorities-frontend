@@ -55,7 +55,12 @@ class LocalDateFormatterSpec extends SpecBase {
   "updateFormErrorKeys" must {
 
     "append the day in the existing key when day is incorrect or all(day, month and year) are incorrect" in new SetUp {
-      localDateFormatter.updateFormErrorKeys(key, invalidDayOfMonthValue, month12OfTheYear, year2023) shouldBe s"$key.day"
+      localDateFormatter.updateFormErrorKeys(
+        key,
+        invalidDayOfMonthValue,
+        month12OfTheYear,
+        year2023
+      ) shouldBe s"$key.day"
     }
 
     "append the month in the existing key when month is incorrect" in new SetUp {
@@ -72,8 +77,7 @@ class LocalDateFormatterSpec extends SpecBase {
       val formDataWithEmptyDay: Map[String, String] =
         Map(s"$key.day" -> emptyString, s"$key.month" -> "10", s"$key.year" -> "2021")
 
-      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithEmptyDay) shouldBe s"$key.day"
+      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(key, formDataWithEmptyDay) shouldBe s"$key.day"
     }
 
     "return key.month as updated key when month value is empty" in new SetUp {
@@ -81,23 +85,23 @@ class LocalDateFormatterSpec extends SpecBase {
         Map(s"$key.day" -> "10", s"$key.month" -> emptyString, s"$key.year" -> "2021")
 
       localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithEmptyMonth) shouldBe s"$key.month"
+        key,
+        formDataWithEmptyMonth
+      ) shouldBe s"$key.month"
     }
 
     "return key.year as updated key when year value is empty" in new SetUp {
       val formDataWithEmptyYear: Map[String, String] =
         Map(s"$key.day" -> "10", s"$key.month" -> "10", s"$key.year" -> emptyString)
 
-      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithEmptyYear) shouldBe s"$key.year"
+      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(key, formDataWithEmptyYear) shouldBe s"$key.year"
     }
 
     "return key.day as updated key when all date fields are empty" in new SetUp {
       val formDataWithEmptyDate: Map[String, String] =
         Map(s"$key.day" -> emptyString, s"$key.month" -> emptyString, s"$key.year" -> emptyString)
 
-      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithEmptyDate) shouldBe s"$key.day"
+      localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(key, formDataWithEmptyDate) shouldBe s"$key.day"
     }
 
     "return key.day as updated key when day value is not numeric" in new SetUp {
@@ -105,7 +109,9 @@ class LocalDateFormatterSpec extends SpecBase {
         Map(s"$key.day" -> "se", s"$key.month" -> "10", s"$key.year" -> "2021")
 
       localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithNonNumericDay) shouldBe s"$key.day"
+        key,
+        formDataWithNonNumericDay
+      ) shouldBe s"$key.day"
     }
 
     "return key.month as updated key when month value is not numeric" in new SetUp {
@@ -113,7 +119,9 @@ class LocalDateFormatterSpec extends SpecBase {
         Map(s"$key.day" -> "10", s"$key.month" -> "test", s"$key.year" -> "2021")
 
       localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithNonNumericMonth) shouldBe s"$key.month"
+        key,
+        formDataWithNonNumericMonth
+      ) shouldBe s"$key.month"
     }
 
     "return key.year as updated key when year value is not numeric" in new SetUp {
@@ -121,26 +129,28 @@ class LocalDateFormatterSpec extends SpecBase {
         Map(s"$key.day" -> "10", s"$key.month" -> "10", s"$key.year" -> "et")
 
       localDateFormatter.formErrorKeysInCaseOfEmptyOrNonNumericValues(
-        key, formDataWithNonNumericYear) shouldBe s"$key.year"
+        key,
+        formDataWithNonNumericYear
+      ) shouldBe s"$key.year"
     }
   }
 }
 
 trait SetUp {
-  val year2022 = 2022
-  val year2023 = 2023
+  val year2022         = 2022
+  val year2023         = 2023
   val month10OfTheYear = 10
   val month12OfTheYear = 12
-  val day12OfMonth = 12
+  val day12OfMonth     = 12
 
-  val invalidMonthValue = 14
+  val invalidMonthValue      = 14
   val invalidDayOfMonthValue = 32
 
-  val key = "start"
-  val invalidMsgKey = "authorityStartDate.error.invalid"
+  val key               = "start"
+  val invalidMsgKey     = "authorityStartDate.error.invalid"
   val allRequiredMsgKey = "authorityStartDate.error.required.all"
   val twoRequiredMsgKey = "authorityStartDate.error.required.two"
-  val requiredMsgKey = "authorityStartDate.error.required"
+  val requiredMsgKey    = "authorityStartDate.error.required"
 
   val bindDataValid: Map[String, String] = Map("start.day" -> "12", "start.month" -> "10", "start.year" -> "2022")
 

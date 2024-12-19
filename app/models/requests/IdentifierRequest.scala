@@ -27,11 +27,13 @@ trait RequestWithInternalId[A] extends Request[A] {
   def credentials: Credentials
 }
 
-final case class IdentifierRequest[A](request: Request[A],
-                                      internalId: InternalId,
-                                      credentials: Credentials,
-                                      affinityGroup: AffinityGroup,
-                                      name: Option[Name],
-                                      email: Option[String],
-                                      eoriNumber: String)
-  extends WrappedRequest[A](request) with RequestWithInternalId[A]
+final case class IdentifierRequest[A](
+  request: Request[A],
+  internalId: InternalId,
+  credentials: Credentials,
+  affinityGroup: AffinityGroup,
+  name: Option[Name],
+  email: Option[String],
+  eoriNumber: String
+) extends WrappedRequest[A](request)
+    with RequestWithInternalId[A]

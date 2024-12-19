@@ -22,8 +22,9 @@ import play.api.Application
 import play.api.http.Status.OK
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, contentAsString, defaultAwaitTimeout, route, running, status,
-  writeableOf_AnyContentAsEmpty}
+import play.api.test.Helpers.{
+  GET, contentAsString, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty
+}
 import views.html.ErrorTemplate
 
 class TechnicalDifficultiesSpec extends SpecBase {
@@ -46,9 +47,9 @@ class TechnicalDifficultiesSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application                   = applicationBuilder().build()
     implicit val config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val msgs: Messages = messages(app)
-    val view: ErrorTemplate = app.injector.instanceOf[ErrorTemplate]
+    implicit val msgs: Messages            = messages(app)
+    val view: ErrorTemplate                = app.injector.instanceOf[ErrorTemplate]
   }
 }

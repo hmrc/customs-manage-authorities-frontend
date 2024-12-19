@@ -44,18 +44,16 @@ object FileFormat {
     val order = 99
   }
 
-  val log: LoggerLike = Logger(this.getClass)
+  val log: LoggerLike                             = Logger(this.getClass)
   val authorityFileFormats: SortedSet[FileFormat] = SortedSet(Csv)
 
-  def filterFileFormats[T <: SdesFile](
-                                        allowedFileFormats: SortedSet[FileFormat])(
-                                        files: Seq[T]): Seq[T] = files.filter(
-    file => allowedFileFormats(file.metadata.fileFormat))
+  def filterFileFormats[T <: SdesFile](allowedFileFormats: SortedSet[FileFormat])(files: Seq[T]): Seq[T] =
+    files.filter(file => allowedFileFormats(file.metadata.fileFormat))
 
   def apply(name: String): FileFormat = name.toUpperCase match {
     case Pdf.name => Pdf
     case Csv.name => Csv
-    case _ =>
+    case _        =>
       log.warn(s"Unknown file format: $name")
       UnknownFileFormat
   }
@@ -67,21 +65,22 @@ object FileFormat {
   }
 }
 
-sealed abstract class FileRole(val name: String,
-                               val featureName: String,
-                               val transactionName: String,
-                               val messageKey: String)
+sealed abstract class FileRole(
+  val name: String,
+  val featureName: String,
+  val transactionName: String,
+  val messageKey: String
+)
 
 object FileRole {
-  case object StandingAuthority extends FileRole(
-    "StandingAuthority", "authorities",
-    "Display standing authorities csv", "authorities")
+  case object StandingAuthority
+      extends FileRole("StandingAuthority", "authorities", "Display standing authorities csv", "authorities")
 
   val log: LoggerLike = Logger(this.getClass)
 
   def apply(name: String): FileRole = name match {
     case "StandingAuthority" => StandingAuthority
-    case _ => throw new Exception(s"Unknown file role: $name")
+    case _                   => throw new Exception(s"Unknown file role: $name")
   }
 }
 
@@ -97,7 +96,7 @@ trait SdesFileMetadata {
   def periodStartMonth: Int
 
   def toMap[T <: SdesFileMetadata with Product]: Map[String, String] = {
-    val fieldNames: Seq[String] = getClass.getDeclaredFields.toIndexedSeq.map(_.getName)
+    val fieldNames: Seq[String]  = getClass.getDeclaredFields.toIndexedSeq.map(_.getName)
     val fieldValues: Seq[String] = productIterator.map(_.toString).toSeq
     fieldNames.zip(fieldValues).toMap
   }
@@ -110,23 +109,28 @@ trait SdesFile {
 
   def auditModelFor(eori: EORI): AuditModel = {
     val downloadStatementAuditData = DownloadStatementAuditData.apply(metadata, eori)
-    val data = downloadStatementAuditData.auditData
-    val auditModel = AuditModel("DisplayStandingAuthoritiesCSV", metadata.fileRole.transactionName, Json.toJson(data))
+    val data                       = downloadStatementAuditData.auditData
+    val auditModel                 = AuditModel("DisplayStandingAuthoritiesCSV", metadata.fileRole.transactionName, Json.toJson(data))
     auditModel
   }
 }
 
-case class StandingAuthorityMetadata(periodStartYear: Int,
-                                     periodStartMonth: Int,
-                                     periodStartDay: Int,
-                                     fileFormat: FileFormat,
-                                     fileRole: FileRole) extends SdesFileMetadata
+case class StandingAuthorityMetadata(
+  periodStartYear: Int,
+  periodStartMonth: Int,
+  periodStartDay: Int,
+  fileFormat: FileFormat,
+  fileRole: FileRole
+) extends SdesFileMetadata
 
-case class StandingAuthorityFile(filename: String,
-                                 downloadURL: String,
-                                 size: Long,
-                                 metadata: StandingAuthorityMetadata,
-                                 eori: String) extends Ordered[StandingAuthorityFile] with SdesFile {
+case class StandingAuthorityFile(
+  filename: String,
+  downloadURL: String,
+  size: Long,
+  metadata: StandingAuthorityMetadata,
+  eori: String
+) extends Ordered[StandingAuthorityFile]
+    with SdesFile {
 
   val startDate: LocalDate = LocalDate.of(metadata.periodStartYear, metadata.periodStartMonth, metadata.periodStartDay)
 

@@ -20,8 +20,8 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.EoriDetailsCorrectFormProvider
 import models.domain.{
-  AccountStatusOpen, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount,
-  DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance
+  AccountStatusOpen, CDSAccount, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance,
+  GeneralGuaranteeAccount, GeneralGuaranteeBalance
 }
 import models.{AuthorityStart, CheckMode, CompanyDetails, EoriDetailsCorrect, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -53,11 +53,11 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, eoriDetailsCorrectRoute)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[EoriDetailsCorrectView]
+        val request   = fakeRequest(GET, eoriDetailsCorrectRoute)
+        val result    = route(application, request).value
+        val view      = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)(messages(application))
+        val helper    = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)(messages(application))
 
         status(result) mustEqual OK
 
@@ -69,47 +69,63 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
     "populate the view correctly on a GET when the question has previously been answered" in new SetUp {
 
       val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
-        .set(AccountsPage, selectedAccounts).success.value
-        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+        .set(AccountsPage, selectedAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersEoriDetails)).build()
 
       running(application) {
 
-        val request = fakeRequest(GET, eoriDetailsCorrectRoute)
+        val request                      = fakeRequest(GET, eoriDetailsCorrectRoute)
         val view: EoriDetailsCorrectView = application.injector.instanceOf[EoriDetailsCorrectView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages(application))
+        val appConfig                    = application.injector.instanceOf[FrontendAppConfig]
+        val helper                       = EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages(application))
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(
-            form.fill(EoriDetailsCorrect.values.head),
-            NormalMode,
-            backLinkRoute,
-            helper)(request, messages(application), appConfig).toString
+          view(form.fill(EoriDetailsCorrect.values.head), NormalMode, backLinkRoute, helper)(
+            request,
+            messages(application),
+            appConfig
+          ).toString
       }
     }
 
     "populate the view correctly on a GET when DetailsCorrect equal No" in new SetUp {
 
       val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
-        .set(AccountsPage, selectedAccounts).success.value
-        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)(EoriDetailsCorrect.writes).success.value
+        .set(AccountsPage, selectedAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)(EoriDetailsCorrect.writes)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersEoriDetails)).build()
 
       running(application) {
 
         val request = fakeRequest(GET, eoriDetailsCorrectRoute)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
       }
@@ -146,40 +162,49 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page and clear the AccountsPage selection when No,change EORI is selected" +
       " and form is submitted" in new SetUp {
 
-      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      val application: Application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[Navigator].toInstance(
-              new FakeNavigator(controllers.add.routes.EoriNumberController.onPageLoad(CheckMode))
-            ),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          ).build()
+        val application: Application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswers))
+            .overrides(
+              bind[Navigator].toInstance(
+                new FakeNavigator(controllers.add.routes.EoriNumberController.onPageLoad(CheckMode))
+              ),
+              bind[SessionRepository].toInstance(mockSessionRepository)
+            )
+            .build()
 
-      running(application) {
+        running(application) {
 
-        val request =
-          fakeRequest(POST, eoriDetailsCorrectCheckModeSubmitRoute)
-            .withFormUrlEncodedBody(("value", EoriDetailsCorrect.No.toString))
+          val request =
+            fakeRequest(POST, eoriDetailsCorrectCheckModeSubmitRoute)
+              .withFormUrlEncodedBody(("value", EoriDetailsCorrect.No.toString))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
+          status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url
+          redirectLocation(result).value mustEqual controllers.add.routes.EoriNumberController.onPageLoad(CheckMode).url
+        }
       }
-    }
 
     "return a Bad Request and errors when invalid data is submitted" in new SetUp {
 
       val userAnswersEoriDetails: UserAnswers = UserAnswers("id")
-        .set(AccountsPage, selectedAccounts).success.value
-        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
-        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes).success.value
+        .set(AccountsPage, selectedAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersEoriDetails)).build()
 
@@ -190,10 +215,10 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[EoriDetailsCorrectView]
+        val view      = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper = EoriDetailsCorrectHelper(userAnswer, mockDateTimeService)(messages(application))
-        val result = route(application, request).value
+        val helper    = EoriDetailsCorrectHelper(userAnswer, mockDateTimeService)(messages(application))
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -238,25 +263,33 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
   trait SetUp {
     def onwardRoute: Call = Call("GET", "/foo")
 
-    lazy val eoriDetailsCorrectRoute: String = controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
+    lazy val eoriDetailsCorrectRoute: String                =
+      controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode).url
     lazy val eoriDetailsCorrectCheckModeSubmitRoute: String =
       controllers.add.routes.EoriDetailsCorrectController.onPageLoad(CheckMode).url
 
-    val formProvider = new EoriDetailsCorrectFormProvider()
+    val formProvider                   = new EoriDetailsCorrectFormProvider()
     val form: Form[EoriDetailsCorrect] = formProvider()
-    val backLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
+    val backLinkRoute: Call            = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
 
-    val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-    val dutyDeferment: DutyDefermentAccount = DutyDefermentAccount(
-      "67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-    val generalGuarantee: GeneralGuaranteeAccount = GeneralGuaranteeAccount(
-      "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
-    val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+    val cashAccount: CashAccount                  =
+      CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val dutyDeferment: DutyDefermentAccount       =
+      DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val generalGuarantee: GeneralGuaranteeAccount =
+      GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+    val selectedAccounts: List[CDSAccount]        = List(cashAccount, dutyDeferment, generalGuarantee)
 
     val userAnswer: UserAnswers = UserAnswers("id")
-      .set(AccountsPage, selectedAccounts).success.value
-      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName"))).success.value
-      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes).success.value
+      .set(AccountsPage, selectedAccounts)
+      .success
+      .value
+      .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("companyName")))
+      .success
+      .value
+      .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+      .success
+      .value
 
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())

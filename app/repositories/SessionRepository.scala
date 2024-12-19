@@ -30,42 +30,47 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DefaultSessionRepository @Inject()(
-                                          mongoComponent: PlayMongoComponent,
-                                          config: Configuration
-                                        )(implicit ec: ExecutionContext)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers-cache",
-    mongoComponent = mongoComponent,
-    domainFormat = UserAnswers.format,
-    indexes = Seq(
-      IndexModel(
-        ascending("lastUpdated"),
-        IndexOptions().name("user-answers-last-updated-index")
-          .unique(true)
-          .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+class DefaultSessionRepository @Inject() (
+  mongoComponent: PlayMongoComponent,
+  config: Configuration
+)(implicit ec: ExecutionContext)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers-cache",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.format,
+      indexes = Seq(
+        IndexModel(
+          ascending("lastUpdated"),
+          IndexOptions()
+            .name("user-answers-last-updated-index")
+            .unique(true)
+            .expireAfter(config.get[Long]("mongodb.timeToLiveInSeconds"), TimeUnit.SECONDS)
+        )
       )
     )
-  ) with SessionRepository {
+    with SessionRepository {
 
   override def get(id: String): Future[Option[UserAnswers]] =
-    collection.find(equal("_id", id))
+    collection
+      .find(equal("_id", id))
       .toSingle()
       .toFutureOption()
 
   override def set(userAnswers: UserAnswers): Future[Boolean] =
-    collection.replaceOne(
-      equal("_id", userAnswers.id),
-      userAnswers.copy(lastUpdated = LocalDateTime.now()),
-      ReplaceOptions().upsert(true))
+    collection
+      .replaceOne(
+        equal("_id", userAnswers.id),
+        userAnswers.copy(lastUpdated = LocalDateTime.now()),
+        ReplaceOptions().upsert(true)
+      )
       .toFuture()
       .map(_.wasAcknowledged())
 
-  override def clear(id: String): Future[Boolean] = {
-    collection.deleteOne(equal("_id", id))
+  override def clear(id: String): Future[Boolean] =
+    collection
+      .deleteOne(equal("_id", id))
       .toFuture()
       .map(_.wasAcknowledged())
-  }
 }
 
 trait SessionRepository {

@@ -24,10 +24,10 @@ import java.time.LocalDate
 class AuthorityStartDatePageSpec extends PageBehaviours {
 
   "AuthorityStartDatePage" must {
-    val year1900 = 1990
-    val year2100 = 2100
+    val year1900            = 1990
+    val year2100            = 2100
     val firstMonthOfTheYear = 1
-    val firstDayOfMonth = 1
+    val firstDayOfMonth     = 1
 
     implicit lazy val arbitraryLocalDate: Arbitrary[LocalDate] = Arbitrary {
       datesBetween(

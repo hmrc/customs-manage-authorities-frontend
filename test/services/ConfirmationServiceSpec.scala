@@ -26,19 +26,21 @@ import repositories.SessionRepository
 
 import scala.concurrent.Future
 
-class ConfirmationServiceSpec extends SpecBase{
+class ConfirmationServiceSpec extends SpecBase {
 
   "successfully populate ConfirmationDetails to sessionCache" in {
     val mockSessionRepository = mock[SessionRepository]
 
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-    val application = applicationBuilder().overrides(
-      inject.bind[SessionRepository].toInstance(mockSessionRepository)
-    ).build()
+    val application = applicationBuilder()
+      .overrides(
+        inject.bind[SessionRepository].toInstance(mockSessionRepository)
+      )
+      .build()
 
     val service = application.injector.instanceOf[ConfirmationService]
-    running(application){
+    running(application) {
       val result = await(service.populateConfirmation("id", "eori"))
       result mustBe true
     }

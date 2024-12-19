@@ -23,20 +23,24 @@ import repositories.SessionRepository
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ConfirmationService @Inject()(sessionRepository: SessionRepository)(implicit executionContext: ExecutionContext) {
+class ConfirmationService @Inject() (sessionRepository: SessionRepository)(implicit
+  executionContext: ExecutionContext
+) {
 
-  def populateConfirmation(internalId: String,
-                           eori: String,
-                           startDate: Option[String] = None,
-                           companyName: Option[String] = None,
-                           multipleAccount: Boolean = false): Future[Boolean] = {
-    Future.fromTry(UserAnswers(internalId)
-      .set(
-        ConfirmationPage,
-        ConfirmationDetails(eori, startDate, companyName, multipleAccount))
-    ).flatMap {
-      newUserAnswers => sessionRepository.set(newUserAnswers)
-    }
-  }
+  def populateConfirmation(
+    internalId: String,
+    eori: String,
+    startDate: Option[String] = None,
+    companyName: Option[String] = None,
+    multipleAccount: Boolean = false
+  ): Future[Boolean] =
+    Future
+      .fromTry(
+        UserAnswers(internalId)
+          .set(ConfirmationPage, ConfirmationDetails(eori, startDate, companyName, multipleAccount))
+      )
+      .flatMap { newUserAnswers =>
+        sessionRepository.set(newUserAnswers)
+      }
 
 }

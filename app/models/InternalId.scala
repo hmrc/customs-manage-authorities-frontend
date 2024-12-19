@@ -24,12 +24,11 @@ object InternalId {
   private def stringFormat[A](fromString: String => A)(makeString: A => String): Format[A] = new Format[A] {
     def reads(json: JsValue): JsResult[A] = json match {
       case JsString(str) => JsSuccess(fromString(str))
-      case _ => JsError(s"Expected JSON string type")
+      case _             => JsError(s"Expected JSON string type")
     }
 
     def writes(o: A): JsValue = JsString(makeString(o))
   }
-
 
   implicit val formal: Format[InternalId] = stringFormat(InternalId.apply)(_.value)
 }

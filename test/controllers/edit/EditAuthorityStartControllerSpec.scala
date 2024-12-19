@@ -37,16 +37,18 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
   private def onwardRoute = Call("GET", "/foo")
 
-  private lazy val authorityStartRoute = controllers.edit.routes.EditAuthorityStartController.onPageLoad("someId", "someId").url
+  private lazy val authorityStartRoute =
+    controllers.edit.routes.EditAuthorityStartController.onPageLoad("someId", "someId").url
 
   private val formProvider = new AuthorityStartFormProvider()
-  private val form = formProvider()
+  private val form         = formProvider()
 
   "EditAuthorityStart Controller" must {
 
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -54,7 +56,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[EditAuthorityStartView]
+        val view      = application.injector.instanceOf[EditAuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
@@ -67,9 +69,13 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
-        UserAnswers(userAnswersId.value).set(
-          EditAuthorityStartPage("someId", "someId"), AuthorityStart.values.head
-        )(AuthorityStart.writes).success.value
+        UserAnswers(userAnswersId.value)
+          .set(
+            EditAuthorityStartPage("someId", "someId"),
+            AuthorityStart.values.head
+          )(AuthorityStart.writes)
+          .success
+          .value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
@@ -78,7 +84,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val request = fakeRequest(GET, authorityStartRoute)
 
-        val view = application.injector.instanceOf[EditAuthorityStartView]
+        val view      = application.injector.instanceOf[EditAuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -86,10 +92,11 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(
-            form.fill(AuthorityStart.values.head),
-            "someId",
-            "someId")(request, messages(application), appConfig).toString
+          view(form.fill(AuthorityStart.values.head), "someId", "someId")(
+            request,
+            messages(application),
+            appConfig
+          ).toString
       }
     }
 
@@ -105,7 +112,8 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
-          .configure("features.edit-journey" -> true).build()
+          .configure("features.edit-journey" -> true)
+          .build()
 
       running(application) {
 
@@ -124,8 +132,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
     "return a Bad Request and errors when invalid data is submitted" in {
 
       val application =
-        applicationBuilder(
-          userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
+        applicationBuilder(userAnswers = Some(emptyUserAnswers)).configure("features.edit-journey" -> true).build()
 
       running(application) {
 
@@ -135,7 +142,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[EditAuthorityStartView]
+        val view      = application.injector.instanceOf[EditAuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value

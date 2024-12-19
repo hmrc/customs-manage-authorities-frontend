@@ -33,30 +33,24 @@ class AuthorityEndSpec extends SpecBase with ScalaCheckPropertyChecks with Optio
     "deserialize valid values" in {
       val gen = Gen.oneOf(AuthorityEnd.values)
 
-      forAll(gen) {
-        authorityEnd =>
-
-          JsString(authorityEnd.toString).validate[AuthorityEnd].asOpt.value mustEqual authorityEnd
+      forAll(gen) { authorityEnd =>
+        JsString(authorityEnd.toString).validate[AuthorityEnd].asOpt.value mustEqual authorityEnd
       }
     }
 
     "fail to deserialize invalid values" in {
       val gen = org.scalacheck.Arbitrary.arbitrary[String] suchThat (!AuthorityEnd.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[AuthorityEnd] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[AuthorityEnd] mustEqual JsError("error.invalid")
       }
     }
 
     "serialise" in {
       val gen = Gen.oneOf(AuthorityEnd.values)
 
-      forAll(gen) {
-        authorityEnd =>
-
-          Json.toJson(authorityEnd)(AuthorityEnd.writes) mustEqual JsString(authorityEnd.toString)
+      forAll(gen) { authorityEnd =>
+        Json.toJson(authorityEnd)(AuthorityEnd.writes) mustEqual JsString(authorityEnd.toString)
       }
     }
 
@@ -64,12 +58,9 @@ class AuthorityEndSpec extends SpecBase with ScalaCheckPropertyChecks with Optio
       implicit val msgs: Messages = Helpers.stubMessages()
 
       val radioItems = Seq(
-        RadioItem(value = Some("indefinite"),
-          content = Text(msgs("authorityEnd.indefinite")),
-          checked = true),
-        RadioItem(value = Some("setDate"),
-          content = Text(msgs("authorityEnd.setDate")),
-          checked = false))
+        RadioItem(value = Some("indefinite"), content = Text(msgs("authorityEnd.indefinite")), checked = true),
+        RadioItem(value = Some("setDate"), content = Text(msgs("authorityEnd.setDate")), checked = false)
+      )
 
       val form = new AuthorityEndFormProvider().apply().fill(AuthorityEnd.Indefinite)
 

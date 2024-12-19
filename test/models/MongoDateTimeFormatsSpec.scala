@@ -25,9 +25,9 @@ class MongoDateTimeFormatsSpec extends SpecBase with MongoDateTimeFormats {
 
   "a LocalDateTime" should {
 
-    val year = 2018
+    val year           = 2018
     val monthOfTheYear = 2
-    val dayOfTheMonth = 1
+    val dayOfTheMonth  = 1
 
     val date = LocalDate.of(year, monthOfTheYear, dayOfTheMonth).atStartOfDay
 

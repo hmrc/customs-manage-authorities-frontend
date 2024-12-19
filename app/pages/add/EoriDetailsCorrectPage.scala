@@ -28,7 +28,6 @@ case object EoriDetailsCorrectPage extends QuestionPage[EoriDetailsCorrect] {
 
   override def toString: String = "eoriDetails"
 
-  override def cleanup(value: Option[EoriDetailsCorrect], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[EoriDetailsCorrect], userAnswers: UserAnswers): Try[UserAnswers] =
     Success(userAnswers)
-  }
 }

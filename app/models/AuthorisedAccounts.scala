@@ -18,8 +18,10 @@ package models
 
 import models.domain.{CDSAccount, EORI}
 
-case class AuthorisedAccounts(alreadyAuthorisedAccounts: Seq[CDSAccount],
-                              availableAccounts: Seq[CDSAccount],
-                              closedAccounts: Seq[CDSAccount],
-                              pendingAccounts: Seq[CDSAccount],
-                              enteredEori: EORI)
+case class AuthorisedAccounts(
+  alreadyAuthorisedAccounts: Seq[CDSAccount],
+  availableAccounts: Seq[CDSAccount],
+  closedAccounts: Seq[CDSAccount],
+  pendingAccounts: Seq[CDSAccount],
+  enteredEori: EORI
+)

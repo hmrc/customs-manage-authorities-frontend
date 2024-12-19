@@ -22,14 +22,14 @@ class ModeSpec extends SpecBase {
 
   "Mode" must {
     "return correct string for CheckMode" in {
-      val mode: Mode = CheckMode
+      val mode: Mode     = CheckMode
       val result: String = Mode.jsLiteral.to(mode)
 
       result mustBe "CheckMode"
     }
 
     "return correct string for NormalMode" in {
-      val mode: Mode = NormalMode
+      val mode: Mode     = NormalMode
       val result: String = Mode.jsLiteral.to(mode)
 
       result mustBe "NormalMode"

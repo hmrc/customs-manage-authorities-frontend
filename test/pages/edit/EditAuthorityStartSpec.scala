@@ -23,7 +23,10 @@ class EditAuthorityStartSpec extends PageBehaviours {
 
   "EditAuthorityStartPage" must {
 
-    beRetrievable[AuthorityStart](EditAuthorityStartPage("someId", "someAuthorityId"))(implicitly, AuthorityStart.format)
+    beRetrievable[AuthorityStart](EditAuthorityStartPage("someId", "someAuthorityId"))(
+      implicitly,
+      AuthorityStart.format
+    )
 
     beSettable[AuthorityStart](EditAuthorityStartPage("someId", "someAuthorityId"))(implicitly, AuthorityStart.format)
 

@@ -29,16 +29,17 @@ import uk.gov.hmrc.http.client.HttpClientV2
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SdesConnector @Inject()(httpClient: HttpClientV2,
-                              appConfig: FrontendAppConfig,
-                              metricsReporterService: MetricsReporterService,
-                              sdesGatekeeperService: SdesGatekeeperService,
-                              auditingService: AuditingService
-                             )(implicit executionContext: ExecutionContext) {
+class SdesConnector @Inject() (
+  httpClient: HttpClientV2,
+  appConfig: FrontendAppConfig,
+  metricsReporterService: MetricsReporterService,
+  sdesGatekeeperService: SdesGatekeeperService,
+  auditingService: AuditingService
+)(implicit executionContext: ExecutionContext) {
 
   def getAuthoritiesCsvFiles(eori: EORI)(implicit hc: HeaderCarrier): Future[Seq[StandingAuthorityFile]] = {
     val transform = sdesGatekeeperService.convertTo(sdesGatekeeperService.convertToStandingAuthoritiesFile) andThen
-                    (files => filterFileFormats(authorityFileFormats)(files))
+      (files => filterFileFormats(authorityFileFormats)(files))
 
     getSdesFiles[FileInformation, StandingAuthorityFile](
       appConfig.filesUrl(StandingAuthority),
@@ -48,12 +49,11 @@ class SdesConnector @Inject()(httpClient: HttpClientV2,
     )
   }
 
-  private def getSdesFiles[A, B <: SdesFile](url: String,
-                                             eori: EORI,
-                                             metricsName: String,
-                                             transform: Seq[A] => Seq[B])
-                                            (implicit reads: HttpReads[Seq[A]], hc: HeaderCarrier): Future[Seq[B]] = {
-
+  private def getSdesFiles[A, B <: SdesFile](url: String, eori: EORI, metricsName: String, transform: Seq[A] => Seq[B])(
+    implicit
+    reads: HttpReads[Seq[A]],
+    hc: HeaderCarrier
+  ): Future[Seq[B]] =
     metricsReporterService.withResponseTimeLogging(metricsName) {
       val headers = Seq(X_CLIENT_ID -> appConfig.xClientIdHeader, X_SDES_KEY -> eori)
 
@@ -67,5 +67,4 @@ class SdesConnector @Inject()(httpClient: HttpClientV2,
           files
         }
     }
-  }
 }

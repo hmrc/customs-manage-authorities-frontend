@@ -55,10 +55,11 @@ class SdesGatekeeperServiceSpec extends SpecBase {
         "https://some.sdes.domain?token=abc123",
         FILE_SIZE_DEFAULT,
         StandingAuthorityMetadata(YEAR_2022, MONTH_6, DAY_1, Csv, StandingAuthority),
-        emptyString)
+        emptyString
+      )
 
-      val standingAuthorityFile = sdesGatekeeperService.convertToStandingAuthoritiesFile(
-        fileInformationForStandingAuthorityCSV)
+      val standingAuthorityFile =
+        sdesGatekeeperService.convertToStandingAuthoritiesFile(fileInformationForStandingAuthorityCSV)
 
       standingAuthorityFile must be(expectedStandingAuthorityFile)
     }

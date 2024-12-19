@@ -100,20 +100,22 @@ class SecureMessageConnectorSpec extends SpecBase {
   }
 
   trait Setup {
-    val hc: HeaderCarrier = HeaderCarrier()
-    implicit val messages: Messages = stubMessages()
-    val mockHttpClientV2: HttpClientV2 = mock[HttpClientV2]
-    val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
+    val hc: HeaderCarrier                        = HeaderCarrier()
+    implicit val messages: Messages              = stubMessages()
+    val mockHttpClientV2: HttpClientV2           = mock[HttpClientV2]
+    val mockRequestBuilder: RequestBuilder       = mock[RequestBuilder]
     val mockFrontendAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
     val returnTo = "gov.uk"
 
     when(mockFrontendAppConfig.customsSecureMessagingBannerEndpoint).thenReturn("http://localhost:12345/banner")
 
-    val app: Application = applicationBuilder().overrides(
-      inject.bind[HttpClientV2].toInstance(mockHttpClientV2),
-      inject.bind[FrontendAppConfig].toInstance(mockFrontendAppConfig)
-    ).build()
+    val app: Application = applicationBuilder()
+      .overrides(
+        inject.bind[HttpClientV2].toInstance(mockHttpClientV2),
+        inject.bind[FrontendAppConfig].toInstance(mockFrontendAppConfig)
+      )
+      .build()
 
     val connector: SecureMessageConnector = app.injector.instanceOf[SecureMessageConnector]
   }

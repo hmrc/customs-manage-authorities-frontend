@@ -18,5 +18,5 @@ package config
 
 object Headers {
   val X_CLIENT_ID = "x-client-id"
-  val X_SDES_KEY = "X-SDES-Key"
+  val X_SDES_KEY  = "X-SDES-Key"
 }

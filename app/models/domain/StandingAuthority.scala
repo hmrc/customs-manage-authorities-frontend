@@ -20,10 +20,12 @@ import play.api.libs.json.{Format, Json, Reads, Writes}
 
 import java.time.LocalDate
 
-case class StandingAuthority(authorisedEori: EORI,
-                             authorisedFromDate: LocalDate,
-                             authorisedToDate: Option[LocalDate],
-                             viewBalance: Boolean) {
+case class StandingAuthority(
+  authorisedEori: EORI,
+  authorisedFromDate: LocalDate,
+  authorisedToDate: Option[LocalDate],
+  viewBalance: Boolean
+) {
 
   def containsEori(eori: EORI): Boolean = authorisedEori == eori
 
@@ -31,7 +33,7 @@ case class StandingAuthority(authorisedEori: EORI,
 }
 
 object StandingAuthority {
-  implicit val standingAuthorityReads: Reads[StandingAuthority] = Json.reads[StandingAuthority]
+  implicit val standingAuthorityReads: Reads[StandingAuthority]   = Json.reads[StandingAuthority]
   implicit val standingAuthorityWrites: Writes[StandingAuthority] = Json.writes[StandingAuthority]
 
   implicit val standingAuthorityFormat: Format[StandingAuthority] =

@@ -31,53 +31,59 @@ import views.html.add.AuthorityStartView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthorityStartController @Inject()(
-                                          override val messagesApi: MessagesApi,
-                                          sessionRepository: SessionRepository,
-                                          navigator: Navigator,
-                                          identify: IdentifierAction,
-                                          getData: DataRetrievalAction,
-                                          requireData: DataRequiredAction,
-                                          formProvider: AuthorityStartFormProvider,
-                                          val controllerComponents: MessagesControllerComponents,
-                                          view: AuthorityStartView
-                                        )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class AuthorityStartController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  navigator: Navigator,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  formProvider: AuthorityStartFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AuthorityStartView
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
 
-      val preparedForm = request.userAnswers.get(AuthorityStartPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AuthorityStartPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(
+    Ok(
+      view(
         preparedForm,
         mode,
-        navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode)))
+        navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))
       )
+    )
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(
-            formWithErrors,
-            mode,
-            navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))
-          ))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AuthorityStartPage, value)(AuthorityStart.writes))
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(AuthorityStartPage, mode, updatedAnswers))
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors =>
+            Future.successful(
+              BadRequest(
+                view(
+                  formWithErrors,
+                  mode,
+                  navigator.backLinkRoute(mode, controllers.add.routes.AccountsController.onPageLoad(mode))
+                )
+              )
+            ),
+          value =>
+            for {
+              updatedAnswers <-
+                Future.fromTry(request.userAnswers.set(AuthorityStartPage, value)(AuthorityStart.writes))
+              _              <- sessionRepository.set(updatedAnswers)
+            } yield Redirect(navigator.nextPage(AuthorityStartPage, mode, updatedAnswers))
+        )
   }
 }

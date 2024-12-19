@@ -25,12 +25,20 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeIdentifierAction @Inject()(bodyParsers: PlayBodyParsers) extends IdentifierAction {
+class FakeIdentifierAction @Inject() (bodyParsers: PlayBodyParsers) extends IdentifierAction {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
-    block(IdentifierRequest(
-      request, InternalId("id"), Credentials("providerId", "providerType"), Organisation,
-      Some(Name(Some("name"), Some("last"))), Some("email"), "GB123456789012"))
+    block(
+      IdentifierRequest(
+        request,
+        InternalId("id"),
+        Credentials("providerId", "providerType"),
+        Organisation,
+        Some(Name(Some("name"), Some("last"))),
+        Some("email"),
+        "GB123456789012"
+      )
+    )
 
   override def parser: BodyParser[AnyContent] =
     bodyParsers.default

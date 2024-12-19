@@ -28,7 +28,7 @@ import java.time._
 class EditAuthorityStartDateFormProviderSpec extends DateBehaviours {
 
   implicit val messages: Messages = Helpers.stubMessages()
-  val mockDateTimeService = mock[DateTimeService]
+  val mockDateTimeService         = mock[DateTimeService]
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   val form = new EditAuthorityStartDateFormProvider(mockDateTimeService)(None)

@@ -35,33 +35,31 @@ import views.html.edit.EditConfirmationView
 import javax.inject.Inject
 import scala.concurrent._
 
-class EditConfirmationController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            sessionRepository: SessionRepository,
-                                            accountsRepository: AccountsRepository,
-                                            authoritiesRepository: AuthoritiesRepository,
-                                            service: AuthoritiesCacheService,
-                                            identify: IdentifierAction,
-                                            getData: DataRetrievalAction,
-                                            requireData: DataRequiredAction,
-                                            confirmationService: ConfirmationService,
-                                            implicit val controllerComponents: MessagesControllerComponents,
-                                            view: EditConfirmationView,
-                                            dataStore: CustomsDataStoreConnector
-                                          )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class EditConfirmationController @Inject() (
+  override val messagesApi: MessagesApi,
+  sessionRepository: SessionRepository,
+  accountsRepository: AccountsRepository,
+  authoritiesRepository: AuthoritiesRepository,
+  service: AuthoritiesCacheService,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  requireData: DataRequiredAction,
+  confirmationService: ConfirmationService,
+  implicit val controllerComponents: MessagesControllerComponents,
+  view: EditConfirmationView,
+  dataStore: CustomsDataStoreConnector
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with DateUtils {
 
   private val logger = LoggerFactory.getLogger("application." + getClass.getCanonicalName)
 
-  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] = (
-    identify andThen getData andThen requireData).async {
-
-    implicit request =>
+  def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
 
       val startDate: Option[String] =
-          request.userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
+        request.userAnswers.get(EditAuthorityStartDatePage(accountId, authorityId)).map(dateAsDayMonthAndYear)
 
       val maybeResult = for {
         accountsWithAuthorities <- liftF(service.retrieveAuthorities(request.internalId))
@@ -72,22 +70,18 @@ class EditConfirmationController @Inject()(
         _                       <- liftF(sessionRepository.clear(request.userAnswers.id))
         _                       <- liftF(accountsRepository.clear(request.internalId.value))
         _                       <- liftF(authoritiesRepository.clear(request.internalId.value))
-        _                       <- liftF(confirmationService.populateConfirmation(request.internalId.value,
-                                                                                  eori, startDate))
+        _                       <- liftF(confirmationService.populateConfirmation(request.internalId.value, eori, startDate))
       } yield Ok(view(eori, startDate, companyName))
 
       maybeResult.value.flatMap {
         case Some(result) => Future.successful(result)
-        case None => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
-      } recover {
-        case _ => {
-          request.userAnswers.get(ConfirmationPage) match {
-           case Some(value) => Ok(view(value.eori, value.startDate, value.companyName))
-            case None => {
-              logger.warn("Something went wrong when displaying confirmation page on the edit journey")
-              Redirect(controllers.routes.SessionExpiredController.onPageLoad)
-            }
-          }
+        case None         => Future.successful(Redirect(controllers.routes.SessionExpiredController.onPageLoad))
+      } recover { case _ =>
+        request.userAnswers.get(ConfirmationPage) match {
+          case Some(value) => Ok(view(value.eori, value.startDate, value.companyName))
+          case None        =>
+            logger.warn("Something went wrong when displaying confirmation page on the edit journey")
+            Redirect(controllers.routes.SessionExpiredController.onPageLoad)
         }
       }
     }

@@ -43,41 +43,42 @@ class AuthorityEndDateControllerSpec extends SpecBase {
     "return OK with pre-populated values if form has some values" in new SetUp {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
-      val app: Application = applicationBuilder(emptyUserAnswers.set(
-        AuthorityEndDatePage, LocalDate.now(ZoneOffset.UTC)).toOption).build()
+      val app: Application =
+        applicationBuilder(emptyUserAnswers.set(AuthorityEndDatePage, LocalDate.now(ZoneOffset.UTC)).toOption).build()
 
-      val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
-      val view: AuthorityEndDateView = app.injector.instanceOf[AuthorityEndDateView]
+      val view: AuthorityEndDateView         = app.injector.instanceOf[AuthorityEndDateView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(
-          LocalDate.now(ZoneOffset.UTC)),
+        contentAsString(result) mustBe view(
+          form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(LocalDate.now(ZoneOffset.UTC)),
           NormalMode,
-          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode))(
-          getRequest, messages(app), appConfig).toString()
+          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+        )(getRequest, messages(app), appConfig).toString()
       }
     }
 
     "return OK without pre-populated values if form has no values" in new SetUp {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
-      val app: Application = applicationBuilder(Option(emptyUserAnswers)).build()
-      val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+      val app: Application                   = applicationBuilder(Option(emptyUserAnswers)).build()
+      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
-      val view: AuthorityEndDateView = app.injector.instanceOf[AuthorityEndDateView]
+      val view: AuthorityEndDateView         = app.injector.instanceOf[AuthorityEndDateView]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages(app)),
+        contentAsString(result) mustBe view(
+          form(LocalDate.now(ZoneOffset.UTC))(messages(app)),
           NormalMode,
-          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode))(
-          getRequest, messages(app), appConfig).toString()
+          controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+        )(getRequest, messages(app), appConfig).toString()
       }
     }
   }
@@ -85,24 +86,28 @@ class AuthorityEndDateControllerSpec extends SpecBase {
   "onSubmit" must {
 
     "redirect to next page if form has no error" in new SetUp {
-      val year2023 = 2023
+      val year2023       = 2023
       val monthOfTheYear = 6
-      val dayOfMonth = 12
-      val hourOfDay = 2
-      val minuteOfHour = 20
+      val dayOfMonth     = 12
+      val hourOfDay      = 2
+      val minuteOfHour   = 20
 
-      when(mockDateTimeService.localTime()).thenReturn(
-        LocalDateTime.of(year2023, monthOfTheYear, dayOfMonth, hourOfDay, minuteOfHour))
+      when(mockDateTimeService.localTime())
+        .thenReturn(LocalDateTime.of(year2023, monthOfTheYear, dayOfMonth, hourOfDay, minuteOfHour))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).overrides(
-        inject.bind[SessionRepository].toInstance(mockSessionRepository),
-        inject.bind[DateTimeService].toInstance(mockDateTimeService)
-      ).build()
+      val app: Application = applicationBuilder(Some(emptyUserAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[DateTimeService].toInstance(mockDateTimeService)
+        )
+        .build()
 
       running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody(
-          "value.day" -> "12", "value.month" -> "6", "value.year" -> "2023")).value
+        val result = route(
+          app,
+          postRequest.withFormUrlEncodedBody("value.day" -> "12", "value.month" -> "6", "value.year" -> "2023")
+        ).value
         status(result) shouldBe SEE_OTHER
         redirectLocation(result).value mustBe
           controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode).url
@@ -123,14 +128,12 @@ class AuthorityEndDateControllerSpec extends SpecBase {
 
   trait SetUp {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
-    val mockDateTimeService: DateTimeService = mock[DateTimeService]
+    val mockDateTimeService: DateTimeService     = mock[DateTimeService]
 
     val getRequest: FakeRequest[AnyContentAsEmpty.type] =
-      fakeRequest(GET,
-        controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode).url)
+      fakeRequest(GET, controllers.add.routes.AuthorityEndDateController.onPageLoad(NormalMode).url)
 
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
-      fakeRequest(POST,
-        controllers.add.routes.AuthorityEndDateController.onSubmit(NormalMode).url)
+      fakeRequest(POST, controllers.add.routes.AuthorityEndDateController.onSubmit(NormalMode).url)
   }
 }

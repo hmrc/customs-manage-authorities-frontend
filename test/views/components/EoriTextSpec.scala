@@ -42,7 +42,7 @@ class EoriTextSpec extends SpecBase {
 
     "render correctly without a provided ID" in new Setup {
       val html: HtmlFormat.Appendable = view("test.title", Html("Test content"), None)
-      val document: Document = Jsoup.parse(html.toString())
+      val document: Document          = Jsoup.parse(html.toString())
 
       document.select("div").hasAttr("id") mustBe false
       document.select("p.govuk-heading-s").text() mustBe msg("test.title")
@@ -51,7 +51,7 @@ class EoriTextSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
     val view: eori_text = app.injector.instanceOf[eori_text]

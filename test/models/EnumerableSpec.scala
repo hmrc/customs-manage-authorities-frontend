@@ -35,10 +35,7 @@ object EnumerableSpec {
   }
 }
 
-class EnumerableSpec extends SpecBase
-  with EitherValues
-  with OptionValues
-  with Enumerable.Implicits {
+class EnumerableSpec extends SpecBase with EitherValues with OptionValues with Enumerable.Implicits {
 
   import EnumerableSpec._
 
@@ -48,14 +45,12 @@ class EnumerableSpec extends SpecBase
       implicitly[Reads[Foo]]
     }
 
-
-    Foo.values.foreach {
-      value =>
-        s"bind correctly for: $value" in {
-          Json.fromJson[Foo](JsString(value.toString)).map{
-            result => result mustEqual value
-          }
+    Foo.values.foreach { value =>
+      s"bind correctly for: $value" in {
+        Json.fromJson[Foo](JsString(value.toString)).map { result =>
+          result mustEqual value
         }
+      }
     }
 
     "fail to bind for invalid values" in {
@@ -70,11 +65,10 @@ class EnumerableSpec extends SpecBase
       implicitly[Writes[Foo]]
     }
 
-    Foo.values.foreach {
-      value =>
-        s"write $value" in {
-          Json.toJson(value) mustEqual JsString(value.toString)
-        }
+    Foo.values.foreach { value =>
+      s"write $value" in {
+        Json.toJson(value) mustEqual JsString(value.toString)
+      }
     }
   }
 

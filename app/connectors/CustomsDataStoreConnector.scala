@@ -18,24 +18,24 @@ package connectors
 
 import config.FrontendAppConfig
 import models.{
-  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse,
-  EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail, XiEoriInformationResponse
+  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse, EmailVerifiedResponse, UndeliverableEmail,
+  UnverifiedEmail, XiEoriInformationResponse
 }
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, UpstreamErrorResponse, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
-                                          httpClient: HttpClientV2
-                                         )(implicit ec: ExecutionContext) extends HttpErrorFunctions {
+class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpClient: HttpClientV2)(implicit
+  ec: ExecutionContext
+) extends HttpErrorFunctions {
 
-  val log = Logger(this.getClass)
+  val log                      = Logger(this.getClass)
   private val baseDataStoreUrl = appConfig.customsDataStore
 
   def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
@@ -46,7 +46,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       .map { response =>
         response.consent match {
           case "1" => Some(response.name)
-          case _ => None
+          case _   => None
         }
       }
       .recover { case e =>
@@ -56,7 +56,7 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
   }
 
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val endpoint = s"$baseDataStoreUrl/eori/$eori/xieori-information"
+    val endpoint                 = s"$baseDataStoreUrl/eori/$eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
     if (isXiEoriEnabled) {
@@ -81,12 +81,12 @@ class CustomsDataStoreConnector @Inject()(appConfig: FrontendAppConfig,
       .get(url"$endpoint")
       .execute[EmailResponse]
       .map {
-        case EmailResponse(Some(address), _, None) => Right(Email(address))
+        case EmailResponse(Some(address), _, None)  => Right(Email(address))
         case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
-        case _ => Left(UnverifiedEmail)
+        case _                                      => Left(UnverifiedEmail)
       }
-      .recover {
-        case UpstreamErrorResponse(_, NOT_FOUND, _, _) => Left(UnverifiedEmail)
+      .recover { case UpstreamErrorResponse(_, NOT_FOUND, _, _) =>
+        Left(UnverifiedEmail)
       }
   }
 

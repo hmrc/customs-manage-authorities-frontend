@@ -28,15 +28,18 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class VerifyAccountNumbersActionImpl @Inject()(authorisedAccountsService: AuthorisedAccountsService)
-                                              (implicit val executionContext: ExecutionContext) extends VerifyAccountNumbersAction {
+class VerifyAccountNumbersActionImpl @Inject() (authorisedAccountsService: AuthorisedAccountsService)(implicit
+  val executionContext: ExecutionContext
+) extends VerifyAccountNumbersAction {
 
   override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     (request.userAnswers.get(EoriNumberPage), request.userAnswers.get(AccountsPage)) match {
-      case (None, _) => Future.successful(Left(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))))
-      case (_, None) => Future.successful(Left(Redirect(controllers.add.routes.AccountsController.onPageLoad(NormalMode))))
+      case (None, _)                           =>
+        Future.successful(Left(Redirect(controllers.add.routes.EoriNumberController.onPageLoad(NormalMode))))
+      case (_, None)                           =>
+        Future.successful(Left(Redirect(controllers.add.routes.AccountsController.onPageLoad(NormalMode))))
       case (Some(enteredEori), Some(accounts)) =>
         authorisedAccountsService.getAuthorisedAccounts(enteredEori)(request, hc).map { authorisedAccounts =>
           if (authorisedAccounts.alreadyAuthorisedAccounts.exists(accounts.contains)) {

@@ -42,13 +42,12 @@ class CDSAccountSpec extends SpecBase {
   trait Setup {
     implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
-    val cashAccount = CashAccount(
-      "12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+    val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
-    val dutyDeferment = DutyDefermentAccount(
-      "67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val dutyDeferment =
+      DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
-    val generalGuarantee = GeneralGuaranteeAccount(
-      "54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
+    val generalGuarantee =
+      GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
   }
 }

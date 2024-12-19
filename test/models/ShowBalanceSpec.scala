@@ -32,27 +32,24 @@ class ShowBalanceSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyC
     "deserialise valid values" in {
       val gen = Gen.oneOf(ShowBalance.values)
 
-      forAll(gen) {
-        showBalance =>
-          JsString(showBalance.toString).validate[ShowBalance].asOpt.value mustEqual showBalance
+      forAll(gen) { showBalance =>
+        JsString(showBalance.toString).validate[ShowBalance].asOpt.value mustEqual showBalance
       }
     }
 
     "fail to deserialise invalid values" in {
       val gen = arbitrary[String] suchThat (!ShowBalance.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-          JsString(invalidValue).validate[ShowBalance] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[ShowBalance] mustEqual JsError("error.invalid")
       }
     }
 
     "serialise" in {
       val gen = Gen.oneOf(ShowBalance.values)
 
-      forAll(gen) {
-        showBalance =>
-          Json.toJson(showBalance)(ShowBalance.writes) mustEqual JsString(showBalance.toString)
+      forAll(gen) { showBalance =>
+        Json.toJson(showBalance)(ShowBalance.writes) mustEqual JsString(showBalance.toString)
       }
     }
   }

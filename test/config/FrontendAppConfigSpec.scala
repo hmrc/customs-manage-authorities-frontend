@@ -57,7 +57,7 @@ class FrontendAppConfigSpec extends SpecBase {
   }
 
   trait Setup {
-    val app = applicationBuilder(userAnswers = None).build()
+    val app       = applicationBuilder(userAnswers = None).build()
     val appConfig = app.injector.instanceOf[FrontendAppConfig]
   }
 }

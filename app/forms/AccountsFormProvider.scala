@@ -44,37 +44,32 @@ class AccountsFormProvider @Inject() extends Mappings {
 
 object AccountsFormProvider {
 
-  def accountsHeadingKey(accounts: AuthorisedAccounts): String = {
+  def accountsHeadingKey(accounts: AuthorisedAccounts): String =
     if (accounts.availableAccounts.length == 1) "accounts.heading.singleAccount" else "accounts.heading"
-  }
 
-  def accountsTitleKey(accounts: AuthorisedAccounts): String = {
+  def accountsTitleKey(accounts: AuthorisedAccounts): String =
     if (accounts.availableAccounts.length == 1) "accounts.title.singleAccount" else "accounts.title"
-  }
 
-  def options(form: Form[_],
-              accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] =
-    accounts.zipWithIndex.map {
+  def options(form: Form[_], accounts: Seq[CDSAccount])(implicit messages: Messages): Seq[CheckboxItem] =
+    accounts.zipWithIndex.map { case (account, index) =>
+      val message = account match {
+        case DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusPending =>
+          s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
 
-      case (account, index) =>
-        val message = account match {
-          case DutyDefermentAccount(_, _, status, _, _, _) if status == AccountStatusPending =>
-            s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
+        case _ =>
+          if (account.isNiAccount) {
+            s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
+          } else {
+            s"${messages("accounts.type." + account.accountType)}: ${account.number}"
+          }
+      }
 
-          case _ =>
-            if (account.isNiAccount) {
-              s"${messages("accounts.type." + account.accountType)} ${messages("accounts.ni")}: ${account.number}"
-            } else {
-              s"${messages("accounts.type." + account.accountType)}: ${account.number}"
-            }
-        }
-
-        CheckboxItem(
-          name = Some(s"value[$index]"),
-          id = Some(s"value${if (index > 0) index.toString else emptyString}"),
-          value = s"account_${index.toString}",
-          content = Text(message),
-          checked = form.data.values.contains(s"account_${index.toString}")
-        )
+      CheckboxItem(
+        name = Some(s"value[$index]"),
+        id = Some(s"value${if (index > 0) index.toString else emptyString}"),
+        value = s"account_${index.toString}",
+        content = Text(message),
+        checked = form.data.values.contains(s"account_${index.toString}")
+      )
     }
 }

@@ -40,9 +40,9 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
   private def onwardRoute = Call("GET", "/foo")
 
   private lazy val authorityDetailsRoute = controllers.add.routes.AuthorityDetailsController.onPageLoad(NormalMode).url
-  private val formProvider = new AuthorityDetailsFormProvider()
-  private val form = formProvider()
-  val backLinkRoute: Call = controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
+  private val formProvider               = new AuthorityDetailsFormProvider()
+  private val form                       = formProvider()
+  val backLinkRoute: Call                = controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode)
 
   "AuthorityDetailsCorrect Controller" must {
 
@@ -56,7 +56,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AuthorityDetailsView]
+        val view      = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
@@ -79,7 +79,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
         val request = fakeRequest(GET, authorityDetailsRoute)
 
-        val view = application.injector.instanceOf[AuthorityDetailsView]
+        val view      = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -132,7 +132,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> emptyString))
 
-        val view = application.injector.instanceOf[AuthorityDetailsView]
+        val view      = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value

@@ -35,7 +35,8 @@ class LinkPTwoLinksSpec extends SpecBase {
         firstLinkId = Some("first-link"),
         secondLinkMessage = "Second Link",
         secondLinkHref = "gov.uk/second",
-        secondLinkId = Some("second-link"))
+        secondLinkId = Some("second-link")
+      )
 
       val document: Document = Jsoup.parse(html.toString())
 
@@ -50,7 +51,7 @@ class LinkPTwoLinksSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application = applicationBuilder().build()
+    val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
 
     val view: link_p_twoLinks = app.injector.instanceOf[link_p_twoLinks]

@@ -30,18 +30,18 @@ class SessionExpiredViewSpec extends SpecBase {
 
   "SessionExpired view" should {
     "when back link is clicked returns to start of the journey" in new Setup {
-      view().getElementsByClass("govuk-back-link")
+      view()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/manage-account-authorities"
-      }
     }
+  }
 
-
-  trait Setup  {
+  trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app: Application = applicationBuilder().build()
+    val app: Application                                          = applicationBuilder().build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     def view(): Document = Jsoup.parse(app.injector.instanceOf[SessionExpiredView].apply().body)
   }

@@ -40,8 +40,8 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
   private lazy val authorityStartRoute = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
 
   private val formProvider = new AuthorityStartFormProvider()
-  private val form = formProvider()
-  val backLinkRoute: Call = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
+  private val form         = formProvider()
+  val backLinkRoute: Call  = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
 
   "AuthorityStart Controller" must {
 
@@ -55,7 +55,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view      = application.injector.instanceOf[AuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
@@ -67,7 +67,10 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId.value).set(AuthorityStartPage, AuthorityStart.values.head)(AuthorityStart.writes).success.value
+      val userAnswers = UserAnswers(userAnswersId.value)
+        .set(AuthorityStartPage, AuthorityStart.values.head)(AuthorityStart.writes)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -75,7 +78,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val request = fakeRequest(GET, authorityStartRoute)
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view      = application.injector.instanceOf[AuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -83,7 +86,11 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(AuthorityStart.values.head), NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form.fill(AuthorityStart.values.head), NormalMode, backLinkRoute)(
+            request,
+            messages(application),
+            appConfig
+          ).toString
       }
     }
 
@@ -127,7 +134,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[AuthorityStartView]
+        val view      = application.injector.instanceOf[AuthorityStartView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -135,7 +142,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 

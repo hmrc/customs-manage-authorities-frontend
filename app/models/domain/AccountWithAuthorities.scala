@@ -20,19 +20,23 @@ import play.api.libs.json.{Format, Json, Reads}
 
 import java.util.{Base64, UUID}
 
-case class AccountWithAuthorities(accountType: AccountType,
-                                  accountNumber: AccountNumber,
-                                  accountStatus: Option[CDSAccountStatus],
-                                  authorities: Seq[StandingAuthority])
+case class AccountWithAuthorities(
+  accountType: AccountType,
+  accountNumber: AccountNumber,
+  accountStatus: Option[CDSAccountStatus],
+  authorities: Seq[StandingAuthority]
+)
 
 object AccountWithAuthorities {
   implicit val accountWithAuthoritiesReads: Reads[AccountWithAuthorities] = Json.reads[AccountWithAuthorities]
 }
 
-case class AccountWithAuthoritiesWithId(accountType: AccountType,
-                                        accountNumber: AccountNumber,
-                                        accountStatus: Option[CDSAccountStatus],
-                                        authorities: Map[String, StandingAuthority])
+case class AccountWithAuthoritiesWithId(
+  accountType: AccountType,
+  accountNumber: AccountNumber,
+  accountStatus: Option[CDSAccountStatus],
+  authorities: Map[String, StandingAuthority]
+)
 
 object AccountWithAuthoritiesWithId {
 
@@ -61,9 +65,8 @@ case class AuthoritiesWithId(authorities: Map[String, AccountWithAuthoritiesWith
   def authorisedWithEori(eori: EORI): Seq[AccountWithAuthoritiesWithId] =
     accounts.filter(_.authorities.values.exists(_.containsEori(eori)))
 
-  def uniqueAuthorisedEORIs: Set[EORI] = {
+  def uniqueAuthorisedEORIs: Set[EORI] =
     accounts.flatMap(_.authorities.values).map(_.authorisedEori).toSet
-  }
 }
 
 object AuthoritiesWithId {
@@ -72,9 +75,8 @@ object AuthoritiesWithId {
 
   private val encoder = Base64.getUrlEncoder
 
-  def apply(authorities: Seq[AccountWithAuthorities]): AuthoritiesWithId = {
+  def apply(authorities: Seq[AccountWithAuthorities]): AuthoritiesWithId =
     AuthoritiesWithId(authorities.map { account =>
       new String(encoder.encode(UUID.randomUUID().toString.getBytes)) -> AccountWithAuthoritiesWithId(account)
     }.toMap)
-  }
 }

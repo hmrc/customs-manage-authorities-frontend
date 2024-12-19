@@ -25,7 +25,7 @@ import utils.DateUtils
 import java.time.LocalDate
 import javax.inject.Inject
 
-class EditAuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeService) extends Mappings with DateUtils {
+class EditAuthorityStartDateFormProvider @Inject() (dateTimeService: DateTimeService) extends Mappings with DateUtils {
 
   def apply(maybeEndDate: Option[LocalDate])(implicit messages: Messages): Form[LocalDate] =
     Form(
@@ -38,12 +38,14 @@ class EditAuthorityStartDateFormProvider @Inject()(dateTimeService: DateTimeServ
         minDate(
           dateTimeService.localTime().toLocalDate,
           minimumMsg = "authorityStartDate.error.minimum",
-          yearMsg = "authorityStartDate.error.year.length")
+          yearMsg = "authorityStartDate.error.year.length"
+        )
       ).verifying(
         maybeMaxDate(
           maybeEndDate,
           errorKey = "authorityStartDate.error.maximum",
-          dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX)))
+          dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))
+        )
       )
     )
 }

@@ -34,17 +34,19 @@ object EoriDetailsCorrect extends Enumerable.Implicits {
   case object No extends WithName("radioNo") with EoriDetailsCorrect
 
   def options(form: Form[_])(implicit messages: Messages): Seq[RadioItem] = values.map {
-    case value@Yes => RadioItem(
-      value = Some(value.toString),
-      content = Text(messages(s"eoriDetails.${value.toString}")),
-      checked = form("value").value.contains(value.toString)
-    )
+    case value @ Yes =>
+      RadioItem(
+        value = Some(value.toString),
+        content = Text(messages(s"eoriDetails.${value.toString}")),
+        checked = form("value").value.contains(value.toString)
+      )
 
-    case value@No => RadioItem(
-      value = Some(value.toString),
-      content = Text(messages(s"eoriDetails.${value.toString}")),
-      checked = form("value").value.contains(value.toString)
-    )
+    case value @ No =>
+      RadioItem(
+        value = Some(value.toString),
+        content = Text(messages(s"eoriDetails.${value.toString}")),
+        checked = form("value").value.contains(value.toString)
+      )
   }
 
   implicit val enumerable: Enumerable[EoriDetailsCorrect] =

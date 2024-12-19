@@ -24,11 +24,11 @@ import views.html.SessionExpiredView
 
 import javax.inject.Inject
 
-class SessionExpiredController @Inject()(
-                                          val controllerComponents: MessagesControllerComponents,
-                                          view: SessionExpiredView
-                                        )(implicit appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class SessionExpiredController @Inject() (
+  val controllerComponents: MessagesControllerComponents,
+  view: SessionExpiredView
+)(implicit appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>

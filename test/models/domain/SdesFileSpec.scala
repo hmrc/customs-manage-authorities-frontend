@@ -62,17 +62,16 @@ class SdesFileSpec extends SpecBase {
 
   "StandingAuthorityFile" should {
     "sort the files correctly" in new Setup {
-      val standAuthFile1: StandingAuthorityFile = StandingAuthorityFile(fileName,
-        downloadUrl,
-        size,
-        standAuthMetaData,
-        eori)
+      val standAuthFile1: StandingAuthorityFile =
+        StandingAuthorityFile(fileName, downloadUrl, size, standAuthMetaData, eori)
 
-      val standAuthFile2: StandingAuthorityFile = StandingAuthorityFile(fileName,
+      val standAuthFile2: StandingAuthorityFile = StandingAuthorityFile(
+        fileName,
         downloadUrl,
         size,
         standAuthMetaData.copy(periodStartYear = standAuthMetaData.periodStartYear + 1),
-        eori)
+        eori
+      )
 
       List(standAuthFile2, standAuthFile1).sorted mustBe List(standAuthFile1, standAuthFile2)
     }
@@ -96,22 +95,30 @@ class SdesFileSpec extends SpecBase {
   trait Setup {
     implicit val msg: Messages = stubMessages()
 
-    val fileName = "test_file"
+    val fileName    = "test_file"
     val downloadUrl = "test_url"
-    val size = 2064L
+    val size        = 2064L
 
     val startYear = 2021
-    val month = 10
-    val day = 2
-    val eori = "test_eori"
+    val month     = 10
+    val day       = 2
+    val eori      = "test_eori"
 
     val standAuthMetaData: StandingAuthorityMetadata =
       StandingAuthorityMetadata(startYear, month, day, Pdf, models.domain.FileRole.StandingAuthority)
 
     val standingAuthorityFile: StandingAuthorityFile = StandingAuthorityFile(
-      emptyString, emptyString, size, StandingAuthorityMetadata(
-        YEAR_2017, LENGTH_11, LENGTH_27, Pdf, models.domain.FileRole.StandingAuthority
-      ), eori
+      emptyString,
+      emptyString,
+      size,
+      StandingAuthorityMetadata(
+        YEAR_2017,
+        LENGTH_11,
+        LENGTH_27,
+        Pdf,
+        models.domain.FileRole.StandingAuthority
+      ),
+      eori
     )
   }
 

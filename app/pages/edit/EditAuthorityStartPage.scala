@@ -28,10 +28,9 @@ case class EditAuthorityStartPage(accountId: String, authorityId: String) extend
 
   override def toString: String = "editAuthorityStart"
 
-  override def cleanup(value: Option[AuthorityStart], userAnswers: UserAnswers): Try[UserAnswers] = {
+  override def cleanup(value: Option[AuthorityStart], userAnswers: UserAnswers): Try[UserAnswers] =
     value match {
       case Some(AuthorityStart.Today) => userAnswers.remove(EditAuthorityStartDatePage(accountId, authorityId))
-      case _ => Success(userAnswers)
+      case _                          => Success(userAnswers)
     }
-  }
 }

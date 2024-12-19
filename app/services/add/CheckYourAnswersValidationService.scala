@@ -26,43 +26,44 @@ import utils.Constants.{CASH_ACCOUNT_TYPE, DUTY_DEFERMENT_ACCOUNT_TYPE, GENERAL_
 
 import scala.util.Try
 
-class CheckYourAnswersValidationService @Inject()(dateTimeService: DateTimeService) {
+class CheckYourAnswersValidationService @Inject() (dateTimeService: DateTimeService) {
 
   def validate(userAnswers: UserAnswers): Option[(Accounts, StandingAuthority, AuthorisedUser)] = Try {
     for {
-      selectedAccounts <- userAnswers.get(AccountsPage)
-      accounts = extractAccounts(selectedAccounts)
-      authorisedEori <- userAnswers.get(EoriNumberPage)
-      authorityStart <- userAnswers.get(AuthorityStartPage)
-      authorityEnd <- userAnswers.get(AuthorityEndPage)
+      selectedAccounts   <- userAnswers.get(AccountsPage)
+      accounts            = extractAccounts(selectedAccounts)
+      authorisedEori     <- userAnswers.get(EoriNumberPage)
+      authorityStart     <- userAnswers.get(AuthorityStartPage)
+      authorityEnd       <- userAnswers.get(AuthorityEndPage)
       authorisedFromDate <- if (authorityStart == AuthorityStart.Setdate) {
-        userAnswers.get(AuthorityStartDatePage)
-      } else {
-        Some(dateTimeService.localTime().toLocalDate)
-      }
+                              userAnswers.get(AuthorityStartDatePage)
+                            } else {
+                              Some(dateTimeService.localTime().toLocalDate)
+                            }
 
-      authorityEndDate = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(AuthorityEndDatePage) else None
-      viewBalance <- userAnswers.get(ShowBalancePage)
-      authorisedUser <- userAnswers.get(AuthorityDetailsPage)
+      authorityEndDate   = if (authorityEnd == AuthorityEnd.Setdate) userAnswers.get(AuthorityEndDatePage) else None
+      viewBalance       <- userAnswers.get(ShowBalancePage)
+      authorisedUser    <- userAnswers.get(AuthorityDetailsPage)
       standingAuthority <- if (authorityEnd == AuthorityEnd.Setdate && authorityEndDate.isEmpty) {
-        None
-      } else {
-        Some(StandingAuthority(
-          authorisedEori.eori,
-          authorisedFromDate,
-          authorityEndDate,
-          viewBalance == ShowBalance.Yes
-        ))
-      }
+                             None
+                           } else {
+                             Some(
+                               StandingAuthority(
+                                 authorisedEori.eori,
+                                 authorisedFromDate,
+                                 authorityEndDate,
+                                 viewBalance == ShowBalance.Yes
+                               )
+                             )
+                           }
     } yield (accounts, standingAuthority, authorisedUser)
   }.recover { case _: IndexOutOfBoundsException => None }.toOption.flatten
 
-  private def extractAccounts(selected: List[CDSAccount]): Accounts = {
+  private def extractAccounts(selected: List[CDSAccount]): Accounts =
     Accounts(
       selected.find(_.accountType == CASH_ACCOUNT_TYPE).map(_.number),
       selected.filter(_.accountType == DUTY_DEFERMENT_ACCOUNT_TYPE).map(_.number),
       selected.find(_.accountType == GENERAL_GUARANTEE_ACCOUNT_TYPE).map(_.number)
     )
-  }
 
 }

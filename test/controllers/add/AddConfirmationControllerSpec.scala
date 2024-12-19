@@ -46,8 +46,10 @@ class AddConfirmationControllerSpec extends SpecBase {
     "return OK and the correct view for a GET" when {
 
       "The user is returning to the page " in {
-        val userAnswers = emptyUserAnswers.set(ConfirmationPage, ConfirmationDetails(
-          "eori", None, Some("Company Name"), true)).success.value
+        val userAnswers = emptyUserAnswers
+          .set(ConfirmationPage, ConfirmationDetails("eori", None, Some("Company Name"), true))
+          .success
+          .value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         running(application) {
@@ -55,7 +57,7 @@ class AddConfirmationControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AddConfirmationView]
+          val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
@@ -66,34 +68,40 @@ class AddConfirmationControllerSpec extends SpecBase {
       }
 
       "Start date is today with single account selected" in {
-        val mockSessionRepository = mock[SessionRepository]
-        val mockAccountsRepository = mock[AccountsRepository]
+        val mockSessionRepository     = mock[SessionRepository]
+        val mockAccountsRepository    = mock[AccountsRepository]
         val mockAuthoritiesRepository = mock[AuthoritiesRepository]
-        val mockConfirmationService = mock[ConfirmationService]
+        val mockConfirmationService   = mock[ConfirmationService]
 
         when(mockSessionRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
         when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
-        when(mockConfirmationService.populateConfirmation(
-          any(), any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any()))
+          .thenReturn(Future.successful(true))
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
-          .set(AccountsPage, List(cashAccount)).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount))
+          .success
+          .value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          inject.bind[SessionRepository].toInstance(mockSessionRepository),
-          inject.bind[AccountsRepository].toInstance(mockAccountsRepository),
-          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
-          inject.bind[ConfirmationService].toInstance(mockConfirmationService)
-        ).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[SessionRepository].toInstance(mockSessionRepository),
+            inject.bind[AccountsRepository].toInstance(mockAccountsRepository),
+            inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+            inject.bind[ConfirmationService].toInstance(mockConfirmationService)
+          )
+          .build()
 
         running(application) {
           val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AddConfirmationView]
+          val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
@@ -103,22 +111,29 @@ class AddConfirmationControllerSpec extends SpecBase {
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
           contentAsString(result) mustEqual
-            view("GB123456789012",
-              None,
-              Some("Company Name"),
-              multipleAccounts = false)(request, messages(application), appConfig).toString
+            view("GB123456789012", None, Some("Company Name"), multipleAccounts = false)(
+              request,
+              messages(application),
+              appConfig
+            ).toString
         }
       }
 
       "Start date is a set date with multiple accounts selected" in {
 
-        val startDate = LocalDate.now().plusMonths(1)
+        val startDate  = LocalDate.now().plusMonths(1)
         val dateFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
-          .set(AuthorityStartDatePage, startDate).success.value
-          .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name")))
+          .success
+          .value
+          .set(AuthorityStartDatePage, startDate)
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount, dutyDeferment))
+          .success
+          .value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -128,23 +143,28 @@ class AddConfirmationControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AddConfirmationView]
+          val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB123456789012",
-              Some(startDate.format(dateFormat)),
-              Some("Company Name"),
-              multipleAccounts = true)(request, messages(application), appConfig).toString
+            view("GB123456789012", Some(startDate.format(dateFormat)), Some("Company Name"), multipleAccounts = true)(
+              request,
+              messages(application),
+              appConfig
+            ).toString
         }
       }
 
       "Start date is selected as today & isn't displayed on page" in {
         val userAnswers = emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name"))).success.value
-          .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Company Name")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount, dutyDeferment))
+          .success
+          .value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -154,23 +174,25 @@ class AddConfirmationControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AddConfirmationView]
+          val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB123456789012",
-              None,
-              Some("Company Name"),
-              multipleAccounts = true)(request, messages(application), appConfig).toString
+            view("GB123456789012", None, Some("Company Name"), multipleAccounts = true)(
+              request,
+              messages(application),
+              appConfig
+            ).toString
 
           contentAsString(result) mustNot contain("Starting on")
         }
       }
 
       "Company doesn't consent to displaying company name " in {
-        val userAnswers = emptyUserAnswers.set(ConfirmationPage, ConfirmationDetails("eori", None, None, true)).success.value
+        val userAnswers =
+          emptyUserAnswers.set(ConfirmationPage, ConfirmationDetails("eori", None, None, true)).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
@@ -178,7 +200,7 @@ class AddConfirmationControllerSpec extends SpecBase {
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[AddConfirmationView]
+          val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK

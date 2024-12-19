@@ -37,8 +37,8 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
     "retrieve the data correctly" in new Setup {
       when(mockRepo.get(id.value)).thenReturn(Future.successful(Some(data)))
 
-      service.retrieveAuthEorisAndCompanyInfoForId(id).map {
-        result => result mustEqual data
+      service.retrieveAuthEorisAndCompanyInfoForId(id).map { result =>
+        result mustEqual data
       }
     }
   }
@@ -48,7 +48,7 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
     "retrieve the data correctly" when {
 
       "data is not present in cache" in new Setup {
-        val eoris: Set[String] = Set(eori1, eori2)
+        val eoris: Set[String]           = Set(eori1, eori2)
         val mapData: Map[String, String] = Map(eori1 -> COMPANY_NAME, eori2 -> COMPANY_NAME)
 
         implicit val hc: HeaderCarrier = HeaderCarrier()
@@ -57,21 +57,21 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
         when(mockRepo.set(id.value, mapData)).thenReturn(Future.successful(true))
         when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
 
-        service.retrieveAuthorisedEoriAndCompanyInfo(id, eoris).map {
-          result => result mustEqual mapData
+        service.retrieveAuthorisedEoriAndCompanyInfo(id, eoris).map { result =>
+          result mustEqual mapData
         }
       }
 
       "data is present in cache" in new Setup {
-        val eoris: Set[String] = Set(eori1, eori2)
+        val eoris: Set[String]           = Set(eori1, eori2)
         val mapData: Map[String, String] = Map(eori1 -> COMPANY_NAME, eori2 -> COMPANY_NAME)
 
         implicit val hc: HeaderCarrier = HeaderCarrier()
 
         when(mockRepo.get(id.value)).thenReturn(Future.successful(Some(mapData)))
 
-        service.retrieveAuthorisedEoriAndCompanyInfo(id, eoris).map {
-          result => result mustEqual mapData
+        service.retrieveAuthorisedEoriAndCompanyInfo(id, eoris).map { result =>
+          result mustEqual mapData
         }
       }
     }
@@ -82,25 +82,27 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
     "successfully store the data" in new Setup {
       when(mockRepo.set(id.value, data)).thenReturn(Future.successful(true))
 
-      service.storeAuthEorisAndCompanyInfo(id, data).map {
-        result => result mustEqual true
+      service.storeAuthEorisAndCompanyInfo(id, data).map { result =>
+        result mustEqual true
       }
     }
   }
 
   trait Setup {
-    val id: InternalId = InternalId("cache_id")
-    val eori1 = "test_eori_1"
-    val eori2 = "test_eori_2"
+    val id: InternalId            = InternalId("cache_id")
+    val eori1                     = "test_eori_1"
+    val eori2                     = "test_eori_2"
     val data: Map[String, String] = Map("eori_1" -> "company_1", "eori_2" -> "company_2")
 
-    val mockRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
+    val mockRepo: AuthorisedEoriAndCompanyInfoRepository  = mock[AuthorisedEoriAndCompanyInfoRepository]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    val application: Application = applicationBuilder().overrides(
-      inject.bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockRepo),
-      inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
-    ).build()
+    val application: Application = applicationBuilder()
+      .overrides(
+        inject.bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockRepo),
+        inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+      )
+      .build()
 
     val service: AuthorisedEoriAndCompanyInfoService =
       application.injector.instanceOf[AuthorisedEoriAndCompanyInfoService]

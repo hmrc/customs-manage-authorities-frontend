@@ -20,7 +20,9 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AuthorisedUserFormProvider
 import models.UserAnswers
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority
+}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -59,7 +61,6 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
       val app: Application = application()
 
-
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe SEE_OTHER
@@ -71,14 +72,16 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      val app: Application = application(emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get)
-      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      val app: Application =
+        application(emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test")).get)
+      val appConfig        = app.injector.instanceOf[FrontendAppConfig]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
         contentAsString(result) mustBe
-          view(app)(form(app)().fill(AuthorisedUser("test", "test")),
+          view(app)(
+            form(app)().fill(AuthorisedUser("test", "test")),
             RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
           )(getRequest, messages(app), appConfig).toString()
       }
@@ -89,15 +92,17 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       val app: Application = application()
-      val appConfig = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig        = app.injector.instanceOf[FrontendAppConfig]
 
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
         contentAsString(result) mustBe
-          view(app)(form(app)(),
-            RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
-          )(getRequest, messages(app), appConfig).toString()
+          view(app)(form(app)(), RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority))(
+            getRequest,
+            messages(app),
+            appConfig
+          ).toString()
       }
     }
   }
@@ -122,7 +127,6 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
       val app: Application = application()
 
-
       running(app) {
         val result = route(app, postRequest).value
         status(result) mustBe SEE_OTHER
@@ -135,7 +139,6 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       val app: Application = application()
-
 
       running(app) {
         val result = route(app, postRequest.withFormUrlEncodedBody("invalid" -> "data")).value
@@ -153,7 +156,8 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       val app: Application = application()
 
       running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody("fullName" -> "testing", "jobRole" -> "testing2")).value
+        val result =
+          route(app, postRequest.withFormUrlEncodedBody("fullName" -> "testing", "jobRole" -> "testing2")).value
         status(result) mustBe SEE_OTHER
         redirectLocation(result).value mustBe controllers.remove.routes.RemoveCheckYourAnswers.onSubmit("a", "b").url
       }
@@ -163,11 +167,11 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   trait Setup {
     val mockAuthoritiesCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockSessionRepository: SessionRepository = mock[SessionRepository]
+    val mockSessionRepository: SessionRepository             = mock[SessionRepository]
 
-    val startDate: LocalDate = LocalDate.parse("2020-03-01")
-    val endDate: LocalDate = LocalDate.parse("2020-04-01")
-    val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
+    val startDate: LocalDate                                        = LocalDate.parse("2020-03-01")
+    val endDate: LocalDate                                          = LocalDate.parse("2020-04-01")
+    val standingAuthority: StandingAuthority                        = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
@@ -177,10 +181,12 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(POST, controllers.remove.routes.RemoveAuthorisedUserController.onSubmit("a", "b").url)
 
-    def application(userAnswers: UserAnswers = emptyUserAnswers): Application = applicationBuilder(Some(userAnswers)).overrides(
-      inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-      inject.bind[SessionRepository].toInstance(mockSessionRepository)
-    ).build()
+    def application(userAnswers: UserAnswers = emptyUserAnswers): Application = applicationBuilder(Some(userAnswers))
+      .overrides(
+        inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+        inject.bind[SessionRepository].toInstance(mockSessionRepository)
+      )
+      .build()
 
     def form(app: Application): AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
 

@@ -25,17 +25,17 @@ import play.api.test.Helpers
 class EditAuthorityStartFormProviderSpec extends OptionFieldBehaviours {
 
   implicit val messages: Messages = Helpers.stubMessages()
-  val form = new EditAuthorityStartFormProvider()(None)
+  val form                        = new EditAuthorityStartFormProvider()(None)
 
   ".value" must {
 
-    val fieldName = "value"
+    val fieldName   = "value"
     val requiredKey = "authorityStart.error.required"
 
     behave like optionsField[AuthorityStart](
       form,
       fieldName,
-      validValues  = AuthorityStart.values,
+      validValues = AuthorityStart.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

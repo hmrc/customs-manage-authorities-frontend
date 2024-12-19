@@ -39,7 +39,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -47,7 +47,7 @@ class AuthActionSpec extends SpecBase {
           new AuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), config, bodyParsers)
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -60,7 +60,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -72,7 +72,7 @@ class AuthActionSpec extends SpecBase {
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -85,7 +85,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -97,7 +97,7 @@ class AuthActionSpec extends SpecBase {
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -110,7 +110,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -122,7 +122,7 @@ class AuthActionSpec extends SpecBase {
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -135,7 +135,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -147,7 +147,7 @@ class AuthActionSpec extends SpecBase {
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -160,7 +160,7 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
@@ -172,7 +172,7 @@ class AuthActionSpec extends SpecBase {
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -185,20 +185,19 @@ class AuthActionSpec extends SpecBase {
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
-        val config = frontendAppConfig(application)
+        val config      = frontendAppConfig(application)
 
         val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
 
         val authAction =
           new AuthenticatedIdentifierAction(
-            new FakeFailingAuthConnector(
-              new UnsupportedCredentialRole),
+            new FakeFailingAuthConnector(new UnsupportedCredentialRole),
             config,
             bodyParsers
           )
 
         val controller = new Harness(authAction)
-        val result = controller.onPageLoad()(fakeRequest())
+        val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
 
@@ -208,14 +207,16 @@ class AuthActionSpec extends SpecBase {
   }
 
   class Harness(authAction: IdentifierAction) {
-    def onPageLoad(): Action[AnyContent] = authAction { _ => Results.Ok }
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Results.Ok)
   }
 }
 
-class FakeFailingAuthConnector @Inject()(exceptionToReturn: Throwable) extends AuthConnector {
+class FakeFailingAuthConnector @Inject() (exceptionToReturn: Throwable) extends AuthConnector {
   val serviceUrl: String = emptyString
 
-  override def authorise[A](predicate: Predicate,
-                            retrieval: Retrieval[A])(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[A] =
+  override def authorise[A](predicate: Predicate, retrieval: Retrieval[A])(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[A] =
     Future.failed(exceptionToReturn)
 }

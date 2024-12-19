@@ -37,25 +37,29 @@ import scala.concurrent.Future
 
 class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
-  private def onwardRoute = Call("GET", "/foo")
+  private def onwardRoute           = Call("GET", "/foo")
   private lazy val showBalanceRoute = controllers.add.routes.ShowBalanceController.onPageLoad(NormalMode).url
 
-  private val formProvider = new ShowBalanceFormProvider()
-  private val form = formProvider()
+  private val formProvider  = new ShowBalanceFormProvider()
+  private val form          = formProvider()
   val mockValidationService = mock[CheckYourAnswersValidationService]
-  val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-  val dutyDeferment = DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-  val backLinkRoute: Call = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
+  val cashAccount           = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+  val dutyDeferment         =
+    DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+  val backLinkRoute: Call   = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
 
   "ShowBalance Controller" must {
 
     "return OK and the correct view for a GET" in {
 
       val userAnswers = UserAnswers(userAnswersId.value)
-        .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
+        .set(AccountsPage, List(cashAccount, dutyDeferment))
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[Navigator].toInstance(new FakeNavigator(backLinkRoute))).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
+        .build()
 
       running(application) {
 
@@ -63,31 +67,35 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ShowBalanceView]
+        val view      = application.injector.instanceOf[ShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, accountsLength = 2, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
       }
     }
 
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId.value)
-        .set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
-        .set(ShowBalancePage, ShowBalance.values.head)(ShowBalance.writes).success.value
+        .set(AccountsPage, List(cashAccount, dutyDeferment))
+        .success
+        .value
+        .set(ShowBalancePage, ShowBalance.values.head)(ShowBalance.writes)
+        .success
+        .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[Navigator].toInstance(new FakeNavigator(backLinkRoute))).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
+        .build()
 
       running(application) {
 
         val request = fakeRequest(GET, showBalanceRoute)
 
-        val view = application.injector.instanceOf[ShowBalanceView]
+        val view      = application.injector.instanceOf[ShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -95,7 +103,11 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(ShowBalance.values.head), accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(form.fill(ShowBalance.values.head), accountsLength = 2, NormalMode, backLinkRoute)(
+            request,
+            messages(application),
+            appConfig
+          ).toString
       }
     }
 
@@ -131,8 +143,9 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswers.set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[Navigator].toInstance(new FakeNavigator(backLinkRoute))).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
+        .build()
 
       running(application) {
 
@@ -142,7 +155,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[ShowBalanceView]
+        val view      = application.injector.instanceOf[ShowBalanceView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
@@ -150,7 +163,11 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, accountsLength = 2, NormalMode,backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, accountsLength = 2, NormalMode, backLinkRoute)(
+            request,
+            messages(application),
+            appConfig
+          ).toString
       }
     }
 

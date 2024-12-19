@@ -24,13 +24,14 @@ import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import utils.WireMockHelper
 
-class AccountsAndBalancesSpec extends SpecBase
-  with WireMockHelper
-  with ScalaFutures
-  with IntegrationPatience
-  with EitherValues
-  with OptionValues
-  with MockitoSugar {
+class AccountsAndBalancesSpec
+    extends SpecBase
+    with WireMockHelper
+    with ScalaFutures
+    with IntegrationPatience
+    with EitherValues
+    with OptionValues
+    with MockitoSugar {
 
   val accountWithStatus: AccountWithStatus =
     AccountWithStatus("number", "type", "owner", AccountStatusClosed, viewBalanceIsGranted = true)
@@ -41,13 +42,18 @@ class AccountsAndBalancesSpec extends SpecBase
 
       val expectedResult =
         domain.GeneralGuaranteeAccount(
-          "number", "owner", AccountStatusClosed, Some(GeneralGuaranteeBalance(BigDecimal(1), BigDecimal(2))))
+          "number",
+          "owner",
+          AccountStatusClosed,
+          Some(GeneralGuaranteeBalance(BigDecimal(1), BigDecimal(2)))
+        )
 
       val generalGuaranteeAccount =
         GeneralGuaranteeAccount(
           account = accountWithStatus,
           guaranteeLimit = Some("1"),
-          availableGuaranteeBalance = Some("2"))
+          availableGuaranteeBalance = Some("2")
+        )
 
       generalGuaranteeAccount.toDomain mustBe expectedResult
     }
@@ -57,10 +63,7 @@ class AccountsAndBalancesSpec extends SpecBase
       val expectedResult = domain.GeneralGuaranteeAccount("number", "owner", AccountStatusClosed, None)
 
       val generalGuaranteeAccount =
-        GeneralGuaranteeAccount(
-          account = accountWithStatus,
-          guaranteeLimit = None,
-          availableGuaranteeBalance = None)
+        GeneralGuaranteeAccount(account = accountWithStatus, guaranteeLimit = None, availableGuaranteeBalance = None)
 
       generalGuaranteeAccount.toDomain mustBe expectedResult
     }
@@ -93,10 +96,10 @@ class AccountsAndBalancesSpec extends SpecBase
     "correctly generate a domain model when a account, limit and balance are available" in {
       val amount = 4
 
-      val guaranteeLimit = BigDecimal(1)
-      val accountLimit = BigDecimal(2)
+      val guaranteeLimit            = BigDecimal(1)
+      val accountLimit              = BigDecimal(2)
       val availableGuaranteeBalance = BigDecimal(3)
-      val availableAccountBalance = BigDecimal(amount)
+      val availableAccountBalance   = BigDecimal(amount)
 
       val expectedResult =
         domain.DutyDefermentAccount(
@@ -107,8 +110,10 @@ class AccountsAndBalancesSpec extends SpecBase
             Some(guaranteeLimit),
             Some(accountLimit),
             Some(availableGuaranteeBalance),
-            Some(availableAccountBalance)),
-          isNiAccount = true)
+            Some(availableAccountBalance)
+          ),
+          isNiAccount = true
+        )
 
       val dutyDefermentAccount =
         DutyDefermentAccount(
@@ -138,7 +143,8 @@ class AccountsAndBalancesSpec extends SpecBase
           isNiAccount = Some(false),
           isIomAccount = Some(false),
           limits = None,
-          balances = None)
+          balances = None
+        )
 
       dutyDefermentAccount.toDomain mustBe expectedResult
     }

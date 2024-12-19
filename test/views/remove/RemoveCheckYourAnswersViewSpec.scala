@@ -21,7 +21,9 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.CustomsDataStoreConnector
 import models.UserAnswers
-import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority}
+import models.domain.{
+  AccountStatusOpen, AccountWithAuthoritiesWithId, AuthorisedUser, CdsCashAccount, StandingAuthority
+}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -50,28 +52,28 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val summaryElements: Elements = doc.getElementsByClass(classSummaryListRow)
       summaryElements.size() must be > 2
 
-      val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
+      val companyDetailsRowEoriNumberElement: Element  = summaryElements.get(0)
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
-      val yourAccountRowElement: Element = summaryElements.get(2)
+      val yourAccountRowElement: Element               = summaryElements.get(2)
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListKey).html() mustBe msgs("checkYourAnswers.eoriNumber.label")
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe msgs(
+        "checkYourAnswers.eoriNumber.label"
+      )
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListValue).html() mustBe eori
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListValue).html() mustBe eori
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListKey).html() mustBe msgs("view-authority-h2.5")
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe msgs(
+        "view-authority-h2.5"
+      )
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListValue).html() mustBe companyName
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListValue).html() mustBe companyName
 
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListKey).html() mustBe msgs("edit-cya-account-number")
+      yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe msgs("edit-cya-account-number")
 
-      yourAccountRowElement.getElementsByClass(
-        classSummaryListValue).html() mustBe msgs(
-        s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+      yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe msgs(
+        s"manageAuthorities.table.heading.account.$CdsCashAccount",
+        accNumber
+      )
     }
 
     "Eori Number Label has correct Text" in new Setup {
@@ -82,11 +84,11 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
       val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListKey).html() mustBe msgs("checkYourAnswers.eoriNumber.label")
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe msgs(
+        "checkYourAnswers.eoriNumber.label"
+      )
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(
-        classSummaryListValue).html() mustBe eori
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListValue).html() mustBe eori
     }
 
     "Company Name Row has correct Text" in new Setup {
@@ -97,11 +99,11 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListKey).html() mustBe msgs("view-authority-h2.5")
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe msgs(
+        "view-authority-h2.5"
+      )
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(
-        classSummaryListValue).html() mustBe companyName
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListValue).html() mustBe companyName
     }
 
     "Eori Numnber has correct Text" in new Setup {
@@ -115,11 +117,11 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe
         msgs("edit-cya-account-number")
       yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe
-        msgs(s"manageAuthorities.table.heading.account.${CdsCashAccount}", accNumber)
+        msgs(s"manageAuthorities.table.heading.account.$CdsCashAccount", accNumber)
     }
 
     "Header displays Check your answers by Tag" in new Setup {
-      val doc: Document = Jsoup.parse(requestView.toString())
+      val doc: Document      = Jsoup.parse(requestView.toString())
       val elements: Elements = doc.getElementsByTag("h1")
 
       elements.size() must be > 0
@@ -127,7 +129,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
     }
 
     "Page ends in help to make better link" in new Setup {
-      val doc: Document = Jsoup.parse(requestView.toString())
+      val doc: Document      = Jsoup.parse(requestView.toString())
       val elements: Elements = doc.getElementsByTag("h2")
 
       elements.size() must be > 0
@@ -167,10 +169,10 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val doc: Document = Jsoup.parse(requestView.toString())
 
       val divElementWithCancelAndConfirmButtons: Elements = doc.getElementsByClass("govuk-button-group")
-      val elementsAsDoc: Document = Jsoup.parse(divElementWithCancelAndConfirmButtons.get(0).toString)
+      val elementsAsDoc: Document                         = Jsoup.parse(divElementWithCancelAndConfirmButtons.get(0).toString)
 
       val confirmButton: Elements = elementsAsDoc.getElementsByTag("button")
-      val cancelButton: Elements = elementsAsDoc.getElementsByClass("govuk-visually-hidden")
+      val cancelButton: Elements  = elementsAsDoc.getElementsByClass("govuk-visually-hidden")
 
       confirmButton.text() mustBe msgs("remove-cya-button")
       cancelButton.text() mustBe msgs("remove-cya-visually-hidden-cancel")
@@ -178,45 +180,45 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
   }
 
   trait Setup {
-    val eori = "test_EORI"
+    val eori        = "test_EORI"
     val companyName = "test_company"
-    val accNumber = "12345"
-    val accountId = "a"
+    val accNumber   = "12345"
+    val accountId   = "a"
     val authorityId = "b"
 
     val authUser: AuthorisedUser = AuthorisedUser("test", "test")
 
-    val classSummaryListRow = "govuk-summary-list__row"
-    val classSummaryListKey = "govuk-summary-list__key"
+    val classSummaryListRow   = "govuk-summary-list__row"
+    val classSummaryListKey   = "govuk-summary-list__key"
     val classSummaryListValue = "govuk-summary-list__value"
 
     val userAnswers: UserAnswers =
       emptyUserAnswers.set(RemoveAuthorisedUserPage(accountId, authorityId), authUser).get
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
-    val endDate: LocalDate = LocalDate.parse("2020-04-01")
+    val endDate: LocalDate   = LocalDate.parse("2020-04-01")
 
-    val standingAuthority: StandingAuthority = StandingAuthority(
-      eori, startDate, Some(endDate), viewBalance = false)
+    val standingAuthority: StandingAuthority = StandingAuthority(eori, startDate, Some(endDate), viewBalance = false)
 
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(
         CdsCashAccount,
         accNumber,
         Some(AccountStatusOpen),
-        Map(authorityId -> standingAuthority))
+        Map(authorityId -> standingAuthority)
+      )
 
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(
-      "GET", "/some/resource/path")
+    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).overrides(
-      inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)).build()
+    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+      .overrides(inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector))
+      .build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val hc: HeaderCarrier = HeaderCarrier()
-    implicit val msgs: Messages = messages(app)
+    implicit val hc: HeaderCarrier            = HeaderCarrier()
+    implicit val msgs: Messages               = messages(app)
 
     val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
 
@@ -230,7 +232,8 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       authUser,
       standingAuthority,
       accountsWithAuthoritiesWithId,
-      mockDataStoreConnector)
+      mockDataStoreConnector
+    )
 
     val requestView: HtmlFormat.Appendable = view(helper)
   }

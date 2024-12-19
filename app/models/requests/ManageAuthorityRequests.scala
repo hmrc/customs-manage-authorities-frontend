@@ -32,22 +32,22 @@ object Accounts {
 }
 
 case class AddAuthorityRequest(
-                                accounts: Accounts,
-                                authority: StandingAuthority,
-                                authorisedUser: AuthorisedUser,
-                                editRequest: Boolean = false
-                              )
+  accounts: Accounts,
+  authority: StandingAuthority,
+  authorisedUser: AuthorisedUser,
+  editRequest: Boolean = false
+)
 
 object AddAuthorityRequest {
   implicit val addAuthorityRequestFormat: Format[AddAuthorityRequest] = Json.format[AddAuthorityRequest]
 }
 
 case class RevokeAuthorityRequest(
-                                   accountNumber: String,
-                                   accountType: AccountType,
-                                   authorisedEori: String,
-                                   authorisedUser: AuthorisedUser
-                                 )
+  accountNumber: String,
+  accountType: AccountType,
+  authorisedEori: String,
+  authorisedUser: AuthorisedUser
+)
 
 object RevokeAuthorityRequest {
   implicit val revokeAuthorityRequestFormat: OFormat[RevokeAuthorityRequest] = Json.format[RevokeAuthorityRequest]

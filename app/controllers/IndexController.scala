@@ -22,9 +22,10 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 
-class IndexController @Inject()(
-                                 val controllerComponents: MessagesControllerComponents
-                               ) extends FrontendBaseController with I18nSupport {
+class IndexController @Inject() (
+  val controllerComponents: MessagesControllerComponents
+) extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = Action {
     Redirect(routes.ManageAuthoritiesController.onPageLoad())

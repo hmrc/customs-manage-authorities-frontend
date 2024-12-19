@@ -32,11 +32,13 @@ class AuthorityStartDateViewSpec extends SpecBase {
 
   "AuthorityStartDaterView" should {
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link")
+      normalModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/start"
     }
     "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link")
+      checkModeView()
+        .getElementsByClass("govuk-back-link")
         .attr("href") mustBe s"/customs/manage-authorities/add-authority/check-answers"
     }
   }
@@ -48,10 +50,10 @@ class AuthorityStartDateViewSpec extends SpecBase {
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    implicit val messages: Messages           = Helpers.stubMessages()
 
     private val formProvider = new AuthorityStartFormProvider()
-    private val form = formProvider()
+    private val form         = formProvider()
 
     private lazy val normalModeBackLinkRoute: Call =
       controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)

@@ -33,9 +33,8 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
   "AuthoritiesNotificationPanel" should {
 
     "display the correct guidance when only GB authority file exists" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
+      val viewModel      = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
+      val view: Document = Jsoup.parse(app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
       val elements: Elements = view.getElementsByClass("govuk-body")
       elements.size() mustBe 2
@@ -51,9 +50,8 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "display the correct guidance when both GB and XI authorities' file exist" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), Option("xiURL"), date)
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
+      val viewModel      = AuthoritiesFilesNotificationViewModel(Option("gbURL"), Option("xiURL"), date)
+      val view: Document = Jsoup.parse(app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
       val elements: Elements = view.getElementsByClass("govuk-body")
       elements.size() mustBe 2
@@ -73,9 +71,8 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "not display the guidance when file does not exists" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(None, None, date)
-      val view: Document = Jsoup.parse(
-        app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
+      val viewModel      = AuthoritiesFilesNotificationViewModel(None, None, date)
+      val view: Document = Jsoup.parse(app.injector.instanceOf[authoritiesNotificationPanel].apply(viewModel).body)
 
       Option(view.getElementById("notification-panel")) mustBe None
 
@@ -83,11 +80,13 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "apply the correct extra classes when provided" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
+      val viewModel      = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
       val view: Document = Jsoup.parse(
-        app.injector.instanceOf[authoritiesNotificationPanel]
+        app.injector
+          .instanceOf[authoritiesNotificationPanel]
           .apply(viewModel, extraClasses = Some("govuk-!-width-two-thirds"))
-          .body)
+          .body
+      )
 
       private val notificationPanel = view.getElementsByClass("notifications-panel").first()
 
@@ -95,11 +94,13 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
     }
 
     "not apply extra classes when none are provided" in new Setup {
-      val viewModel = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
+      val viewModel      = AuthoritiesFilesNotificationViewModel(Option("gbURL"), None, date)
       val view: Document = Jsoup.parse(
-        app.injector.instanceOf[authoritiesNotificationPanel]
+        app.injector
+          .instanceOf[authoritiesNotificationPanel]
           .apply(viewModel)
-          .body)
+          .body
+      )
 
       private val notificationPanel = view.getElementsByClass("notifications-panel").first()
 
@@ -108,7 +109,7 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
   }
 
   trait Setup {
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+    implicit val appConfig: FrontendAppConfig                 = app.injector.instanceOf[FrontendAppConfig]
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/some/resource/path")
 
     val date = "25 November 2022"

@@ -44,7 +44,9 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
 
       val userAnswersWithEori: UserAnswers =
         emptyUserAnswers
-        .set(AccountsPage, List.empty).success.value
+          .set(AccountsPage, List.empty)
+          .success
+          .value
 
       private val futureResult = action.callRefine(dataRequest(userAnswersWithEori))
 
@@ -53,16 +55,19 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
           Left(
             Result(
               ResponseHeader(SEE_OTHER, Map("Location" -> "/customs/manage-authorities/add-authority/eori-number")),
-              HttpEntity.NoEntity)
+              HttpEntity.NoEntity
+            )
           )
       }
     }
 
     "redirect the user to the Accounts entry page if the accounts aren't present in the request" in new Setup {
-      val action = new Harness()
+      val action                           = new Harness()
       val userAnswersAccounts: UserAnswers =
         emptyUserAnswers
-          .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
+          .set(EoriNumberPage, CompanyDetails("someEori", Some("1")))
+          .success
+          .value
 
       private val futureResult = action.callRefine(dataRequest(userAnswersAccounts))
 
@@ -71,51 +76,61 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
           Left(
             Result(
               ResponseHeader(SEE_OTHER, Map("Location" -> "/customs/manage-authorities/add-authority/accounts")),
-              HttpEntity.NoEntity)
+              HttpEntity.NoEntity
+            )
           )
       }
     }
 
     "redirect the user to the Accounts page if there is an account number that" +
       " can't be authorised due to existing authority" in new Setup {
-      val action = new Harness()
-      val amount100 = 100
+        val action    = new Harness()
+        val amount100 = 100
 
-      private val accounts = List(CashAccount("1234", "4321", AccountStatusOpen, CDSCashBalance(Some(amount100))))
+        private val accounts = List(CashAccount("1234", "4321", AccountStatusOpen, CDSCashBalance(Some(amount100))))
 
-      val userAnswersWithEoriAndAccounts: UserAnswers =
-        emptyUserAnswers
-        .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
-        .set(AccountsPage, accounts).success.value
+        val userAnswersWithEoriAndAccounts: UserAnswers =
+          emptyUserAnswers
+            .set(EoriNumberPage, CompanyDetails("someEori", Some("1")))
+            .success
+            .value
+            .set(AccountsPage, accounts)
+            .success
+            .value
 
-      when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
-        .thenReturn(Future.successful(AuthorisedAccounts(accounts, Seq.empty, Seq.empty, Seq.empty, "someEori")))
+        when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+          .thenReturn(Future.successful(AuthorisedAccounts(accounts, Seq.empty, Seq.empty, Seq.empty, "someEori")))
 
-      private val futureResult = action.callRefine(dataRequest(userAnswersWithEoriAndAccounts))
+        private val futureResult = action.callRefine(dataRequest(userAnswersWithEoriAndAccounts))
 
-      whenReady(futureResult) { result =>
-        result mustBe
-          Left(
-            Result(
-              ResponseHeader(SEE_OTHER, Map("Location" -> "/customs/manage-authorities/add-authority/accounts")),
-              HttpEntity.NoEntity)
-          )
+        whenReady(futureResult) { result =>
+          result mustBe
+            Left(
+              Result(
+                ResponseHeader(SEE_OTHER, Map("Location" -> "/customs/manage-authorities/add-authority/accounts")),
+                HttpEntity.NoEntity
+              )
+            )
+        }
+
       }
-
-    }
 
     "return the request if the account numbers are valid" in new Setup {
       val action = new Harness()
 
       val userAnswersWithEoriAndAccounts: UserAnswers =
         emptyUserAnswers
-        .set(EoriNumberPage, CompanyDetails("someEori", Some("1"))).success.value
-        .set(AccountsPage, List.empty).success.value
+          .set(EoriNumberPage, CompanyDetails("someEori", Some("1")))
+          .success
+          .value
+          .set(AccountsPage, List.empty)
+          .success
+          .value
 
       private val futureResult = action.callRefine(dataRequest(userAnswersWithEoriAndAccounts))
 
       whenReady(futureResult) {
-        case Left(_) => fail()
+        case Left(_)  => fail()
         case Right(v) => v.userAnswers mustBe userAnswersWithEoriAndAccounts
       }
     }
@@ -127,12 +142,7 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
     when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
       .thenReturn(
         Future.successful(
-          AuthorisedAccounts(
-            Seq.empty,
-            Seq.empty,
-            Seq.empty,
-            Seq.empty,
-            "someEori")
+          AuthorisedAccounts(Seq.empty, Seq.empty, Seq.empty, Seq.empty, "someEori")
         )
       )
 
@@ -141,7 +151,8 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
       InternalId("id"),
       Credentials(emptyString, emptyString),
       Organisation,
-      Some(Name(Some("name"), Some("last"))), Some("email"),
+      Some(Name(Some("name"), Some("last"))),
+      Some("email"),
       "eori",
       userAnswers
     )

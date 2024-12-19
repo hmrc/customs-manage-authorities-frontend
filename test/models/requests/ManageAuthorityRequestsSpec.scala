@@ -49,8 +49,8 @@ class ManageAuthorityRequestsSpec extends SpecBase {
   }
 
   trait Setup {
-    val ddAccountsOnly: Accounts = Accounts(None, Seq("67890"), None)
+    val ddAccountsOnly: Accounts  = Accounts(None, Seq("67890"), None)
     val ddAccountsEmpty: Accounts = Accounts(Some("12345"), Seq(), None)
-    val accounts: Accounts = Accounts(Some("12345"), Seq("67890"), Some("12345678"))
+    val accounts: Accounts        = Accounts(Some("12345"), Seq("67890"), Some("12345678"))
   }
 }

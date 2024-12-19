@@ -21,8 +21,8 @@ import play.api.libs.json.{Format, Json, OFormat, Reads, Writes}
 case class CompanyDetails(eori: String, name: Option[String])
 
 object CompanyDetails {
-  implicit val companyDetailsFormat: Format[CompanyDetails] = Json.format[CompanyDetails]
+  implicit val companyDetailsFormat: Format[CompanyDetails]   = Json.format[CompanyDetails]
   implicit val companyDetailsOFormat: OFormat[CompanyDetails] = Json.format[CompanyDetails]
-  implicit val companyDetailsReads: Reads[CompanyDetails] = Json.reads[CompanyDetails]
-  implicit val companyDetailsWrites: Writes[CompanyDetails] = Json.writes[CompanyDetails]
+  implicit val companyDetailsReads: Reads[CompanyDetails]     = Json.reads[CompanyDetails]
+  implicit val companyDetailsWrites: Writes[CompanyDetails]   = Json.writes[CompanyDetails]
 }
