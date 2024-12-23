@@ -1,7 +1,7 @@
 import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings.{targetJvm, itSettings, scalaSettings, defaultSettings}
+import uk.gov.hmrc.DefaultBuildSettings.{itSettings, scalaSettings, defaultSettings}
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
@@ -46,7 +46,6 @@ lazy val root = (project in file("."))
   .settings(inConfig(Test)(testSettings) *)
   .settings(ThisBuild / useSuperShell := false)
   .settings(
-    targetJvm := "jvm-11",
     name := appName,
     RoutesKeys.routesImport += "models._",
     TwirlKeys.templateImports ++= Seq(
