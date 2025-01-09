@@ -21,6 +21,6 @@
 @(title: String, content: Html, id: Option[String] = None)(implicit messages: Messages)
 
 <div @{id.fold(emptyString)(id => s"id=$id")}>
-    <p id="value-hint-title" class="govuk-heading-s">@messages(title)</p>
+    <h2 id="value-hint-title" class="govuk-heading-s">@messages(title)</h2>
     <p class="govuk-body">@content</p>
 </div>

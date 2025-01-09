@@ -36,7 +36,7 @@ class EoriTextSpec extends SpecBase {
 
       val document: Document = Jsoup.parse(html.toString())
       document.select("div").attr("id") mustBe "test-id"
-      document.select("p.govuk-heading-s").text() mustBe msg("test.title")
+      document.select("h2.govuk-heading-s").text() mustBe msg("test.title")
       document.select("p.govuk-body").text() mustBe "Test content"
     }
 
@@ -45,7 +45,7 @@ class EoriTextSpec extends SpecBase {
       val document: Document          = Jsoup.parse(html.toString())
 
       document.select("div").hasAttr("id") mustBe false
-      document.select("p.govuk-heading-s").text() mustBe msg("test.title")
+      document.select("h2.govuk-heading-s").text() mustBe msg("test.title")
       document.select("p.govuk-body").text() mustBe "Test content"
     }
   }
