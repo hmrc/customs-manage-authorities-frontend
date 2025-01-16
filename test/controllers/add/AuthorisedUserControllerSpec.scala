@@ -59,9 +59,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val view                                  = app.injector.instanceOf[AuthorisedUserView]
         implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-        implicit val msg: Messages                = messages(app)
+        implicit val msg: Messages                = messages
 
-        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages(app))
+        val helper = viewmodels.CheckYourAnswersHelper(userAnswers, mockDateTimeService)(messages)
 
         implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest(GET, authorisedUserRoute)
         val result                                                = route(app, request).value

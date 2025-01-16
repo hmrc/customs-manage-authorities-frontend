@@ -57,7 +57,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
             standingAuthority,
             accountsWithAuthoritiesWithId,
             mockDataStoreConnector
-          )(messages(app), hc)
+          )(messages, hc)
         )
 
         val userAnswers = result.userAnswers
@@ -92,7 +92,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
             standingAuthority,
             accountsWithAuthoritiesWithId,
             mockDataStoreConnector
-          )(messages(app), hc)
+          )(messages, hc)
         )
         val userAnswers = result.userAnswers
 

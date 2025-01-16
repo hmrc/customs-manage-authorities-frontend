@@ -48,7 +48,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         view.getElementsByTag("h1").html() mustBe "Success"
 
         firstElement.getElementsByTag("p").get(0).html() must include(
-          messages(app)("addConfirmation.body.eori.number")
+          messages("addConfirmation.body.eori.number")
         )
         firstElement
           .getElementsByTag("strong")
@@ -56,7 +56,7 @@ class AddConfirmationPanelSpec extends SpecBase {
           .html() mustBe "GB123456789000"
 
         firstElement.getElementsByTag("p").get(1).html() must include(
-          messages(app)("addConfirmation.body.company.name")
+          messages("addConfirmation.body.company.name")
         )
         firstElement
           .getElementsByTag("strong")
@@ -64,7 +64,7 @@ class AddConfirmationPanelSpec extends SpecBase {
           .html() mustBe "TestCompany"
 
         firstElement.getElementsByTag("p").get(2).html() must include(
-          messages(app)("addConfirmation.body.setDate", "01-01-2021")
+          messages("addConfirmation.body.setDate", "01-01-2021")
         )
       }
     }
@@ -89,7 +89,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         view.getElementsByTag("h1").html() mustBe "Success"
 
         firstElement.getElementsByTag("p").get(0).html() must include(
-          messages(app)("addConfirmation.body.eori.number")
+          messages("addConfirmation.body.eori.number")
         )
         firstElement
           .getElementsByTag("strong")
@@ -101,7 +101,7 @@ class AddConfirmationPanelSpec extends SpecBase {
 
   trait Setup {
     val app: Application       = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
+    implicit val msg: Messages = messages
 
     val view: Document
 

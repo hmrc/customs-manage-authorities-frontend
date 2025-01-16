@@ -23,14 +23,11 @@ import models.domain._
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
-import play.api.i18n.Messages
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.Actions
 import utils.StringUtils.emptyString
 
 class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
-
-  implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
 
@@ -95,13 +92,13 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
         val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
-            "eoriDetail.eoriNumber.label",
+            messages("eoriDetail.eoriNumber.label"),
             "GB123456789012",
             None,
             Actions(items = Seq())
           ),
           summaryListRow(
-            "eoriDetail.companyName.label",
+            messages("eoriDetail.companyName.label"),
             "companyName",
             None,
             Actions(items = Seq())

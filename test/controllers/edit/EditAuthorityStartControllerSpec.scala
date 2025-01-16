@@ -62,7 +62,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(request, messages(application), appConfig).toString
+          view(form, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -94,7 +94,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(AuthorityStart.values.head), "someId", "someId")(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -150,7 +150,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
+          view(boundForm, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 

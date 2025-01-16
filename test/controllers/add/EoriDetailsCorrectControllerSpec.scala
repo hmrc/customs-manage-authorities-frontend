@@ -57,12 +57,12 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         val result    = route(application, request).value
         val view      = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper    = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)(messages(application))
+        val helper    = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)(messages)
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute, helper)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute, helper)(request, messages, appConfig).toString
       }
     }
 
@@ -89,7 +89,9 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         val request                      = fakeRequest(GET, eoriDetailsCorrectRoute)
         val view: EoriDetailsCorrectView = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig                    = application.injector.instanceOf[FrontendAppConfig]
-        val helper                       = EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages(application))
+
+        val helper =
+          EoriDetailsCorrectHelper(userAnswersEoriDetails, mockDateTimeService)(messages)
 
         val result = route(application, request).value
 
@@ -98,7 +100,7 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(EoriDetailsCorrect.values.head), NormalMode, backLinkRoute, helper)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -217,13 +219,13 @@ class EoriDetailsCorrectControllerSpec extends SpecBase with MockitoSugar {
 
         val view      = application.injector.instanceOf[EoriDetailsCorrectView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val helper    = EoriDetailsCorrectHelper(userAnswer, mockDateTimeService)(messages(application))
+        val helper    = EoriDetailsCorrectHelper(userAnswer, mockDateTimeService)(messages)
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, helper)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, helper)(request, messages, appConfig).toString
       }
     }
 

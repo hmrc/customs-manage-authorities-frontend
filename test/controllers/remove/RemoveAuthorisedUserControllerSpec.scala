@@ -83,7 +83,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           view(app)(
             form(app)().fill(AuthorisedUser("test", "test")),
             RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority)
-          )(getRequest, messages(app), appConfig).toString()
+          )(getRequest, messages, appConfig).toString()
       }
     }
 
@@ -100,7 +100,7 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustBe
           view(app)(form(app)(), RemoveViewModel("a", "b", accountsWithAuthoritiesWithId, standingAuthority))(
             getRequest,
-            messages(app),
+            messages,
             appConfig
           ).toString()
       }

@@ -55,10 +55,10 @@ class AuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(LocalDate.now(ZoneOffset.UTC)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages).fill(LocalDate.now(ZoneOffset.UTC)),
           NormalMode,
           controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
 
@@ -75,10 +75,10 @@ class AuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages),
           NormalMode,
           controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
   }

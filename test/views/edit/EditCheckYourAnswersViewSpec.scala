@@ -212,7 +212,7 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       .build()
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val msgs: Messages               = messages(app)
+    implicit val msgs: Messages               = messages
 
     val checkAnswersEditHelper = new CheckYourAnswersEditHelper(
       userAnswers,

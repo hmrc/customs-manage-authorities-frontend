@@ -52,7 +52,7 @@ class EditAuthorityEndControllerSpec extends SpecBase {
 
         contentAsString(result) mustBe view(form().fill(AuthorityEnd.Setdate), "123", "12345")(
           getRequest,
-          messages(app),
+          messages,
           appConfig
         ).toString()
       }
@@ -69,7 +69,7 @@ class EditAuthorityEndControllerSpec extends SpecBase {
         val result = route(app, getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(), "123", "12345")(getRequest, messages(app), appConfig).toString()
+        contentAsString(result) mustBe view(form(), "123", "12345")(getRequest, messages, appConfig).toString()
       }
     }
   }

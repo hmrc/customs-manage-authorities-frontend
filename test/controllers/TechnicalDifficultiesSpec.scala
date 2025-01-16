@@ -49,7 +49,7 @@ class TechnicalDifficultiesSpec extends SpecBase {
   trait Setup {
     val app: Application                   = applicationBuilder().build()
     implicit val config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val msgs: Messages            = messages(app)
+    implicit val msgs: Messages            = messages
     val view: ErrorTemplate                = app.injector.instanceOf[ErrorTemplate]
   }
 }

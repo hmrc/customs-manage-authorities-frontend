@@ -218,7 +218,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
     implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
     implicit val hc: HeaderCarrier            = HeaderCarrier()
-    implicit val msgs: Messages               = messages(app)
+    implicit val msgs: Messages               = messages
 
     val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
 

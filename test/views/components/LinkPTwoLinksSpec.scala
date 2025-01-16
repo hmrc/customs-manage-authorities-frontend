@@ -52,7 +52,7 @@ class LinkPTwoLinksSpec extends SpecBase {
 
   trait Setup {
     val app: Application       = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
+    implicit val msg: Messages = messages
 
     val view: link_p_twoLinks = app.injector.instanceOf[link_p_twoLinks]
   }

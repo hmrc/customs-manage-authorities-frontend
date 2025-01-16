@@ -19,13 +19,10 @@ package forms
 import forms.behaviours.OptionFieldBehaviours
 import models.AuthorityStart
 import play.api.data.FormError
-import play.api.i18n.Messages
-import play.api.test.Helpers
 
 class EditAuthorityStartFormProviderSpec extends OptionFieldBehaviours {
 
-  implicit val messages: Messages = Helpers.stubMessages()
-  val form                        = new EditAuthorityStartFormProvider()(None)
+  val form = new EditAuthorityStartFormProvider()(None)
 
   ".value" must {
 

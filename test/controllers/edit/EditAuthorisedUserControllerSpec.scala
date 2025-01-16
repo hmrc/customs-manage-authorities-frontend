@@ -50,7 +50,7 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustBe OK
         contentAsString(result) mustBe view(form().fill(AuthorisedUser("test", "test2")), "a", "b")(
           getRequest,
-          messages(app),
+          messages,
           appConfig
         ).toString()
       }
@@ -66,7 +66,7 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val result = route(app, getRequest).value
         status(result) mustBe OK
-        contentAsString(result) mustBe view(form(), "a", "b")(getRequest, messages(app), appConfig).toString()
+        contentAsString(result) mustBe view(form(), "a", "b")(getRequest, messages, appConfig).toString()
       }
     }
   }

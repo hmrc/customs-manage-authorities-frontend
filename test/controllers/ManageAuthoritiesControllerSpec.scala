@@ -93,15 +93,14 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         running(application) {
 
-          val request   = fakeRequest(GET, manageAuthoritiesRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[NoAccountsView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[NoAccountsView]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(filesNotificationViewModel(application))(request, messages(application), appConfig).toString
+            view(filesNotificationViewModel(application))(request, messages, appConfig).toString
 
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
@@ -173,7 +172,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
                 filesNotificationViewModel(application)
               ),
               maybeMessageBannerPartial = None
-            )(request, messages(application), appConfig).toString
+            )(request, messages, appConfig).toString
 
           verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
         }
@@ -236,7 +235,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
                 filesNotificationViewModel(application)
               ),
               maybeMessageBannerPartial = None
-            )(request, messages(application), appConfig).toString
+            )(request, messages, appConfig).toString
         }
       }
 
@@ -278,10 +277,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         running(application) {
 
-          val request   = fakeRequest(GET, manageAuthoritiesRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[ManageAuthoritiesView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ManageAuthoritiesView]
 
           status(result) mustEqual OK
 
@@ -293,7 +291,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
                 filesNotificationViewModel = filesNotificationViewModel(application)
               ),
               maybeMessageBannerPartial = None
-            )(request, messages(application), appConfig).toString
+            )(request, messages, appConfig).toString
         }
       }
     }
@@ -344,7 +342,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view(filesNotificationViewModel(application))(request, messages(application), appConfig).toString
+            view(filesNotificationViewModel(application))(request, messages, appConfig).toString
         }
       }
     }
@@ -695,7 +693,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       AuthoritiesFilesNotificationViewModel(
         Some(gbStanAuthFile154Url),
         Some(xiStanAuthFile154Url),
-        dateAsDayMonthAndYear(START_DATE_1)(messages(app))
+        dateAsDayMonthAndYear(START_DATE_1)(messages)
       )
   }
 }

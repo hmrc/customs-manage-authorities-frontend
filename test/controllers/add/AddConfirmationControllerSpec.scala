@@ -63,7 +63,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, Some("Company Name"), true)(request, messages(application), appConfig).toString
+            view("eori", None, Some("Company Name"), true)(request, messages, appConfig).toString
         }
       }
 
@@ -113,7 +113,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", None, Some("Company Name"), multipleAccounts = false)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
         }
@@ -151,7 +151,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", Some(startDate.format(dateFormat)), Some("Company Name"), multipleAccounts = true)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
         }
@@ -182,7 +182,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", None, Some("Company Name"), multipleAccounts = true)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
 
@@ -206,7 +206,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, None, true)(request, messages(application), appConfig).toString
+            view("eori", None, None, true)(request, messages, appConfig).toString
 
           contentAsString(result) mustNot contain("Company name")
 

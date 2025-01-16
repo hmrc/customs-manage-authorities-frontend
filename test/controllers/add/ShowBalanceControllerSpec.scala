@@ -73,7 +73,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, accountsLength = 2, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, accountsLength = 2, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 
@@ -105,7 +105,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(ShowBalance.values.head), accountsLength = 2, NormalMode, backLinkRoute)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -165,7 +165,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(boundForm, accountsLength = 2, NormalMode, backLinkRoute)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }

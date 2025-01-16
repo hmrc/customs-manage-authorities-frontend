@@ -56,7 +56,7 @@ class AuthorityEndControllerSpec extends SpecBase {
           form().fill(AuthorityEnd.Setdate),
           NormalMode,
           controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
 
@@ -75,7 +75,7 @@ class AuthorityEndControllerSpec extends SpecBase {
           form(),
           NormalMode,
           controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
   }

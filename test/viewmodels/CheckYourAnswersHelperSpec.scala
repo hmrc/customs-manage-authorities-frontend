@@ -22,7 +22,6 @@ import models.domain._
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add._
-import play.api.i18n.Messages
 import services.DateTimeService
 import uk.gov.hmrc.govukfrontend.views.Aliases.ActionItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -34,8 +33,6 @@ import viewmodels.ManageAuthoritiesViewModel.dateAsDayMonthAndYear
 import java.time.{LocalDate, LocalDateTime}
 
 class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
-
-  implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
   val cashAccount: CashAccount                  = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
   val dutyDeferment: DutyDefermentAccount       =

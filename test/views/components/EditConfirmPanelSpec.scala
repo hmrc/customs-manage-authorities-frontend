@@ -39,10 +39,10 @@ class EditConfirmPanelSpec extends SpecBase {
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe
-          messages(app)("editConfirmation.heading")
+          messages("editConfirmation.heading")
 
         firstElement.getElementsByTag("p").get(0).html() must include(
-          messages(app)("editConfirmation.body.eori.number")
+          messages("editConfirmation.body.eori.number")
         )
         firstElement
           .getElementsByTag("strong")
@@ -50,7 +50,7 @@ class EditConfirmPanelSpec extends SpecBase {
           .html() mustBe "GB123456789000"
 
         firstElement.getElementsByTag("p").get(1).html() must include(
-          messages(app)("editConfirmation.body.company.name")
+          messages("editConfirmation.body.company.name")
         )
         firstElement
           .getElementsByTag("strong")
@@ -58,7 +58,7 @@ class EditConfirmPanelSpec extends SpecBase {
           .html() mustBe "TestCompany"
 
         firstElement.getElementsByTag("p").last().html() must include(
-          messages(app)("editConfirmation.body.changes")
+          messages("editConfirmation.body.changes")
         )
       }
     }
@@ -74,10 +74,10 @@ class EditConfirmPanelSpec extends SpecBase {
 
       running(app) {
         view.getElementsByTag("h1").html() mustBe
-          messages(app)("editConfirmation.heading")
+          messages("editConfirmation.heading")
 
         firstElement.getElementsByTag("p").get(0).html() must include(
-          messages(app)("editConfirmation.body.eori.number")
+          messages("editConfirmation.body.eori.number")
         )
         firstElement
           .getElementsByTag("strong")
@@ -85,7 +85,7 @@ class EditConfirmPanelSpec extends SpecBase {
           .html() mustBe "GB123456789000"
 
         firstElement.getElementsByTag("p").last().html() must include(
-          messages(app)("editConfirmation.body.changes")
+          messages("editConfirmation.body.changes")
         )
       }
     }
@@ -93,7 +93,7 @@ class EditConfirmPanelSpec extends SpecBase {
 
   trait SetUp {
     val app: Application       = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
+    implicit val msg: Messages = messages
 
     val view: Document
 

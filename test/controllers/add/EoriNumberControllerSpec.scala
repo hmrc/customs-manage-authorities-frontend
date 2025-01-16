@@ -60,7 +60,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages, appConfig).toString
       }
     }
 
@@ -87,7 +87,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill("answer"), NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -397,7 +397,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val xiEoriEnabled = true
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages, appConfig).toString
       }
     }
 
@@ -425,7 +425,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val xiEoriEnabled = true
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages, appConfig).toString
       }
     }
 
@@ -457,7 +457,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val xiEoriEnabled = true
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(request, messages, appConfig).toString
       }
     }
 
@@ -490,7 +490,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual BAD_REQUEST
 
-          contentAsString(result).contains(messages(application)("eoriNumber.error.authorise-own-eori"))
+          contentAsString(result).contains(messages("eoriNumber.error.authorise-own-eori"))
         }
       }
   }

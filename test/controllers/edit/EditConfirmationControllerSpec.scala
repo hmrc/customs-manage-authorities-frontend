@@ -62,7 +62,7 @@ class EditConfirmationControllerSpec extends SpecBase {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, Some("Company Name"))(request, messages(application), appConfig).toString
+            view("eori", None, Some("Company Name"))(request, messages, appConfig).toString
         }*/
       }
 
@@ -111,7 +111,7 @@ class EditConfirmationControllerSpec extends SpecBase {
           verify(mockAccountsRepository, times(1)).clear("id")
           verify(mockAuthoritiesRepository, times(1)).clear("id")
 
-          //  contentAsString(result) mustEqual view("GB123456789012", None, Some("Tony Stark"))(request, messages(application), appConfig).toString
+          //  contentAsString(result) mustEqual view("GB123456789012", None, Some("Tony Stark"))(request, messages, appConfig).toString
         }
       }
     }

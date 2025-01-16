@@ -46,7 +46,6 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
         emptyUserAnswers.set(EditAuthorityEndDatePage("123", "12345"), LocalDate.now(ZoneOffset.UTC)).toOption
       ).build()
 
-      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
       val view: EditAuthorityEndDateView     = app.injector.instanceOf[EditAuthorityEndDateView]
 
@@ -55,10 +54,10 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(LocalDate.now(ZoneOffset.UTC)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages).fill(LocalDate.now(ZoneOffset.UTC)),
           "123",
           "12345"
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
 
@@ -74,9 +73,9 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
         val result = route(app, getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages(app)), "123", "12345")(
+        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages), "123", "12345")(
           getRequest,
-          messages(app),
+          messages,
           appConfig
         ).toString()
       }

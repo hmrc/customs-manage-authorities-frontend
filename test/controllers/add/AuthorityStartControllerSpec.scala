@@ -61,7 +61,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 
@@ -88,7 +88,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(form.fill(AuthorityStart.values.head), NormalMode, backLinkRoute)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -142,7 +142,7 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 

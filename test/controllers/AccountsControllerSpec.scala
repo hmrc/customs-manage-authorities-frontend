@@ -94,7 +94,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual INTERNAL_SERVER_ERROR
 
           contentAsString(result) mustEqual
-            view()(request, messages(application), appConfig).toString
+            view()(request, messages, appConfig).toString
         }
       }
 
@@ -126,7 +126,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
               ),
               NormalMode,
               backLinkRoute
-            )(request, messages(application), appConfig).toString
+            )(request, messages, appConfig).toString
         }
       }
 
@@ -175,7 +175,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             ),
             NormalMode,
             backLinkRoute
-          )(request, messages(application), appConfig).toString
+          )(request, messages, appConfig).toString
         }
       }
     }
@@ -207,7 +207,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("GB9876543210000")(request, messages(application), appConfig).toString
+            view("GB9876543210000")(request, messages, appConfig).toString
         }
       }
     }
@@ -253,7 +253,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             ),
             NormalMode,
             backLinkRoute
-          )(request, messages(application), appConfig).toString
+          )(request, messages, appConfig).toString
       }
     }
 
@@ -295,7 +295,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             ),
             CheckMode,
             backLinkRouteInCheckMode
-          )(request, messages(application), appConfig).toString
+          )(request, messages, appConfig).toString
       }
     }
 
@@ -541,7 +541,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             ),
             NormalMode,
             backLinkRoute
-          )(request, messages(application), appConfig).toString
+          )(request, messages, appConfig).toString
       }
     }
   }

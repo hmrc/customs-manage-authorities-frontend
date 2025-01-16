@@ -32,6 +32,7 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.CSRFTokenHelper._
 import play.api.test.FakeRequest
 import utils.StringUtils.emptyString
+import scala.reflect.ClassTag
 
 class FakeMetrics extends Metrics {
   override val defaultRegistry: MetricRegistry = new MetricRegistry
@@ -39,17 +40,19 @@ class FakeMetrics extends Metrics {
 
 trait SpecBase extends PlaySpec with TryValues with ScalaFutures with IntegrationPatience {
 
-  val userAnswersId: InternalId = InternalId("id")
-
-  def frontendAppConfig(app: Application): FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  val userAnswersId: InternalId         = InternalId("id")
+  lazy val appConfig: FrontendAppConfig = instanceOf[FrontendAppConfig]
 
   def emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId.value)
 
-  def messages(app: Application): Messages =
-    app.injector.instanceOf[MessagesApi].preferred(fakeRequest(emptyString, emptyString))
+  implicit lazy val messages: Messages =
+    instanceOf[MessagesApi].preferred(fakeRequest(emptyString, emptyString))
 
   def fakeRequest(method: String = emptyString, path: String = emptyString): FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(method, path).withCSRFToken.asInstanceOf[FakeRequest[AnyContentAsEmpty.type]]
+
+  def application(ua: Option[UserAnswers] = None, eori: String = emptyString): Application =
+    applicationBuilder(ua, eori).build()
 
   protected def applicationBuilder(
     userAnswers: Option[UserAnswers] = None,
@@ -85,4 +88,8 @@ trait SpecBase extends PlaySpec with TryValues with ScalaFutures with Integratio
         )
     )
   )
+
+  implicit val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("GET", "/some/resource/path")
+
+  def instanceOf[T: ClassTag]: T = application().injector.instanceOf[T]
 }

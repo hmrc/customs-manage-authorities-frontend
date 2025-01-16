@@ -81,7 +81,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(getRequest, messages(application), appConfig).toString
+          view(form, "someId", "someId")(getRequest, messages, appConfig).toString
       }
     }
 
@@ -103,7 +103,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages(application), appConfig).toString
+          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages, appConfig).toString
       }
     }
 
@@ -153,7 +153,7 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
+          view(boundForm, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 

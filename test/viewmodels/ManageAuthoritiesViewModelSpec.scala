@@ -17,13 +17,12 @@
 package viewmodels
 
 import base.SpecBase
-import config.FrontendAppConfig
 import models.NormalMode
 import models.domain._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import play.api.Application
-import play.api.i18n.{DefaultMessagesApi, Messages}
+import play.api.i18n.DefaultMessagesApi
 import play.twirl.api.HtmlFormat
 import utils.DateUtils
 import utils.TestData.START_DATE_1
@@ -32,9 +31,7 @@ import java.time.LocalDate
 
 class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
 
-  implicit lazy val app: Application        = applicationBuilder().build()
-  implicit val msg: Messages                = messages(app)
-  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val app: Application = applicationBuilder().build()
 
   val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
   val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
@@ -192,7 +189,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         accounts = cdsAccounts,
         filesNotificationViewModel = authoritiesFilesNotificationViewModel
       )
-      val result: HtmlFormat.Appendable         = viewModel.generateLinks()(msg, appConfig)
+      val result: HtmlFormat.Appendable         = viewModel.generateLinks()(messages, appConfig)
       val resultString: String                  = result.toString()
 
       val doc: Document = Jsoup.parse(resultString)
@@ -200,12 +197,12 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
       val authorityLink: Element = doc.getElementById("start-link")
       authorityLink        must not be None
       authorityLink.attr("href") mustBe controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-      authorityLink.text() must include(msg("manageAuthorities.addAuthority"))
+      authorityLink.text() must include(messages("manageAuthorities.addAuthority"))
 
       val authorisedLink: Element = doc.getElementById("authorised-to-view-link")
       authorisedLink        must not be None
       authorisedLink.attr("href") mustBe appConfig.authorizedToViewUrl
-      authorisedLink.text() must include(msg("cf.account.authorized-to-view.title"))
+      authorisedLink.text() must include(messages("cf.account.authorized-to-view.title"))
     }
   }
 }

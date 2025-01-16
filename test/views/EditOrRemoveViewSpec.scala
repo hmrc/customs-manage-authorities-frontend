@@ -46,23 +46,23 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       val yourAccountRowElement: Element               = summaryElements.get(2)
 
       // Order of the summary rows is also being tested
-      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(
         "checkYourAnswers.eoriNumber.label"
       )
 
       companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListValue).html() mustBe eori
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(
         "view-authority-h2.5"
       )
 
       companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListValue).html() mustBe companyName
 
-      yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+      yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe messages(
         "edit-cya-account-number"
       )
 
-      yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe messages(app)(
+      yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe messages(
         s"manageAuthorities.table.heading.account.$CdsCashAccount",
         accNumber
       )
@@ -75,7 +75,7 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
 
       val companyDetailsRowEoriNumberElement: Element = summaryElements.get(0)
 
-      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+      companyDetailsRowEoriNumberElement.getElementsByClass(classSummaryListKey).html() mustBe messages(
         "checkYourAnswers.eoriNumber.label"
       )
 
@@ -89,7 +89,7 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
 
       val companyDetailsRowCompanyNameElement: Element = summaryElements.get(1)
 
-      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(app)(
+      companyDetailsRowCompanyNameElement.getElementsByClass(classSummaryListKey).html() mustBe messages(
         "view-authority-h2.5"
       )
 
@@ -104,9 +104,9 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       val yourAccountRowElement: Element = summaryElements.get(2)
 
       yourAccountRowElement.getElementsByClass(classSummaryListKey).html() mustBe
-        messages(app)("edit-cya-account-number")
+        messages("edit-cya-account-number")
       yourAccountRowElement.getElementsByClass(classSummaryListValue).html() mustBe
-        messages(app)(s"manageAuthorities.table.heading.account.$CdsCashAccount", accNumber)
+        messages(s"manageAuthorities.table.heading.account.$CdsCashAccount", accNumber)
     }
 
     "Header displays Account authority by Tag" in new Setup {
@@ -190,11 +190,11 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       standingAuthority,
       accountsWithAuthoritiesWithId,
       Option(companyName)
-    )(messages(app))
+    )(messages)
 
     val view: EditOrRemoveView = app.injector.instanceOf[EditOrRemoveView]
 
     val result: HtmlFormat.Appendable =
-      view(checkAnswersEditHelper, "123", "456")(csrfRequest, messages(app), appConfig)
+      view(checkAnswersEditHelper, "123", "456")(csrfRequest, messages, appConfig)
   }
 }

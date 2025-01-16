@@ -40,12 +40,12 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
       elements.size() mustBe 2
 
       elements.get(0).getElementsByTag("p").html() must contain
-      messages(app)("manageAuthorities.notificationPanel.p1")
+      messages("manageAuthorities.notificationPanel.p1")
 
-      elements.get(1).html() mustBe messages(app)("manageAuthorities.notificationPanel.p2", date)
+      elements.get(1).html() mustBe messages("manageAuthorities.notificationPanel.p2", date)
 
       view.getElementById("gb-csv-authority-link").html() mustBe
-        messages(app)("manageAuthorities.notificationPanel.a.gb-authority")
+        messages("manageAuthorities.notificationPanel.a.gb-authority")
       view.getElementById("gb-csv-authority-link").attr("href") mustBe "gbURL"
     }
 
@@ -57,17 +57,17 @@ class AuthoritiesNotificationPanelSpec extends ViewTestHelper {
       elements.size() mustBe 2
 
       view.getElementById("gb-csv-authority-link").html() mustBe
-        messages(app)("manageAuthorities.notificationPanel.a.gb-authority")
+        messages("manageAuthorities.notificationPanel.a.gb-authority")
       view.getElementById("gb-csv-authority-link").attr("href") mustBe "gbURL"
 
       view.getElementById("xi-csv-authority-link").html() mustBe
-        messages(app)("manageAuthorities.notificationPanel.a.xi-authority")
+        messages("manageAuthorities.notificationPanel.a.xi-authority")
       view.getElementById("xi-csv-authority-link").attr("href") mustBe "xiURL"
 
       elements.get(0).getElementsByTag("p").html() must contain
-      messages(app)("manageAuthorities.notificationPanel.p1")
+      messages("manageAuthorities.notificationPanel.p1")
 
-      elements.get(1).html() mustBe messages(app)("manageAuthorities.notificationPanel.p2", date)
+      elements.get(1).html() mustBe messages("manageAuthorities.notificationPanel.p2", date)
     }
 
     "not display the guidance when file does not exists" in new Setup {

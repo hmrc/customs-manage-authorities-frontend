@@ -40,7 +40,7 @@ class UnauthorisedControllerSpec extends SpecBase {
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view()(request, messages(application), appConfig).toString
+        contentAsString(result) mustEqual view()(request, messages, appConfig).toString
       }
     }
   }

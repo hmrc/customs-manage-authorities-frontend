@@ -17,7 +17,6 @@
 package views
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{AccountStatusClosed, AccountStatusOpen, CDSCashBalance, CashAccount}
 import models.{AuthorisedAccounts, CheckMode, NormalMode}
@@ -56,8 +55,7 @@ class AccountsViewSpec extends SpecBase {
 
     val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
+    implicit val messages: Messages = Helpers.stubMessages()
 
     private lazy val normalModeBackLinkRoute: Call = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode)
     private lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
@@ -89,7 +87,7 @@ class AccountsViewSpec extends SpecBase {
             ),
             NormalMode,
             normalModeBackLinkRoute
-          )
+          )(request, messages, appConfig)
           .body
       )
 
@@ -108,7 +106,7 @@ class AccountsViewSpec extends SpecBase {
             ),
             CheckMode,
             checkModeBackLinkRoute
-          )
+          )(request, messages, appConfig)
           .body
       )
 
@@ -127,7 +125,7 @@ class AccountsViewSpec extends SpecBase {
             ),
             NormalMode,
             normalModeBackLinkRoute
-          )
+          )(request, messages, appConfig)
           .body
       )
   }

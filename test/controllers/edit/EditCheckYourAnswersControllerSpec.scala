@@ -88,7 +88,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual
           view(helper(userAnswers, application, standingAuthority), "a", "b")(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -803,7 +803,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         authority,
         accountsWithAuthoritiesWithId,
         None
-      )(messages(application))
+      )(messages)
 
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())

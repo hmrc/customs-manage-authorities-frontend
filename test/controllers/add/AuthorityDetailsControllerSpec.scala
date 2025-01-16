@@ -62,7 +62,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
     "populate the view correctly on a GET when the question has previously been answered" in {
@@ -87,7 +87,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(answer), NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(form.fill(answer), NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 
@@ -140,7 +140,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 

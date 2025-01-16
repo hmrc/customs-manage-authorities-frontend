@@ -73,7 +73,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(request, messages(application), appConfig).toString
+          view(form, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -99,7 +99,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(ShowBalance.Yes), "someId", "someId")(request, messages(application), appConfig).toString
+          view(form.fill(ShowBalance.Yes), "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -152,7 +152,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
+          view(boundForm, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 

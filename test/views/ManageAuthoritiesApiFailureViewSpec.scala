@@ -32,18 +32,18 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
   "ManageAuthoritiesApiFailureView" should {
 
     "display the correct page title" in new Setup {
-      view().title must include(messages(app)("manageAuthorities.title"))
+      view().title must include(messages("manageAuthorities.title"))
     }
 
     "display the main heading" in new Setup {
-      view().getElementById("manageAuthorities.heading").text mustBe messages(app)("manageAuthorities.title")
+      view().getElementById("manageAuthorities.heading").text mustBe messages("manageAuthorities.title")
     }
 
     "display the authorized-to-view link" in new Setup {
       private val link = view().getElementById("manageAuthorities-noAccounts-link")
 
       link.attr("href") mustBe appConfig.authorizedToViewUrl
-      link.text mustBe messages(app)("cf.account.authorized-to-view.title")
+      link.text mustBe messages("cf.account.authorized-to-view.title")
     }
 
     "display the notification panel if provided" in new Setup {
@@ -64,11 +64,11 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     }
 
     "display the authorized accounts heading" in new Setup {
-      view().select("h2.govuk-heading-m").first.text mustBe messages(app)("manageAuthorities.accounts.authorised")
+      view().select("h2.govuk-heading-m").first.text mustBe messages("manageAuthorities.accounts.authorised")
     }
 
     "display the error message paragraph" in new Setup {
-      view().select("p.govuk-body").get(1).text mustBe messages(app)("manageAuthorities.error.display")
+      view().select("p.govuk-body").get(1).text mustBe messages("manageAuthorities.error.display")
     }
   }
 
@@ -88,7 +88,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     def view(): Document = {
       val htmlContent = app.injector
         .instanceOf[ManageAuthoritiesApiFailureView]
-        .apply(viewModel)(csrfRequest, messages(app), appConfig)
+        .apply(viewModel)(csrfRequest, messages, appConfig)
         .body
       Jsoup.parse(htmlContent)
     }
