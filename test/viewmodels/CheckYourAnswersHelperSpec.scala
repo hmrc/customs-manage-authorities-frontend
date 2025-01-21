@@ -102,8 +102,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
       }
 
       "summaryListRowHelper should give correct values for yesOrNo" in {
-        yesOrNo(true) mustEqual "site.yes"
-        yesOrNo(false) mustEqual "site.no"
+        yesOrNo(true) mustEqual messages("site.yes")
+        yesOrNo(false) mustEqual messages("site.no")
       }
 
       "accountNumberRow should return valid message if xiEori is true" in {
@@ -128,25 +128,27 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
       "only EORI number row is displayed when no company name is present" in {
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
         val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+
         helper.accountsRows mustBe Seq(
           summaryListRow(
-            "accounts.checkYourAnswersLabel.singular",
-            "accounts.type.cash: 12345",
+            messages("accounts.checkYourAnswersLabel.singular"),
+            s"${messages("accounts.type.cash")}: 12345",
             None,
             Actions(items =
               Seq(
                 ActionItem(
                   href = controllers.add.routes.AccountsController.onPageLoad(CheckMode).url,
-                  content = span("site.change"),
-                  visuallyHiddenText = Some("checkYourAnswers.accounts.hidden")
+                  content = span(messages("site.change")),
+                  visuallyHiddenText = Some(messages("checkYourAnswers.accounts.hidden"))
                 )
               )
             )
           )
         )
+
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
-            "checkYourAnswers.eoriNumber.label",
+            messages("checkYourAnswers.eoriNumber.label"),
             "GB123456789012",
             None,
             actions = Actions(items =
@@ -159,13 +161,18 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
               )
             )
           ),
-          summaryListRow("view-authority-h2.5", "view-authority-h2.6", None, actions = Actions(items = Seq()))
+          summaryListRow(
+            messages("view-authority-h2.5"),
+            messages("view-authority-h2.6"),
+            None,
+            actions = Actions(items = Seq())
+          )
         )
 
         helper.authorityDurationRows mustBe Seq(
           summaryListRow(
-            "authorityStart.checkYourAnswersLabel",
-            s"authorityStart.checkYourAnswersLabel.today ${dateAsDayMonthAndYear(LocalDate.now())}",
+            messages("authorityStart.checkYourAnswersLabel"),
+            s"${messages("authorityStart.checkYourAnswersLabel.today")} ${dateAsDayMonthAndYear(LocalDate.now())}",
             None,
             actions = Actions(items =
               Seq(
@@ -178,8 +185,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             )
           ),
           summaryListRow(
-            "authorityEnd.checkYourAnswersLabel",
-            s"checkYourAnswers.authorityEnd.indefinite",
+            messages("authorityEnd.checkYourAnswersLabel"),
+            messages("checkYourAnswers.authorityEnd.indefinite"),
             None,
             actions = Actions(items =
               Seq(
@@ -192,8 +199,8 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             )
           ),
           summaryListRow(
-            "showBalance.checkYourAnswersLabel",
-            "showBalance.checkYourAnswers.yes",
+            messages("showBalance.checkYourAnswersLabel"),
+            messages("showBalance.checkYourAnswers.yes"),
             None,
             actions = Actions(items =
               Seq(
@@ -212,14 +219,16 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
     "produce correct authorisation declaration message" when {
 
       "a single account is selected" in {
-        val userAnswers: UserAnswers       = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+        val userAnswers: UserAnswers =
+          userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
+
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
-        helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.singular"
+        helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.singular")
       }
 
       "multiple accounts are selected" in {
         val helper: CheckYourAnswersHelper = CheckYourAnswersHelper(userAnswersTodayToIndefinite, mockDateTimeService)
-        helper.accountsTitle mustBe "checkYourAnswers.accounts.h2.plural"
+        helper.accountsTitle mustBe messages("checkYourAnswers.accounts.h2.plural")
       }
     }
 
@@ -258,9 +267,10 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
         val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val compare     = s"${messages("accounts.type.dutyDeferment")} ${messages("accounts.ni")}: 67890"
 
         helper.accountsRows.size mustBe 1
-        helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment accounts.ni: 67890"))
+        helper.accountsRows.head.value mustBe Value(HtmlContent(compare))
       }
     }
 
@@ -298,9 +308,10 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
 
         val userAnswers = userAnswersWithNIEoriAndDefermentAccount.set(AccountsPage, List(dutyDeferment)).success.value
         val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
+        val compare     = s"${messages("accounts.type.dutyDeferment")}: 67890"
 
         helper.accountsRows.size mustBe 1
-        helper.accountsRows.head.value mustBe Value(HtmlContent("accounts.type.dutyDeferment: 67890"))
+        helper.accountsRows.head.value mustBe Value(HtmlContent(compare))
       }
     }
   }

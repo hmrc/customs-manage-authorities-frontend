@@ -111,7 +111,7 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
         val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(
           summaryListRow(
-            "eoriDetail.eoriNumber.label",
+            messages("eoriDetail.eoriNumber.label"),
             "GB123456789012",
             None,
             actions = Actions(items = Seq())
