@@ -40,20 +40,12 @@ import scala.concurrent.Future
 class SdesConnectorSpec extends SpecBase {
 
   "getAuthoritiesCsvFiles" should {
-
     "make a GET request to sdesStandingAuthorityFilesUrl" in new Setup {
       val url: String = sdesStandingAuthorityFileUrl
 
-      val app: Application = applicationBuilder()
-        .overrides(
-          inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
-        )
-        .build()
-
-      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
-
       when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
         .thenReturn(mockRequestBuilder)
+
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(Seq.empty))
 
@@ -72,6 +64,7 @@ class SdesConnectorSpec extends SpecBase {
 
       when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
         .thenReturn(mockRequestBuilder)
+
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(standingAuthoritiesFilesSdesResponse))
 
@@ -79,16 +72,16 @@ class SdesConnectorSpec extends SpecBase {
 
       when(sdesGatekeeperServiceSpy.convertTo(any())).thenCallRealMethod()
 
-      val app: Application = applicationBuilder()
+      val appWithGateKeeper: Application = applicationBuilder()
         .overrides(
           inject.bind[HttpClientV2].toInstance(mockHttpClientV2),
           inject.bind[SdesGatekeeperService].toInstance(sdesGatekeeperServiceSpy)
         )
         .build()
 
-      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
+      val service: SdesConnector = appWithGateKeeper.injector.instanceOf[SdesConnector]
 
-      await(sdesService.getAuthoritiesCsvFiles(someEori)(hc))
+      await(service.getAuthoritiesCsvFiles(someEori)(hc))
       verify(mockHttpClientV2).get(eqTo(new URL(url)))(any)
       verify(mockRequestBuilder).setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*)
       verify(mockRequestBuilder).execute[Seq[FileInformation]](any, any)
@@ -100,18 +93,11 @@ class SdesConnectorSpec extends SpecBase {
 
       when(mockRequestBuilder.setHeader(any[(String, String)].asInstanceOf[Seq[(String, String)]]: _*))
         .thenReturn(mockRequestBuilder)
+
       when(mockRequestBuilder.execute[Seq[FileInformation]](any, any))
         .thenReturn(Future.successful(standingAuthoritiesFilesWithUnknownFiletypesSdesResponse))
 
       when(mockHttpClientV2.get(eqTo(new URL(url)))(any)).thenReturn(mockRequestBuilder)
-
-      val app: Application = applicationBuilder()
-        .overrides(
-          inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
-        )
-        .build()
-
-      val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
 
       val result: Seq[StandingAuthorityFile] =
         await(sdesService.getAuthoritiesCsvFiles(someEoriWithUnknownFileTypes)(hc))
@@ -235,5 +221,13 @@ class SdesConnectorSpec extends SpecBase {
     val mockAppConfig: FrontendAppConfig                   = mock[FrontendAppConfig]
     val mockMetricsReporterService: MetricsReporterService = mock[MetricsReporterService]
     val mockAuditingService: AuditingService               = mock[AuditingService]
+
+    val app: Application = applicationBuilder()
+      .overrides(
+        inject.bind[HttpClientV2].toInstance(mockHttpClientV2)
+      )
+      .build()
+
+    val sdesService: SdesConnector = app.injector.instanceOf[SdesConnector]
   }
 }

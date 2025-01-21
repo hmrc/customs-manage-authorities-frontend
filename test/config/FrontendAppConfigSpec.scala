@@ -23,12 +23,11 @@ import play.api.test.Helpers.running
 class FrontendAppConfigSpec extends SpecBase {
 
   "FrontendAppConfig" should {
-    "load all configuration values correctly" in new Setup {
-      running(app) {
+    "load all configuration values correctly" in {
+      running(application()) {
         appConfig.appName mustBe "customs-manage-authorities-frontend"
         appConfig.feedbackUrl mustBe "https://www.development.tax.service.gov.uk/feedback/CDS-FIN"
         appConfig.xiEoriEnabled mustBe true
-
         appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
         appConfig.authorizedToViewUrl mustBe "http://localhost:9876/customs/payment-records/authorized-to-view"
         appConfig.customsSecureMessagingBannerEndpoint mustBe "http://localhost:9842/customs/secure-messaging/banner"
@@ -38,26 +37,20 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.loginContinueUrl mustBe "http://localhost:8322"
         appConfig.subscribeCdsUrl mustBe "https://www.tax.service.gov.uk/customs-enrolment-services/cds/subscribe"
         appConfig.govukHome mustBe "https://www.gov.uk"
-        appConfig.helpMakeGovUkBetterUrl mustBe
-          "https://signup.take-part-in-research.service.gov.uk?utm_campaign=CDSfinancials&utm_source=Other&utm_medium=other&t=HMRC&id=249"
-
         appConfig.xClientIdHeader mustBe "c10ef6c6-8ffe-4a45-a159-d707ef90cf07"
-        appConfig.timeout mustBe 900
-        appConfig.countdown mustBe 120
-
         appConfig.customsDataStore mustBe "http://localhost:9893/customs-data-store"
         appConfig.customsFinancialsFrontendHomepageUrl mustBe "http://localhost:9876/customs/payment-records/"
         appConfig.sdesApi mustBe "http://localhost:9754/customs-financials-sdes-stub"
+        appConfig.timeout mustBe 900
+        appConfig.countdown mustBe 120
+
+        appConfig.helpMakeGovUkBetterUrl mustBe
+          "https://signup.take-part-in-research.service.gov.uk?utm_campaign=CDSfinancials&utm_source=Other&utm_medium=other&t=HMRC&id=249"
 
         val fileRole = FileRole("StandingAuthority")
         appConfig.filesUrl(fileRole) mustBe
           "http://localhost:9754/customs-financials-sdes-stub/files-available/list/StandingAuthority"
       }
     }
-  }
-
-  trait Setup {
-    val app       = applicationBuilder(userAnswers = None).build()
-    val appConfig = app.injector.instanceOf[FrontendAppConfig]
   }
 }

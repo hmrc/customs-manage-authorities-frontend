@@ -41,11 +41,9 @@ class LogoutControllerSpec extends SpecBase {
 
   "logoutNoSurvey" must {
     "redirect the user to logout with no continue location" in {
-      val application = applicationBuilder(userAnswers = None)
-        .build()
-      running(application) {
+      running(application()) {
         val request = FakeRequest(GET, routes.LogoutController.logoutNoSurvey.url)
-        val result  = route(application, request).value
+        val result  = route(application(), request).value
 
         redirectLocation(result).value mustEqual expectedSignoutUrl
       }
