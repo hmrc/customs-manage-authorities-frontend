@@ -52,10 +52,8 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, authorityDetailsRoute)
-
-        val result = route(application, request).value
-
+        val request   = fakeRequest(GET, authorityDetailsRoute)
+        val result    = route(application, request).value
         val view      = application.injector.instanceOf[AuthorityDetailsView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -65,6 +63,7 @@ class AuthorityDetailsControllerSpec extends SpecBase with MockitoSugar {
           view(form, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
+
     "populate the view correctly on a GET when the question has previously been answered" in {
 
       val answer = AuthorisedUser("name", "role")

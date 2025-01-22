@@ -42,10 +42,9 @@ class AddConfirmationControllerSpec extends SpecBase {
     DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
   "AddConfirmation Controller" must {
-
     "return OK and the correct view for a GET" when {
-
       "The user is returning to the page " in {
+
         val userAnswers = emptyUserAnswers
           .set(ConfirmationPage, ConfirmationDetails("eori", None, Some("Company Name"), true))
           .success
@@ -53,10 +52,9 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
 
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -97,10 +95,8 @@ class AddConfirmationControllerSpec extends SpecBase {
           .build()
 
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -139,10 +135,8 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -170,10 +164,8 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -196,10 +188,8 @@ class AddConfirmationControllerSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -217,13 +207,10 @@ class AddConfirmationControllerSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
-
           val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }

@@ -112,7 +112,6 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
               )
             )
         }
-
       }
 
     "return the request if the account numbers are valid" in new Setup {

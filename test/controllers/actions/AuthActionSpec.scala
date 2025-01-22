@@ -33,9 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionSpec extends SpecBase {
 
   "Auth Action" when {
-
     "the user hasn't logged in" must {
-
       "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -52,14 +50,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
-        // redirectLocation(result).get must startWith(config.loginUrl)
         redirectLocation(result).get must startWith("")
       }
     }
 
     "the user's session has expired" must {
-
       "redirect the user to log in " in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -76,14 +71,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
-        // redirectLocation(result).get must startWith(appConfig.loginUrl)
         redirectLocation(result).get must startWith("")
       }
     }
 
     "the user doesn't have sufficient enrolments" must {
-
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -100,13 +92,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
     "the user doesn't have sufficient confidence level" must {
-
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -123,13 +113,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
     "the user used an unaccepted auth provider" must {
-
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -146,13 +134,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
     "the user has an unsupported affinity group" must {
-
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -169,13 +155,11 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }
 
     "the user has an unsupported credential role" must {
-
       "redirect the user to the unauthorised page" in {
 
         val application = applicationBuilder(userAnswers = None).build()
@@ -192,7 +176,6 @@ class AuthActionSpec extends SpecBase {
         val result     = controller.onPageLoad()(fakeRequest())
 
         status(result) mustBe SEE_OTHER
-
         redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
       }
     }

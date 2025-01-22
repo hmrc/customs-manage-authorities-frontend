@@ -48,7 +48,6 @@ import scala.concurrent.Future
 class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
   "onPageLoad" must {
-
     "return OK and the correct view for a GET" in new SetUp {
 
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
@@ -67,7 +66,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val result                                                = route(app, request).value
 
         status(result) mustEqual OK
-
         contentAsString(result) mustEqual view(form, helper).toString
       }
     }
@@ -82,7 +80,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       running(app) {
         val request = fakeRequest(GET, authorisedUserRoute)
         val result  = route(app, request).value
-
         status(result) mustEqual SEE_OTHER
       }
     }
@@ -96,7 +93,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val result  = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual sessionExpiredPage
       }
     }
@@ -110,16 +106,14 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         val result  = route(app, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual sessionExpiredPage
       }
     }
-
   }
 
   "onSubmit" must {
-
     "redirect to next page for valid data" in new SetUp {
+
       val userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
       val app: Application         =
         applicationWithUserAnswersAndEori(userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
@@ -148,10 +142,12 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(true))
+
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(true))
 
@@ -166,6 +162,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to error page for valid data when user has selected cash,guarantee and DD accounts " +
       "and input EORI is XI EORI but grant authority calls fail" in new SetUp {
+
         val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori
           .set(AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment))
           .success
@@ -175,10 +172,12 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(false))
+
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(false))
 
@@ -204,10 +203,12 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(true))
+
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(false))
 
@@ -217,7 +218,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(technicalDifficultiesPage)
-
           verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
         }
       }
@@ -234,6 +234,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(true))
@@ -243,7 +244,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
-
           verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
         }
       }
@@ -254,7 +254,6 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         applicationWithUserAnswersAndEori(userAnswers, dataStoreConnector = Some(mockDataStoreConnector))
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
-
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
 
