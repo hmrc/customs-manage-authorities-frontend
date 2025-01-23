@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityEndFormProvider
 import models.AuthorityEnd
 import org.mockito.ArgumentMatchers.any
@@ -42,7 +41,6 @@ class EditAuthorityEndControllerSpec extends SpecBase {
         emptyUserAnswers.set(EditAuthorityEndPage("123", "12345"), AuthorityEnd.Setdate).toOption
       ).build()
 
-      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
       val view: EditAuthorityEndView     = app.injector.instanceOf[EditAuthorityEndView]
 
@@ -59,14 +57,15 @@ class EditAuthorityEndControllerSpec extends SpecBase {
     }
 
     "return OK without pre-populated values if form has no values" in new SetUp {
-      val app: Application = applicationBuilder(Option(emptyUserAnswers)).build()
 
-      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
-      val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
-      val view: EditAuthorityEndView     = app.injector.instanceOf[EditAuthorityEndView]
+      val form: AuthorityEndFormProvider =
+        application(Option(emptyUserAnswers)).injector.instanceOf[AuthorityEndFormProvider]
 
-      running(app) {
-        val result = route(app, getRequest).value
+      val view: EditAuthorityEndView =
+        application(Option(emptyUserAnswers)).injector.instanceOf[EditAuthorityEndView]
+
+      running(application(Option(emptyUserAnswers))) {
+        val result = route(application(Option(emptyUserAnswers)), getRequest).value
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(form(), "123", "12345")(getRequest, messages, appConfig).toString()
@@ -93,10 +92,14 @@ class EditAuthorityEndControllerSpec extends SpecBase {
     }
 
     "return BAD_REQUEST if form has errors" in new SetUp {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).build()
+      running(application(Some(emptyUserAnswers))) {
 
-      running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody("invalid" -> "field_value")).value
+        val result =
+          route(
+            application(Some(emptyUserAnswers)),
+            postRequest.withFormUrlEncodedBody("invalid" -> "field_value")
+          ).value
+
         status(result) shouldBe BAD_REQUEST
       }
     }

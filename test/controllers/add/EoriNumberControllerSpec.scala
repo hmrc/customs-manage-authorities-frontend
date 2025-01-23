@@ -41,19 +41,13 @@ import scala.concurrent.Future
 class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
   "EoriNumber Controller" must {
-
     "return OK and the correct view for a GET" in new SetUp {
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
+      running(application(Some(emptyUserAnswers))) {
 
         val request = fakeRequest(GET, eoriNumberRoute)
-
-        val result = route(application, request).value
-
-        val view      = application.injector.instanceOf[EoriNumberView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val result  = route(application(Some(emptyUserAnswers)), request).value
+        val view    = application(Some(emptyUserAnswers)).injector.instanceOf[EoriNumberView]
 
         val xiEoriEnabled = true
 
@@ -69,16 +63,11 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers: UserAnswers =
         UserAnswers(userAnswersId.value).set(EoriNumberPage, CompanyDetails("answer", Some("1"))).success.value
 
-      val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
+      running(application(Some(userAnswers))) {
 
         val request = fakeRequest(GET, eoriNumberRoute)
-
-        val view      = application.injector.instanceOf[EoriNumberView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view    = application(Some(userAnswers)).injector.instanceOf[EoriNumberView]
+        val result  = route(application(Some(userAnswers)), request).value
 
         val xiEoriEnabled = true
 
@@ -379,18 +368,12 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and errors when invalid data is submitted" in new SetUp {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application(Some(emptyUserAnswers))) {
 
-      running(application) {
-
-        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", emptyString))
-
+        val request   = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", emptyString))
         val boundForm = form.bind(Map("value" -> emptyString))
-
-        val view      = application.injector.instanceOf[EoriNumberView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view      = application(Some(emptyUserAnswers)).injector.instanceOf[EoriNumberView]
+        val result    = route(application(Some(emptyUserAnswers)), request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -403,9 +386,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     "return a Bad Request and errors when eori is same as the authorise eori is submitted" in new SetUp {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
+      running(application(Some(emptyUserAnswers))) {
 
         val request =
           fakeRequest(POST, eoriNumberRoute)
@@ -416,10 +397,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
             .bind(Map("value" -> "GB123456789012"))
             .withError("value", "eoriNumber.error.authorise-own-eori")
 
-        val view      = application.injector.instanceOf[EoriNumberView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view   = application(Some(emptyUserAnswers)).injector.instanceOf[EoriNumberView]
+        val result = route(application(Some(emptyUserAnswers)), request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -449,8 +428,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val view      = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -489,7 +467,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-
           contentAsString(result).contains(messages("eoriNumber.error.authorise-own-eori"))
         }
       }

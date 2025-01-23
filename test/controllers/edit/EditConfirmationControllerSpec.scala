@@ -47,25 +47,6 @@ class EditConfirmationControllerSpec extends SpecBase {
 
   "EditConfirmation Controller" must {
     "return OK and the correct view for a GET" when {
-
-      "The user is returning to the page " in { /*
-        val userAnswers = emptyUserAnswers.set(ConfirmationPage , ConfirmationDetails("eori", None, Some("Company Name"), false)).success.value
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).configure("features.edit-journey" -> true).build()
-        running(application){
-          val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-
-          val result = route(application, request).value
-
-          val view = application.injector.instanceOf[EditConfirmationView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-          status(result) mustEqual OK
-
-          contentAsString(result) mustEqual
-            view("eori", None, Some("Company Name"))(request, messages, appConfig).toString
-        }*/
-      }
-
       "Start date is today with single account selected" in {
 
         val mockSessionRepository     = mock[SessionRepository]
@@ -102,7 +83,6 @@ class EditConfirmationControllerSpec extends SpecBase {
         running(application) {
 
           val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-
           val result = route(application, request).value
 
           status(result) mustEqual OK
@@ -110,8 +90,6 @@ class EditConfirmationControllerSpec extends SpecBase {
           verify(mockSessionRepository, times(1)).clear("id")
           verify(mockAccountsRepository, times(1)).clear("id")
           verify(mockAuthoritiesRepository, times(1)).clear("id")
-
-          //  contentAsString(result) mustEqual view("GB123456789012", None, Some("Tony Stark"))(request, messages, appConfig).toString
         }
       }
     }
@@ -123,11 +101,9 @@ class EditConfirmationControllerSpec extends SpecBase {
       running(application) {
 
         val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

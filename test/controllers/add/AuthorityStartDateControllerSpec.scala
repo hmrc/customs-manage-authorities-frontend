@@ -17,7 +17,6 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityStartDateFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -43,10 +42,8 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   private val formProvider = new AuthorityStartDateFormProvider(mockDateTimeService)
   private def form         = formProvider()
-
-  private def onwardRoute = Call("GET", "/foo")
-
-  private val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  private def onwardRoute  = Call("GET", "/foo")
+  private val validAnswer  = LocalDate.now(ZoneOffset.UTC)
 
   private lazy val authorityStartDateRoute =
     controllers.add.routes.AuthorityStartDateController.onPageLoad(NormalMode).url
@@ -63,20 +60,16 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         "value.month" -> validAnswer.getMonthValue.toString,
         "value.year"  -> validAnswer.getYear.toString
       )
-  val backLinkRoute: Call                                               = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
+
+  val backLinkRoute: Call = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode)
 
   "AuthorityStartDate Controller" must {
-
     "return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application(Some(emptyUserAnswers))) {
 
-      running(application) {
-
-        val result = route(application, getRequest).value
-
-        val view      = application.injector.instanceOf[AuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val result = route(application(Some(emptyUserAnswers)), getRequest).value
+        val view   = application(Some(emptyUserAnswers)).injector.instanceOf[AuthorityStartDateView]
 
         status(result) mustEqual OK
 
@@ -89,14 +82,10 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = UserAnswers(userAnswersId.value).set(AuthorityStartDatePage, validAnswer).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      running(application(Some(userAnswers))) {
 
-      running(application) {
-
-        val view      = application.injector.instanceOf[AuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, getRequest).value
+        val view   = application(Some(userAnswers)).injector.instanceOf[AuthorityStartDateView]
+        val result = route(application(Some(userAnswers)), getRequest).value
 
         status(result) mustEqual OK
 
@@ -108,7 +97,6 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -120,31 +108,25 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
       running(application) {
-
         val result = route(application, postRequest).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
+      running(application(Some(emptyUserAnswers))) {
 
         val request =
           fakeRequest(POST, authorityStartDateRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
+        val view      = application(Some(emptyUserAnswers)).injector.instanceOf[AuthorityStartDateView]
 
-        val view      = application.injector.instanceOf[AuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val result = route(application(Some(emptyUserAnswers)), request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -155,11 +137,8 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-
-        val result = route(application, getRequest).value
+      running(application(None)) {
+        val result = route(application(None), getRequest).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -168,14 +147,10 @@ class AuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-
-        val result = route(application, postRequest).value
+      running(application(None)) {
+        val result = route(application(None), postRequest).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

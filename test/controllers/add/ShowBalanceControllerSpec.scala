@@ -17,7 +17,6 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.ShowBalanceFormProvider
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
 import models.{NormalMode, ShowBalance, UserAnswers}
@@ -49,7 +48,6 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
   val backLinkRoute: Call   = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
 
   "ShowBalance Controller" must {
-
     "return OK and the correct view for a GET" in {
 
       val userAnswers = UserAnswers(userAnswersId.value)
@@ -64,11 +62,8 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, showBalanceRoute)
-
-        val result = route(application, request).value
-
-        val view      = application.injector.instanceOf[ShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[ShowBalanceView]
 
         status(result) mustEqual OK
 
@@ -94,11 +89,8 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, showBalanceRoute)
-
-        val view      = application.injector.instanceOf[ShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[ShowBalanceView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
 
@@ -114,7 +106,6 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -134,7 +125,6 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -154,11 +144,8 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
         val view      = application.injector.instanceOf[ShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
@@ -173,13 +160,10 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
+      running(application(None)) {
 
         val request = fakeRequest(GET, showBalanceRoute)
-
-        val result = route(application, request).value
+        val result  = route(application(None), request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -188,18 +172,15 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
+      running(application(None)) {
 
         val request =
           fakeRequest(POST, showBalanceRoute)
             .withFormUrlEncodedBody(("value", ShowBalance.values.head.toString))
 
-        val result = route(application, request).value
+        val result = route(application(None), request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

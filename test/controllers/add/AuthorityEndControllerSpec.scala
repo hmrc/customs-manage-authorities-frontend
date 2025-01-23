@@ -17,7 +17,6 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityEndFormProvider
 import models.{AuthorityEnd, NormalMode}
 import org.mockito.ArgumentMatchers.any
@@ -41,15 +40,14 @@ import scala.concurrent.Future
 class AuthorityEndControllerSpec extends SpecBase {
   "onPageLoad" must {
     "return OK with pre-populated values if form has some values" in new SetUp {
-      val app: Application =
-        applicationBuilder(emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate).toOption).build()
 
-      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
-      val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
-      val view: AuthorityEndView         = app.injector.instanceOf[AuthorityEndView]
+      val empUserAnswers = emptyUserAnswers.set(AuthorityEndPage, AuthorityEnd.Setdate).toOption
 
-      running(app) {
-        val result = route(app, getRequest).value
+      val form: AuthorityEndFormProvider = application(empUserAnswers).injector.instanceOf[AuthorityEndFormProvider]
+      val view: AuthorityEndView         = application(empUserAnswers).injector.instanceOf[AuthorityEndView]
+
+      running(application(empUserAnswers)) {
+        val result = route(application(empUserAnswers), getRequest).value
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
@@ -61,14 +59,13 @@ class AuthorityEndControllerSpec extends SpecBase {
     }
 
     "return OK without pre-populated values if form has no values" in new SetUp {
-      val app: Application = applicationBuilder(Option(emptyUserAnswers)).build()
 
-      val appConfig: FrontendAppConfig   = app.injector.instanceOf[FrontendAppConfig]
-      val form: AuthorityEndFormProvider = app.injector.instanceOf[AuthorityEndFormProvider]
-      val view: AuthorityEndView         = app.injector.instanceOf[AuthorityEndView]
+      val view: AuthorityEndView         = application(Option(emptyUserAnswers)).injector.instanceOf[AuthorityEndView]
+      val form: AuthorityEndFormProvider =
+        application(Option(emptyUserAnswers)).injector.instanceOf[AuthorityEndFormProvider]
 
-      running(app) {
-        val result = route(app, getRequest).value
+      running(application(Option(emptyUserAnswers))) {
+        val result = route(application(Option(emptyUserAnswers)), getRequest).value
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
@@ -82,6 +79,7 @@ class AuthorityEndControllerSpec extends SpecBase {
 
   "onSubmit" must {
     "redirect to next page if form has no error" in new SetUp {
+
       val app: Application = applicationBuilder(Some(emptyUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
@@ -99,10 +97,15 @@ class AuthorityEndControllerSpec extends SpecBase {
     }
 
     "return BAD_REQUEST if form has errors" in new SetUp {
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).build()
 
-      running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody("invalid" -> "field_value")).value
+      running(application(Some(emptyUserAnswers))) {
+        val result =
+          route(
+            application(Some(emptyUserAnswers)),
+            postRequest
+              .withFormUrlEncodedBody("invalid" -> "field_value")
+          ).value
+
         status(result) shouldBe BAD_REQUEST
       }
     }

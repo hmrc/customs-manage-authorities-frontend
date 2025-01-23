@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.ShowBalanceFormProvider
 import models.domain.{AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentAccount, DutyDefermentBalance}
 import models.{ShowBalance, UserAnswers}
@@ -63,12 +62,9 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, showBalanceRoute)
-
-        val result = route(application, request).value
-
+        val request   = fakeRequest(GET, showBalanceRoute)
+        val result    = route(application, request).value
         val view      = application.injector.instanceOf[EditShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         status(result) mustEqual OK
 
@@ -89,10 +85,8 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request = fakeRequest(GET, showBalanceRoute)
-
+        val request   = fakeRequest(GET, showBalanceRoute)
         val view      = application.injector.instanceOf[EditShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
 
@@ -127,7 +121,6 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -145,8 +138,6 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
         val view      = application.injector.instanceOf[EditShowBalanceView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
