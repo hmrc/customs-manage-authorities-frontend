@@ -83,7 +83,7 @@ class EditConfirmationControllerSpec extends SpecBase {
         running(application) {
 
           val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual OK
 
@@ -101,7 +101,7 @@ class EditConfirmationControllerSpec extends SpecBase {
       running(application) {
 
         val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url

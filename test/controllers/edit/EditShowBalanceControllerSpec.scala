@@ -62,9 +62,9 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request   = fakeRequest(GET, showBalanceRoute)
-        val result    = route(application, request).value
-        val view      = application.injector.instanceOf[EditShowBalanceView]
+        val request = fakeRequest(GET, showBalanceRoute)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[EditShowBalanceView]
 
         status(result) mustEqual OK
 
@@ -85,8 +85,8 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request   = fakeRequest(GET, showBalanceRoute)
-        val view      = application.injector.instanceOf[EditShowBalanceView]
+        val request = fakeRequest(GET, showBalanceRoute)
+        val view    = application.injector.instanceOf[EditShowBalanceView]
 
         val result = route(application, request).value
 
@@ -137,7 +137,7 @@ class EditShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view      = application.injector.instanceOf[EditShowBalanceView]
+        val view   = application.injector.instanceOf[EditShowBalanceView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST

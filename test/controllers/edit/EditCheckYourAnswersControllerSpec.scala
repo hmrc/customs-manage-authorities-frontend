@@ -77,9 +77,9 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(application) {
-        val request   = fakeRequest(GET, authorisedUserRoute)
-        val result    = route(application, request).value
-        val view      = application.injector.instanceOf[EditCheckYourAnswersView]
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[EditCheckYourAnswersView]
 
         status(result) mustEqual OK
 

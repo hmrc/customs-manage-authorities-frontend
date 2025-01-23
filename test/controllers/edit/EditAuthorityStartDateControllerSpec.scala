@@ -137,8 +137,8 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
-        val result    = route(application, request).value
+        val view   = application.injector.instanceOf[EditAuthorityStartDateView]
+        val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 

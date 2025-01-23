@@ -50,9 +50,9 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request   = fakeRequest(GET, authorityStartRoute)
-        val result    = route(application, request).value
-        val view      = application.injector.instanceOf[EditAuthorityStartView]
+        val request = fakeRequest(GET, authorityStartRoute)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[EditAuthorityStartView]
 
         status(result) mustEqual OK
 
