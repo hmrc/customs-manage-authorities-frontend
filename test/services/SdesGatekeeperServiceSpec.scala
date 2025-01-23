@@ -21,14 +21,10 @@ import models.domain
 import models.domain.FileFormat.Csv
 import models.domain.FileRole.StandingAuthority
 import models.domain.{Metadata, MetadataItem, StandingAuthorityFile, StandingAuthorityMetadata}
-import play.api.i18n.Messages
-import play.api.test.Helpers
 import utils.StringUtils.emptyString
 import utils.TestData.{DAY_1, FILE_SIZE_DEFAULT, MONTH_6, YEAR_2022}
 
 class SdesGatekeeperServiceSpec extends SpecBase {
-
-  implicit val messages: Messages = Helpers.stubMessages()
 
   "SdesGatekeeperService" should {
 

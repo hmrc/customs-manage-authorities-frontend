@@ -43,6 +43,7 @@ class AccountsCacheServiceSpec extends SpecBase {
 
     "closed Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(closedAccount)))
+
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
 
       val result: Future[CDSAccounts] = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
@@ -52,6 +53,7 @@ class AccountsCacheServiceSpec extends SpecBase {
 
     "suspended Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(suspendedAccount)))
+
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
 
       val result: Future[CDSAccounts] = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
@@ -61,6 +63,7 @@ class AccountsCacheServiceSpec extends SpecBase {
 
     "pending Account is valid" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(pendingAccount)))
+
       val service = new AccountsCacheService(mockRepository, mockConnector)(implicitly)
 
       val result: Future[CDSAccounts] = service.retrieveAccounts(InternalId("cachedId"), Seq("GB098765432109"))(hc)
@@ -82,7 +85,6 @@ class AccountsCacheServiceSpec extends SpecBase {
   }
 
   "retrieveAuthoritiesForId" must {
-
     "return return the authorities for the given InternalId" in new Setup {
       when(mockRepository.get("cachedId")).thenReturn(Future.successful(Some(cachedAccounts)))
 
@@ -145,5 +147,4 @@ class AccountsCacheServiceSpec extends SpecBase {
 
     val accountCacheService: AccountsCacheService = app.injector.instanceOf[AccountsCacheService]
   }
-
 }

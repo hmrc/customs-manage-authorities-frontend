@@ -18,8 +18,6 @@ package forms
 
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
-import play.api.i18n.Messages
-import play.api.test.Helpers
 import forms.behaviours.DateBehaviours
 import services.DateTimeService
 
@@ -27,8 +25,8 @@ import java.time._
 
 class EditAuthorityStartDateFormProviderSpec extends DateBehaviours {
 
-  implicit val messages: Messages = Helpers.stubMessages()
-  val mockDateTimeService         = mock[DateTimeService]
+  val mockDateTimeService = mock[DateTimeService]
+
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   val form = new EditAuthorityStartDateFormProvider(mockDateTimeService)(None)

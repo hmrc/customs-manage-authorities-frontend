@@ -26,21 +26,21 @@ import java.time.format.DateTimeFormatter
 class DateTimeServiceSpec() extends SpecBase {
 
   "DateTimeService" should {
-    "return system date when fixed-systemdate-for-tests feature is disabled" in new Setup {
+    "return system date when fixed-systemdate-for-tests feature is disabled" in {
       val service               = new DateTimeService(appConfig)
       val result: LocalDateTime = service.systemTime()
 
       result.until(LocalDateTime.now(), ChronoUnit.SECONDS) mustBe <(1L)
     }
 
-    "return iso local datetime" in new Setup {
+    "return iso local datetime" in {
       val service = new DateTimeService(appConfig)
 
       LocalDateTime.parse(service.isoLocalDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")) mustBe
         a[LocalDateTime]
     }
 
-    "return local date when fixed-systemdate-for-tests feature is disabled" in new Setup {
+    "return local date when fixed-systemdate-for-tests feature is disabled" in {
       val service               = new DateTimeService(appConfig)
       val result: LocalDateTime = service.localTime()
 
@@ -66,10 +66,4 @@ class DateTimeServiceSpec() extends SpecBase {
         LocalDateTime.of(LocalDate.of(year2027, monthOfTheYear, dayOfMonth), LocalTime.of(hourOfDay, minuteOfHour))
     }
   }
-
-  trait Setup {
-    val app       = applicationBuilder().build()
-    val appConfig = app.injector.instanceOf[FrontendAppConfig]
-  }
-
 }

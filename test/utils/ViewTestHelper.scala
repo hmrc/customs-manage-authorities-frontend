@@ -17,20 +17,13 @@
 package utils
 
 import base.SpecBase
-import config.FrontendAppConfig
 import org.jsoup.nodes.Document
 import org.scalatest.Assertion
 import play.api.Application
-import play.api.i18n.Messages
-import play.api.mvc.AnyContentAsEmpty
-import play.api.test.FakeRequest
 
 trait ViewTestHelper extends SpecBase {
 
-  implicit lazy val app: Application                        = applicationBuilder().build()
-  implicit val messages: Messages                           = messages(app)
-  implicit val appConfig: FrontendAppConfig                 = app.injector.instanceOf[FrontendAppConfig]
-  implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest()
+  implicit lazy val app: Application = applicationBuilder().build()
 
   def titleShouldBeCorrect(view: Document, titleMsgKey: String): Assertion =
     view.title() mustBe s"${messages(titleMsgKey)} - ${messages("service.name")} - GOV.UK"

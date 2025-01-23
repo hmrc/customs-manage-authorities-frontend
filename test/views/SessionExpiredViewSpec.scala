@@ -38,11 +38,13 @@ class SessionExpiredViewSpec extends SpecBase {
 
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app: Application                                          = applicationBuilder().build()
+    implicit val messages: Messages                               = Helpers.stubMessages()
 
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
-
-    def view(): Document = Jsoup.parse(app.injector.instanceOf[SessionExpiredView].apply().body)
+    def view(): Document = Jsoup.parse(
+      application().injector
+        .instanceOf[SessionExpiredView]
+        .apply()(request, messages, appConfig)
+        .body
+    )
   }
 }

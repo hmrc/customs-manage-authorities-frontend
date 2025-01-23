@@ -36,25 +36,23 @@ class AccountsFormProviderObjectSpec extends SpecBase {
         CashAccount("54321", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
       )
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application(Some(emptyUserAnswers))) {
 
-      running(application) {
-
-        val result = AccountsFormProvider.options(form, accounts)(messages(application))
+        val result = AccountsFormProvider.options(form, accounts)(messages)
 
         result mustEqual Seq(
           CheckboxItem(
             name = Some("value[0]"),
             id = Some("value"),
             value = "account_0",
-            content = Text(messages(application)("accounts.type.cash") + ": 12345"),
+            content = Text(messages("accounts.type.cash") + ": 12345"),
             checked = false
           ),
           CheckboxItem(
             name = Some("value[1]"),
             id = Some("value1"),
             value = "account_1",
-            content = Text(messages(application)("accounts.type.cash") + ": 54321"),
+            content = Text(messages("accounts.type.cash") + ": 54321"),
             checked = false
           )
         )

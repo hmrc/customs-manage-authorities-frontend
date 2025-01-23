@@ -23,11 +23,8 @@ import pages.behaviours.PageBehaviours
 class AccountsPageSpec extends PageBehaviours {
 
   "AccountsPage" must {
-
     beRetrievable[List[CDSAccount]](AccountsPage)
-
     beSettable[List[CDSAccount]](AccountsPage)
-
     beRemovable[List[CDSAccount]](AccountsPage)
   }
 }

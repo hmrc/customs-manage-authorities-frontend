@@ -17,7 +17,6 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityEndDateFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
@@ -46,7 +45,6 @@ class AuthorityEndDateControllerSpec extends SpecBase {
       val app: Application =
         applicationBuilder(emptyUserAnswers.set(AuthorityEndDatePage, LocalDate.now(ZoneOffset.UTC)).toOption).build()
 
-      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
       val view: AuthorityEndDateView         = app.injector.instanceOf[AuthorityEndDateView]
 
@@ -55,10 +53,10 @@ class AuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(LocalDate.now(ZoneOffset.UTC)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages).fill(LocalDate.now(ZoneOffset.UTC)),
           NormalMode,
           controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
 
@@ -66,7 +64,6 @@ class AuthorityEndDateControllerSpec extends SpecBase {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
       val app: Application                   = applicationBuilder(Option(emptyUserAnswers)).build()
-      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
       val view: AuthorityEndDateView         = app.injector.instanceOf[AuthorityEndDateView]
 
@@ -75,10 +72,10 @@ class AuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages),
           NormalMode,
           controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
   }
@@ -94,6 +91,7 @@ class AuthorityEndDateControllerSpec extends SpecBase {
 
       when(mockDateTimeService.localTime())
         .thenReturn(LocalDateTime.of(year2023, monthOfTheYear, dayOfMonth, hourOfDay, minuteOfHour))
+
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val app: Application = applicationBuilder(Some(emptyUserAnswers))

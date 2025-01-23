@@ -65,7 +65,6 @@ class CsvFilesSpec extends SpecBase {
         CsvFiles(gbCsvFiles = gbAuthFiles, xiCsvFiles = xiAuthFiles)
 
       partitionAsXiAndGb(gbAuthFiles) mustBe CsvFiles(gbCsvFiles = gbAuthFiles, xiCsvFiles = Seq.empty)
-
       partitionAsXiAndGb(xiAuthFiles) mustBe CsvFiles(gbCsvFiles = Seq.empty, xiCsvFiles = xiAuthFiles)
     }
 

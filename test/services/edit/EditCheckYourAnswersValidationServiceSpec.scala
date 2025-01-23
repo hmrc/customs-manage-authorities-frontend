@@ -40,12 +40,6 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
         when(mockDateTimeService.localTime())
           .thenReturn(LocalDateTime.of(yearVal, monthVal, dayOfMonthVal, hourVal, minuteVal))
 
-        val application: Application = applicationBuilder()
-          .overrides(
-            inject.bind[DateTimeService].toInstance(mockDateTimeService)
-          )
-          .build()
-
         val service: EditCheckYourAnswersValidationService =
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
 
@@ -79,12 +73,6 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
           .success
           .value
 
-        val application: Application = applicationBuilder()
-          .overrides(
-            inject.bind[DateTimeService].toInstance(mockDateTimeService)
-          )
-          .build()
-
         val service: EditCheckYourAnswersValidationService =
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
 
@@ -99,12 +87,6 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
         when(mockDateTimeService.localTime())
           .thenReturn(LocalDateTime.of(yearVal, monthVal, dayOfMonthVal, hourVal, minuteVal))
 
-        val application: Application = applicationBuilder()
-          .overrides(
-            inject.bind[DateTimeService].toInstance(mockDateTimeService)
-          )
-          .build()
-
         val service: EditCheckYourAnswersValidationService =
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
 
@@ -117,12 +99,6 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
     "return None" when {
       "RunTimeException is raised" in new SetUp {
         when(mockDateTimeService.localTime()).thenThrow(new IndexOutOfBoundsException("Error Message"))
-
-        val application: Application = applicationBuilder()
-          .overrides(
-            inject.bind[DateTimeService].toInstance(mockDateTimeService)
-          )
-          .build()
 
         val service: EditCheckYourAnswersValidationService =
           application.injector.instanceOf[EditCheckYourAnswersValidationService]
@@ -201,5 +177,11 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
       .set(EditAuthorisedUserPage(accountIdVal, authorityIdVal), authUser)
       .success
       .value
+
+    val application: Application = applicationBuilder()
+      .overrides(
+        inject.bind[DateTimeService].toInstance(mockDateTimeService)
+      )
+      .build()
   }
 }

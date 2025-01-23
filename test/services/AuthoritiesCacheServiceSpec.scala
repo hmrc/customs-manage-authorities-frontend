@@ -37,8 +37,8 @@ import scala.concurrent.Future
 class AuthoritiesCacheServiceSpec extends SpecBase {
 
   "retrieveAuthorities" must {
-
     "use cached values on cache hit" in new Setup {
+
       when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
 
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
@@ -52,6 +52,7 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
     }
 
     "update cache on cache miss" in new Setup {
+
       when(mockAuthRepo.get("notCachedId")).thenReturn(Future.successful(None))
 
       when(mockConnector.retrieveAccountAuthorities(any())(any()))
@@ -70,8 +71,8 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
   }
 
   "getAccountAndAuthority" must {
-
     "return correct AccountAndAuthority when there is no error" in new Setup {
+
       when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
 
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
@@ -97,8 +98,8 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
     }
 
     "return NoAccount when authority is not found for the accountId" in new Setup {
-      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
 
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
 
       private val result: Either[AuthoritiesCacheErrorResponse, AccountAndAuthority] =
@@ -113,10 +114,9 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
   }
 
   "retrieveAuthoritiesForId" must {
-
     "return return the authorities for the given InternalId" in new Setup {
-      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
 
+      when(mockAuthRepo.get("cachedId")).thenReturn(Future.successful(Some(cachedAuthorities)))
       when(mockAuthRepo.set(any(), any())).thenReturn(Future.successful(true))
 
       val result: Future[Option[AuthoritiesWithId]] = authCacheServices.retrieveAuthoritiesForId(InternalId("cachedId"))
@@ -175,5 +175,4 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
 
     val authCacheServices: AuthoritiesCacheService = app.injector.instanceOf[AuthoritiesCacheService]
   }
-
 }

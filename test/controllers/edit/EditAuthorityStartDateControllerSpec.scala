@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityStartDateFormProvider
 import models.UserAnswers
 import navigation.{FakeNavigator, Navigator}
@@ -43,10 +42,8 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
   private val formProvider = new AuthorityStartDateFormProvider(mockDateTimeService)
   private def form         = formProvider()
-
-  private def onwardRoute = Call("GET", "/foo")
-
-  private val validAnswer = LocalDate.now(ZoneOffset.UTC)
+  private def onwardRoute  = Call("GET", "/foo")
+  private val validAnswer  = LocalDate.now(ZoneOffset.UTC)
 
   private lazy val authorityStartDateRoute =
     controllers.edit.routes.EditAuthorityStartDateController.onPageLoad("someId", "someId").url
@@ -65,7 +62,6 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
       )
 
   "EditAuthorityStartDate Controller" must {
-
     "return OK and the correct view for a GET" in {
 
       val application =
@@ -74,14 +70,12 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val result = route(application, getRequest).value
-
-        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val view   = application.injector.instanceOf[EditAuthorityStartDateView]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(getRequest, messages(application), appConfig).toString
+          view(form, "someId", "someId")(getRequest, messages, appConfig).toString
       }
     }
 
@@ -95,15 +89,13 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+        val view   = application.injector.instanceOf[EditAuthorityStartDateView]
         val result = route(application, getRequest).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages(application), appConfig).toString
+          view(form.fill(validAnswer), "someId", "someId")(getRequest, messages, appConfig).toString
       }
     }
 
@@ -127,7 +119,6 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, postRequest).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -145,15 +136,13 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view      = application.injector.instanceOf[EditAuthorityStartDateView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
+        val view   = application.injector.instanceOf[EditAuthorityStartDateView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
+          view(boundForm, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -179,7 +168,6 @@ class EditAuthorityStartDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, postRequest).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

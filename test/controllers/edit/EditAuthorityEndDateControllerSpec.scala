@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityEndDateFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -46,7 +45,6 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
         emptyUserAnswers.set(EditAuthorityEndDatePage("123", "12345"), LocalDate.now(ZoneOffset.UTC)).toOption
       ).build()
 
-      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
       val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
       val view: EditAuthorityEndDateView     = app.injector.instanceOf[EditAuthorityEndDateView]
 
@@ -55,28 +53,29 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
         status(result) shouldBe OK
 
         contentAsString(result) mustBe view(
-          form(LocalDate.now(ZoneOffset.UTC))(messages(app)).fill(LocalDate.now(ZoneOffset.UTC)),
+          form(LocalDate.now(ZoneOffset.UTC))(messages).fill(LocalDate.now(ZoneOffset.UTC)),
           "123",
           "12345"
-        )(getRequest, messages(app), appConfig).toString()
+        )(getRequest, messages, appConfig).toString()
       }
     }
 
     "return OK without pre-populated values if form has no values" in new SetUp {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
-      val app: Application                   = applicationBuilder(Option(emptyUserAnswers)).build()
-      val appConfig: FrontendAppConfig       = app.injector.instanceOf[FrontendAppConfig]
-      val form: AuthorityEndDateFormProvider = app.injector.instanceOf[AuthorityEndDateFormProvider]
-      val view: EditAuthorityEndDateView     = app.injector.instanceOf[EditAuthorityEndDateView]
+      val form: AuthorityEndDateFormProvider =
+        application(Option(emptyUserAnswers)).injector.instanceOf[AuthorityEndDateFormProvider]
 
-      running(app) {
-        val result = route(app, getRequest).value
+      val view: EditAuthorityEndDateView =
+        application(Option(emptyUserAnswers)).injector.instanceOf[EditAuthorityEndDateView]
+
+      running(application(Option(emptyUserAnswers))) {
+        val result = route(application(Option(emptyUserAnswers)), getRequest).value
         status(result) shouldBe OK
 
-        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages(app)), "123", "12345")(
+        contentAsString(result) mustBe view(form(LocalDate.now(ZoneOffset.UTC))(messages), "123", "12345")(
           getRequest,
-          messages(app),
+          messages,
           appConfig
         ).toString()
       }
@@ -84,7 +83,6 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
   }
 
   "onSubmit" must {
-
     "redirect to next page if form has no error" in new SetUp {
       val year2023       = 2023
       val monthOfTheYear = 6
@@ -94,6 +92,7 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
 
       when(mockDateTimeService.localTime())
         .thenReturn(LocalDateTime.of(year2023, monthOfTheYear, dayOfMonth, hourOfDay, minuteOfHour))
+
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val app: Application = applicationBuilder(Some(emptyUserAnswers))
@@ -108,7 +107,9 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
           app,
           postRequest.withFormUrlEncodedBody("value.day" -> "12", "value.month" -> "6", "value.year" -> "2023")
         ).value
+
         status(result) shouldBe SEE_OTHER
+
         redirectLocation(result).value mustBe
           routes.EditAuthorisedUserController.onPageLoad("123", "12345").url
       }
@@ -117,10 +118,14 @@ class EditAuthorityEndDateControllerSpec extends SpecBase {
     "return BAD_REQUEST if form has errors" in new SetUp {
       when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now(ZoneOffset.UTC))
 
-      val app: Application = applicationBuilder(Some(emptyUserAnswers)).build()
+      running(application(Some(emptyUserAnswers))) {
 
-      running(app) {
-        val result = route(app, postRequest.withFormUrlEncodedBody("invalid" -> "field_value")).value
+        val result =
+          route(
+            application(Some(emptyUserAnswers)),
+            postRequest.withFormUrlEncodedBody("invalid" -> "field_value")
+          ).value
+
         status(result) shouldBe BAD_REQUEST
       }
     }

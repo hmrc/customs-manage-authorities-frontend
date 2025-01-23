@@ -42,10 +42,9 @@ class AddConfirmationControllerSpec extends SpecBase {
     DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
 
   "AddConfirmation Controller" must {
-
     "return OK and the correct view for a GET" when {
-
       "The user is returning to the page " in {
+
         val userAnswers = emptyUserAnswers
           .set(ConfirmationPage, ConfirmationDetails("eori", None, Some("Company Name"), true))
           .success
@@ -53,17 +52,16 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
 
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, Some("Company Name"), true)(request, messages(application), appConfig).toString
+            view("eori", None, Some("Company Name"), true)(request, messages, appConfig).toString
         }
       }
 
@@ -97,10 +95,8 @@ class AddConfirmationControllerSpec extends SpecBase {
           .build()
 
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -113,7 +109,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", None, Some("Company Name"), multipleAccounts = false)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
         }
@@ -139,10 +135,8 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -151,7 +145,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", Some(startDate.format(dateFormat)), Some("Company Name"), multipleAccounts = true)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
         }
@@ -170,10 +164,8 @@ class AddConfirmationControllerSpec extends SpecBase {
 
         running(application) {
 
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
@@ -182,7 +174,7 @@ class AddConfirmationControllerSpec extends SpecBase {
           contentAsString(result) mustEqual
             view("GB123456789012", None, Some("Company Name"), multipleAccounts = true)(
               request,
-              messages(application),
+              messages,
               appConfig
             ).toString
 
@@ -196,17 +188,15 @@ class AddConfirmationControllerSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
-
+          val request   = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
+          val result    = route(application, request).value
           val view      = application.injector.instanceOf[AddConfirmationView]
           val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
           status(result) mustEqual OK
 
           contentAsString(result) mustEqual
-            view("eori", None, None, true)(request, messages(application), appConfig).toString
+            view("eori", None, None, true)(request, messages, appConfig).toString
 
           contentAsString(result) mustNot contain("Company name")
 
@@ -217,13 +207,10 @@ class AddConfirmationControllerSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
-
           val request = fakeRequest(GET, controllers.add.routes.AddConfirmationController.onPageLoad().url)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }

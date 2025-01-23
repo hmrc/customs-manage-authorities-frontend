@@ -26,7 +26,6 @@ class OptionFieldBehaviours extends FieldBehaviours {
     "bind all valid values" in {
 
       for (value <- validValues) {
-
         val result = form.bind(Map(fieldName -> value.toString)).apply(fieldName)
         result.value.value shouldEqual value.toString
       }
@@ -37,7 +36,6 @@ class OptionFieldBehaviours extends FieldBehaviours {
       val generator = stringsExceptSpecificValues(validValues.map(_.toString))
 
       forAll(generator -> "invalidValue") { value =>
-
         val result = form.bind(Map(fieldName -> value)).apply(fieldName)
         result.errors shouldEqual Seq(invalidError)
       }

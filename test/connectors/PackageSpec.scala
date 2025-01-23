@@ -21,15 +21,18 @@ import base.SpecBase
 class PackageSpec extends SpecBase {
 
   ".PackageSpec" must {
-
-    ".acknowledgmentRef Generate Random Digits returns correct length" in {
-      val result = connectors.acknowledgmentRef(3)
-      result.length() mustBe 3
+    ".acknowledgmentRef Generate Random Digits returns correct length" in new Setup {
+      val result = connectors.acknowledgmentRef(length)
+      result.length() mustBe length
     }
 
-    ".generateStringOfRandomDigits Generate Random Digits returns correct length" in {
-      val result = connectors.generateStringOfRandomDigits(3)
-      result.length() mustBe 3
+    ".generateStringOfRandomDigits Generate Random Digits returns correct length" in new Setup {
+      val result = connectors.generateStringOfRandomDigits(length)
+      result.length() mustBe length
     }
+  }
+
+  trait Setup {
+    val length = 3
   }
 }

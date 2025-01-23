@@ -65,9 +65,7 @@ class NoAccountsViewSpec extends SpecBase {
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
-    val app: Application                      = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
+    implicit val messages: Messages = Helpers.stubMessages()
 
     val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
     val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
@@ -81,6 +79,11 @@ class NoAccountsViewSpec extends SpecBase {
     val homeUrl: String = "http://localhost:9876/customs/payment-records"
 
     def view(): Document =
-      Jsoup.parse(app.injector.instanceOf[NoAccountsView].apply(standingAuthorityFilesViewModel).body)
+      Jsoup.parse(
+        application(Some(emptyUserAnswers)).injector
+          .instanceOf[NoAccountsView]
+          .apply(standingAuthorityFilesViewModel)(request, messages, appConfig)
+          .body
+      )
   }
 }

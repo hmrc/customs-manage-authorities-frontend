@@ -23,9 +23,7 @@ class EoriNumberPageSpec extends PageBehaviours {
 
   "EoriNumberPage" must {
     beRetrievable[CompanyDetails](EoriNumberPage)
-
     beSettable[CompanyDetails](EoriNumberPage)
-
     beRemovable[CompanyDetails](EoriNumberPage)
   }
 }

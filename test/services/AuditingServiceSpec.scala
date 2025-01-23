@@ -94,5 +94,4 @@ class AuditingServiceSpec extends SpecBase {
 
     val auditingService = new AuditingService(mockConfig, mockAuditConnector)
   }
-
 }

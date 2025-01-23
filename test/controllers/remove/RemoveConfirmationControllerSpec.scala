@@ -36,8 +36,9 @@ class RemoveConfirmationControllerSpec extends SpecBase {
   val startDate         = LocalDate.parse("2020-03-01")
   val endDate           = LocalDate.parse("2020-04-01")
   val standingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
-  val accounts          = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
   val cashAccount       = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
+
+  val accounts = Seq(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority)))
 
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(
     Map(
@@ -65,7 +66,8 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
           val request =
             fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("missing", "b").url)
-          val result  = route(application, request).value
+
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -84,7 +86,8 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
           val request =
             fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "missing").url)
-          val result  = route(application, request).value
+
+          val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url

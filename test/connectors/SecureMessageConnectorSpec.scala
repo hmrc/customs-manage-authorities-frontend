@@ -36,7 +36,6 @@ import scala.concurrent.Future
 class SecureMessageConnectorSpec extends SpecBase {
 
   "getMessageCountBanner" should {
-
     "return a valid message banner when the upstream call returns OK" in new Setup {
       val url = new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
 
@@ -52,9 +51,8 @@ class SecureMessageConnectorSpec extends SpecBase {
 
       val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
       verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
-
       verify(mockRequestBuilder).execute[HtmlPartial](any, any)
+      assert(urlCaptor.getValue.toString == url.toString)
     }
 
     "return None when the upstream call returns HtmlPartial.Failure" in new Setup {
@@ -72,9 +70,8 @@ class SecureMessageConnectorSpec extends SpecBase {
 
       val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
       verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
-
       verify(mockRequestBuilder).execute[HtmlPartial](any, any)
+      assert(urlCaptor.getValue.toString == url.toString)
     }
 
     "return None when the upstream call throws an Exception" in new Setup {
@@ -92,11 +89,9 @@ class SecureMessageConnectorSpec extends SpecBase {
 
       val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
       verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
-
       verify(mockRequestBuilder).execute[HtmlPartial](any, any)
+      assert(urlCaptor.getValue.toString == url.toString)
     }
-
   }
 
   trait Setup {

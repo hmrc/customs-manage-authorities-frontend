@@ -45,11 +45,6 @@ class CustomsFinancialsConnectorSpec
   implicit private lazy val hc: HeaderCarrier        = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
-  private def application: Application =
-    new GuiceApplicationBuilder()
-      .configure("microservice.services.customs-financials-api.port" -> server.port)
-      .build()
-
   ".retrieveAccounts" must {
     "return accounts" in new Setup {
       val response =
@@ -88,12 +83,12 @@ class CustomsFinancialsConnectorSpec
         List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
       )
 
-      running(app) {
-
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/eori/accounts/"))
             .willReturn(ok(response))
         )
+
         val result = connector.retrieveAccounts("GB123456789012").futureValue
         result mustBe expected
       }
@@ -123,21 +118,19 @@ class CustomsFinancialsConnectorSpec
           |]
           |""".stripMargin
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/()/account-authorities"))
             .willReturn(ok(response))
         )
 
         val result = connector.retrieveAccountAuthorities((): Unit).futureValue
-
         result mustBe accountAuthorities
       }
     }
   }
 
   ".grantAccountAuthorities" must {
-
     val request = AddAuthorityRequest(
       Accounts(
         Some("12345"),
@@ -154,36 +147,36 @@ class CustomsFinancialsConnectorSpec
     )
 
     "return success response" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(noContent())
         )
+
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe true
       }
     }
 
     "return failure response" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(serverError())
         )
+
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
     }
 
     "handle errors" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
         )
+
         val result = connector.grantAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
@@ -191,7 +184,6 @@ class CustomsFinancialsConnectorSpec
   }
 
   ".revokeAccountAuthorities" must {
-
     val request = RevokeAuthorityRequest(
       "12345",
       domain.CdsCashAccount,
@@ -200,36 +192,36 @@ class CustomsFinancialsConnectorSpec
     )
 
     "return success response" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(noContent())
         )
+
         val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
         result mustBe true
       }
     }
 
     "return failure response" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(serverError())
         )
+
         val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
     }
 
     "handle errors" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
         )
+
         val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
         result mustBe false
       }
@@ -238,46 +230,37 @@ class CustomsFinancialsConnectorSpec
 
   ".validateEori" must {
     "return true for valid eori" in new Setup {
-
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(ok())
         )
 
         val result = connector.validateEori(eoriNumber).futureValue
-
         result mustBe Right(true)
       }
     }
 
     "return false for not found" in new Setup {
-
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(notFound())
         )
 
         val result = connector.validateEori(eoriNumber).futureValue
-
         result mustBe Right(false)
       }
     }
 
     "return validation error for internal server error" in new Setup {
-
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
             .willReturn(serverError())
         )
 
         val result = connector.validateEori(eoriNumber).futureValue
-
         result mustBe Left(EORIValidationError)
       }
     }
@@ -285,14 +268,13 @@ class CustomsFinancialsConnectorSpec
 
   ".retrieve eori company name" must {
     "return success response" in new Setup {
-
-      running(app) {
-
-        val json   = """{"name" : "ABCD", "consent":"1"}"""
+      running(application) {
+        val json = """{"name" : "ABCD", "consent":"1"}"""
         server.stubFor(
           get(urlEqualTo("/customs-financials-api/subscriptions/company-name"))
             .willReturn(ok(json))
         )
+
         val result = connector.retrieveEoriCompanyName().futureValue
         result.name mustBe Some("ABCD")
       }
@@ -300,9 +282,7 @@ class CustomsFinancialsConnectorSpec
   }
 
   "delete notifications should return a boolean based on the result" in new Setup {
-
-    running(app) {
-
+    running(application) {
       server.stubFor(
         delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
           .willReturn(ok())
@@ -314,8 +294,12 @@ class CustomsFinancialsConnectorSpec
   }
 
   trait Setup {
+    val application: Application =
+      new GuiceApplicationBuilder()
+        .configure("microservice.services.customs-financials-api.port" -> server.port)
+        .build()
+
     val eoriNumber: String                    = "121312"
-    val app: Application                      = application
-    val connector: CustomsFinancialsConnector = app.injector.instanceOf[CustomsFinancialsConnector]
+    val connector: CustomsFinancialsConnector = application.injector.instanceOf[CustomsFinancialsConnector]
   }
 }

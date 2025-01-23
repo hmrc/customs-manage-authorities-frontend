@@ -37,7 +37,6 @@ class AccountsAndBalancesSpec
     AccountWithStatus("number", "type", "owner", AccountStatusClosed, viewBalanceIsGranted = true)
 
   "GeneralGuaranteeAccount model" should {
-
     "correctly generate a domain model when a account, limit and balance are available" in {
 
       val expectedResult =
@@ -70,11 +69,9 @@ class AccountsAndBalancesSpec
   }
 
   "CdsCashAccount model" should {
-
     "correctly generate a domain model when account balance is available" in {
 
       val expectedResult = CashAccount("number", "owner", AccountStatusClosed, CDSCashBalance(Some(BigDecimal(1))))
-
       val cdsCashAccount = CdsCashAccount(accountWithStatus, Some("1"))
 
       cdsCashAccount.toDomain mustBe expectedResult
@@ -83,7 +80,6 @@ class AccountsAndBalancesSpec
     "correctly generate a domain model when account balance is unavailable" in {
 
       val expectedResult = CashAccount("number", "owner", AccountStatusClosed, CDSCashBalance(None))
-
       val cdsCashAccount = CdsCashAccount(accountWithStatus, None)
 
       cdsCashAccount.toDomain mustBe expectedResult
@@ -92,7 +88,6 @@ class AccountsAndBalancesSpec
   }
 
   "DutyDefermentAccount model" should {
-
     "correctly generate a domain model when a account, limit and balance are available" in {
       val amount = 4
 

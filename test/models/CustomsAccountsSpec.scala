@@ -51,7 +51,6 @@ class CustomsAccountsSpec extends SpecBase {
       val expectedUsedPercentage = 0
       guaranteeAccountZeroLimitZeroBalance.balances.get.usedPercentage must be(expectedUsedPercentage)
     }
-
   }
 
   "DutyDefermentAccount" should {
@@ -176,5 +175,4 @@ class CustomsAccountsSpec extends SpecBase {
         Some(GeneralGuaranteeBalance(BigDecimal(zeroAmount), BigDecimal(zeroAmount)))
       )
   }
-
 }

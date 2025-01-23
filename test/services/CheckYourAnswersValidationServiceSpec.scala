@@ -172,63 +172,6 @@ class CheckYourAnswersValidationServiceSpec extends SpecBase {
         .value
       service.validate(userAnswers) mustBe None
     }
-
-    /* "validate complete submission from today to indefinite" in {
-              val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-              val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
-              val authorisedUser = AuthorisedUser("username", "role")
-
-              service.validate(completeUserAnswers).value mustEqual Tuple3(accounts, standingAuthority, authorisedUser)
-            }*/
-
-    /*"validate complete submission with only one account selected" in {
-      val userAnswer = completeUserAnswers
-        .set(AccountsPage, List(generalGuarantee)).success.value
-
-      val accounts = Accounts(None, Seq(), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
-      service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
-    }
-     */
-    /* "validate complete submission with only one account" in {
-      val userAnswer = completeUserAnswers
-        .set(AccountsPage, List(dutyDeferment)).success.value
-
-      val accounts = Accounts(None, Seq(dutyDeferment.number), None)
-      val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), Option(LocalDate.now().plusDays(1)), viewBalance = true)
-      service.validate(userAnswer).value mustEqual Tuple2(accounts, standingAuthority)
-    }*/
-
-    /* "validate complete submission from set date to set date" in {
-      implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
-
-      val startDate = LocalDate.now().plusMonths(6)
-      val endDate = LocalDate.now().plusYears(1)
-
-      val userAnswers = completeUserAnswers
-        .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
-        .set(AuthorityStartDatePage, startDate).success.value
-
-      val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", startDate, Some(endDate), viewBalance = true)
-      service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
-    }*/
-
-    /*"validate complete submission from set date to indefinite" in {
-      implicit val writes: Writes[LocalDate] = (o: LocalDate) => JsString(o.toString)
-
-      val startDate = LocalDate.now().plusMonths(6)
-      val endDate: LocalDate = LocalDate.parse("2020-04-01")
-
-      val userAnswers = completeUserAnswers
-        .set(AuthorityStartPage, AuthorityStart.Setdate).success.value
-        .set(AuthorityStartDatePage, startDate).success.value
-
-      val accounts = Accounts(Some(cashAccount.number), Seq(dutyDeferment.number), Some(generalGuarantee.number))
-      val standingAuthority = StandingAuthority("GB123456789012", startDate, Some(endDate), viewBalance = true)
-      service.validate(userAnswers).value mustEqual Tuple2(accounts, standingAuthority)
-    }
-     */
   }
 
   trait Setup {

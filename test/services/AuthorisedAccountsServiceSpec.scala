@@ -27,7 +27,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.AccountsPage
-import play.api.Application
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
@@ -106,12 +105,9 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
       enteredEori = "GB123456789012"
     )
 
-    val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-    val mockAccCacheService: AccountsCacheService     = mock[AccountsCacheService]
-
-    val app: Application = applicationBuilder().build()
-
-    val authorisedAccountsService: AuthorisedAccountsService = app.injector.instanceOf[AuthorisedAccountsService]
+    val mockAuthCacheService: AuthoritiesCacheService        = mock[AuthoritiesCacheService]
+    val mockAccCacheService: AccountsCacheService            = mock[AccountsCacheService]
+    val authorisedAccountsService: AuthorisedAccountsService = instanceOf[AuthorisedAccountsService]
 
     implicit val request: FakeRequest[AnyContentAsEmpty.type] = fakeRequest()
     implicit val hc: HeaderCarrier                            = HeaderCarrier()

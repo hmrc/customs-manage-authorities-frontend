@@ -23,7 +23,6 @@ import utils.TestData.FILE_SIZE_DEFAULT
 class FileInformationSpec extends SpecBase {
 
   "FileInformation" should {
-
     "be able to read from json" in {
 
       val json =
@@ -56,7 +55,6 @@ class FileInformationSpec extends SpecBase {
       val fileInformation = Json.parse(json).as[FileInformation]
 
       fileInformation must be(expectedFileInformation)
-
     }
 
     "be able to write to json" in {

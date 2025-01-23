@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import models.AuthorityEnd.Indefinite
@@ -78,17 +77,16 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(application) {
-        val request   = fakeRequest(GET, authorisedUserRoute)
-        val result    = route(application, request).value
-        val view      = application.injector.instanceOf[EditCheckYourAnswersView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val request = fakeRequest(GET, authorisedUserRoute)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[EditCheckYourAnswersView]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
           view(helper(userAnswers, application, standingAuthority), "a", "b")(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -803,7 +801,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         authority,
         accountsWithAuthoritiesWithId,
         None
-      )(messages(application))
+      )(messages)
 
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())

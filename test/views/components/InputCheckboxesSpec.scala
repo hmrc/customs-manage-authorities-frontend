@@ -43,7 +43,7 @@ class InputCheckboxesSpec extends SpecBase {
           .body
       )
 
-      view.getElementsByTag("label").html() mustBe messages(app)(
+      view.getElementsByTag("label").html() mustBe messages(
         "accounts.type.cash"
       )
       view.getElementById("value-hint").html() mustBe "Hint"
@@ -70,7 +70,7 @@ class InputCheckboxesSpec extends SpecBase {
 
   trait Setup {
     val app: Application       = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
+    implicit val msg: Messages = messages
 
     val validForm: Form[String]   = new EoriNumberFormProvider()
       .apply()
@@ -82,7 +82,7 @@ class InputCheckboxesSpec extends SpecBase {
         name = Some("value[0]"),
         id = Some("value"),
         value = "account_0",
-        content = Text(messages(app)("accounts.type.cash")),
+        content = Text(messages("accounts.type.cash")),
         checked = false
       )
     )

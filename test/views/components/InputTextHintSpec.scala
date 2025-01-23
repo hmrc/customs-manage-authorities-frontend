@@ -108,7 +108,7 @@ class InputTextHintSpec extends SpecBase {
 
   trait Setup {
     val app: Application       = applicationBuilder().build()
-    implicit val msg: Messages = messages(app)
+    implicit val msg: Messages = messages
 
     val id                 = "value"
     val detailsSummaryText = "summaryText"

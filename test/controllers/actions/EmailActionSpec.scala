@@ -112,6 +112,5 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
         filter(request)
     }
-
   }
 }

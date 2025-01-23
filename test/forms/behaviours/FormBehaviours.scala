@@ -25,7 +25,6 @@ import utils.StringUtils.emptyString
 trait FormBehaviours extends FormSpec {
 
   val validData: Map[String, String]
-
   val form: Form[_]
 
   def questionForm[A](expectedResult: A): Unit =
@@ -203,6 +202,5 @@ trait FormBehaviours extends FormSpec {
       val expectedError = error("dateOfBirth", "error.invalid_date")
       checkForError(form, data, expectedError)
     }
-
   }
 }

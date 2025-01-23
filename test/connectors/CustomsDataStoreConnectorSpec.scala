@@ -61,7 +61,7 @@ class CustomsDataStoreConnectorSpec
 
       val expectedResult: Option[String] = Some("Tony Stark")
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
@@ -87,7 +87,7 @@ class CustomsDataStoreConnectorSpec
           |}
           |""".stripMargin
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
@@ -113,7 +113,7 @@ class CustomsDataStoreConnectorSpec
           |}
           |""".stripMargin
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
             .willReturn(ok(response))
@@ -142,8 +142,7 @@ class CustomsDataStoreConnectorSpec
 
       val expectedResult: Option[String] = Some("XI1234567")
 
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
@@ -168,32 +167,30 @@ class CustomsDataStoreConnectorSpec
           |}
           |""".stripMargin
 
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
         )
+
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe expected
       }
     }
 
     "return None when error response is returned" in new Setup {
-
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(serverError())
         )
+
         val result = connector.getXiEori("GB123456789012").futureValue
         result mustBe expected
       }
     }
 
-    "return None when feature flag is false" in {
-
+    "return None when feature flag is false" in new Setup {
       val mockAppConfig = mock[FrontendAppConfig]
       when(mockAppConfig.xiEoriEnabled).thenReturn(false)
       when(mockAppConfig.customsDataStore).thenReturn("some/string")
@@ -211,16 +208,7 @@ class CustomsDataStoreConnectorSpec
           |}
           |""".stripMargin
 
-      val application: Application =
-        new GuiceApplicationBuilder()
-          .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
-          .configure("microservice.services.customs-data-store.port" -> server.port)
-          .build()
-
-      val connector = application.injector.instanceOf[CustomsDataStoreConnector]
-
       running(application) {
-
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
             .willReturn(ok(response))
@@ -239,12 +227,12 @@ class CustomsDataStoreConnectorSpec
           |"address": "some@email.com"
           |}""".stripMargin
 
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
             .willReturn(ok(emailResponse))
         )
+
         val result = connector.getEmail("GB123456789012").futureValue
         result mustBe Right(Email("some@email.com"))
       }
@@ -260,7 +248,7 @@ class CustomsDataStoreConnectorSpec
           |}
           |}""".stripMargin
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
             .willReturn(ok(emailResponse))
@@ -274,7 +262,7 @@ class CustomsDataStoreConnectorSpec
     "return unverifiedEmail when the request is successful and email address is not present in the response" in new Setup {
       val emailResponse = """{}"""
 
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
             .willReturn(ok(emailResponse))
@@ -286,13 +274,12 @@ class CustomsDataStoreConnectorSpec
     }
 
     "return no email when a NOT_FOUND response is returned" in new Setup {
-
-      running(app) {
-
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
             .willReturn(notFound)
         )
+
         val result = connector.getEmail("GB123456789012").futureValue
         result mustBe Left(UnverifiedEmail)
       }
@@ -300,10 +287,8 @@ class CustomsDataStoreConnectorSpec
   }
 
   "unverifiedEmail" must {
-
     "return success response" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
             .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}"""))
@@ -315,8 +300,7 @@ class CustomsDataStoreConnectorSpec
     }
 
     "return failure response of None" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
             .willReturn(ok("""{}"""))
@@ -329,10 +313,8 @@ class CustomsDataStoreConnectorSpec
   }
 
   "verifiedEmail" must {
-
     "return correct email" in new Setup {
-
-      running(app) {
+      running(application) {
         server.stubFor(
           get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
             .willReturn(ok("""{"verifiedEmail": "test@test.com"}"""))
@@ -349,13 +331,12 @@ class CustomsDataStoreConnectorSpec
     val emailValue: String                      = "test@test.com"
     val emailVerifiedRes: EmailVerifiedResponse = EmailVerifiedResponse(Some(emailValue))
 
-    private def application: Application =
+    val application: Application =
       new GuiceApplicationBuilder()
         .configure("microservice.services.customs-data-store.port" -> server.port)
         .build()
 
     val expected: Option[Nothing]            = None
-    val app: Application                     = application
-    val connector: CustomsDataStoreConnector = app.injector.instanceOf[CustomsDataStoreConnector]
+    val connector: CustomsDataStoreConnector = application.injector.instanceOf[CustomsDataStoreConnector]
   }
 }

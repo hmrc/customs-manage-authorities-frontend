@@ -17,7 +17,6 @@
 package controllers.edit
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityStartFormProvider
 import models.{AuthorityStart, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -44,7 +43,6 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
   private val form         = formProvider()
 
   "EditAuthorityStart Controller" must {
-
     "return OK and the correct view for a GET" in {
 
       val application =
@@ -53,16 +51,13 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val result = route(application, request).value
-
-        val view      = application.injector.instanceOf[EditAuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[EditAuthorityStartView]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, "someId", "someId")(request, messages(application), appConfig).toString
+          view(form, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -83,18 +78,15 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val view      = application.injector.instanceOf[EditAuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[EditAuthorityStartView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
           view(form.fill(AuthorityStart.values.head), "someId", "someId")(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -124,7 +116,6 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
@@ -141,16 +132,13 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
         val view      = application.injector.instanceOf[EditAuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, "someId", "someId")(request, messages(application), appConfig).toString
+          view(boundForm, "someId", "someId")(request, messages, appConfig).toString
       }
     }
 
@@ -161,8 +149,7 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -182,7 +169,6 @@ class EditAuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

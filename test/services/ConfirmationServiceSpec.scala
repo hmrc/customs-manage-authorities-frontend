@@ -40,10 +40,10 @@ class ConfirmationServiceSpec extends SpecBase {
       .build()
 
     val service = application.injector.instanceOf[ConfirmationService]
+
     running(application) {
       val result = await(service.populateConfirmation("id", "eori"))
       result mustBe true
     }
   }
-
 }

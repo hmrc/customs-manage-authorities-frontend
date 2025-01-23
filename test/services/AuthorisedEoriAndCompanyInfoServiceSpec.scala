@@ -44,10 +44,9 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
   }
 
   "retrieveAuthorisedEoriAndCompanyInfo" must {
-
     "retrieve the data correctly" when {
-
       "data is not present in cache" in new Setup {
+
         val eoris: Set[String]           = Set(eori1, eori2)
         val mapData: Map[String, String] = Map(eori1 -> COMPANY_NAME, eori2 -> COMPANY_NAME)
 

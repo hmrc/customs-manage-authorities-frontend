@@ -32,7 +32,12 @@ class RemoveConfirmationViewSpec extends ViewTestHelper {
       val companyName = "test_company"
 
       val viewDoc: Document =
-        Jsoup.parse(app.injector.instanceOf[RemoveConfirmationView].apply(eori, Some(companyName)).body)
+        Jsoup.parse(
+          app.injector
+            .instanceOf[RemoveConfirmationView]
+            .apply(eori, Some(companyName))(request, messages, appConfig)
+            .body
+        )
 
       val pageElements                     = viewDoc.getElementsByClass("govuk-grid-column-two-thirds")
       implicit val elementsAsDoc: Document = Jsoup.parse(pageElements.html())

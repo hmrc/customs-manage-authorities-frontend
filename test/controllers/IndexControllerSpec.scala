@@ -23,19 +23,14 @@ import play.api.test.Helpers._
 class IndexControllerSpec extends SpecBase {
 
   "Index Controller" must {
-
     "redirect to the Accounts question page" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
+      running(application(None)) {
 
         val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
-
-        val result = route(application, request).value
+        val result  = route(application(None), request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual routes.ManageAuthoritiesController.onPageLoad().url
       }
     }

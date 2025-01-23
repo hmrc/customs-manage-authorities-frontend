@@ -37,9 +37,7 @@ class AuthorityStartDatePageSpec extends PageBehaviours {
     }
 
     beRetrievable[LocalDate](AuthorityStartDatePage)
-
     beSettable[LocalDate](AuthorityStartDatePage)
-
     beRemovable[LocalDate](AuthorityStartDatePage)
   }
 }

@@ -39,15 +39,12 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       )
 
       val result = form.bind(data)
-
       result.value.value mustEqual date
     }
   }
 
   "fail to bind an empty date" in new Setup {
-
     val result: Form[LocalDate] = form.bind(Map.empty[String, String])
-
     result.errors must contain only FormError("value.day", "error.required.all", List.empty)
   }
 

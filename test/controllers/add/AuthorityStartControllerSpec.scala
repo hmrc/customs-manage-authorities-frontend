@@ -17,7 +17,6 @@
 package controllers.add
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AuthorityStartFormProvider
 import models.{AuthorityStart, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
@@ -35,33 +34,26 @@ import scala.concurrent.Future
 
 class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
-  private def onwardRoute = Call("GET", "/foo")
-
   private lazy val authorityStartRoute = controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
 
+  private def onwardRoute  = Call("GET", "/foo")
   private val formProvider = new AuthorityStartFormProvider()
   private val form         = formProvider()
   val backLinkRoute: Call  = controllers.add.routes.AccountsController.onPageLoad(NormalMode)
 
   "AuthorityStart Controller" must {
-
     "return OK and the correct view for a GET in Normal mode" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
+      running(application(Some(emptyUserAnswers))) {
 
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val result = route(application, request).value
-
-        val view      = application.injector.instanceOf[AuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val result  = route(application(Some(emptyUserAnswers)), request).value
+        val view    = application(Some(emptyUserAnswers)).injector.instanceOf[AuthorityStartView]
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(form, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 
@@ -72,23 +64,18 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
+      running(application(Some(userAnswers))) {
 
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val view      = application.injector.instanceOf[AuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view    = application(Some(userAnswers)).injector.instanceOf[AuthorityStartView]
+        val result  = route(application(Some(userAnswers)), request).value
 
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
           view(form.fill(AuthorityStart.values.head), NormalMode, backLinkRoute)(
             request,
-            messages(application),
+            messages,
             appConfig
           ).toString
       }
@@ -97,7 +84,6 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid data is submitted" in {
 
       val mockSessionRepository = mock[SessionRepository]
-
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
       val application =
@@ -109,7 +95,6 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
       running(application) {
-
         val request =
           fakeRequest(POST, authorityStartRoute)
             .withFormUrlEncodedBody(("value", AuthorityStart.values.head.toString))
@@ -117,44 +102,33 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
 
     "return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
-
+      running(application(Some(emptyUserAnswers))) {
         val request =
           fakeRequest(POST, authorityStartRoute)
             .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view      = application.injector.instanceOf[AuthorityStartView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view      = application(Some(emptyUserAnswers)).injector.instanceOf[AuthorityStartView]
+        val result    = route(application(Some(emptyUserAnswers)), request).value
 
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute)(request, messages(application), appConfig).toString
+          view(boundForm, NormalMode, backLinkRoute)(request, messages, appConfig).toString
       }
     }
 
     "redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-
+      running(application(None)) {
         val request = fakeRequest(GET, authorityStartRoute)
-
-        val result = route(application, request).value
+        val result  = route(application(None), request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
@@ -163,18 +137,14 @@ class AuthorityStartControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-
+      running(application(None)) {
         val request =
           fakeRequest(POST, authorityStartRoute)
             .withFormUrlEncodedBody(("value", AuthorityStart.values.head.toString))
 
-        val result = route(application, request).value
+        val result = route(application(None), request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }

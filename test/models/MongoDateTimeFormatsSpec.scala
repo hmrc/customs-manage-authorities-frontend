@@ -39,19 +39,16 @@ class MongoDateTimeFormatsSpec extends SpecBase with MongoDateTimeFormats {
 
     "must serialise to json" in {
       val result = Json.toJson(date)
-
       result mustEqual json
     }
 
     "must deserialise from json" in {
       val result = json.as[LocalDateTime]
-
       result mustEqual date
     }
 
     "must serialise/deserialise to the same value" in {
       val result = Json.toJson(date).as[LocalDateTime]
-
       result mustEqual date
     }
   }
