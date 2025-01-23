@@ -22,11 +22,8 @@ import pages.behaviours.PageBehaviours
 class EditAuthorisedUserPageSpec extends PageBehaviours {
 
   "EditAuthorisedUserPage" must {
-
     beRetrievable[AuthorisedUser](EditAuthorisedUserPage("someId", "someAuthorityId"))
-
     beSettable[AuthorisedUser](EditAuthorisedUserPage("someId", "someAuthorityId"))
-
     beRemovable[AuthorisedUser](EditAuthorisedUserPage("someId", "someAuthorityId"))
   }
 }

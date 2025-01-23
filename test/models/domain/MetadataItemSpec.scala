@@ -23,7 +23,6 @@ import play.api.libs.json._
 class MetadataItemSpec extends AnyWordSpec with Matchers {
 
   "MetadataItem" should {
-
     "writes to JSON correctly" in {
       val metadataItem = MetadataItem("exampleKey", "exampleValue")
 

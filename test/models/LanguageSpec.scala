@@ -28,13 +28,11 @@ class LanguageSpec extends SpecBase with EitherValues {
 
     "bind Cymraeg from a URL" in {
       val result = pathBindable.bind("language", Language.Cymraeg.toString)
-
       result.getOrElse(Language.Cymraeg) mustEqual Language.Cymraeg
     }
 
     "bind English from a URL" in {
       val result = pathBindable.bind("language", Language.English.toString)
-
       result.getOrElse(Language.English) mustEqual Language.English
     }
 
@@ -46,13 +44,11 @@ class LanguageSpec extends SpecBase with EitherValues {
 
     "unbind Cymraeg" in {
       val result = pathBindable.unbind("language", Language.Cymraeg)
-
       result mustEqual Language.Cymraeg.toString
     }
 
     "unbind English" in {
       val result = pathBindable.unbind("language", Language.English)
-
       result mustEqual Language.English.toString
     }
   }

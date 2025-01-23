@@ -29,7 +29,6 @@ class EditAuthorityStartSpec extends PageBehaviours {
     )
 
     beSettable[AuthorityStart](EditAuthorityStartPage("someId", "someAuthorityId"))(implicitly, AuthorityStart.format)
-
     beRemovable[AuthorityStart](EditAuthorityStartPage("someId", "someAuthorityId"))(implicitly, AuthorityStart.format)
   }
 }

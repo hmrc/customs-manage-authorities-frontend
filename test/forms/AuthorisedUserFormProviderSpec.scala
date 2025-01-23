@@ -36,7 +36,6 @@ class AuthorisedUserFormProviderSpec extends StringFieldBehaviours {
   val textFieldRegex: String  = """^[^(){}$<>\[\]\\\/]*$"""
 
   val user = AuthorisedUser("name", "role")
-
   val form = new AuthorisedUserFormProviderWithConsent()()
 
   "AuthorisedUserForm" must {

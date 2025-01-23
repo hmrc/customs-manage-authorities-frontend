@@ -27,7 +27,6 @@ import utils.TestData._
 class SdesFileSpec extends SpecBase {
 
   "an SdesFile" should {
-
     "be correctly ordered by start date" in new Setup {
 
       val file1: StandingAuthorityFile = standingAuthorityFile.copy(
@@ -121,5 +120,4 @@ class SdesFileSpec extends SpecBase {
       eori
     )
   }
-
 }

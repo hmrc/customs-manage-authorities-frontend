@@ -32,9 +32,7 @@ trait PageBehaviours extends SpecBase with ScalaCheckPropertyChecks with Generat
     def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit = {
 
       "return None" when {
-
         "being retrieved from UserAnswers" when {
-
           "the question has not been answered" in {
 
             val gen = for {
@@ -50,9 +48,7 @@ trait PageBehaviours extends SpecBase with ScalaCheckPropertyChecks with Generat
       }
 
       "return the saved value" when {
-
         "being retrieved from UserAnswers" when {
-
           "the question has been answered" in {
 
             val gen = for {

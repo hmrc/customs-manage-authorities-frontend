@@ -26,7 +26,6 @@ import play.api.libs.json.{JsError, JsString, Json}
 class AuthorityStartSpec extends SpecBase with ScalaCheckPropertyChecks with OptionValues {
 
   "AuthorityStart" must {
-
     "deserialise valid values" in {
 
       val gen = Gen.oneOf(AuthorityStart.values)

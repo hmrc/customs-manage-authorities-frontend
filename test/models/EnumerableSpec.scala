@@ -40,7 +40,6 @@ class EnumerableSpec extends SpecBase with EitherValues with OptionValues with E
   import EnumerableSpec._
 
   ".reads" must {
-
     "be found implicitly" in {
       implicitly[Reads[Foo]]
     }
@@ -60,7 +59,6 @@ class EnumerableSpec extends SpecBase with EitherValues with OptionValues with E
   }
 
   ".writes" must {
-
     "be found implicitly" in {
       implicitly[Writes[Foo]]
     }
@@ -73,7 +71,6 @@ class EnumerableSpec extends SpecBase with EitherValues with OptionValues with E
   }
 
   ".formats" must {
-
     "be found implicitly" in {
       implicitly[Format[Foo]]
     }

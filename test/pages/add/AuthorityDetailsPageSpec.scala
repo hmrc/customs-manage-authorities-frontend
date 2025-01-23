@@ -23,9 +23,7 @@ class AuthorityDetailsPageSpec extends PageBehaviours {
 
   "AuthorityDetailsPage" must {
     beRetrievable[AuthorisedUser](AuthorityDetailsPage)
-
     beSettable[AuthorisedUser](AuthorityDetailsPage)
-
     beRemovable[AuthorisedUser](AuthorityDetailsPage)
   }
 }

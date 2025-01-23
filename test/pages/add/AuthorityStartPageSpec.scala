@@ -22,11 +22,8 @@ import pages.behaviours.PageBehaviours
 class AuthorityStartPageSpec extends PageBehaviours {
 
   "AuthorityStartPage" must {
-
     beRetrievable[AuthorityStart](AuthorityStartPage)(implicitly, AuthorityStart.format)
-
     beSettable[AuthorityStart](AuthorityStartPage)(implicitly, AuthorityStart.format)
-
     beRemovable[AuthorityStart](AuthorityStartPage)(implicitly, AuthorityStart.format)
   }
 }

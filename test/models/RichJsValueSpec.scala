@@ -37,9 +37,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
   "set" should {
 
     "return an error if the path is empty" in {
-
       val value = Json.obj()
-
       value.set(JsPath, Json.obj()) mustEqual JsError("path cannot be empty")
     }
 
@@ -54,8 +52,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
 
       forAll(gen) { case (originalKey, originalValue, pathKey, newValue) =>
         val value = Json.obj(originalKey -> originalValue)
-
-        val path = JsPath \ pathKey
+        val path  = JsPath \ pathKey
 
         value.set(path, JsString(newValue)) mustEqual
           JsSuccess(Json.obj(originalKey -> originalValue, pathKey -> newValue))
@@ -63,7 +60,6 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     }
 
     "set a nested value on a JsObject" in {
-
       val value = Json.obj(
         "foo" -> Json.obj()
       )
@@ -82,8 +78,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
       forAll(nonEmptyAlphaStr) { newValue =>
 
         val value = Json.arr()
-
-        val path = JsPath \ 0
+        val path  = JsPath \ 0
 
         value.set(path, JsString(newValue)) mustEqual JsSuccess(Json.arr(newValue))
       }
@@ -94,8 +89,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
       forAll(nonEmptyAlphaStr, nonEmptyAlphaStr) { (oldValue, newValue) =>
 
         val value = Json.arr(oldValue)
-
-        val path = JsPath \ 1
+        val path  = JsPath \ 1
 
         value.set(path, JsString(newValue)) mustEqual JsSuccess(Json.arr(oldValue, newValue))
       }
@@ -106,8 +100,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
       forAll(nonEmptyAlphaStr, nonEmptyAlphaStr, nonEmptyAlphaStr) { (firstValue, secondValue, newValue) =>
 
         val value = Json.arr(firstValue, secondValue)
-
-        val path = JsPath \ 0
+        val path  = JsPath \ 0
 
         value.set(path, JsString(newValue)) mustEqual JsSuccess(Json.arr(newValue, secondValue))
       }
@@ -116,8 +109,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "set a nested value on a JsArray" in {
 
       val value = Json.arr(Json.arr("foo"))
-
-      val path = JsPath \ 0 \ 0
+      val path  = JsPath \ 0 \ 0
 
       value.set(path, JsString("bar")).asOpt.value mustEqual Json.arr(Json.arr("bar"))
     }
@@ -142,8 +134,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "return an error when trying to set a key on a non-JsObject" in {
 
       val value = Json.arr()
-
-      val path = JsPath \ "foo"
+      val path  = JsPath \ "foo"
 
       value.set(path, JsString("bar")) mustEqual JsError(s"cannot set a key on $value")
     }
@@ -151,8 +142,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "return an error when trying to set an index on a non-JsArray" in {
 
       val value = Json.obj()
-
-      val path = JsPath \ 0
+      val path  = JsPath \ 0
 
       value.set(path, JsString("bar")) mustEqual JsError(s"cannot set an index on $value")
     }
@@ -160,8 +150,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "return an error when trying to set an index other than zero on an empty array" in {
 
       val value = Json.arr()
-
-      val path = JsPath \ 1
+      val path  = JsPath \ 1
 
       value.set(path, JsString("bar")) mustEqual JsError("array index out of bounds: 1, []")
     }
@@ -169,8 +158,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "return an error when trying to set an index out of bounds" in {
 
       val value = Json.arr("bar", "baz")
-
-      val path = JsPath \ 3
+      val path  = JsPath \ 3
 
       value.set(path, JsString("fork")) mustEqual JsError("array index out of bounds: 3, [\"bar\",\"baz\"]")
     }
@@ -178,8 +166,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "set into an array which does not exist" in {
 
       val value = Json.obj()
-
-      val path = JsPath \ "foo" \ 0
+      val path  = JsPath \ "foo" \ 0
 
       value.set(path, JsString("bar")) mustEqual JsSuccess(
         Json.obj(
@@ -191,8 +178,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "set into an object which does not exist" in {
 
       val value = Json.obj()
-
-      val path = JsPath \ "foo" \ "bar"
+      val path  = JsPath \ "foo" \ "bar"
 
       value.set(path, JsString("baz")) mustEqual JsSuccess(
         Json.obj(
@@ -206,8 +192,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
     "set nested objects and arrays" in {
 
       val value = Json.obj()
-
-      val path = JsPath \ "foo" \ 0 \ "bar" \ 0
+      val path  = JsPath \ "foo" \ 0 \ "bar" \ 0
 
       value.set(path, JsString("baz")) mustEqual JsSuccess(
         Json.obj(
@@ -224,11 +209,8 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
   }
 
   "remove" must {
-
     "return an error if the path is empty" in {
-
       val value = Json.obj()
-
       value.set(JsPath, Json.obj()) mustEqual JsError("path cannot be empty")
     }
 
@@ -248,7 +230,6 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
         value.remove(path) mustEqual JsError("cannot find value at path")
 
       }
-
     }
 
     "remove a value given a keyPathNode and return the new object" in {
@@ -266,8 +247,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
         }
 
         val testObject: JsObject = initialObj + (keyToRemove -> Json.toJson(valueToRemove))
-
-        val pathToRemove = JsPath \ keyToRemove
+        val pathToRemove         = JsPath \ keyToRemove
 
         testObject mustNot equal(initialObj)
         testObject.remove(pathToRemove) mustEqual JsSuccess(initialObj)
@@ -288,8 +268,7 @@ class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with Option
         val valuesInArrays: Seq[JsValue] = values.map(Json.toJson[String])
         val initialObj: JsObject         = buildJsObj(Seq(key), Seq(valuesInArrays))
 
-        val pathToRemove = JsPath \ key \ indexToRemove
-
+        val pathToRemove               = JsPath \ key \ indexToRemove
         val removed: JsResult[JsValue] = initialObj.remove(pathToRemove)
 
         val expectedOutcome =

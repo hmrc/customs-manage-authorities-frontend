@@ -50,7 +50,6 @@ class MetadataSpec extends SpecBase {
   }
 
   "asMap" should {
-
     "convert a sequence of MetadataItems into a map" in {
       val items = Seq(
         MetadataItem("key1", "value1"),

@@ -22,7 +22,6 @@ import utils.StringUtils.emptyString
 class CompanyInformationSpec extends SpecBase {
 
   ".GeneralInformationSpec" should {
-
     "Company Information must be valid" in new Setup {
       val result: CompanyInformation = CompanyInformation(name, consent, address)
 
@@ -38,12 +37,10 @@ class CompanyInformationSpec extends SpecBase {
 }
 
 trait Setup {
-  val name: String    = "TestCompany"
-  val consent: String = "Yes"
-
+  val name: String                = "TestCompany"
+  val consent: String             = "Yes"
   val address: AddressInformation = AddressInformation("123 Street", "New City", Some("123 ABC"), "GB")
-
-  val corp = CompanyInformation(name, consent, address)
+  val corp                        = CompanyInformation(name, consent, address)
 
   def formattedAddress: String = s"${address.streetAndNumber}, ${address.city}, " +
     s"${address.postalCode.getOrElse(emptyString)}, ${address.countryCode}"

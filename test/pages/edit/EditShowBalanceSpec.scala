@@ -22,11 +22,8 @@ import pages.behaviours.PageBehaviours
 class EditShowBalanceSpec extends PageBehaviours {
 
   "EditShowBalancePage" must {
-
     beRetrievable[ShowBalance](EditShowBalancePage("someId", "someAuthorityId"))(implicitly, ShowBalance.format)
-
     beSettable[ShowBalance](EditShowBalancePage("someId", "someAuthorityId"))(implicitly, ShowBalance.format)
-
     beRemovable[ShowBalance](EditShowBalancePage("someId", "someAuthorityId"))(implicitly, ShowBalance.format)
   }
 }

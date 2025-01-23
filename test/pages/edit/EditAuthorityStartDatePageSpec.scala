@@ -37,9 +37,7 @@ class EditAuthorityStartDatePageSpec extends PageBehaviours {
     }
 
     beRetrievable[LocalDate](EditAuthorityStartDatePage("someId", "someAuthorityId"))
-
     beSettable[LocalDate](EditAuthorityStartDatePage("someId", "someAuthorityId"))
-
     beRemovable[LocalDate](EditAuthorityStartDatePage("someId", "someAuthorityId"))
   }
 }
