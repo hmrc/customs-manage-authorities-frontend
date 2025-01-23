@@ -69,10 +69,7 @@ class ManageAuthoritiesViewSpec extends SpecBase {
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
+    implicit val messages: Messages = Helpers.stubMessages()
 
     val gbStanAuthFile154Url = "https://test.co.uk/GB123456789012/SA_000000000154_csv.csv"
     val xiStanAuthFile154Url = "https://test.co.uk/XI123456789012/SA_000000000154_XI_csv.csv"
@@ -83,16 +80,17 @@ class ManageAuthoritiesViewSpec extends SpecBase {
       dateAsDayMonthAndYear(START_DATE_1)
     )
 
-    lazy val viewModel: ManageAuthoritiesViewModel               = ManageAuthoritiesViewModel(
+    lazy val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
       authorities = AuthoritiesWithId(Nil),
       accounts = CDSAccounts("testEori", List.empty),
       auhorisedEoriAndCompanyMap = Map.empty,
       filesNotificationViewModel = standingAuthorityFilesViewModel
     )
+
     val maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None
 
     def view(): Document = {
-      val htmlContent = app.injector
+      val htmlContent = application(Some(emptyUserAnswers)).injector
         .instanceOf[ManageAuthoritiesView]
         .apply(viewModel, maybeMessageBannerPartial)(csrfRequest, messages, appConfig)
         .body

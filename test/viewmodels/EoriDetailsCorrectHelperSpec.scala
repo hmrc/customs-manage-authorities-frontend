@@ -84,10 +84,9 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
   when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
   "EoriDetailsCorrectHelper" must {
-
     "produce correct rows" when {
-
       "a EORI number and company name is displayed" in {
+
         val userAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
         val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(
@@ -107,6 +106,7 @@ class EoriDetailsCorrectHelperSpec extends SpecBase with SummaryListRowHelper {
       }
 
       "only EORI number row is displayed when no company name is present" in {
+
         val userAnswers = userAnswersNoCompanyName.set(AccountsPage, List(cashAccount)).success.value
         val helper      = EoriDetailsCorrectHelper(userAnswers, mockDateTimeService)
         helper.companyDetailsRows mustBe Seq(

@@ -87,9 +87,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
       override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
       val pageView: Document = Jsoup.parse(
-        app.injector
+        application(Some(emptyUserAnswers)).injector
           .instanceOf[AuthorisedUserView]
-          .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+          .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
           .body
       )
 
@@ -138,9 +138,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -184,9 +184,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -237,9 +237,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -285,9 +285,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
       override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
       val pageView: Document = Jsoup.parse(
-        app.injector
+        application(Some(emptyUserAnswers)).injector
           .instanceOf[AuthorisedUserView]
-          .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+          .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
           .body
       )
 
@@ -336,9 +336,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -386,9 +386,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -436,9 +436,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -486,9 +486,9 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
         override val helper      = CheckYourAnswersHelper(userAnswers, mockDateTimeService)
 
         val pageView: Document = Jsoup.parse(
-          app.injector
+          application(Some(emptyUserAnswers)).injector
             .instanceOf[AuthorisedUserView]
-            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)
+            .apply(new AuthorisedUserFormProviderWithConsent().apply(), helper)(request, messages, appConfig)
             .body
         )
 
@@ -536,9 +536,8 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app: Application                                          = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages                               = Helpers.stubMessages()
+
+    implicit val messages: Messages = Helpers.stubMessages()
 
     def userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
 
@@ -547,6 +546,12 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
     private val formProvider = new AuthorisedUserFormProviderWithConsent()
     private val form         = formProvider()
 
-    def view(): Document = Jsoup.parse(app.injector.instanceOf[AuthorisedUserView].apply(form, helper).body)
+    def view(): Document =
+      Jsoup.parse(
+        application(Some(emptyUserAnswers)).injector
+          .instanceOf[AuthorisedUserView]
+          .apply(form, helper)(request, messages, appConfig)
+          .body
+      )
   }
 }

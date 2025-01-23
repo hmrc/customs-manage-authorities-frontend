@@ -75,10 +75,6 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-
     val viewModel: AuthoritiesFilesNotificationViewModel = AuthoritiesFilesNotificationViewModel(
       gbAuthUrl = None,
       xiAuthUrl = None,
@@ -86,7 +82,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     )
 
     def view(): Document = {
-      val htmlContent = app.injector
+      val htmlContent = application(Some(emptyUserAnswers)).injector
         .instanceOf[ManageAuthoritiesApiFailureView]
         .apply(viewModel)(csrfRequest, messages, appConfig)
         .body

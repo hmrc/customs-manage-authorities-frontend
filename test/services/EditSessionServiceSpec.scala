@@ -34,9 +34,10 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class EditSessionServiceSpec extends SpecBase with MockitoSugar {
-  "populateUserAnswers" should {
 
+  "populateUserAnswers" should {
     "update the session with the user's answers for standingAuthority date set to today" in new Setup {
+
       val startDate         = LocalDate.now()
       val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
@@ -48,7 +49,6 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
       )
 
       running(app) {
-
         val result = await(
           service.resetUserAnswers(
             accountId,
@@ -129,5 +129,4 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
 
     val service: EditSessionService = app.injector.instanceOf[EditSessionService]
   }
-
 }

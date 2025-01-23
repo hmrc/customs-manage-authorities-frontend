@@ -22,87 +22,74 @@ import utils.Constants._
 class ConstantsSpec extends SpecBase {
 
   "MDG_ACK_REF_LENGTH" should {
-
     "return correct value" in {
       MDG_ACK_REF_LENGTH mustBe 32
     }
   }
 
   "RANDOM_GENERATION_INT_LENGTH" should {
-
     "return correct value" in {
       RANDOM_GENERATION_INT_LENGTH mustBe 10
     }
   }
 
   "CASH_ACCOUNT_TYPE" should {
-
     "return correct value" in {
       CASH_ACCOUNT_TYPE mustBe "cash"
     }
   }
 
   "GENERAL_GUARANTEE_ACCOUNT_TYPE" should {
-
     "return correct value" in {
       GENERAL_GUARANTEE_ACCOUNT_TYPE mustBe "generalGuarantee"
     }
   }
 
   "DUTY_DEFERMENT_ACCOUNT_TYPE" should {
-
     "return correct value" in {
       DUTY_DEFERMENT_ACCOUNT_TYPE mustBe "dutyDeferment"
     }
   }
 
   "FIXED_DATE_TIME_YEAR" should {
-
     "return correct value" in {
       FIXED_DATE_TIME_YEAR mustBe 2027
     }
   }
 
   "FIXED_DATE_TIME_MONTH_OF_YEAR" should {
-
     "return correct value" in {
       FIXED_DATE_TIME_MONTH_OF_YEAR mustBe 12
     }
   }
 
   "FIXED_DATE_TIME_DAY_OF_MONTH" should {
-
     "return correct value" in {
       FIXED_DATE_TIME_DAY_OF_MONTH mustBe 20
     }
   }
 
   "FIXED_DATE_TIME_HOUR_OF_DAY" should {
-
     "return correct value" in {
       FIXED_DATE_TIME_HOUR_OF_DAY mustBe 12
     }
   }
 
   "FIXED_DATE_TIME_MIN_OF_HOUR" should {
-
     "return correct value" in {
       FIXED_DATE_TIME_MIN_OF_HOUR mustBe 30
     }
   }
 
   "ENROLMENT_KEY" should {
-
     "return correct value" in {
       ENROLMENT_KEY mustBe "HMRC-CUS-ORG"
     }
   }
 
   "ENROLMENT_IDENTIFIER" should {
-
     "return correct value" in {
       ENROLMENT_IDENTIFIER mustBe "EORINumber"
     }
   }
-
 }

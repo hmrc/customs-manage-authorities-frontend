@@ -36,8 +36,8 @@ class MetricsReporterServiceSpec extends SpecBase {
 
   "MetricsReporterService" should {
     "withResponseTimeLogging" should {
-
       "log successful call metrics" in new Setup {
+
         running(app) {
           await {
             service.withResponseTimeLogging("foo") {

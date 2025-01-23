@@ -46,11 +46,7 @@ class ShowBalanceViewSpec extends SpecBase {
 
   trait Setup {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
+    implicit val messages: Messages                               = Helpers.stubMessages()
 
     private val formProvider = new ShowBalanceFormProvider()
     private val form         = formProvider()
@@ -61,14 +57,17 @@ class ShowBalanceViewSpec extends SpecBase {
 
     def normalModeView(): Document =
       Jsoup.parse(
-        app.injector
+        application(Some(emptyUserAnswers)).injector
           .instanceOf[ShowBalanceView]
-          .apply(form, accountsLength = 2, NormalMode, normalModeBackLinkRoute)
+          .apply(form, accountsLength = 2, NormalMode, normalModeBackLinkRoute)(request, messages, appConfig)
           .body
       )
     def checkModeView(): Document  =
       Jsoup.parse(
-        app.injector.instanceOf[ShowBalanceView].apply(form, accountsLength = 2, CheckMode, checkModeBackLinkRoute).body
+        application(Some(emptyUserAnswers)).injector
+          .instanceOf[ShowBalanceView]
+          .apply(form, accountsLength = 2, CheckMode, checkModeBackLinkRoute)(request, messages, appConfig)
+          .body
       )
   }
 }

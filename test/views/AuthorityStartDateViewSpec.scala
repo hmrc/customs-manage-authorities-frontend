@@ -47,10 +47,7 @@ class AuthorityStartDateViewSpec extends SpecBase {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest("GET", "/some/resource/path")
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
+    implicit val messages: Messages = Helpers.stubMessages()
 
     private val formProvider = new AuthorityStartFormProvider()
     private val form         = formProvider()
@@ -61,9 +58,19 @@ class AuthorityStartDateViewSpec extends SpecBase {
     private lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     def normalModeView(): Document =
-      Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form, NormalMode, normalModeBackLinkRoute).body)
+      Jsoup.parse(
+        application(Some(emptyUserAnswers)).injector
+          .instanceOf[AuthorityStartView]
+          .apply(form, NormalMode, normalModeBackLinkRoute)(request, messages, appConfig)
+          .body
+      )
 
     def checkModeView(): Document =
-      Jsoup.parse(app.injector.instanceOf[AuthorityStartView].apply(form, CheckMode, checkModeBackLinkRoute).body)
+      Jsoup.parse(
+        application(Some(emptyUserAnswers)).injector
+          .instanceOf[AuthorityStartView]
+          .apply(form, CheckMode, checkModeBackLinkRoute)(request, messages, appConfig)
+          .body
+      )
   }
 }

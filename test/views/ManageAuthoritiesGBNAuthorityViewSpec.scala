@@ -39,11 +39,13 @@ class ManageAuthoritiesGBNAuthorityViewSpec extends SpecBase {
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest("GET", "/some/resource/path")
 
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val messages: Messages = Helpers.stubMessages()
 
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages           = Helpers.stubMessages()
-
-    def view(): Document = Jsoup.parse(app.injector.instanceOf[ManageAuthoritiesGBNAuthorityView].apply().body)
+    def view(): Document = Jsoup.parse(
+      application(Some(emptyUserAnswers)).injector
+        .instanceOf[ManageAuthoritiesGBNAuthorityView]
+        .apply()(request, messages, appConfig)
+        .body
+    )
   }
 }
