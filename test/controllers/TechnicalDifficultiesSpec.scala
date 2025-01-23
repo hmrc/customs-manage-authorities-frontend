@@ -17,24 +17,21 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
-import play.api.Application
 import play.api.http.Status.OK
 import play.api.i18n.Messages
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{
   GET, contentAsString, defaultAwaitTimeout, route, running, status, writeableOf_AnyContentAsEmpty
 }
-import views.html.ErrorTemplate
 
 class TechnicalDifficultiesSpec extends SpecBase {
 
   "onPageLoad" should {
     "return OK" in new Setup {
-      running(app) {
-        val request = FakeRequest(GET, routes.TechnicalDifficulties.onPageLoad.url)
 
-        val result = route(app, request).value
+      running(application()) {
+        val request = FakeRequest(GET, routes.TechnicalDifficulties.onPageLoad.url)
+        val result  = route(application(), request).value
 
         status(result) mustBe OK
         val contentAsStringResult = contentAsString(result)
@@ -47,9 +44,6 @@ class TechnicalDifficultiesSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application                   = applicationBuilder().build()
-    implicit val config: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val msgs: Messages            = messages
-    val view: ErrorTemplate                = app.injector.instanceOf[ErrorTemplate]
+    implicit val msgs: Messages = messages
   }
 }

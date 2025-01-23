@@ -83,5 +83,4 @@ class EmailControllerSpec extends SpecBase {
       )
       .build()
   }
-
 }

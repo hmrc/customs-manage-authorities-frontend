@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SdesConnector, SecureMessageConnector}
 import models.domain.FileFormat.Csv
 import models.domain._
@@ -41,10 +40,9 @@ import scala.concurrent.Future
 class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with DateUtils {
 
   "ManageAuthorities Controller" when {
-
     "onPageLoad" should {
-
       "call deleteNotification on the customsFinancialsConnector" in new Setup {
+
         private val mockCustomsFinancialsConnector = mock[CustomsFinancialsConnector]
 
         private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -63,8 +61,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
 
     "API call succeeds" must {
-
       "return OK and the correct view if no accounts associated with a EORI" in new Setup {
+
         val accounts: CDSAccounts = CDSAccounts("GB123456789012", List())
 
         val mockRepository: AuthoritiesRepository              = mock[AuthoritiesRepository]
@@ -156,10 +154,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         running(application) {
 
-          val request   = fakeRequest(GET, manageAuthoritiesRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[ManageAuthoritiesView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ManageAuthoritiesView]
 
           status(result) mustEqual OK
 
@@ -219,10 +216,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         running(application) {
 
-          val request   = fakeRequest(GET, manageAuthoritiesRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[ManageAuthoritiesView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, manageAuthoritiesRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ManageAuthoritiesView]
 
           status(result) mustEqual OK
 
@@ -297,8 +293,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
 
     "API call fails" must {
-
       "redirect to 'unavailable' page" in new Setup {
+
         val mockRepository = mock[AuthoritiesRepository]
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 
@@ -334,10 +330,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         running(application) {
 
-          val request   = fakeRequest(GET, manageAuthoritiesUnavailableRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, manageAuthoritiesUnavailableRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ManageAuthoritiesApiFailureView]
 
           status(result) mustEqual OK
 
@@ -348,8 +343,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
 
     "API call fails due to GBN EORI Json Validation" must {
-
       "redirect to 'account unavailable' page" in new Setup {
+
         val statusCode = 500
 
         val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]

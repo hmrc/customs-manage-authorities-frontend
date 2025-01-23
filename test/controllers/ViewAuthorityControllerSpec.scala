@@ -37,20 +37,20 @@ class ViewAuthorityControllerSpec extends SpecBase {
   "onPageLoad" must {
     "return 404 when calling with empty values" in new Setup {
 
-      running(application) {
+      running(application(Some(userAnswers))) {
         val request = FakeRequest(
           GET,
           controllers.routes.ViewAuthorityController.onPageLoad(emptyString, emptyString).url
         )
 
-        val result = route(application, request).value
+        val result = route(application(Some(userAnswers)), request).value
         status(result) mustEqual NOT_FOUND
       }
     }
 
     "return OK when called with correct values" in new Setup {
 
-      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
         )
@@ -71,7 +71,7 @@ class ViewAuthorityControllerSpec extends SpecBase {
 
     "return 303 when AuthoritiesCacheErrorResponse is received" in new Setup {
 
-      override val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
           inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
         )
@@ -126,7 +126,5 @@ class ViewAuthorityControllerSpec extends SpecBase {
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
     val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
-
-    val application: Application = applicationBuilder(userAnswers = Some(userAnswers)).build()
   }
 }

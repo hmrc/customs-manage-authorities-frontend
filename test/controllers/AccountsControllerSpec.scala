@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{
   AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount,
@@ -44,16 +43,15 @@ import java.time.LocalDate
 import scala.concurrent.Future
 
 class AccountsControllerSpec extends SpecBase with MockitoSugar {
-  "Accounts Controller" must {
 
+  "Accounts Controller" must {
     "return OK and the correct view for a GET" when {
 
       "user answers exists with no entered EORI" in new Setup {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
-        running(application) {
+        running(application(Some(emptyUserAnswers))) {
           val request = fakeRequest(GET, accountsRoute)
-          val result  = route(application, request).value
+          val result  = route(application(Some(emptyUserAnswers)), request).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
@@ -86,10 +84,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
-          val request   = fakeRequest(GET, accountsRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[ServiceUnavailableView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, accountsRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[ServiceUnavailableView]
 
           status(result) mustEqual INTERNAL_SERVER_ERROR
 
@@ -107,10 +104,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
 
-          val request   = fakeRequest(GET, accountsRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[AccountsView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, accountsRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[AccountsView]
 
           status(result) mustEqual OK
 
@@ -146,10 +142,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
 
-          val request   = fakeRequest(GET, accountsRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[AccountsView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, accountsRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[AccountsView]
 
           contentAsString(result) mustEqual view(
             form,
@@ -199,10 +194,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
         running(application) {
 
-          val request   = fakeRequest(GET, accountsRoute)
-          val result    = route(application, request).value
-          val view      = application.injector.instanceOf[NoAvailableAccountsView]
-          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+          val request = fakeRequest(GET, accountsRoute)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[NoAvailableAccountsView]
 
           status(result) mustEqual OK
 
@@ -231,11 +225,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, accountsRoute)
-
-        val view      = application.injector.instanceOf[AccountsView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val view    = application.injector.instanceOf[AccountsView]
+        val result  = route(application, request).value
 
         status(result) mustEqual OK
 
@@ -275,9 +266,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        val request   = fakeRequest(GET, accountsRouteInCheckMode)
-        val view      = application.injector.instanceOf[AccountsView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+        val request = fakeRequest(GET, accountsRouteInCheckMode)
+        val view    = application.injector.instanceOf[AccountsView]
 
         val result = route(application, request).value
 
@@ -304,7 +294,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "user answers exists" in new Setup {
 
         val mockSessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application =
@@ -326,7 +315,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual onwardRoute.url
         }
       }
@@ -364,7 +352,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "Incorrect user answers exists in NormalMode" in new Setup {
 
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application: Application =
@@ -383,7 +370,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
             .withFormUrlEncodedBody(("value[0]", emptyString))
 
           val result = route(application, request).value
-
           status(result) mustEqual BAD_REQUEST
         }
       }
@@ -391,7 +377,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "user answers exists in NormalMode with XI" in new Setup {
 
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application: Application =
@@ -420,7 +405,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "user answers exists in CheckMode" in new Setup {
 
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application: Application =
@@ -450,7 +434,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "user answers exists with no EORI" in new Setup {
 
         val mockSessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application =
@@ -479,7 +462,6 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
       "user answers doesn't exist" in new Setup {
 
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
-
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
         val application =
@@ -499,11 +481,9 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }
-
     }
 
     "return a Bad Request and errors when invalid data is submitted" in new Setup {
@@ -521,11 +501,8 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
         val view      = application.injector.instanceOf[AccountsView]
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-
-        val result = route(application, request).value
+        val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
 
