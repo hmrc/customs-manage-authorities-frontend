@@ -37,7 +37,6 @@ class RemoveFormProviderSpec extends StringFieldBehaviours {
   val textFieldRegex: String  = """^[^(){}$<>\[\]\\\/]*$"""
 
   val user = AuthorisedUser("name", "role")
-
   val form = new AuthorisedUserFormProvider()()
 
   "RemoveFormProvider" must {

@@ -36,9 +36,7 @@ class AccountsFormProviderObjectSpec extends SpecBase {
         CashAccount("54321", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
       )
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-
-      running(application) {
+      running(application(Some(emptyUserAnswers))) {
 
         val result = AccountsFormProvider.options(form, accounts)(messages)
 

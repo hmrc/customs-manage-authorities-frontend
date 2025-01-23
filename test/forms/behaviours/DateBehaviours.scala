@@ -25,12 +25,12 @@ import java.time.format.DateTimeFormatter
 
 class DateBehaviours extends FieldBehaviours {
 
-  val noOfYears                                                              = 10
+  val noOfYears = 10
+
   def dateField(form: Form[_], key: String, validData: Gen[LocalDate]): Unit =
     "bind valid data" in {
 
       forAll(validData -> "valid date") { date =>
-
         val data = Map(
           s"$key.day"   -> date.getDayOfMonth.toString,
           s"$key.month" -> date.getMonthValue.toString,
@@ -38,7 +38,6 @@ class DateBehaviours extends FieldBehaviours {
         )
 
         val result = form.bind(data)
-
         result.value.value shouldEqual date
       }
     }
@@ -49,7 +48,6 @@ class DateBehaviours extends FieldBehaviours {
       val generator = datesBetween(max.plusDays(1), max.plusYears(noOfYears))
 
       forAll(generator -> "invalid dates") { date =>
-
         val data = Map(
           s"$key.day"   -> date.getDayOfMonth.toString,
           s"$key.month" -> date.getMonthValue.toString,
@@ -57,7 +55,6 @@ class DateBehaviours extends FieldBehaviours {
         )
 
         val result = form.bind(data)
-
         result.errors should contain only formError
       }
     }
@@ -68,7 +65,6 @@ class DateBehaviours extends FieldBehaviours {
       val generator = datesBetween(min.minusYears(noOfYears), min.minusDays(1))
 
       forAll(generator -> "invalid dates") { date =>
-
         val data = Map(
           s"$key.day"   -> date.getDayOfMonth.toString,
           s"$key.month" -> date.getMonthValue.toString,
@@ -76,16 +72,13 @@ class DateBehaviours extends FieldBehaviours {
         )
 
         val result = form.bind(data)
-
         result.errors should contain only formError
       }
     }
 
   def mandatoryDateField(form: Form[_], key: String, requiredAllKey: String, errorArgs: Seq[String] = Seq.empty): Unit =
     "fail to bind an empty date" in {
-
       val result = form.bind(Map.empty[String, String])
-
       result.errors should contain only FormError(key, requiredAllKey, errorArgs)
     }
 }
