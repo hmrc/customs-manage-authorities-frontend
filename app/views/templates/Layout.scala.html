@@ -20,8 +20,11 @@
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
+@import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
 @import config.FrontendAppConfig
 @import views.html.components.fullWidthMainContent
+@import views.html.components.browserBackLink
+@import views.html.helper.CSPNonce
 
 @this(
     appConfig: FrontendAppConfig,
@@ -30,11 +33,14 @@
     hmrcTimeoutDialog: HmrcTimeoutDialog,
     hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
-    fullWidthMainContent: fullWidthMainContent
+    fullWidthMainContent: fullWidthMainContent,
+    govukBackLink: GovukBackLink,
+    browserBackLinkComponent: browserBackLink
 )
 
 @(pageTitle: Option[String] = None,
   backLink: Option[String] = None,
+  browserBackLink: Option[String] = None,
   helpAndSupport: Boolean = true,
   deskpro: Boolean = true,
   welshToggle: Boolean = true,
@@ -57,8 +63,13 @@
 }
 
 @beforeContent = {
-    @maybeMessageBannerPartial.map(identity).getOrElse(HtmlFormat.empty)
+    @maybeMessageBannerPartial.getOrElse(HtmlFormat.empty)
     @hmrcLanguageSelectHelper()
+
+    @{
+        browserBackLink.map(browserBackLinkComponent(_))
+            .getOrElse(backLink.map(link => govukBackLink(BackLink(href = link))).getOrElse(HtmlFormat.empty))
+    }
 }
 
 @additionalHead = {
@@ -71,6 +82,8 @@
         timeoutUrl = Some(controllers.routes.LogoutController.logoutNoSurvey.url)
     ))
     <link href='@controllers.routes.Assets.versioned("stylesheets/application.css")' media="screen" rel="stylesheet" type="text/css"/>
+
+    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/main.js")'></script>
 }
 
 @mainContent = {
@@ -91,10 +104,10 @@
             signOutUrl = Some(controllers.routes.LogoutController.logout.url),
             accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
         ),
-        backLink = backLink.filter(_.nonEmpty).map(BackLink(_)),
+        backLink = if (browserBackLink.isDefined) None else backLink.map(BackLink(_)),
         templateOverrides = TemplateOverrides(
             additionalHeadBlock = Some(additionalHead),
-            beforeContentBlock = maybeMessageBannerPartial.map(_ => beforeContent),
+            beforeContentBlock = if (maybeMessageBannerPartial.isDefined || browserBackLink.isDefined || backLink.isDefined) Some(beforeContent) else None,
             mainContentLayout = Some(if(isFullWidth) fullWidthMainContent(_) else twoThirdsMainContent(_))
         ),
         banners = Banners(
@@ -104,3 +117,4 @@
         isWelshTranslationAvailable = welshToggle,
     )
 )(mainContent)
+
