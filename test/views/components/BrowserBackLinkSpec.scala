@@ -31,7 +31,7 @@ class BrowserBackLinkSpec extends SpecBase {
     "render the back link with correct attributes and text" in new Setup {
       running(app) {
         val output: HtmlFormat.Appendable = browserBackLinkView(
-          href = "/url",
+          href = "/url"
         )(messages(app))
 
         val html: Document = Jsoup.parse(contentAsString(output))
@@ -43,7 +43,7 @@ class BrowserBackLinkSpec extends SpecBase {
   }
 
   trait Setup {
-    val app: Application                       = applicationBuilder().build()
-    val browserBackLinkView: browserBackLink   = app.injector.instanceOf[browserBackLink]
+    val app: Application                     = applicationBuilder().build()
+    val browserBackLinkView: browserBackLink = app.injector.instanceOf[browserBackLink]
   }
 }
