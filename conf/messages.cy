@@ -25,7 +25,6 @@ cf.accounts.view-customs-account=rheoli tollau mewnforio a chyfrifon TAW
 
 cf.back=Yn ôl
 
-
 footer.accessibility=Datganiad hygyrchedd
 footer.cookies=Cwcis
 footer.privacy=Polisi preifatrwydd
