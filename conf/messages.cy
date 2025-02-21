@@ -23,6 +23,7 @@ cf.error.not-found.message.go-to-home-page-text1=Gallwch fynd
 cf.error.not-found.message.go-to-home-page-text2=yn ôl i reoli tollau mewnforio a chyfrifon TAW
 cf.accounts.view-customs-account=rheoli tollau mewnforio a chyfrifon TAW
 
+cf.back=Yn ôl
 
 footer.accessibility=Datganiad hygyrchedd
 footer.cookies=Cwcis
