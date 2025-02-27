@@ -157,7 +157,7 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
     implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages                               = Helpers.stubMessages()
 
-    private val formProvider = new EoriNumberFormProvider()
+    private val formProvider = new EoriNumberFormProvider(appConfig)
     val form                 = formProvider()
 
     lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()

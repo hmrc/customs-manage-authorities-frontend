@@ -17,6 +17,7 @@
 package views.components
 
 import base.SpecBase
+import config.FrontendAppConfig
 import forms.EoriNumberFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -71,12 +72,13 @@ class InputCheckboxesSpec extends SpecBase {
   trait Setup {
     val app: Application       = applicationBuilder().build()
     implicit val msg: Messages = messages(app)
+    private val appConfig      = app.injector.instanceOf[FrontendAppConfig]
 
-    val validForm: Form[String]   = new EoriNumberFormProvider()
+    val validForm: Form[String]   = new EoriNumberFormProvider(appConfig)
       .apply()
       .bind(Map("value" -> "GB123456789012"))
     val invalidForm: Form[String] =
-      new EoriNumberFormProvider().apply().bind(Map("value" -> "3456789012"))
+      new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "3456789012"))
     val items                     = Seq(
       CheckboxItem(
         name = Some("value[0]"),

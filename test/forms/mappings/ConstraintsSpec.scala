@@ -248,24 +248,59 @@ class ConstraintsSpec extends SpecBase with ScalaCheckPropertyChecks with Genera
     }
   }
 
-  "checkEORI" must {
+  "checkEORI" when {
 
-    "return valid when GBN EORI is provided" in {
-      val result = checkEORI("error.invalid2")("GBN45365789211")
+    "eu eori flag is enabled" must {
+      "return valid when GBN EORI is provided" in {
+        val result = checkEORI("error.invalid2", true)("GBN45365789211")
 
-      result mustEqual Valid
+        result mustEqual Valid
+      }
+
+      "return Invalid when an incorrect EORI format is provided" in {
+        val result = checkEORI("error.invalid2", true)("XI45394830957499865767")
+
+        result mustEqual Invalid("error.invalid2", """^[A-Z]{2}[0-9A-Z]{1,15}$""")
+      }
+
+      "return Valid for an input that does not match the expression" in {
+        val result = checkEORI("error.invalid2", true)("GB123456789102")
+
+        result mustEqual Valid
+      }
+
+      "return Valid when an EU EORI is provided" in {
+        val result = checkEORI("error.invalid2", true)("DE123456789012")
+
+        result mustEqual Valid
+      }
     }
 
-    "return Invalid when an incorrect EORI format is provided" in {
-      val result = checkEORI("error.invalid2")("XI453")
+    "eu eori flag is disabled" must {
 
-      result mustEqual Invalid("error.invalid2", """GB\d{12}""")
-    }
+      "return valid when GBN EORI is provided" in {
+        val result = checkEORI("error.invalid2", false)("GBN45365789211")
 
-    "return Valid for an input that does not match the expression" in {
-      val result = checkEORI("error.invalid2")("GB123456789102")
+        result mustEqual Valid
+      }
 
-      result mustEqual Valid
+      "return Invalid when an incorrect EORI format is provided" in {
+        val result = checkEORI("error.invalid2", false)("XI453")
+
+        result mustEqual Invalid("error.invalid2", """GB\d{12}""")
+      }
+
+      "return Valid for an input that does not match the expression" in {
+        val result = checkEORI("error.invalid2", false)("GB123456789102")
+
+        result mustEqual Valid
+      }
+
+      "return Invalid when an EU EORI is provided" in {
+        val result = checkEORI("error.invalid2", false)("DE123456789012")
+
+        result mustEqual Invalid("error.invalid2", """GB\d{12}""")
+      }
     }
   }
 
