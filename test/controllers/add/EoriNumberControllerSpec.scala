@@ -498,11 +498,12 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
   trait SetUp {
     def onwardRoute: Call = Call("GET", "/foo")
 
-    val formProvider       = new EoriNumberFormProvider()
-    val form: Form[String] = formProvider()
-
     val mockConnector: CustomsFinancialsConnector         = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+    val frontendAppConfig: FrontendAppConfig              = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
+
+    val formProvider       = new EoriNumberFormProvider(frontendAppConfig)
+    val form: Form[String] = formProvider()
 
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 

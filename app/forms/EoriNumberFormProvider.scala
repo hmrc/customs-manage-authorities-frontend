@@ -16,17 +16,18 @@
 
 package forms
 
+import config.FrontendAppConfig
 import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class EoriNumberFormProvider @Inject() extends Mappings {
+class EoriNumberFormProvider @Inject() (frontendAppConfig: FrontendAppConfig) extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text(errorKey = "eoriNumber.error.required")
-        .verifying(checkEORI(invalidFormatErrorKey = "eoriNumber.error.format"))
+        .verifying(checkEORI(invalidFormatErrorKey = "eoriNumber.error.format", frontendAppConfig.euEoriEnabled))
     )
 
 }
