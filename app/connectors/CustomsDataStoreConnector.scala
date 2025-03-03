@@ -55,8 +55,8 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
-  def retrieveCompanyInformationThirdParty(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val endpoint = s"$baseDataStoreUrl/eori/company-information-third-party"
+  def getCompanyNameV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val endpoint = s"$baseDataStoreUrl/eori/company-information"
     httpClient
       .get(url"$endpoint")
       .execute[CompanyInformation]
@@ -92,7 +92,7 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
     }
   }
 
-  def getXiEoriInformationV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
+  def getXiEoriV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint                 = s"$baseDataStoreUrl/eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
@@ -127,8 +127,8 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
-  def retrieveVerifiedEmailThirdParty(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
-    val endpoint = s"$baseDataStoreUrl/eori/verified-email-third-party"
+  def getEmailV2(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
+    val endpoint = s"$baseDataStoreUrl/eori/verified-email"
     httpClient
       .get(url"$endpoint")
       .execute[EmailResponse]

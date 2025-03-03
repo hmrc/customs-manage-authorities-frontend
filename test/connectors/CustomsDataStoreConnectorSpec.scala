@@ -72,7 +72,7 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return company-information-third-party when consent is defined as 1(True)" in new Setup {
+    "return companyNameV2 when consent is defined as 1(True)" in new Setup {
       val response: String =
         """
           |{
@@ -91,11 +91,11 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
-        val result = connector.retrieveCompanyInformationThirdParty.futureValue
+        val result = connector.getCompanyNameV2.futureValue
         result mustBe expectedResult
       }
     }
@@ -126,7 +126,7 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return None when consent is defined as 0(False) for company info from third party" in new Setup {
+    "return None when consent is defined as 0(False) for company info v2" in new Setup {
       val response: String =
         """
           |{
@@ -143,11 +143,11 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/company-informatio"))
             .willReturn(ok(response))
         )
 
-        val result = connector.retrieveCompanyInformationThirdParty.futureValue
+        val result = connector.getCompanyNameV2.futureValue
         result mustBe expected
       }
     }
@@ -178,7 +178,7 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return None when consent is empty for company info third party" in new Setup {
+    "return None when consent is empty for company info v2" in new Setup {
       val response: String =
         """
           |{
@@ -195,11 +195,11 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
-        val result = connector.retrieveCompanyInformationThirdParty.futureValue
+        val result = connector.getCompanyNameV2.futureValue
         result mustBe expected
       }
     }
@@ -257,7 +257,7 @@ class CustomsDataStoreConnectorSpec
             .willReturn(ok(response))
         )
 
-        val result = connector.getXiEoriInformationV2.futureValue
+        val result = connector.getXiEoriV2.futureValue
         result mustBe expectedResult
       }
     }
@@ -307,7 +307,7 @@ class CustomsDataStoreConnectorSpec
           get(urlEqualTo("/customs-data-store/eori/xieori-information"))
             .willReturn(ok(response))
         )
-        val result = connector.getXiEoriInformationV2.futureValue
+        val result = connector.getXiEoriV2.futureValue
         result mustBe expected
       }
     }
@@ -333,7 +333,7 @@ class CustomsDataStoreConnectorSpec
           get(urlEqualTo("/customs-data-store/eori/xieori-information"))
             .willReturn(serverError())
         )
-        val result = connector.getXiEoriInformationV2.futureValue
+        val result = connector.getXiEoriV2.futureValue
         result mustBe expected
       }
     }
@@ -411,7 +411,7 @@ class CustomsDataStoreConnectorSpec
             .willReturn(ok(response))
         )
 
-        val result = connector.getXiEoriInformationV2.futureValue
+        val result = connector.getXiEoriV2.futureValue
         result mustBe None
       }
     }
@@ -437,7 +437,7 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return a third party email address when the request is successful and undeliverable" +
+    "return an email address for v2 when the request is successful and undeliverable" +
       " is not present in the response" in new Setup {
 
       val emailResponse: String =
@@ -448,10 +448,10 @@ class CustomsDataStoreConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/verified-email"))
             .willReturn(ok(emailResponse))
         )
-        val result = connector.retrieveVerifiedEmailThirdParty.futureValue
+        val result = connector.getEmailV2.futureValue
         result mustBe Right(Email("some@email.com"))
       }
     }
@@ -477,7 +477,7 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return no third party email address when the request is successful and undeliverable" +
+    "return no email address for v2 when the request is successful and undeliverable" +
       "is present in the response" in new Setup {
 
       val emailResponse: String =
@@ -491,16 +491,17 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/verified-email"))
             .willReturn(ok(emailResponse))
         )
 
-        val result = connector.retrieveVerifiedEmailThirdParty.futureValue
+        val result = connector.getEmailV2.futureValue
         result mustBe Left(UndeliverableEmail("some@email.com"))
       }
     }
 
-    "return unverifiedEmail when the request is successful and email address is not present in the response" in new Setup {
+    "return unverifiedEmail when the request is successful and" +
+      " email address is not present in the response" in new Setup {
       val emailResponse = """{}"""
 
       running(app) {
@@ -514,18 +515,18 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return unverifiedEmail third party when the request is successful and email address is not present " +
-      "in the response" in new Setup {
+    "return unverifiedEmail third party when the request is successful and" +
+      " email address is not present in the response" in new Setup {
 
       val emailResponse = """{}"""
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/verified-email"))
             .willReturn(ok(emailResponse))
         )
 
-        val result = connector.retrieveVerifiedEmailThirdParty.futureValue
+        val result = connector.getEmailV2.futureValue
         result mustBe Left(UnverifiedEmail)
       }
     }
@@ -548,10 +549,10 @@ class CustomsDataStoreConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email-third-party"))
+          get(urlEqualTo("/customs-data-store/eori/verified-email"))
             .willReturn(notFound)
         )
-        val result = connector.retrieveVerifiedEmailThirdParty.futureValue
+        val result = connector.getEmailV2.futureValue
         result mustBe Left(UnverifiedEmail)
       }
     }
