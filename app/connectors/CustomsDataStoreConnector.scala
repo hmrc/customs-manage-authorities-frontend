@@ -55,8 +55,45 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
+  def retrieveCompanyInformationThirdParty(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val endpoint = s"$baseDataStoreUrl/eori/company-information-third-party"
+    httpClient
+      .get(url"$endpoint")
+      .execute[CompanyInformation]
+      .map { response =>
+        response.consent match {
+          case "1" => Some(response.name)
+          case _ => None
+        }
+      }
+      .recover { case e =>
+        log.error(s"Call to data stored failed for getCompanyName exception=$e")
+        None
+      }
+  }
+
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint                 = s"$baseDataStoreUrl/eori/$eori/xieori-information"
+    val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
+
+    if (isXiEoriEnabled) {
+      httpClient
+        .get(url"$endpoint")
+        .execute[XiEoriInformationResponse]
+        .map { response =>
+          if (response.xiEori.isEmpty) None else Some(response.xiEori)
+        }
+        .recover { case e =>
+          log.error(s"Call to data stored failed for getXiEori exception=$e")
+          None
+        }
+    } else {
+      Future.successful(None)
+    }
+  }
+
+  def getXiEoriInformationV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val endpoint                 = s"$baseDataStoreUrl/eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
     if (isXiEoriEnabled) {
@@ -90,6 +127,21 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
+  def retrieveVerifiedEmailThirdParty(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
+    val endpoint = s"$baseDataStoreUrl/eori/verified-email-third-party"
+    httpClient
+      .get(url"$endpoint")
+      .execute[EmailResponse]
+      .map {
+        case EmailResponse(Some(address), _, None) => Right(Email(address))
+        case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
+        case _ => Left(UnverifiedEmail)
+      }
+      .recover { case UpstreamErrorResponse(_, NOT_FOUND, _, _) =>
+        Left(UnverifiedEmail)
+      }
+  }
+
   def unverifiedEmail(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint = s"$baseDataStoreUrl/subscriptions/unverified-email-display"
     httpClient
@@ -104,5 +156,4 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       .get(url"$endpoint")
       .execute[EmailVerifiedResponse]
   }
-
 }
