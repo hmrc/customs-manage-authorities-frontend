@@ -506,7 +506,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-    lazy val eoriNumberRoute: String                 = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+    lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+
     lazy val eoriNumberNormalModeSubmitRoute: String =
       controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
 
