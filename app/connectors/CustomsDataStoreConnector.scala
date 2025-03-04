@@ -63,7 +63,7 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       .map { response =>
         response.consent match {
           case "1" => Some(response.name)
-          case _ => None
+          case _   => None
         }
       }
       .recover { case e =>
@@ -133,9 +133,9 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       .get(url"$endpoint")
       .execute[EmailResponse]
       .map {
-        case EmailResponse(Some(address), _, None) => Right(Email(address))
+        case EmailResponse(Some(address), _, None)  => Right(Email(address))
         case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
-        case _ => Left(UnverifiedEmail)
+        case _                                      => Left(UnverifiedEmail)
       }
       .recover { case UpstreamErrorResponse(_, NOT_FOUND, _, _) =>
         Left(UnverifiedEmail)
