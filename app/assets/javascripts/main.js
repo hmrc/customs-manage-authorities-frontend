@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const backLink = document.getElementById('browser-back-link');
-    if (backLink) {
+    const backLinks = document.querySelectorAll('.govuk-back-link');
+    backLinks.forEach(function(backLink) {
         backLink.addEventListener('click', function(event) {
             event.preventDefault();
             window.history.back();
         });
-    }
+    });
 });
