@@ -18,26 +18,26 @@ package controllers.edit
 
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import controllers.actions._
+import controllers.actions.*
 import controllers.grantAccountAuthRequestList
 import models.domain.AccountWithAuthoritiesWithId
 import models.requests.{AddAuthorityRequest, DataRequest, GrantAccountAuthorityRequest}
 import models.{ErrorResponse, MissingAccountError, MissingAuthorityError, NormalMode, UserAnswers}
 import navigation.Navigator
-import pages.edit._
+import pages.edit.*
 import play.api.Logging
-import play.api.i18n._
-import play.api.mvc._
-import services._
+import play.api.i18n.*
+import play.api.mvc.*
+import services.*
 import services.edit.EditAuthorityValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.{emptyString, nIEORIPrefix}
+import utils.StringUtils.{emptyString, gbEORIPrefix, nIEORIPrefix}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 
 import javax.inject.Inject
-import scala.concurrent._
+import scala.concurrent.*
 import scala.concurrent.duration.Duration
 
 class EditCheckYourAnswersController @Inject() (
@@ -109,15 +109,15 @@ class EditCheckYourAnswersController @Inject() (
     authorisedEori: String,
     account: AccountWithAuthoritiesWithId,
     xiEori: String,
-    gbEori: String
+    eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = if (authorisedEori.startsWith(nIEORIPrefix)) xiEori else gbEori
+    val ownerEori = if (authorisedEori.startsWith(nIEORIPrefix)) xiEori else eori
 
     editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
       case Right(payload) =>
         if (authorisedEori.startsWith(nIEORIPrefix)) {
-          processPayloadForXIEori(userAnswers, xiEori, gbEori, payload, accountId, authorityId)
+          processPayloadForXIEori(userAnswers, xiEori, eori, payload, accountId, authorityId)
         } else {
           connector.grantAccountAuthorities(payload, ownerEori).map {
             case true  =>
