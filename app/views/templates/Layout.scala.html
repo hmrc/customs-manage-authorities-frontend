@@ -23,7 +23,6 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
 @import config.FrontendAppConfig
 @import views.html.components.fullWidthMainContent
-@import views.html.components.browserBackLink
 @import views.html.helper.CSPNonce
 
 @this(
@@ -34,13 +33,11 @@
     hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
     fullWidthMainContent: fullWidthMainContent,
-    govukBackLink: GovukBackLink,
-    browserBackLinkComponent: browserBackLink
+    govukBackLink: GovukBackLink
 )
 
 @(pageTitle: Option[String] = None,
   backLink: Option[String] = None,
-  browserBackLink: Option[String] = None,
   helpAndSupport: Boolean = true,
   deskpro: Boolean = true,
   welshToggle: Boolean = true,
@@ -67,8 +64,7 @@
     @hmrcLanguageSelectHelper()
 
     @{
-        browserBackLink.map(browserBackLinkComponent(_))
-            .getOrElse(backLink.map(link => govukBackLink(BackLink(href = link))).getOrElse(HtmlFormat.empty))
+        backLink.map(link => govukBackLink(BackLink(href = link))).getOrElse(HtmlFormat.empty)
     }
 }
 
@@ -104,10 +100,10 @@
             signOutUrl = Some(controllers.routes.LogoutController.logout.url),
             accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
         ),
-        backLink = if (browserBackLink.isDefined) None else backLink.map(BackLink(_)),
+        backLink = backLink.map(BackLink(_)),
         templateOverrides = TemplateOverrides(
             additionalHeadBlock = Some(additionalHead),
-            beforeContentBlock = if (maybeMessageBannerPartial.isDefined || browserBackLink.isDefined || backLink.isDefined) Some(beforeContent) else None,
+            beforeContentBlock = if (maybeMessageBannerPartial.isDefined || backLink.isDefined) Some(beforeContent) else None,
             mainContentLayout = Some(if(isFullWidth) fullWidthMainContent(_) else twoThirdsMainContent(_))
         ),
         banners = Banners(
@@ -117,4 +113,3 @@
         isWelshTranslationAvailable = welshToggle,
     )
 )(mainContent)
-
