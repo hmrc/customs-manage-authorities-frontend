@@ -78,8 +78,8 @@ class AuthorisedUserController @Inject() (
       } yield result
     }
 
-  def doSubmission(userAnswers: UserAnswers, xiEori: String, gbEori: String)(implicit
-    hc: HeaderCarrier
+  private def doSubmission(userAnswers: UserAnswers, xiEori: String, eori: String)(implicit
+                                                                                   hc: HeaderCarrier
   ): Future[Result] =
     addAuthorityValidationService
       .validate(userAnswers)
@@ -87,10 +87,10 @@ class AuthorisedUserController @Inject() (
         Future.successful(errorPage("UserAnswers did not contain sufficient data to construct add authority request"))
       ) { payload =>
         val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
-        val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix)) xiEori else gbEori
+        val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix)) xiEori else eori
 
         if (enteredEori.startsWith(nIEORIPrefix)) {
-          processPayloadForXIEori(userAnswers, xiEori, gbEori, payload)
+          processPayloadForXIEori(userAnswers, xiEori, eori, payload)
         } else {
           connector.grantAccountAuthorities(payload, ownerEori).map {
             case true  => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
