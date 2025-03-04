@@ -186,6 +186,33 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "redirect to confirmation page when successful and authorised EORI is EU" in new Setup {
+      private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
+
+      val app: Application =
+        applicationWithUserAnswersAndEori(
+          userAnswers,
+          euEori,
+          financialConnector = Some(mockCustomsFinancialsConnector)
+        )
+
+      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(true))
+
+      running(app) {
+        val result = route(app, postRequest).value
+
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result).value mustBe
+          controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
+        verify(mockCustomsFinancialsConnector, Mockito.times(1))
+          .revokeAccountAuthorities(any(), ArgumentMatchers.eq(euEori))(any)
+      }
+    }
+
     "redirect to confirmation page and use GB Eori as ownerEori when authorisedEori is XI Eori " +
       "and account type is CdsCashAccount" in new Setup {
         val userAnswers: UserAnswers =
@@ -301,6 +328,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     val gbEori                   = "GB123456789012"
     val xiEori                   = "XI123456789012"
+    val euEori                   = "DE123456789012"
     val authUser: AuthorisedUser = AuthorisedUser("test", "test")
 
     val standingAuthority: StandingAuthority           = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
