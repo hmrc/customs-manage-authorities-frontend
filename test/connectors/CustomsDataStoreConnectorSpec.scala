@@ -421,40 +421,40 @@ class CustomsDataStoreConnectorSpec
     "return an email address when the request is successful and undeliverable" +
       " is not present in the response" in new Setup {
 
-      val emailResponse: String =
-        """{
+        val emailResponse: String =
+          """{
           |"address": "some@email.com"
           |}""".stripMargin
 
-      running(app) {
+        running(app) {
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Right(Email("some@email.com"))
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
+          val result = connector.getEmail("GB123456789012").futureValue
+          result mustBe Right(Email("some@email.com"))
+        }
       }
-    }
 
     "return an email address for v2 when the request is successful and undeliverable" +
       " is not present in the response" in new Setup {
 
-      val emailResponse: String =
-        """{
+        val emailResponse: String =
+          """{
           |"address": "some@email.com"
           |}""".stripMargin
 
-      running(app) {
+        running(app) {
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
-        val result = connector.getEmailV2.futureValue
-        result mustBe Right(Email("some@email.com"))
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
+          val result = connector.getEmailV2.futureValue
+          result mustBe Right(Email("some@email.com"))
+        }
       }
-    }
 
     "return no email address when the request is successful and undeliverable is present in the response" in new Setup {
       val emailResponse: String =
@@ -480,8 +480,8 @@ class CustomsDataStoreConnectorSpec
     "return no email address for v2 when the request is successful and undeliverable" +
       "is present in the response" in new Setup {
 
-      val emailResponse: String =
-        """{
+        val emailResponse: String =
+          """{
           |"address": "some@email.com",
           |"timestamp": "2022-10-10T11:22:22Z",
           |"undeliverable": {
@@ -489,47 +489,47 @@ class CustomsDataStoreConnectorSpec
           |}
           |}""".stripMargin
 
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
 
-        val result = connector.getEmailV2.futureValue
-        result mustBe Left(UndeliverableEmail("some@email.com"))
+          val result = connector.getEmailV2.futureValue
+          result mustBe Left(UndeliverableEmail("some@email.com"))
+        }
       }
-    }
 
     "return unverifiedEmail when the request is successful and" +
       " email address is not present in the response" in new Setup {
-      val emailResponse = """{}"""
+        val emailResponse = """{}"""
 
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
 
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Left(UnverifiedEmail)
+          val result = connector.getEmail("GB123456789012").futureValue
+          result mustBe Left(UnverifiedEmail)
+        }
       }
-    }
 
     "return unverifiedEmail third party when the request is successful and" +
       " email address is not present in the response" in new Setup {
 
-      val emailResponse = """{}"""
+        val emailResponse = """{}"""
 
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
 
-        val result = connector.getEmailV2.futureValue
-        result mustBe Left(UnverifiedEmail)
+          val result = connector.getEmailV2.futureValue
+          result mustBe Left(UnverifiedEmail)
+        }
       }
-    }
 
     "return no email when a NOT_FOUND response is returned" in new Setup {
 
