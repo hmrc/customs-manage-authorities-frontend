@@ -164,6 +164,31 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+    "redirect to next page for valid data when user has selected cash,guarantee and DD accounts " +
+      "and input EORI is EU EORI" in new SetUp {
+        val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithEuEori
+          .set(AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment))
+          .success
+          .value
+
+        val app: Application = applicationWithUserAnswersAndEori(userAnswers, euEori, Some(mockDataStoreConnector))
+
+        when(mockValidator.validate(userAnswers))
+          .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+
+        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
+          .thenReturn(Future.successful(true))
+
+        running(app) {
+          val request = fakeRequest(POST, onSubmitRoute)
+          val result  = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+        }
+      }
+
     "redirect to error page for valid data when user has selected cash,guarantee and DD accounts " +
       "and input EORI is XI EORI but grant authority calls fail" in new SetUp {
         val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori
@@ -280,6 +305,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
     val gbEori                 = "GB123456789012"
     val xiEori                 = "XI9876543210000"
+    val euEori                 = "DE9876543210000"
     val accountsString: String =
       AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty).toString
     val accounts: Accounts     = Accounts(Some(accountsString), Seq.empty, None)
@@ -307,6 +333,27 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
 
     val userAnswersTodayToIndefinite: UserAnswers =
+      UserAnswers("id")
+        .set(AccountsPage, selectedAccounts)
+        .success
+        .value
+        .set(EoriNumberPage, CompanyDetails(gbEori, Some("companyName")))
+        .success
+        .value
+        .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
+        .success
+        .value
+        .set(EoriDetailsCorrectPage, EoriDetailsCorrect.Yes)(EoriDetailsCorrect.writes)
+        .success
+        .value
+        .set(ShowBalancePage, ShowBalance.Yes)(ShowBalance.writes)
+        .success
+        .value
+        .set(AuthorityDetailsPage, AuthorisedUser(emptyString, emptyString))
+        .success
+        .value
+
+    val userAnswersTodayToIndefiniteWithEuEori: UserAnswers =
       UserAnswers("id")
         .set(AccountsPage, selectedAccounts)
         .success

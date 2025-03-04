@@ -79,7 +79,7 @@ class AuthorisedUserController @Inject() (
     }
 
   private def doSubmission(userAnswers: UserAnswers, xiEori: String, eori: String)(implicit
-                                                                                   hc: HeaderCarrier
+    hc: HeaderCarrier
   ): Future[Result] =
     addAuthorityValidationService
       .validate(userAnswers)
