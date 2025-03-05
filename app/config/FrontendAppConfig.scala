@@ -50,7 +50,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val customsFinancialsFrontendHomepageUrl: String =
     configuration.get[String]("microservice.services.customs-financials-frontend.homepage")
 
-  val authorizedToViewUrl: String = s"${customsFinancialsFrontendHomepageUrl}authorized-to-view"
+  val authorityToUseUrl: String = s"${customsFinancialsFrontendHomepageUrl}authority-to-use"
 
   lazy val customsDataStore: String = servicesConfig.baseUrl("customs-data-store") +
     configuration.get[String]("microservice.services.customs-data-store.context")
