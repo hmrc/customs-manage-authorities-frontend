@@ -31,6 +31,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, Email}
 import uk.gov.hmrc.http.ServiceUnavailableException
 import utils.StringUtils.emptyString
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -41,9 +42,8 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
     "allow requests with valida email" in new Setup {
       val action = new Harness()
 
-      when(
-        mockDataStoreConnector.getEmail("GB123456789012")(any())
-      ) thenReturn Future.successful(Right(Email("some@email.com")))
+      when(mockDataStoreConnector.getEmail)
+        .thenReturn(Future.successful(Right(Email("some@email.com"))))
 
       val futureResult = action.filter(identifierRequest())
       whenReady(futureResult) { result =>
@@ -55,7 +55,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       val action = new Harness()
 
       when(
-        mockDataStoreConnector.getEmail("GB123456789012")(any())
+        mockDataStoreConnector.getEmail
       ) thenReturn Future.failed(new ServiceUnavailableException(emptyString))
 
       val futureResult = action.filter(identifierRequest())
@@ -68,7 +68,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       val action = new Harness()
 
       when(
-        mockDataStoreConnector.getEmail("GB123456789012")(any())
+        mockDataStoreConnector.getEmail
       ) thenReturn Future.successful(Left(UnverifiedEmail))
 
       val futureResult = action.filter(identifierRequest())
@@ -83,7 +83,7 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       val emailId = "test@test.com"
 
       when(
-        mockDataStoreConnector.getEmail("GB123456789012")(any())
+        mockDataStoreConnector.getEmail
       ) thenReturn Future.successful(Left(UndeliverableEmail(emailId)))
 
       val futureResult = action.filter(identifierRequest())
@@ -97,6 +97,8 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
   trait Setup {
     val mockDataStoreConnector: CustomsDataStoreConnector =
       mock[CustomsDataStoreConnector]
+
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     def identifierRequest(): IdentifierRequest[AnyContentAsEmpty.type] = IdentifierRequest(
       fakeRequest(),
@@ -112,6 +114,5 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       def callFilter[A](request: IdentifierRequest[A]): Future[Option[Result]] =
         filter(request)
     }
-
   }
 }

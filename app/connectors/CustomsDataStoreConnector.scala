@@ -17,10 +17,8 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{
-  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse, EmailVerifiedResponse, UndeliverableEmail,
-  UnverifiedEmail, XiEoriInformationResponse
-}
+import models._
+import models.requests.EoriRequest
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
@@ -38,24 +36,7 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
   val log                      = Logger(this.getClass)
   private val baseDataStoreUrl = appConfig.customsDataStore
 
-  def getCompanyName(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val endpoint = s"$baseDataStoreUrl/eori/$eori/company-information"
-    httpClient
-      .get(url"$endpoint")
-      .execute[CompanyInformation]
-      .map { response =>
-        response.consent match {
-          case "1" => Some(response.name)
-          case _   => None
-        }
-      }
-      .recover { case e =>
-        log.error(s"Call to data stored failed for getCompanyName exception=$e")
-        None
-      }
-  }
-
-  def getCompanyNameV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
+  def getCompanyName(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint = s"$baseDataStoreUrl/eori/company-information"
     httpClient
       .get(url"$endpoint")
@@ -72,27 +53,27 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
-  def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val endpoint                 = s"$baseDataStoreUrl/eori/$eori/xieori-information"
-    val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
+  def retrieveCompanyInformationThirdParty(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
+    val endpoint             = s"$baseDataStoreUrl/eori/company-information-third-party"
+    val request: EoriRequest = EoriRequest(eori)
 
-    if (isXiEoriEnabled) {
-      httpClient
-        .get(url"$endpoint")
-        .execute[XiEoriInformationResponse]
-        .map { response =>
-          if (response.xiEori.isEmpty) None else Some(response.xiEori)
+    httpClient
+      .post(url"$endpoint")
+      .withBody(request)
+      .execute[CompanyInformation]
+      .map { response =>
+        response.consent match {
+          case "1" => Some(response.name)
+          case _   => None
         }
-        .recover { case e =>
-          log.error(s"Call to data stored failed for getXiEori exception=$e")
-          None
-        }
-    } else {
-      Future.successful(None)
-    }
+      }
+      .recover { case e =>
+        log.error(s"Call to data stored failed for getCompanyName exception=$e")
+        None
+      }
   }
 
-  def getXiEoriV2(implicit hc: HeaderCarrier): Future[Option[String]] = {
+  def getXiEori(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint                 = s"$baseDataStoreUrl/eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
@@ -112,22 +93,7 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
     }
   }
 
-  def getEmail(eori: String)(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
-    val endpoint = s"$baseDataStoreUrl/eori/$eori/verified-email"
-    httpClient
-      .get(url"$endpoint")
-      .execute[EmailResponse]
-      .map {
-        case EmailResponse(Some(address), _, None)  => Right(Email(address))
-        case EmailResponse(Some(email), _, Some(_)) => Left(UndeliverableEmail(email))
-        case _                                      => Left(UnverifiedEmail)
-      }
-      .recover { case UpstreamErrorResponse(_, NOT_FOUND, _, _) =>
-        Left(UnverifiedEmail)
-      }
-  }
-
-  def getEmailV2(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
+  def getEmail(implicit hc: HeaderCarrier): Future[Either[EmailResponses, Email]] = {
     val endpoint = s"$baseDataStoreUrl/eori/verified-email"
     httpClient
       .get(url"$endpoint")
