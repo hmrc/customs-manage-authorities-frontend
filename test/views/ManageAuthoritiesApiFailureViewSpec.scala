@@ -42,7 +42,7 @@ class ManageAuthoritiesApiFailureViewSpec extends SpecBase {
     "display the authorized-to-view link" in new Setup {
       private val link = view().getElementById("manageAuthorities-noAccounts-link")
 
-      link.attr("href") mustBe appConfig.authorizedToViewUrl
+      link.attr("href") mustBe appConfig.authorityToUseUrl
       link.text mustBe messages(app)("cf.account.authorized-to-view.title")
     }
 

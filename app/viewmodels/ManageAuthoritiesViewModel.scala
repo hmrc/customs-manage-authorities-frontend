@@ -52,7 +52,7 @@ case class ManageAuthoritiesViewModel(
       firstLinkHref = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url,
       firstLinkId = Some("start-link"),
       secondLinkMessage = "cf.account.authorized-to-view.title",
-      secondLinkHref = appConfig.authorizedToViewUrl,
+      secondLinkHref = appConfig.authorityToUseUrl,
       secondLinkId = Some("authorised-to-view-link")
     )
 }
