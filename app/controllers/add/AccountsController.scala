@@ -32,7 +32,7 @@ import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.{CASH_ACCOUNT_TYPE, GENERAL_GUARANTEE_ACCOUNT_TYPE}
-import utils.StringUtils.{emptyString, gbEORIPrefix, nIEORIPrefix}
+import utils.StringUtils.{emptyString, gbEORIPrefix}
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 
 import javax.inject.Inject
@@ -85,7 +85,7 @@ class AccountsController @Inject() (
                         authorisedAccounts.availableAccounts
                           .filter(isNIOrCashOrGeneralGuaranteeAccountType)
                       ),
-                      getXIAccounts(authorisedAccounts),
+                      getNonGBAccounts(authorisedAccounts),
                       mode,
                       navigator
                         .backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))
@@ -149,13 +149,13 @@ class AccountsController @Inject() (
     if (eori.startsWith(gbEORIPrefix)) {
       getGBAccounts(authorisedAccounts)
     } else {
-      getXIAccounts(authorisedAccounts)
+      getNonGBAccounts(authorisedAccounts)
     }
 
   private def getGBAccounts(authorisedAccounts: AuthorisedAccounts) =
     getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
 
-  private def getXIAccounts(authorisedAccounts: AuthorisedAccounts) =
+  private def getNonGBAccounts(authorisedAccounts: AuthorisedAccounts) =
     getAuthorisedAccountsList(
       authorisedAccounts,
       authorisedAccounts.availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType)
@@ -164,15 +164,15 @@ class AccountsController @Inject() (
   private def filterAccountsWithContext(eori: String, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
     val accountString = "account_"
 
-    if (eori.startsWith(nIEORIPrefix)) {
+    if (eori.startsWith(gbEORIPrefix)) {
       value.map(account =>
-        authorisedAccounts.availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType)(
+        authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)(
           account.replace(accountString, emptyString).toInt
         )
       )
     } else {
       value.map(account =>
-        authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)(
+        authorisedAccounts.availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType)(
           account.replace(accountString, emptyString).toInt
         )
       )
