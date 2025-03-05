@@ -31,8 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.{CASH_ACCOUNT_TYPE, GENERAL_GUARANTEE_ACCOUNT_TYPE}
-import utils.StringUtils.{emptyString, gbEORIPrefix}
+import utils.StringUtils.emptyString
 import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView}
 
 import javax.inject.Inject
@@ -67,31 +66,15 @@ class AccountsController @Inject() (
             .getAuthorisedAccounts(enteredEori.eori)
             .map { authorisedAccounts =>
               if (authorisedAccounts.availableAccounts.nonEmpty) {
-
-                if (enteredEori.eori.contains(gbEORIPrefix)) {
-                  Ok(
-                    view(
-                      populateForm(authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)),
-                      getGBAccounts(authorisedAccounts),
-                      mode,
-                      navigator
-                        .backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))
-                    )
+                Ok(
+                  view(
+                    populateForm(authorisedAccounts.availableAccounts),
+                    authorisedAccounts,
+                    mode,
+                    navigator
+                      .backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))
                   )
-                } else {
-                  Ok(
-                    view(
-                      populateForm(
-                        authorisedAccounts.availableAccounts
-                          .filter(isNIOrCashOrGeneralGuaranteeAccountType)
-                      ),
-                      getNonGBAccounts(authorisedAccounts),
-                      mode,
-                      navigator
-                        .backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))
-                    )
-                  )
-                }
+                )
               } else {
                 Ok(noAvailableAccounts(authorisedAccounts.enteredEori))
               }
@@ -116,7 +99,7 @@ class AccountsController @Inject() (
                     BadRequest(
                       view(
                         formWithErrors,
-                        filterAccounts(authorisedAccounts, enteredEori.eori),
+                        authorisedAccounts,
                         mode,
                         navigator
                           .backLinkRoute(mode, controllers.add.routes.EoriDetailsCorrectController.onPageLoad(mode))
@@ -124,8 +107,7 @@ class AccountsController @Inject() (
                     )
                   ),
                 value => {
-                  val selected =
-                    filterAccountsWithContext(enteredEori.eori, value, authorisedAccounts)
+                  val selected = selectAccounts(value, authorisedAccounts)
                   for {
                     updatedAnswers <- Future.fromTry(request.userAnswers.set(AccountsPage, selected))
                     _              <- sessionRepository.set(updatedAnswers)
@@ -136,47 +118,9 @@ class AccountsController @Inject() (
       }
   }
 
-  private def getAuthorisedAccountsList(accounts: AuthorisedAccounts, cdsAcc: Seq[CDSAccount]): AuthorisedAccounts =
-    AuthorisedAccounts(
-      accounts.alreadyAuthorisedAccounts,
-      cdsAcc,
-      accounts.closedAccounts,
-      accounts.pendingAccounts,
-      accounts.enteredEori
-    )
-
-  private def filterAccounts(authorisedAccounts: AuthorisedAccounts, eori: String) =
-    if (eori.startsWith(gbEORIPrefix)) {
-      getGBAccounts(authorisedAccounts)
-    } else {
-      getNonGBAccounts(authorisedAccounts)
-    }
-
-  private def getGBAccounts(authorisedAccounts: AuthorisedAccounts) =
-    getAuthorisedAccountsList(authorisedAccounts, authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount))
-
-  private def getNonGBAccounts(authorisedAccounts: AuthorisedAccounts) =
-    getAuthorisedAccountsList(
-      authorisedAccounts,
-      authorisedAccounts.availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType)
-    )
-
-  private def filterAccountsWithContext(eori: String, value: List[String], authorisedAccounts: AuthorisedAccounts) = {
+  private def selectAccounts(value: List[String], authorisedAccounts: AuthorisedAccounts) = {
     val accountString = "account_"
-
-    if (eori.startsWith(gbEORIPrefix)) {
-      value.map(account =>
-        authorisedAccounts.availableAccounts.filter(x => !x.isNiAccount)(
-          account.replace(accountString, emptyString).toInt
-        )
-      )
-    } else {
-      value.map(account =>
-        authorisedAccounts.availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType)(
-          account.replace(accountString, emptyString).toInt
-        )
-      )
-    }
+    value.map(account => authorisedAccounts.availableAccounts(account.replace(accountString, emptyString).toInt))
   }
 
   private def populateForm(availableAccounts: Seq[CDSAccount])(implicit request: DataRequest[_]): Form[List[String]] =
@@ -188,9 +132,4 @@ class AccountsController @Inject() (
           .map { case (_, index) => s"account_$index" }
         form.fill(formValues)
     }
-
-  private def isNIOrCashOrGeneralGuaranteeAccountType(account: CDSAccount) =
-    account.isNiAccount ||
-      account.accountType.equals(CASH_ACCOUNT_TYPE) ||
-      account.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE)
 }
