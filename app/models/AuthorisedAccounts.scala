@@ -40,7 +40,7 @@ case class AuthorisedAccounts(
         account.accountType.equals(CASH_ACCOUNT_TYPE) ||
         account.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE)
 
-    enteredEori.match {
+    enteredEori match {
       case eori if eori.startsWith(gbEORIPrefix) =>
         AuthorisedAccounts(
           alreadyAuthorisedAccounts,

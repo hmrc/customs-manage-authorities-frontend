@@ -35,8 +35,8 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.StringUtils.emptyString
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import java.time.LocalDate
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class AuthorisedAccountsServiceSpec extends SpecBase {
@@ -47,38 +47,19 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
 
       when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(Future.successful(authoritiesWithId))
 
-      when(mockAccCacheService.retrieveAccounts(any, any)(any)).thenReturn(
-        Future.successful(accounts)
-      )
+      when(mockAccCacheService.retrieveAccounts(any, any)(any)).thenReturn(Future.successful(accounts))
 
-      authorisedAccountsService.getAuthorisedAccounts(gbEori)(dataRequest(userAnswers, gbEori), hc).map { authAcc =>
+      authorisedAccountsService.getAuthorisedAccounts(eori)(dataRequest(userAnswers, eori), hc).map { authAcc =>
         authAcc mustBe authAccounts
       }
     }
   }
 
-  "filterAccounts" should {
-    "return correct CDSAccount for GB Eori" in new Setup {
-      authorisedAccountsService.filterAccounts(gbEori, cdsAccounts) mustBe Seq(cashAccount)
-    }
-
-    "return correct CDSAccount for XI Eori" in new Setup {
-      authorisedAccountsService.filterAccounts(xiEori, cdsAccounts) mustBe Seq(cashAccoiuntForNI)
-    }
-  }
-
   trait Setup {
-    val xiEori = "XI098765432109"
-    val gbEori = "GB098765432109"
+    val eori = "GB098765432109"
 
-    val cashAccount: CashAccount =
+    val cashAccount: CashAccount       =
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
-
-    val cashAccoiuntForNI: CashAccount =
-      CashAccount("54321", "GB098765432109", AccountStatusOpen, CDSCashBalance(Some(100.00)), isNiAccount = true)
-
-    val cdsAccounts: Seq[CashAccount] = Seq(cashAccount, cashAccoiuntForNI)
-
     val openCashAccount: CashAccount   =
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
     val closedCashAccount: CashAccount =
@@ -93,9 +74,7 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
 
     val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(
-      Map(
-        "a" -> accountsWithAuthoritiesWithId
-      )
+      Map("a" -> accountsWithAuthoritiesWithId)
     )
 
     val authAccounts: AuthorisedAccounts = AuthorisedAccounts(
