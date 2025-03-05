@@ -30,7 +30,7 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.xiEoriEnabled mustBe true
 
         appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
-        appConfig.authorizedToViewUrl mustBe "http://localhost:9876/customs/payment-records/authorized-to-view"
+        appConfig.authorityToUseUrl mustBe "http://localhost:9876/customs/payment-records/authority-to-use"
         appConfig.customsSecureMessagingBannerEndpoint mustBe "http://localhost:9842/customs/secure-messaging/banner"
         appConfig.manageAuthoritiesServiceUrl mustBe "http://localhost:9000"
         appConfig.signOutUrl mustBe "http://localhost:9553/bas-gateway/sign-out-without-state"

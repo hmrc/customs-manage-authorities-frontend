@@ -57,7 +57,7 @@ class NoAccountsViewSpec extends SpecBase {
     }
 
     "goto find accounts you have auth to use when the link is clicked" in new Setup {
-      view().getElementById("manageAuthorities-noAccounts-link").attr("href") mustBe s"$homeUrl/authorized-to-view"
+      view().getElementById("manageAuthorities-noAccounts-link").attr("href") mustBe s"$homeUrl/authority-to-use"
     }
 
   }
