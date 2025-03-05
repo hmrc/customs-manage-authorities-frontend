@@ -222,7 +222,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
     val view: RemoveCheckYourAnswersView = app.injector.instanceOf[RemoveCheckYourAnswersView]
 
-    when(mockDataStoreConnector.getCompanyName(any[String])(any[HeaderCarrier]))
+    when(mockDataStoreConnector.getCompanyName(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some(companyName)))
 
     val helper = new CheckYourAnswersRemoveHelper(

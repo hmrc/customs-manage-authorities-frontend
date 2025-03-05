@@ -40,7 +40,8 @@ class AuthorisedEoriAndCompanyInfoService @Inject() (
   )(implicit hc: HeaderCarrier): Future[Option[Map[String, String]]] = {
 
     lazy val eoriAndCompanyMap = for {
-      eoriSeq: Seq[Option[EORI]] <- Future.sequence(eoris.toSeq.map(dataStoreConnector.getCompanyName(_)))
+      eoriSeq: Seq[Option[EORI]] <-
+        Future.sequence(eoris.toSeq.map(dataStoreConnector.retrieveCompanyInformationThirdParty(_)))
     } yield eoris.zip(eoriSeq).toMap.map(keyValue => (keyValue._1, keyValue._2.getOrElse(emptyString)))
 
     repository.get(internalId.value).flatMap {

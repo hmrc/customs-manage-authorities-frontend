@@ -34,6 +34,7 @@ import utils.DateUtils
 import utils.TestData._
 import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
 import views.html.{ManageAuthoritiesApiFailureView, ManageAuthoritiesView, NoAccountsView}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -127,9 +128,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val mockSecureMessageConnector: SecureMessageConnector                     = mock[SecureMessageConnector]
         val mockSdesConnector: SdesConnector                                       = mock[SdesConnector]
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
-        when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
-        when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(XI_EORI)))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(Right(testEmail)))
+        when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
@@ -197,9 +198,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           mock[AuthorisedEoriAndCompanyInfoService]
         val mockSdesConnector: SdesConnector                                   = mock[SdesConnector]
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
-        when(mockDataStoreConnector.getEmail(any)(any)).thenReturn(Future.successful(Right(testEmail)))
-        when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(XI_EORI)))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(Right(testEmail)))
+        when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
         when(mockAccountsRepository.get(any())).thenReturn(Future.successful(Some(accounts)))
         when(mockAuthRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
 
@@ -406,9 +407,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
         .thenReturn(Future.successful(authoritiesWithId))
 
-      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
+
       when(mockAuthAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
         .thenReturn(Future.successful(Some(eoriAndCompanyMap)))
 
@@ -429,7 +431,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
+        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
       }
     }
 
@@ -453,11 +455,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
       when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
         .thenReturn(Future.successful(authoritiesWithId))
-      when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+
+      when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
-      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -476,7 +479,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(1)).getCompanyName(any())(any())
+        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
       }
     }
 
@@ -500,8 +503,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
-      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -547,10 +550,12 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
         .thenReturn(Future.successful(authoritiesWithId02))
 
-      when(mockDataStoreConnector.getEmail(any())(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())(any())).thenReturn(Future.successful(Some(XI_EORI)))
-      when(mockDataStoreConnector.getCompanyName(any())(any()))
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      when(mockDataStoreConnector.getCompanyName)
         .thenReturn(Future.failed(new RuntimeException("Failed")))
+
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -570,7 +575,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(2)).getCompanyName(any())(any())
+        verify(mockDataStoreConnector, times(2)).retrieveCompanyInformationThirdParty(any())(any())
       }
     }
 
@@ -596,6 +601,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
   }
 
   trait Setup {
+    implicit val hc: HeaderCarrier = HeaderCarrier()
+
     lazy val manageAuthoritiesRoute: String              = routes.ManageAuthoritiesController.onPageLoad().url
     lazy val manageAuthoritiesUnavailableRoute: String   = routes.ManageAuthoritiesController.unavailable().url
     lazy val manageAuthoritiesGBNValidationRoute: String = routes.ManageAuthoritiesController.validationFailure().url

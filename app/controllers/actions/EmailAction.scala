@@ -38,8 +38,7 @@ class EmailAction @Inject() (dataStoreConnector: CustomsDataStoreConnector)(impl
   def filter[A](request: IdentifierRequest[A]): Future[Option[Result]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    dataStoreConnector
-      .getEmail(request.eoriNumber)
+    dataStoreConnector.getEmail
       .map {
         case Left(value) => checkEmailResponseAndRedirect(value)
         case Right(_)    => None

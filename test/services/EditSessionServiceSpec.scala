@@ -21,7 +21,6 @@ import connectors.CustomsDataStoreConnector
 import models.{AuthorityEnd, AuthorityStart}
 import models.domain.{AccountStatusOpen, AccountWithAuthoritiesWithId, CdsCashAccount, StandingAuthority}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.edit._
@@ -121,13 +120,10 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    when(mockDataStoreConnector.getCompanyName(anyString())(any()))
-      .thenReturn(Future.successful(None))
-
+    when(mockDataStoreConnector.getCompanyName(any())).thenReturn(Future.successful(None))
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
 
     val service: EditSessionService = app.injector.instanceOf[EditSessionService]
   }
-
 }

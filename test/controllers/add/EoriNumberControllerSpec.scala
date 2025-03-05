@@ -348,8 +348,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
-        when(mockDataStoreConnector.getCompanyName(any[String])(any[HeaderCarrier])).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any[HeaderCarrier])).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getCompanyName(any[HeaderCarrier])).thenReturn(Future.successful(None))
 
         val application: Application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -466,7 +466,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockDataStoreConnector.getXiEori(any[String])(any[HeaderCarrier]))
+        when(mockDataStoreConnector.getXiEori(any[HeaderCarrier]))
           .thenReturn(Future.successful(Some("XI123456789012")))
 
         val application: Application =
@@ -507,7 +507,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
 
-    lazy val eoriNumberRoute: String                 = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+    lazy val eoriNumberRoute: String = controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
+
     lazy val eoriNumberNormalModeSubmitRoute: String =
       controllers.add.routes.EoriNumberController.onSubmit(NormalMode).url
 

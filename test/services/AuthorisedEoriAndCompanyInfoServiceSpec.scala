@@ -55,7 +55,7 @@ class AuthorisedEoriAndCompanyInfoServiceSpec extends SpecBase {
 
         when(mockRepo.get(id.value)).thenReturn(Future.successful(None))
         when(mockRepo.set(id.value, mapData)).thenReturn(Future.successful(true))
-        when(mockDataStoreConnector.getCompanyName(any)(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+        when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
 
         service.retrieveAuthorisedEoriAndCompanyInfo(id, eoris).map { result =>
           result mustEqual mapData

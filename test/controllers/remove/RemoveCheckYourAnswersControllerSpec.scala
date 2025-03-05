@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import models.UserAnswers
 import models.domain._
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
@@ -90,8 +90,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       val app: Application = applicationWithUserAnswersAndEori(userAnswers)
 
-      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
-        .thenReturn(Future.successful(Some("Tony Stark")))
+      when(mockDataStoreConnector.getCompanyName(any())).thenReturn(Future.successful(Some("Tony Stark")))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
@@ -206,7 +205,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value
@@ -241,7 +240,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value
@@ -277,7 +276,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(xiEori))(any()))
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value

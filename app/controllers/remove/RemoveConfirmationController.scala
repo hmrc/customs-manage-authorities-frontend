@@ -55,7 +55,7 @@ class RemoveConfirmationController @Inject() (
         ids         <- OptionT.liftF(service.retrieveAuthorities(request.internalId))
         account     <- OptionT.fromOption[Future](ids.authorities.get(accountId))
         authority   <- OptionT.fromOption[Future](account.authorities.get(authorityId))
-        companyName <- OptionT.liftF(dataStore.getCompanyName(authority.authorisedEori))
+        companyName <- OptionT.liftF(dataStore.getCompanyName)
         _           <- OptionT.liftF(repository.clear(request.internalId.value))
         _           <- OptionT.liftF(confirmationService.populateConfirmation(request.internalId.value, authority.authorisedEori))
       } yield Ok(view(authority.authorisedEori, companyName))).value
