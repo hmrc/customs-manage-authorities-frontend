@@ -47,12 +47,11 @@ class AuthorisedAccountsSpec extends SpecBase {
   }
 
   trait Setup {
-    val ddNi = DutyDefermentAccount("DD", "owner", AccountStatusOpen, DutyDefermentBalance(None, None, None, None), true)
-    val ddGb = DutyDefermentAccount("DD", "owner", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
-    val cash = CashAccount("CASH", "owner", AccountStatusOpen, CDSCashBalance(None))
-    val guar = GeneralGuaranteeAccount("GUA", "owner", AccountStatusOpen, None)
+    val ddNi  =
+      DutyDefermentAccount("DD", "owner", AccountStatusOpen, DutyDefermentBalance(None, None, None, None), true)
+    val ddGb  = DutyDefermentAccount("DD", "owner", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
+    val cash  = CashAccount("CASH", "owner", AccountStatusOpen, CDSCashBalance(None))
+    val guar  = GeneralGuaranteeAccount("GUA", "owner", AccountStatusOpen, None)
     val input = Seq(ddNi, ddGb, cash, guar)
   }
 }
-
-

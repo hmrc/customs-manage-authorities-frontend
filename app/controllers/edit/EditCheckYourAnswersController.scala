@@ -32,7 +32,7 @@ import services.*
 import services.edit.EditAuthorityValidationService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.{emptyString, gbEORIPrefix, nIEORIPrefix}
+import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
 

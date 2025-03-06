@@ -44,6 +44,7 @@ import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView
 import java.time.LocalDate
 import scala.concurrent.Future
 
+// scalastyle:off file.size.limit
 class AccountsControllerSpec extends SpecBase with MockitoSugar {
   "Accounts Controller" must {
 

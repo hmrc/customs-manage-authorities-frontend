@@ -47,6 +47,7 @@ import views.html.edit.EditCheckYourAnswersView
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
+// scalastyle:off file.size.limit
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   "onPageLoad" must {
     "return OK and the correct view for a GET" in new Setup {

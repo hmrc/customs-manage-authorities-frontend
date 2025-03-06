@@ -30,12 +30,12 @@ case class AuthorisedAccounts(
 
 object AuthorisedAccounts {
   def apply(
-             alreadyAuthorisedAccounts: Seq[CDSAccount],
-             availableAccounts: Seq[CDSAccount],
-             closedAccounts: Seq[CDSAccount],
-             pendingAccounts: Seq[CDSAccount],
-             enteredEori: EORI
-           ): AuthorisedAccounts = {
+    alreadyAuthorisedAccounts: Seq[CDSAccount],
+    availableAccounts: Seq[CDSAccount],
+    closedAccounts: Seq[CDSAccount],
+    pendingAccounts: Seq[CDSAccount],
+    enteredEori: EORI
+  ): AuthorisedAccounts = {
 
     def isNIOrCashOrGeneralGuaranteeAccountType(account: CDSAccount) =
       account.isNiAccount ||
@@ -51,7 +51,7 @@ object AuthorisedAccounts {
           pendingAccounts.filter(!_.isNiAccount),
           enteredEori
         )
-      case eori =>
+      case eori                                  =>
         new AuthorisedAccounts(
           alreadyAuthorisedAccounts,
           availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType),
