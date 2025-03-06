@@ -28,6 +28,7 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.appName mustBe "customs-manage-authorities-frontend"
         appConfig.feedbackUrl mustBe "https://www.development.tax.service.gov.uk/feedback/CDS-FIN"
         appConfig.xiEoriEnabled mustBe true
+        appConfig.euEoriEnabled mustBe false
 
         appConfig.emailFrontendUrl mustBe "http://localhost:9898/manage-email-cds/service/customs-finance"
         appConfig.authorizedToViewUrl mustBe "http://localhost:9876/customs/payment-records/authorized-to-view"
