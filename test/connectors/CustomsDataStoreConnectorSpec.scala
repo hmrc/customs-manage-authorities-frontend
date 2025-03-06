@@ -171,7 +171,7 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
@@ -197,7 +197,7 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 

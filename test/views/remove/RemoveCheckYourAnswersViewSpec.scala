@@ -225,6 +225,9 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
     when(mockDataStoreConnector.getCompanyName(any[HeaderCarrier]))
       .thenReturn(Future.successful(Some(companyName)))
 
+    when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
+      .thenReturn(Future.successful(Some(companyName)))
+
     val helper = new CheckYourAnswersRemoveHelper(
       userAnswers,
       accountId,

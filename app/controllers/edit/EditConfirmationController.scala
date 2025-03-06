@@ -66,7 +66,7 @@ class EditConfirmationController @Inject() (
         account                 <- fromOption[Future](accountsWithAuthorities.authorities.get(accountId))
         authority               <- fromOption[Future](account.authorities.get(authorityId))
         eori                    <- fromOption[Future](Some(authority.authorisedEori))
-        companyName             <- OptionT.liftF(dataStore.getCompanyName)
+        companyName             <- OptionT.liftF(dataStore.retrieveCompanyInformationThirdParty(authority.authorisedEori))
         _                       <- liftF(sessionRepository.clear(request.userAnswers.id))
         _                       <- liftF(accountsRepository.clear(request.internalId.value))
         _                       <- liftF(authoritiesRepository.clear(request.internalId.value))

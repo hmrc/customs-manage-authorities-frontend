@@ -122,7 +122,7 @@ class EoriNumberController @Inject() (
     eori: String
   ): Future[Result] =
     (for {
-      companyName                         <- dataStore.getCompanyName(hc)
+      companyName                         <- dataStore.retrieveCompanyInformationThirdParty(eori)(hc)
       companyDetails                       = CompanyDetails(eori, companyName)
       updatedAnswers                      <-
         Future.fromTry(

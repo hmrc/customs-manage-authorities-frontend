@@ -62,7 +62,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .configure(Map("features.edit-journey" -> true))
         .build()
 
-      when(mockDataStoreConnector.getCompanyName(any()))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
         .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))

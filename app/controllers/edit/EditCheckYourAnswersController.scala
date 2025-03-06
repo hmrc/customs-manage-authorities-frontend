@@ -65,7 +65,8 @@ class EditCheckYourAnswersController @Inject() (
       case Left(NoAuthority)                              => errorPage(MissingAuthorityError)
       case Left(NoAccount)                                => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
-        val companyName = Await.result(dataStore.getCompanyName, Duration.Inf)
+        val companyName =
+          Await.result(dataStore.retrieveCompanyInformationThirdParty(authority.authorisedEori), Duration.Inf)
         val helper      = new CheckYourAnswersEditHelper(
           request.userAnswers,
           accountId,

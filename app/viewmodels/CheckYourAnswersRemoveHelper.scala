@@ -41,7 +41,7 @@ class CheckYourAnswersRemoveHelper(
     extends SummaryListRowHelper {
 
   val companyName: Option[String] =
-    Await.result(dataStore.getCompanyName, Duration.Inf)
+    Await.result(dataStore.retrieveCompanyInformationThirdParty(standingAuthority.authorisedEori), Duration.Inf)
   private val isXiEori: Boolean   = standingAuthority.authorisedEori.startsWith(nIEORIPrefix)
 
   def authorisedCompanyDetailsRows: Seq[SummaryListRow] =

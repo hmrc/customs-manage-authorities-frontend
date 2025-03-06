@@ -17,12 +17,22 @@
 package models.requests
 
 import base.SpecBase
-import play.api.libs.json.Json
+import play.api.libs.json.{JsSuccess, Json}
 
 class EoriRequestSpec extends SpecBase {
   "EoriRequest" should {
-    "return the correct value using reads and writes" in {
-      Json.fromJson[EoriRequest](Json.toJson(EoriRequest("Eori"))).get.mustEqual(EoriRequest("Eori"))
+    "return correct value for Json Reads" in new Setup {
+      import models.requests.EoriRequest.format
+      Json.fromJson(Json.parse(eoriRequestJsString)) mustBe JsSuccess(request)
     }
+
+    "return correct value for Json Writes" in new Setup {
+      Json.toJson(request) mustBe Json.parse(eoriRequestJsString)
+    }
+  }
+
+  trait Setup {
+    val request: EoriRequest = EoriRequest("someEori")
+    val eoriRequestJsString  = """{"eori":"someEori"}"""
   }
 }

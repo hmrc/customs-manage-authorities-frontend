@@ -17,7 +17,10 @@
 package connectors
 
 import config.FrontendAppConfig
-import models._
+import models.{
+  CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse, EmailVerifiedResponse, UndeliverableEmail,
+  UnverifiedEmail, XiEoriInformationResponse
+}
 import models.requests.EoriRequest
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
@@ -68,7 +71,7 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
         }
       }
       .recover { case e =>
-        log.error(s"Call to data stored failed for getCompanyName exception=$e")
+        log.error(s"Call to data stored failed for retrieveCompanyInformationThirdParty exception=$e")
         None
       }
   }

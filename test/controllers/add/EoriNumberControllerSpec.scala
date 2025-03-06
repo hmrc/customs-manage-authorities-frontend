@@ -49,8 +49,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
 
         val request = fakeRequest(GET, eoriNumberRoute)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         val view      = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -349,7 +348,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockDataStoreConnector.getXiEori(any[HeaderCarrier])).thenReturn(Future.successful(None))
-        when(mockDataStoreConnector.getCompanyName(any[HeaderCarrier])).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
+          .thenReturn(Future.successful(None))
 
         val application: Application =
           applicationBuilder(userAnswers = Some(emptyUserAnswers))

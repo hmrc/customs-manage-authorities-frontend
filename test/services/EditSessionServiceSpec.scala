@@ -120,7 +120,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
 
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    when(mockDataStoreConnector.getCompanyName(any())).thenReturn(Future.successful(None))
+    when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any())).thenReturn(Future.successful(None))
     when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
 
