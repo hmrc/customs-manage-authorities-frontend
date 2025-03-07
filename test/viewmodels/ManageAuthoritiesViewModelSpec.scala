@@ -204,7 +204,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
 
       val authorisedLink: Element = doc.getElementById("authorised-to-view-link")
       authorisedLink        must not be None
-      authorisedLink.attr("href") mustBe appConfig.authorizedToViewUrl
+      authorisedLink.attr("href") mustBe appConfig.authorityToUseUrl
       authorisedLink.text() must include(msg("cf.account.authorized-to-view.title"))
     }
   }
