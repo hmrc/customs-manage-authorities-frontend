@@ -28,6 +28,7 @@ class AuthorisedAccountsSpec extends SpecBase {
     "the EORI starts with GB" should {
       "exclude NI accounts from available, closed, and pending" in new Setup {
         val result = AuthorisedAccounts(input, input, input, input, "GB123456789012")
+
         result.alreadyAuthorisedAccounts mustBe input
         result.availableAccounts must contain theSameElementsAs Seq(ddGb, cash, guar)
         result.closedAccounts    must contain theSameElementsAs Seq(ddGb, cash, guar)
@@ -38,6 +39,7 @@ class AuthorisedAccountsSpec extends SpecBase {
     "the EORI does not start with GB" should {
       "keep only NI, cash, or general guarantee accounts" in new Setup {
         val result = AuthorisedAccounts(input, input, input, input, "XI123456789012")
+
         result.alreadyAuthorisedAccounts mustBe input
         result.availableAccounts must contain theSameElementsAs Seq(ddNi, cash, guar)
         result.closedAccounts    must contain theSameElementsAs Seq(ddNi, cash, guar)
