@@ -65,7 +65,8 @@ class EditCheckYourAnswersController @Inject() (
       case Left(NoAuthority)                              => errorPage(MissingAuthorityError)
       case Left(NoAccount)                                => errorPage(MissingAccountError)
       case Right(AccountAndAuthority(account, authority)) =>
-        val companyName = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
+        val companyName =
+          Await.result(dataStore.retrieveCompanyInformationThirdParty(authority.authorisedEori), Duration.Inf)
         val helper      = new CheckYourAnswersEditHelper(
           request.userAnswers,
           accountId,
@@ -88,7 +89,7 @@ class EditCheckYourAnswersController @Inject() (
 
         case Right(AccountAndAuthority(account, authority)) =>
           for {
-            xiEori <- dataStore.getXiEori(request.eoriNumber)
+            xiEori <- dataStore.getXiEori
             result <- doSubmission(
                         request.userAnswers,
                         accountId,

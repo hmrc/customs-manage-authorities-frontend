@@ -73,7 +73,7 @@ class AuthorisedUserController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen verifyAccountNumbers).async { implicit request =>
       for {
-        xiEori <- dataStore.getXiEori(request.eoriNumber)
+        xiEori <- dataStore.getXiEori
         result <- doSubmission(request.userAnswers, xiEori.getOrElse(emptyString), request.eoriNumber)
       } yield result
     }

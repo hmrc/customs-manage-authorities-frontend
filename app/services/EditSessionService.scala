@@ -43,7 +43,8 @@ class EditSessionService @Inject() (sessionRepository: SessionRepository, dateTi
   )(implicit messages: Messages, hc: HeaderCarrier): Future[CheckYourAnswersEditHelper] = {
 
     val newUserAnswers = UserAnswers(userAnswers.id)
-    val companyName    = Await.result(dataStore.getCompanyName(authority.authorisedEori), Duration.Inf)
+    val companyName    =
+      Await.result(dataStore.retrieveCompanyInformationThirdParty(authority.authorisedEori), Duration.Inf)
 
     for {
       populatedStartDatePage <- populateStartDatePage(newUserAnswers, accountId, authorityId, authority)

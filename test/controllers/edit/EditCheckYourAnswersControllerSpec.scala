@@ -29,7 +29,7 @@ import models.domain.{
 }
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain, withNameToString}
-import org.mockito.ArgumentMatchers.{any, anyString}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
@@ -62,7 +62,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .configure(Map("features.edit-journey" -> true))
         .build()
 
-      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
         .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -123,7 +123,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any()))
@@ -160,7 +160,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         val optAccountWithAuthoritiesWithId: Option[AccountWithAuthoritiesWithId] =
@@ -204,7 +204,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         .configure(Map("features.edit-journey" -> true))
         .build()
 
-      when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+      when(mockDataStoreConnector.getCompanyName(any()))
         .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
       when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -217,7 +217,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+      when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
       val accounts: Accounts = Accounts(
         Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -256,7 +256,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -271,7 +271,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -315,7 +315,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -330,7 +330,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -375,7 +375,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -390,7 +390,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -435,7 +435,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -448,7 +448,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -495,7 +495,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           None
         )
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -512,7 +512,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             )
           )
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
           Right(
@@ -545,7 +545,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -558,7 +558,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -597,7 +597,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -610,7 +610,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
         when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(Left(UnknownAccountType))
 
         running(application) {
@@ -636,7 +636,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         val optAccountWithAuthoritiesWithId: Option[AccountWithAuthoritiesWithId] =
@@ -679,7 +679,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+        when(mockDataStoreConnector.getCompanyName(any()))
           .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
 
         when(mockAuthoritiesRepo.get(any()))

@@ -43,6 +43,88 @@ class CustomsDataStoreConnectorSpec
   implicit private lazy val hc: HeaderCarrier        = HeaderCarrier()
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
 
+  "retrieveCompanyInformationThirdParty" must {
+    "return Company Information Third Party when consent is defined as 1(True)" in new Setup {
+      val response: String =
+        """
+          |{
+          |   "name":"Tony Stark",
+          |   "consent":"1",
+          |   "address":{
+          |      "streetAndNumber":"86 Mysore Road",
+          |      "city":"London",
+          |      "postalCode":"SW11 5RZ",
+          |      "countryCode":"GB"
+          |   }
+          |}
+          |""".stripMargin
+
+      val expectedResult: Option[String] = Some("Tony Stark")
+
+      running(app) {
+        server.stubFor(
+          post(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+            .willReturn(ok(response))
+        )
+
+        val result = connector.retrieveCompanyInformationThirdParty("GB123456789012").futureValue
+        result mustBe expectedResult
+      }
+    }
+
+    "return None when consent is defined as 0(False) for company info" in new Setup {
+      val response: String =
+        """
+          |{
+          |   "name":"Tony Stark",
+          |   "consent":"0",
+          |   "address":{
+          |      "streetAndNumber":"86 Mysore Road",
+          |      "city":"London",
+          |      "postalCode":"SW11 5RZ",
+          |      "countryCode":"GB"
+          |   }
+          |}
+          |""".stripMargin
+
+      running(app) {
+        server.stubFor(
+          post(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+            .willReturn(ok(response))
+        )
+
+        val result = connector.retrieveCompanyInformationThirdParty("GB123456789012").futureValue
+        result mustBe expected
+      }
+    }
+
+    "return None when consent is empty for company info" in new Setup {
+      val response: String =
+        """
+          |{
+          |   "name":"Tony Stark",
+          |   "consent": None,
+          |   "address":{
+          |      "streetAndNumber":"86 Mysore Road",
+          |      "city":"London",
+          |      "postalCode":"SW11 5RZ",
+          |      "countryCode":"GB"
+          |   }
+          |}
+          |""".stripMargin
+
+      running(app) {
+        server.stubFor(
+          post(urlEqualTo("/customs-data-store/eori/company-information-third-party"))
+            .willReturn(ok(response))
+        )
+
+        val result = connector.retrieveCompanyInformationThirdParty("GB123456789012").futureValue
+        result mustBe expected
+      }
+    }
+  }
+
   ".getCompanyName" must {
     "return companyName when consent is defined as 1(True)" in new Setup {
       val response: String =
@@ -63,16 +145,16 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
-        val result = connector.getCompanyName("GB123456789012").futureValue
+        val result = connector.getCompanyName.futureValue
         result mustBe expectedResult
       }
     }
 
-    "return None when consent is defined as 0(False)" in new Setup {
+    "return None when consent is defined as 0(False) for company info" in new Setup {
       val response: String =
         """
           |{
@@ -89,16 +171,16 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
-        val result = connector.getCompanyName("GB123456789012").futureValue
+        val result = connector.getCompanyName.futureValue
         result mustBe expected
       }
     }
 
-    "return None when consent is empty" in new Setup {
+    "return None when consent is empty for company info" in new Setup {
       val response: String =
         """
           |{
@@ -115,231 +197,234 @@ class CustomsDataStoreConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/company-information"))
+          get(urlEqualTo("/customs-data-store/eori/company-information"))
             .willReturn(ok(response))
         )
 
-        val result = connector.getCompanyName("GB123456789012").futureValue
-        result mustBe expected
-      }
-    }
-  }
-
-  ".get XiEori" must {
-    "return xi eori when it is returned from data store" in new Setup {
-      val response: String =
-        """
-          |{
-          |   "xiEori":"XI1234567",
-          |   "consent":"1",
-          |   "address":{
-          |      "pbeAddressLine1":"86 street",
-          |      "pbeAddressLine2":"London",
-          |      "pbeAddressLine3":"GB"
-          |   }
-          |}
-          |""".stripMargin
-
-      val expectedResult: Option[String] = Some("XI1234567")
-
-      running(app) {
-
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(ok(response))
-        )
-
-        val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe expectedResult
-      }
-    }
-
-    "return None when empty XI EORI value is returned from data store" in new Setup {
-      val response: String =
-        """
-          |{
-          |   "xiEori":"",
-          |   "consent":"1",
-          |   "address":{
-          |      "pbeAddressLine1":"86 street",
-          |      "pbeAddressLine2":"London",
-          |      "pbeAddressLine3":"GB"
-          |   }
-          |}
-          |""".stripMargin
-
-      running(app) {
-
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(ok(response))
-        )
-        val result = connector.getXiEori("GB123456789012").futureValue
+        val result = connector.getCompanyName.futureValue
         result mustBe expected
       }
     }
 
-    "return None when error response is returned" in new Setup {
+    ".get XiEori" must {
+      "return xi eori when it is returned from data store" in new Setup {
+        val response: String =
+          """
+            |{
+            |   "xiEori":"XI1234567",
+            |   "consent":"1",
+            |   "address":{
+            |      "pbeAddressLine1":"86 street",
+            |      "pbeAddressLine2":"London",
+            |      "pbeAddressLine3":"GB"
+            |   }
+            |}
+            |""".stripMargin
 
-      running(app) {
+        val expectedResult: Option[String] = Some("XI1234567")
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(serverError())
-        )
-        val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe expected
+        running(app) {
+
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/xieori-information"))
+              .willReturn(ok(response))
+          )
+
+          val result = connector.getXiEori.futureValue
+          result mustBe expectedResult
+        }
+      }
+
+      "return None when empty XI EORI value is returned from data store" in new Setup {
+        val response: String =
+          """
+            |{
+            |   "xiEori":"",
+            |   "consent":"1",
+            |   "address":{
+            |      "pbeAddressLine1":"86 street",
+            |      "pbeAddressLine2":"London",
+            |      "pbeAddressLine3":"GB"
+            |   }
+            |}
+            |""".stripMargin
+
+        running(app) {
+
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/xieori-information"))
+              .willReturn(ok(response))
+          )
+          val result = connector.getXiEori.futureValue
+          result mustBe expected
+        }
+      }
+
+      "return None when error response is returned" in new Setup {
+
+        running(app) {
+
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/xieori-information"))
+              .willReturn(serverError())
+          )
+          val result = connector.getXiEori.futureValue
+          result mustBe expected
+        }
+      }
+
+      "return None when feature flag is false" in {
+
+        val mockAppConfig = mock[FrontendAppConfig]
+        when(mockAppConfig.xiEoriEnabled).thenReturn(false)
+        when(mockAppConfig.customsDataStore).thenReturn("some/string")
+
+        val response =
+          """
+            |{
+            |   "xiEori":"",
+            |   "consent":"1",
+            |   "address":{
+            |      "pbeAddressLine1":"86 street",
+            |      "pbeAddressLine2":"London",
+            |      "pbeAddressLine3":"GB"
+            |   }
+            |}
+            |""".stripMargin
+
+        val application: Application =
+          new GuiceApplicationBuilder()
+            .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
+            .configure("microservice.services.customs-data-store.port" -> server.port)
+            .build()
+
+        val connector = application.injector.instanceOf[CustomsDataStoreConnector]
+
+        running(application) {
+
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/xieori-information"))
+              .willReturn(ok(response))
+          )
+
+          val result = connector.getXiEori.futureValue
+          result mustBe None
+        }
       }
     }
 
-    "return None when feature flag is false" in {
+    "getEmail" should {
+      "return an email address when the request is successful and undeliverable" +
+        " is not present in the response" in new Setup {
 
-      val mockAppConfig = mock[FrontendAppConfig]
-      when(mockAppConfig.xiEoriEnabled).thenReturn(false)
-      when(mockAppConfig.customsDataStore).thenReturn("some/string")
+          val emailResponse: String =
+            """{
+            |"address": "some@email.com"
+            |}""".stripMargin
 
-      val response =
-        """
-          |{
-          |   "xiEori":"",
-          |   "consent":"1",
-          |   "address":{
-          |      "pbeAddressLine1":"86 street",
-          |      "pbeAddressLine2":"London",
-          |      "pbeAddressLine3":"GB"
-          |   }
-          |}
-          |""".stripMargin
+          running(app) {
 
-      val application: Application =
-        new GuiceApplicationBuilder()
-          .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
-          .configure("microservice.services.customs-data-store.port" -> server.port)
-          .build()
+            server.stubFor(
+              get(urlEqualTo("/customs-data-store/eori/verified-email"))
+                .willReturn(ok(emailResponse))
+            )
+            val result = connector.getEmail.futureValue
+            result mustBe Right(Email("some@email.com"))
+          }
+        }
 
-      val connector = application.injector.instanceOf[CustomsDataStoreConnector]
+      "return no email address when the request is successful and undeliverable is present in the response" in new Setup {
+        val emailResponse: String =
+          """{
+            |"address": "some@email.com",
+            |"timestamp": "2022-10-10T11:22:22Z",
+            |"undeliverable": {
+            |"subject": "someSubject"
+            |}
+            |}""".stripMargin
 
-      running(application) {
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/verified-email"))
+              .willReturn(ok(emailResponse))
+          )
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/xieori-information"))
-            .willReturn(ok(response))
-        )
-
-        val result = connector.getXiEori("GB123456789012").futureValue
-        result mustBe None
+          val result = connector.getEmail.futureValue
+          result mustBe Left(UndeliverableEmail("some@email.com"))
+        }
       }
-    }
-  }
 
-  "getEmail" should {
-    "return an email address when the request is successful and undeliverable is not present in the response" in new Setup {
-      val emailResponse: String =
-        """{
-          |"address": "some@email.com"
-          |}""".stripMargin
+      "return unverifiedEmail when the request is successful and" +
+        " email address is not present in the response" in new Setup {
+          val emailResponse = """{}"""
 
-      running(app) {
+          running(app) {
+            server.stubFor(
+              get(urlEqualTo("/customs-data-store/eori/verified-email"))
+                .willReturn(ok(emailResponse))
+            )
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Right(Email("some@email.com"))
-      }
-    }
+            val result = connector.getEmail.futureValue
+            result mustBe Left(UnverifiedEmail)
+          }
+        }
 
-    "return no email address when the request is successful and undeliverable is present in the response" in new Setup {
-      val emailResponse: String =
-        """{
-          |"address": "some@email.com",
-          |"timestamp": "2022-10-10T11:22:22Z",
-          |"undeliverable": {
-          |"subject": "someSubject"
-          |}
-          |}""".stripMargin
+      "return no email when a NOT_FOUND response is returned" in new Setup {
 
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
+        running(app) {
 
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Left(UndeliverableEmail("some@email.com"))
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/eori/verified-email"))
+              .willReturn(notFound)
+          )
+          val result = connector.getEmail.futureValue
+          result mustBe Left(UnverifiedEmail)
+        }
       }
     }
 
-    "return unverifiedEmail when the request is successful and email address is not present in the response" in new Setup {
-      val emailResponse = """{}"""
+    "unverifiedEmail" must {
 
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(ok(emailResponse))
-        )
+      "return success response" in new Setup {
 
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Left(UnverifiedEmail)
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
+              .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}"""))
+          )
+
+          val result = connector.unverifiedEmail(hc).futureValue
+          result mustBe Some("unverified@email.com")
+        }
+      }
+
+      "return failure response of None" in new Setup {
+
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
+              .willReturn(ok("""{}"""))
+          )
+
+          val result = connector.unverifiedEmail(hc).futureValue
+          result mustBe None
+        }
       }
     }
 
-    "return no email when a NOT_FOUND response is returned" in new Setup {
+    "verifiedEmail" must {
 
-      running(app) {
+      "return correct email" in new Setup {
 
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/GB123456789012/verified-email"))
-            .willReturn(notFound)
-        )
-        val result = connector.getEmail("GB123456789012").futureValue
-        result mustBe Left(UnverifiedEmail)
-      }
-    }
-  }
+        running(app) {
+          server.stubFor(
+            get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
+              .willReturn(ok("""{"verifiedEmail": "test@test.com"}"""))
+          )
 
-  "unverifiedEmail" must {
-
-    "return success response" in new Setup {
-
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
-            .willReturn(ok("""{"unVerifiedEmail": "unverified@email.com"}"""))
-        )
-
-        val result = connector.unverifiedEmail(hc).futureValue
-        result mustBe Some("unverified@email.com")
-      }
-    }
-
-    "return failure response of None" in new Setup {
-
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/subscriptions/unverified-email-display"))
-            .willReturn(ok("""{}"""))
-        )
-
-        val result = connector.unverifiedEmail(hc).futureValue
-        result mustBe None
-      }
-    }
-  }
-
-  "verifiedEmail" must {
-
-    "return correct email" in new Setup {
-
-      running(app) {
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/subscriptions/email-display"))
-            .willReturn(ok("""{"verifiedEmail": "test@test.com"}"""))
-        )
-
-        val result = connector.verifiedEmail(hc).futureValue
-        result mustBe emailVerifiedRes
+          val result = connector.verifiedEmail(hc).futureValue
+          result mustBe emailVerifiedRes
+        }
       }
     }
   }

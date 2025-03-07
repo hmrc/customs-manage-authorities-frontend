@@ -91,7 +91,7 @@ class EoriNumberController @Inject() (
       errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
     } else {
       val result = for {
-        xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
+        xiEori: Option[String] <- dataStore.getXiEori
       } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode, request, hc, msgs)
 
       result.flatten
@@ -122,7 +122,7 @@ class EoriNumberController @Inject() (
     eori: String
   ): Future[Result] =
     (for {
-      companyName                         <- dataStore.getCompanyName(eori)(hc)
+      companyName                         <- dataStore.retrieveCompanyInformationThirdParty(eori)(hc)
       companyDetails                       = CompanyDetails(eori, companyName)
       updatedAnswers                      <-
         Future.fromTry(
