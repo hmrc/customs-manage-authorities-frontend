@@ -39,7 +39,7 @@
 )
 
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())),
-        browserBackLink = Some(appConfig.customsFinancialsFrontendHomepageUrl),
+        backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl),
         isFullWidth = viewModel.hasAccounts,
         maybeMessageBannerPartial = maybeMessageBannerPartial) {
 
