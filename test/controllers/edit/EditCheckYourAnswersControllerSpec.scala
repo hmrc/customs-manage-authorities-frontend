@@ -47,6 +47,7 @@ import views.html.edit.EditCheckYourAnswersView
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
 
+// scalastyle:off file.size.limit
 class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   "onPageLoad" must {
     "return OK and the correct view for a GET" in new Setup {
@@ -474,6 +475,61 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+    "Redirect to next page for valid data when user has selected cash, guarantee and DD accounts is submitted " +
+      "and authorised EORI is EU EORI" in new Setup {
+
+        val application: Application = applicationBuilder(Some(userAnswers), euEori)
+          .overrides(
+            inject.bind[CustomsFinancialsConnector].toInstance(mockConnector),
+            inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+            inject.bind[CheckYourAnswersValidationService].toInstance(mockValidator),
+            inject.bind[VerifyAccountNumbersAction].toInstance(new FakeVerifyAccountNumbersAction(userAnswers)),
+            inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepo),
+            inject.bind[EditAuthorityValidationService].toInstance(mockEditAuthorityValidationService),
+            inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+          )
+          .configure(Map("features.edit-journey" -> true))
+          .build()
+
+        when(mockDataStoreConnector.getCompanyName(anyString())(any()))
+          .thenReturn(Future.successful(Some("This business has not consented to their name being shared.")))
+
+        when(mockAuthoritiesRepo.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockConnector.retrieveAccountAuthorities(any)(any)).thenReturn(
+          Future.successful(Seq(accWithAuthorities1))
+        )
+        when(mockAuthCacheService.retrieveAuthorities(any, any)(any)).thenReturn(
+          Future.successful(authoritiesWithId)
+        )
+        when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+          .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+
+        val accounts: Accounts = Accounts(
+          Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+          Seq("123456"),
+          Some("123456")
+        )
+
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+          Right(
+            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+          )
+        )
+
+        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
+          .thenReturn(Future.successful(true))
+
+        running(application) {
+          val request = fakeRequest(POST, onSubmitRoute)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+        }
+      }
+
     "Redirect to next page when valid data is submitted for AccountAuthority with XI Eori " +
       "as authorised EORI " in new Setup {
 
@@ -711,6 +767,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     private val authId    = "b"
 
     val gbEori = "GB123456789012"
+    val euEori = "DE123456789012"
 
     def onwardRoute: Call = Call("GET", "/foo")
 

@@ -20,20 +20,21 @@ import base.SpecBase
 import config.FrontendAppConfig
 import forms.AccountsFormProvider
 import models.domain.{
-  AccountStatusClosed, AccountStatusOpen, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount,
+  AccountStatusClosed, AccountStatusOpen, CDSAccount, CDSAccounts, CDSCashBalance, CashAccount, DutyDefermentAccount,
   DutyDefermentBalance, StandingAuthority
 }
 import models.{AuthorisedAccounts, CheckMode, CompanyDetails, InternalId, NormalMode, UserAnswers}
 import navigation.{FakeNavigator, Navigator}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, EoriNumberPage}
 import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{AccountsCacheService, AuthorisedAccountsService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.InternalServerException
@@ -43,6 +44,7 @@ import views.html.{AccountsView, NoAvailableAccountsView, ServiceUnavailableView
 import java.time.LocalDate
 import scala.concurrent.Future
 
+// scalastyle:off file.size.limit
 class AccountsControllerSpec extends SpecBase with MockitoSugar {
   "Accounts Controller" must {
 
@@ -123,6 +125,62 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
                 Seq(CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))),
                 Seq.empty,
                 "GB9876543210000"
+              ),
+              NormalMode,
+              backLinkRoute
+            )(request, messages(application), appConfig).toString
+        }
+      }
+
+      "user answers exists with EU EORI" in new Setup {
+        val application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetailsEU))
+          .overrides(bind[AccountsCacheService].toInstance(mockAccountsCacheService))
+          .overrides(bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
+          .overrides(bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService))
+          .build()
+
+        when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
+          .thenReturn(Future.successful(euAccounts))
+
+        when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              AuthorisedAccounts(Seq.empty, euAuthorisedAccounts, euClosedAccount, Seq.empty, "DE123456789012")
+            )
+          )
+
+        running(application) {
+
+          val request   = fakeRequest(GET, accountsRoute)
+          val result    = route(application, request).value
+          val view      = application.injector.instanceOf[AccountsView]
+          val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual
+            view(
+              form,
+              AuthorisedAccounts(
+                Seq.empty,
+                Seq(
+                  DutyDefermentAccount(
+                    "123",
+                    "DE123456789012",
+                    AccountStatusOpen,
+                    DutyDefermentBalance(
+                      Some(bigDecimal100),
+                      Some(bigDecimal100),
+                      Some(bigDecimal100),
+                      Some(bigDecimal100)
+                    ),
+                    isNiAccount = true
+                  ),
+                  CashAccount("12345", "DE123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100)))
+                ),
+                Seq(euClosedAccount.head),
+                Seq.empty,
+                "DE9876543210000"
               ),
               NormalMode,
               backLinkRoute
@@ -328,6 +386,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
 
           redirectLocation(result).value mustEqual onwardRoute.url
+          verify(mockSessionRepository).set(ArgumentMatchers.eq(userAnswersOnSubmission))
         }
       }
 
@@ -358,6 +417,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
           redirectLocation(result).value mustEqual
             controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
+          verify(mockSessionRepository).set(ArgumentMatchers.eq(userAnswersOnSubmission))
         }
       }
 
@@ -414,6 +474,47 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual
             controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
+          verify(mockSessionRepository).set(ArgumentMatchers.eq(userAnswersOnSubmissionXI))
+        }
+      }
+
+      "user answers exists in NormalMode with EU EORI" in new Setup {
+
+        val mockSessionRepository: SessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application: Application =
+          applicationBuilder(userAnswers = Some(userAnswersCompanyDetailsEU))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(authStartNormalModeRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+              bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+              bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+            )
+            .build()
+
+        when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
+          .thenReturn(Future.successful(euAccounts))
+
+        when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+          .thenReturn(
+            Future.successful(
+              AuthorisedAccounts(Seq.empty, euAuthorisedAccounts, euClosedAccount, Seq.empty, "DE123456789012")
+            )
+          )
+
+        running(application) {
+          val request = fakeRequest(POST, accountsSubmitRouteInNormalMode)
+            .withFormUrlEncodedBody(("value[0]", answer.head))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual
+            controllers.add.routes.AuthorityStartController.onPageLoad(NormalMode).url
+          verify(mockSessionRepository).set(ArgumentMatchers.eq(userAnswersOnSubmissionEU))
         }
       }
 
@@ -444,6 +545,7 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
 
           redirectLocation(result).value mustEqual
             controllers.add.routes.AuthorityStartController.onPageLoad(CheckMode).url
+          verify(mockSessionRepository).set(ArgumentMatchers.eq(userAnswersOnSubmission))
         }
       }
 
@@ -544,6 +646,69 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
           )(request, messages(application), appConfig).toString
       }
     }
+
+    "return a Bad Request and errors when invalid data is submitted with an EU EORI" in new Setup {
+      val application: Application = applicationBuilder(userAnswers = Some(userAnswersCompanyDetailsEU))
+        .overrides(
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedAccountsService].toInstance(mockAuthorisedAccountService)
+        )
+        .build()
+
+      when(mockAccountsCacheService.retrieveAccounts(any[InternalId](), any())(any()))
+        .thenReturn(Future.successful(euAccounts))
+
+      when(mockAuthorisedAccountService.getAuthorisedAccounts(any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            AuthorisedAccounts(Seq.empty, euAuthorisedAccounts, euClosedAccount, Seq.empty, "DE123456789012")
+          )
+        )
+
+      running(application) {
+
+        val request = fakeRequest(POST, accountsRoute)
+          .withFormUrlEncodedBody(("value", "invalid value"))
+
+        val boundForm = form.bind(Map("value" -> "invalid value"))
+
+        val view      = application.injector.instanceOf[AccountsView]
+        val appConfig = application.injector.instanceOf[FrontendAppConfig]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+
+        contentAsString(result) mustEqual
+          view(
+            boundForm,
+            AuthorisedAccounts(
+              Seq.empty,
+              Seq(
+                DutyDefermentAccount(
+                  "123",
+                  "DE123456789012",
+                  AccountStatusOpen,
+                  DutyDefermentBalance(
+                    Some(bigDecimal100),
+                    Some(bigDecimal100),
+                    Some(bigDecimal100),
+                    Some(bigDecimal100)
+                  ),
+                  isNiAccount = true
+                ),
+                CashAccount("12345", "DE123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100)))
+              ),
+              Seq(euClosedAccount.head),
+              Seq.empty,
+              "DE9876543210000"
+            ),
+            NormalMode,
+            backLinkRoute
+          )(request, messages(application), appConfig).toString
+      }
+    }
   }
 
   trait Setup {
@@ -565,19 +730,51 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
     val formProvider             = new AccountsFormProvider()
     val form: Form[List[String]] = formProvider()
 
+    val answerAccounts: List[CashAccount] =
+      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))))
+
     val userAnswersCompanyDetails: UserAnswers =
       emptyUserAnswers.set(EoriNumberPage, CompanyDetails("GB9876543210000", Some("name"))).success.value
 
+    val userAnswersOnSubmission: UserAnswers =
+      userAnswersCompanyDetails.set(AccountsPage, answerAccounts).success.value
+
     val userAnswersCompanyDetailsXI: UserAnswers =
       emptyUserAnswers.set(EoriNumberPage, CompanyDetails("XI9876543210000", Some("name"))).success.value
+
+    val userAnswersOnSubmissionXI: UserAnswers =
+      userAnswersCompanyDetailsXI
+        .set(
+          AccountsPage,
+          List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))))
+        )
+        .success
+        .value
+
+    val userAnswersCompanyDetailsEU: UserAnswers =
+      emptyUserAnswers.set(EoriNumberPage, CompanyDetails("DE9876543210000", Some("name"))).success.value
+
+    val userAnswersOnSubmissionEU: UserAnswers =
+      userAnswersCompanyDetailsEU
+        .set(
+          AccountsPage,
+          List(
+            DutyDefermentAccount(
+              "123",
+              "DE123456789012",
+              AccountStatusOpen,
+              DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+              isNiAccount = true
+            )
+          )
+        )
+        .success
+        .value
 
     val standingAuthority: StandingAuthority =
       StandingAuthority("EORI", LocalDate.parse("2020-03-01"), Some(LocalDate.parse("2020-04-01")), viewBalance = false)
 
     val answer: List[String] = List("account_0")
-
-    val answerAccounts: List[CashAccount] =
-      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))))
 
     val accounts: CDSAccounts =
       CDSAccounts(
@@ -595,12 +792,49 @@ class AccountsControllerSpec extends SpecBase with MockitoSugar {
         )
       )
 
+    val euAccounts: CDSAccounts =
+      CDSAccounts(
+        "DE123456789012",
+        List(
+          DutyDefermentAccount(
+            "123",
+            "DE123456789012",
+            AccountStatusOpen,
+            DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+            isNiAccount = true
+          ),
+          DutyDefermentAccount(
+            "123",
+            "DE123456789012",
+            AccountStatusOpen,
+            DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100))
+          ),
+          CashAccount("12345", "DE123456789012", AccountStatusOpen, CDSCashBalance(Some(bigDecimal100))),
+          CashAccount("23456", "DE123456789012", AccountStatusClosed, CDSCashBalance(Some(bigDecimal100)))
+        )
+      )
+
     val authorisedAccounts: List[CashAccount] = List(
       CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(amount100)))
     )
 
+    val euAuthorisedAccounts: List[CDSAccount] = List(
+      DutyDefermentAccount(
+        "123",
+        "DE123456789012",
+        AccountStatusOpen,
+        DutyDefermentBalance(Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100), Some(bigDecimal100)),
+        isNiAccount = true
+      ),
+      CashAccount("12345", "DE123456789012", AccountStatusOpen, CDSCashBalance(Some(amount100)))
+    )
+
     private val closedAccount = List(
       CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(amount100)))
+    )
+
+    val euClosedAccount = List(
+      CashAccount("23456", "DE123456789012", AccountStatusClosed, CDSCashBalance(Some(amount100)))
     )
 
     val closedAccountXI: List[DutyDefermentAccount] =

@@ -112,10 +112,10 @@ class RemoveCheckYourAnswers @Inject() (
     accountId: String,
     authorityId: String,
     xiEori: String,
-    gbEori: String
+    eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, gbEori)
+    val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
 
     customsFinancialsConnector.revokeAccountAuthorities(revokeRequest, ownerEori).map {
       case true  => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
@@ -127,15 +127,15 @@ class RemoveCheckYourAnswers @Inject() (
     account: AccountType,
     authorisedEori: String,
     xiEori: String,
-    gbEori: String
+    eori: String
   ): String =
     if (authorisedEori.startsWith(nIEORIPrefix)) {
       account match {
-        case accn if accn == CdsCashAccount || accn == CdsGeneralGuaranteeAccount => gbEori
+        case accn if accn == CdsCashAccount || accn == CdsGeneralGuaranteeAccount => eori
         case _                                                                    => xiEori
       }
     } else {
-      gbEori
+      eori
     }
 
   private def errorPage(error: ErrorResponse): Result = {

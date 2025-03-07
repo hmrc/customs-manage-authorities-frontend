@@ -17,6 +17,8 @@
 package models
 
 import models.domain.{CDSAccount, EORI}
+import utils.Constants.{CASH_ACCOUNT_TYPE, GENERAL_GUARANTEE_ACCOUNT_TYPE}
+import utils.StringUtils.gbEORIPrefix
 
 case class AuthorisedAccounts(
   alreadyAuthorisedAccounts: Seq[CDSAccount],
@@ -25,3 +27,38 @@ case class AuthorisedAccounts(
   pendingAccounts: Seq[CDSAccount],
   enteredEori: EORI
 )
+
+object AuthorisedAccounts {
+  def apply(
+    alreadyAuthorisedAccounts: Seq[CDSAccount],
+    availableAccounts: Seq[CDSAccount],
+    closedAccounts: Seq[CDSAccount],
+    pendingAccounts: Seq[CDSAccount],
+    enteredEori: EORI
+  ): AuthorisedAccounts = {
+
+    def isNIOrCashOrGeneralGuaranteeAccountType(account: CDSAccount) =
+      account.isNiAccount ||
+        account.accountType.equals(CASH_ACCOUNT_TYPE) ||
+        account.accountType.equals(GENERAL_GUARANTEE_ACCOUNT_TYPE)
+
+    enteredEori match {
+      case eori if eori.startsWith(gbEORIPrefix) =>
+        new AuthorisedAccounts(
+          alreadyAuthorisedAccounts,
+          availableAccounts.filter(!_.isNiAccount),
+          closedAccounts.filter(!_.isNiAccount),
+          pendingAccounts.filter(!_.isNiAccount),
+          enteredEori
+        )
+      case eori                                  =>
+        new AuthorisedAccounts(
+          alreadyAuthorisedAccounts,
+          availableAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType),
+          closedAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType),
+          pendingAccounts.filter(isNIOrCashOrGeneralGuaranteeAccountType),
+          enteredEori
+        )
+    }
+  }
+}

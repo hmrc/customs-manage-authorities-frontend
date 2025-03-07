@@ -17,10 +17,9 @@
 package services
 
 import models.AuthorisedAccounts
-import models.domain.{CDSAccount, EORI}
+import models.domain.EORI
 import models.requests.DataRequest
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.StringUtils.gbEORIPrefix
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -41,17 +40,9 @@ class AuthorisedAccountsService @Inject() (
       AuthorisedAccounts(
         accounts.alreadyAuthorised(availableAccountNumbers),
         accounts.canAuthoriseAccounts(availableAccountNumbers),
-        filterAccounts(enteredEori, accounts.closedAccounts),
-        filterAccounts(enteredEori, accounts.pendingAccounts),
+        accounts.closedAccounts,
+        accounts.pendingAccounts,
         enteredEori
       )
     }
-
-  def filterAccounts(enteredEori: EORI, accounts: Seq[CDSAccount]): Seq[CDSAccount] =
-    if (enteredEori.startsWith(gbEORIPrefix)) {
-      accounts.filter(!_.isNiAccount)
-    } else {
-      accounts.filter(_.isNiAccount)
-    }
-
 }
