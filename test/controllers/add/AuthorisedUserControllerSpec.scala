@@ -175,7 +175,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(None))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
           .thenReturn(Future.successful(true))
