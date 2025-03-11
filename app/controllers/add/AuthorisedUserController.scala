@@ -18,7 +18,7 @@ package controllers.add
 
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import controllers.actions._
+import controllers.actions.*
 import controllers.grantAccountAuthRequestList
 import forms.AuthorisedUserFormProviderWithConsent
 import models.requests.{AddAuthorityRequest, GrantAccountAuthorityRequest}
@@ -32,7 +32,7 @@ import services.DateTimeService
 import services.add.{AddAuthorityValidationService, CheckYourAnswersValidationService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.StringUtils.{emptyString, nIEORIPrefix}
+import utils.StringUtils.{emptyString, gbEORIPrefix, nIEORIPrefix}
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
 
@@ -87,10 +87,10 @@ class AuthorisedUserController @Inject() (
         Future.successful(errorPage("UserAnswers did not contain sufficient data to construct add authority request"))
       ) { payload =>
         val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
-        val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix)) xiEori else eori
+        val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) xiEori else eori
 
-        if (enteredEori.startsWith(nIEORIPrefix)) {
-          processPayloadForXIEori(userAnswers, xiEori, eori, payload)
+        if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) {
+          processPayloadForLinkedXiAndGbEori(userAnswers, xiEori, eori, payload)
         } else {
           connector.grantAccountAuthorities(payload, ownerEori).map {
             case true  => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
@@ -99,7 +99,7 @@ class AuthorisedUserController @Inject() (
         }
       }
 
-  private def processPayloadForXIEori(
+  private def processPayloadForLinkedXiAndGbEori(
     userAnswers: UserAnswers,
     xiEori: String,
     gbEori: String,
