@@ -164,6 +164,31 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
+    "redirect to next page for valid data when user has selected cash, guarantee and DD accounts " +
+      "and input EORI is XI EORI and user EORI is EU" in new SetUp {
+        val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithXIEori
+          .set(AccountsPage, List(cashAccount, generalGuarantee, dutyDeferment))
+          .success
+          .value
+
+        val app: Application = applicationWithUserAnswersAndEori(userAnswers, euEori, Some(mockDataStoreConnector))
+
+        when(mockValidator.validate(userAnswers))
+          .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
+        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+
+        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
+          .thenReturn(Future.successful(true))
+
+        running(app) {
+          val request = fakeRequest(POST, onSubmitRoute)
+          val result  = route(app, request).value
+
+          status(result) mustEqual SEE_OTHER
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+        }
+      }
+
     "redirect to next page for valid data when user has selected cash,guarantee and DD accounts " +
       "and input EORI is EU EORI" in new SetUp {
         val userAnswers: UserAnswers = userAnswersTodayToIndefiniteWithEuEori
@@ -171,7 +196,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           .success
           .value
 
-        val app: Application = applicationWithUserAnswersAndEori(userAnswers, euEori, Some(mockDataStoreConnector))
+        val app: Application = applicationWithUserAnswersAndEori(userAnswers, gbEori, Some(mockDataStoreConnector))
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
@@ -358,7 +383,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         .set(AccountsPage, selectedAccounts)
         .success
         .value
-        .set(EoriNumberPage, CompanyDetails(gbEori, Some("companyName")))
+        .set(EoriNumberPage, CompanyDetails(euEori, Some("companyName")))
         .success
         .value
         .set(AuthorityStartPage, AuthorityStart.Today)(AuthorityStart.writes)
