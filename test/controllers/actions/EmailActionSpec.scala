@@ -106,7 +106,6 @@ class EmailActionSpec extends SpecBase with MockitoSugar with ScalaFutures {
       Credentials(emptyString, emptyString),
       Organisation,
       None,
-      None,
       "GB123456789012"
     )
 

@@ -151,7 +151,6 @@ class VerifyAccountNumbersActionSpec extends SpecBase with MockitoSugar {
       InternalId("id"),
       Credentials(emptyString, emptyString),
       Organisation,
-      Some(Name(Some("name"), Some("last"))),
       Some("email"),
       "eori",
       userAnswers

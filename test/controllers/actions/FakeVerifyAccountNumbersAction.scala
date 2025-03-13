@@ -31,7 +31,6 @@ class FakeVerifyAccountNumbersAction(usersAnswers: UserAnswers) extends VerifyAc
           request.internalId,
           request.credentials,
           request.affinityGroup,
-          request.name,
           request.email,
           request.eoriNumber,
           usersAnswers

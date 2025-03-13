@@ -19,7 +19,7 @@ package models.requests
 import models.InternalId
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 trait RequestWithInternalId[A] extends Request[A] {
   def internalId: InternalId
@@ -32,7 +32,6 @@ final case class IdentifierRequest[A](
   internalId: InternalId,
   credentials: Credentials,
   affinityGroup: AffinityGroup,
-  name: Option[Name],
   email: Option[String],
   eoriNumber: String
 ) extends WrappedRequest[A](request)
