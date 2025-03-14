@@ -48,6 +48,6 @@ final case class DataRequest[A](
   affinityGroup: AffinityGroup,
   email: Option[String],
   eoriNumber: String,
-  userAnswers: UserAnswers,
+  userAnswers: UserAnswers
 ) extends WrappedRequest[A](request)
     with RequestWithUserAnswers[A]
