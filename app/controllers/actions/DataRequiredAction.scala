@@ -38,7 +38,6 @@ class DataRequiredActionImpl @Inject() (implicit val executionContext: Execution
               request.internalId,
               request.credentials,
               request.affinityGroup,
-              request.name,
               request.email,
               request.eoriNumber,
               userAnswers

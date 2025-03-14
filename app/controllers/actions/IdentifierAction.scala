@@ -48,18 +48,17 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised().retrieve(
       Retrievals.credentials and
-        Retrievals.name and
         Retrievals.email and
         Retrievals.affinityGroup and
         Retrievals.internalId and
         Retrievals.allEnrolments
     ) {
 
-      case Some(credentials) ~ name ~ email ~ Some(affinityGroup) ~ Some(internalId) ~ allEnrolments =>
+      case Some(credentials) ~ email ~ Some(affinityGroup) ~ Some(internalId) ~ allEnrolments =>
         allEnrolments.getEnrolment(ENROLMENT_KEY).flatMap(_.getIdentifier(ENROLMENT_IDENTIFIER)) match {
           case Some(eori) =>
             block(
-              IdentifierRequest(request, InternalId(internalId), credentials, affinityGroup, name, email, eori.value)
+              IdentifierRequest(request, InternalId(internalId), credentials, affinityGroup, email, eori.value)
             )
 
           case None => Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))

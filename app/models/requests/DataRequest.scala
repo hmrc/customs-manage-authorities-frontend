@@ -19,7 +19,7 @@ package models.requests
 import models.{InternalId, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.AffinityGroup
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 trait RequestWithUserAnswers[A] extends Request[A] {
   def internalId: InternalId
@@ -36,7 +36,6 @@ final case class OptionalDataRequest[A](
   internalId: InternalId,
   credentials: Credentials,
   affinityGroup: AffinityGroup,
-  name: Option[Name],
   email: Option[String],
   eoriNumber: String,
   userAnswers: Option[UserAnswers]
@@ -47,7 +46,6 @@ final case class DataRequest[A](
   internalId: InternalId,
   credentials: Credentials,
   affinityGroup: AffinityGroup,
-  name: Option[Name],
   email: Option[String],
   eoriNumber: String,
   userAnswers: UserAnswers

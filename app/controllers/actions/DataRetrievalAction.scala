@@ -35,7 +35,6 @@ class DataRetrievalActionImpl @Inject() (
         request.internalId,
         request.credentials,
         request.affinityGroup,
-        request.name,
         request.email,
         request.eoriNumber,
         _

@@ -32,7 +32,6 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers], eoriNumber: Str
         request.internalId,
         request.credentials,
         request.affinityGroup,
-        request.name,
         request.email,
         if (eoriNumber.isEmpty) request.eoriNumber else eoriNumber,
         dataToReturn

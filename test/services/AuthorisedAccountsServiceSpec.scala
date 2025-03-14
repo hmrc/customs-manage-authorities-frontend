@@ -31,7 +31,7 @@ import play.api.Application
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.StringUtils.emptyString
 
@@ -101,7 +101,6 @@ class AuthorisedAccountsServiceSpec extends SpecBase {
         InternalId("id"),
         Credentials(emptyString, emptyString),
         Organisation,
-        Some(Name(Some("name"), Some("last"))),
         Some("email"),
         eori,
         userAnswers
