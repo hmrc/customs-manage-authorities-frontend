@@ -35,6 +35,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.StringUtils.{emptyString, gbEORIPrefix, nIEORIPrefix}
 import viewmodels.CheckYourAnswersHelper
 import views.html.add.AuthorisedUserView
+import utils.Utils.getXiEori
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -73,7 +74,7 @@ class AuthorisedUserController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData andThen verifyAccountNumbers).async { implicit request =>
       for {
-        xiEori <- dataStore.getXiEori
+        xiEori <- getXiEori(dataStore)
         result <- doSubmission(request.userAnswers, xiEori.getOrElse(emptyString), request.eoriNumber)
       } yield result
     }

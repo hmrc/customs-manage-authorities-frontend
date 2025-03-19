@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateUtils
 import utils.StringUtils.emptyString
+import utils.Utils.getXiEori
 import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
 import views.html._
 
@@ -69,7 +70,7 @@ class ManageAuthoritiesController @Inject() (
     val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad().url
 
     val response = for {
-      xiEori                 <- dataStoreConnector.getXiEori
+      xiEori                 <- getXiEori(dataStoreConnector)
       accountsFromCache      <- accountsCacheService.retrieveAccountsForId(request.internalId)
       accounts               <- fetchAccounts(xiEori, accountsFromCache)
       authoritiesFromCache   <- service.retrieveAuthoritiesForId(request.internalId)
@@ -103,10 +104,12 @@ class ManageAuthoritiesController @Inject() (
       }
   }
 
+
+
   def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
     (identify andThen checkEmailIsVerified).async { implicit request =>
       val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
-        xiEori      <- dataStoreConnector.getXiEori
+        xiEori      <- getXiEori(dataStoreConnector)
         accounts    <- getAllAccounts(eori, xiEori)
         authorities <- getAllAuthorities(eori, xiEori, accounts)
       } yield authorities

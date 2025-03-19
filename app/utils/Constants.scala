@@ -32,4 +32,6 @@ object Constants {
 
   val ENROLMENT_KEY        = "HMRC-CUS-ORG"
   val ENROLMENT_IDENTIFIER = "EORINumber"
+
+  val NON_EU_EORI_PREFIXES = Set("GB", "GBN", "XI")
 }

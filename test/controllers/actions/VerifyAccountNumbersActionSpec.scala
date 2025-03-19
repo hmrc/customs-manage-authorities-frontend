@@ -29,7 +29,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.mvc.{AnyContentAsEmpty, ResponseHeader, Result}
 import services.AuthorisedAccountsService
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, Name}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import utils.StringUtils.emptyString
 
 import scala.concurrent.ExecutionContext.Implicits.global

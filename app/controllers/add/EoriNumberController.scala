@@ -32,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.StringUtils.{emptyString, isXIEori, removeSpaceAndConvertToUpperCase}
 import views.html.add.EoriNumberView
+import utils.Utils.getXiEori
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -91,7 +92,7 @@ class EoriNumberController @Inject() (
       errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
     } else {
       val result = for {
-        xiEori: Option[String] <- dataStore.getXiEori
+        xiEori: Option[String] <- getXiEori(dataStore)
       } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode, request, hc, msgs)
 
       result.flatten
