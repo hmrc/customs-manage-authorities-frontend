@@ -126,7 +126,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
-      when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
 
       running(app) {
@@ -148,7 +148,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(true))
@@ -175,7 +175,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(true))
@@ -200,7 +200,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
           .thenReturn(Future.successful(true))
@@ -225,7 +225,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(false))
@@ -254,10 +254,12 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
           .thenReturn(Future.successful(true))
+
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(false))
 
@@ -284,7 +286,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockValidator.validate(userAnswers))
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
+
         when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
           .thenReturn(Future.successful(true))
 
@@ -305,7 +309,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
-      when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some(xiEori)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
       when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
 
       running(app) {

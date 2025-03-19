@@ -32,7 +32,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendController
 import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersRemoveHelper
 import views.html.remove.RemoveCheckYourAnswersView
-import utils.Utils.getXiEori
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -85,7 +84,7 @@ class RemoveCheckYourAnswers @Inject() (
 
         case Right(AccountAndAuthority(account, authority)) =>
           for {
-            xiEori <- getXiEori(dataStore)
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
             result <- request.userAnswers
                         .get(RemoveAuthorisedUserPage(accountId, authorityId))
                         .map { authorisedUser =>

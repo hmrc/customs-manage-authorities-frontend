@@ -218,7 +218,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
       val accounts: Accounts = Accounts(
         Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -272,7 +272,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -331,7 +331,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -391,7 +391,8 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityForXI)))
           )
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any))
+          .thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -449,7 +450,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -504,7 +505,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -568,7 +569,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             )
           )
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
           Right(
@@ -614,7 +615,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
@@ -666,7 +667,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-        when(mockDataStoreConnector.getXiEori(any)).thenReturn(Future.successful(Some("XI123456789012")))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
         when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(Left(UnknownAccountType))
 
         running(application) {

@@ -19,17 +19,23 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.FrontendAppConfig
-import models.{EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail}
-import org.mockito.Mockito.when
+import models.{EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail, InternalId}
+import models.requests.IdentifierRequest
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
+import org.mockito.Mockito._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import play.api.{Application, inject}
+import play.api.test.FakeRequest
+import play.api.mvc.{AnyContent, Request, AnyContentAsEmpty}
+import utils.WireMockHelper
+import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
+import utils.StringUtils.emptyString
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.WireMockHelper
 
 class CustomsDataStoreConnectorSpec
     extends SpecBase
@@ -230,7 +236,7 @@ class CustomsDataStoreConnectorSpec
               .willReturn(ok(response))
           )
 
-          val result = connector.getXiEori.futureValue
+          val result = connector.getXiEori("GB123456789").futureValue
           result mustBe expectedResult
         }
       }
@@ -255,7 +261,7 @@ class CustomsDataStoreConnectorSpec
             get(urlEqualTo("/customs-data-store/eori/xieori-information"))
               .willReturn(ok(response))
           )
-          val result = connector.getXiEori.futureValue
+          val result = connector.getXiEori("GB123456789").futureValue
           result mustBe expected
         }
       }
@@ -268,7 +274,7 @@ class CustomsDataStoreConnectorSpec
             get(urlEqualTo("/customs-data-store/eori/xieori-information"))
               .willReturn(serverError())
           )
-          val result = connector.getXiEori.futureValue
+          val result = connector.getXiEori("GB123456789").futureValue
           result mustBe expected
         }
       }
@@ -307,7 +313,7 @@ class CustomsDataStoreConnectorSpec
               .willReturn(ok(response))
           )
 
-          val result = connector.getXiEori.futureValue
+          val result = connector.getXiEori("GB123456789").futureValue
           result mustBe None
         }
       }
@@ -425,6 +431,23 @@ class CustomsDataStoreConnectorSpec
           val result = connector.verifiedEmail(hc).futureValue
           result mustBe emailVerifiedRes
         }
+      }
+    }
+
+    "getXiEori" should {
+      "return None when an invalid prefix is passed" in new Setup {
+        val fakeRequest: Request[AnyContent] = FakeRequest().withBody(AnyContentAsEmpty)
+
+        val request = IdentifierRequest(
+          fakeRequest,
+          InternalId("id"),
+          Credentials(emptyString, emptyString),
+          Organisation,
+          Some("email"),
+          "FR123456789"
+        )
+        val result = connector.getXiEori("FR123456789").futureValue
+        result mustBe None
       }
     }
   }

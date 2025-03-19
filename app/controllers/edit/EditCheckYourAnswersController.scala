@@ -35,7 +35,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.StringUtils.{emptyString, nIEORIPrefix}
 import viewmodels.CheckYourAnswersEditHelper
 import views.html.edit.EditCheckYourAnswersView
-import utils.Utils.getXiEori
 
 import javax.inject.Inject
 import scala.concurrent.*
@@ -90,7 +89,7 @@ class EditCheckYourAnswersController @Inject() (
 
         case Right(AccountAndAuthority(account, authority)) =>
           for {
-            xiEori <- getXiEori(dataStore)
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
             result <- doSubmission(
                         request.userAnswers,
                         accountId,
