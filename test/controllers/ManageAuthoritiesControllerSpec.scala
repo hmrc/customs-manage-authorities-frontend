@@ -39,6 +39,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import java.time.LocalDate
 import scala.concurrent.Future
 
+// scalastyle:off file.size.limit
 class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with DateUtils {
 
   "ManageAuthorities Controller" when {
@@ -600,6 +601,225 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
   }
 
+  "fetchAuthoritiesOnMIDVAHomePageLoadV2" should {
+
+    "return OK when authorities are retrieved successfully" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts(
+        "GB123456789012",
+        List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        )
+      )
+
+      val mockRepository: AuthoritiesRepository                              = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService                     = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService               = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector                  = mock[CustomsDataStoreConnector]
+      val mockAuthAndCompanyInfoService: AuthorisedEoriAndCompanyInfoService = mock[AuthorisedEoriAndCompanyInfoService]
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository     = mock[AuthorisedEoriAndCompanyInfoRepository]
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId02)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId))
+
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
+
+      when(mockAuthAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
+        .thenReturn(Future.successful(Some(eoriAndCompanyMap)))
+
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
+        )
+        .configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRouteV2)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+      }
+    }
+
+    "return OK when authorities are retrieved successfully and save company info in the cache" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts(
+        "GB123456789012",
+        List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        )
+      )
+
+      val mockRepository: AuthoritiesRepository                          = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService                 = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService           = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector              = mock[CustomsDataStoreConnector]
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId))
+
+      when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
+
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
+        )
+        .configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRouteV2)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+      }
+    }
+
+    "return NO_CONTENT when there are no authorities found due to Pending accounts" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts(
+        "GB123456789012",
+        List(
+          CashAccount("12345", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusPending, CDSCashBalance(Some(100.00)))
+        )
+      )
+
+      val mockRepository: AuthoritiesRepository             = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService    = mock[AccountsCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId           = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
+
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        )
+        .configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRouteV2)
+        val result  = route(application, request).value
+
+        status(result) mustEqual NO_CONTENT
+      }
+    }
+
+    "return OK even if getCompanyName api throws exception" in new Setup {
+      val accounts: CDSAccounts = CDSAccounts(
+        "GB123456789012",
+        List(
+          CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
+          CashAccount("23456", "GB123456789012", AccountStatusClosed, CDSCashBalance(Some(100.00)))
+        )
+      )
+
+      val mockRepository: AuthoritiesRepository                          = mock[AuthoritiesRepository]
+      val mockAccountsCacheService: AccountsCacheService                 = mock[AccountsCacheService]
+      val mockAuthoritiesCacheService: AuthoritiesCacheService           = mock[AuthoritiesCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector              = mock[CustomsDataStoreConnector]
+      val mockAuthAndCompanyRepo: AuthorisedEoriAndCompanyInfoRepository = mock[AuthorisedEoriAndCompanyInfoRepository]
+
+      val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
+      val emptyAuthoritiesWithId: AuthoritiesWithId           = AuthoritiesWithId(emptyMap)
+
+      when(mockRepository.get(any())).thenReturn(Future.successful(Some(emptyAuthoritiesWithId)))
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.successful(accounts))
+
+      when(mockAuthoritiesCacheService.retrieveAuthorities(any(), any())(any()))
+        .thenReturn(Future.successful(authoritiesWithId02))
+
+      when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
+      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+
+      when(mockDataStoreConnector.getCompanyName)
+        .thenReturn(Future.failed(new RuntimeException("Failed")))
+
+      when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
+
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AuthoritiesRepository].toInstance(mockRepository),
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
+          bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          bind[AuthorisedEoriAndCompanyInfoRepository].toInstance(mockAuthAndCompanyRepo)
+        )
+        .configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, fetchAllAuthoritiesRouteV2)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        verify(mockDataStoreConnector, times(2)).retrieveCompanyInformationThirdParty(any())(any())
+      }
+    }
+
+    "return INTERNAL_SERVER_ERROR if there is an error during the processing" in new Setup {
+      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+
+      when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+
+      private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+        )
+        .build()
+
+      running(application) {
+        val request = fakeRequest(GET, fetchAllAuthoritiesRouteV2)
+        val result  = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+      }
+    }
+  }
+
   trait Setup {
     implicit val hc: HeaderCarrier = HeaderCarrier()
 
@@ -613,6 +833,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
     val fetchAllAuthoritiesRoute: String =
       routes.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoad(EORI_NUMBER).url
+
+    val fetchAllAuthoritiesRouteV2: String =
+      routes.ManageAuthoritiesController.fetchAuthoritiesOnMIDVAHomePageLoadV2().url
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate   = LocalDate.parse("2020-04-01")
