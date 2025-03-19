@@ -103,8 +103,6 @@ class ManageAuthoritiesController @Inject() (
       }
   }
 
-
-
   def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
     (identify andThen checkEmailIsVerified).async { implicit request =>
       val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
