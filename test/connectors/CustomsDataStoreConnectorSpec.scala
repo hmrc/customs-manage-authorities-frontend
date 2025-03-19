@@ -19,7 +19,7 @@ package connectors
 import base.SpecBase
 import com.github.tomakehurst.wiremock.client.WireMock._
 import config.FrontendAppConfig
-import models.{EmailVerifiedResponse, UndeliverableEmail, UnverifiedEmail, InternalId}
+import models.{EmailVerifiedResponse, InternalId, UndeliverableEmail, UnverifiedEmail}
 import models.requests.IdentifierRequest
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
@@ -29,7 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import play.api.{Application, inject}
 import play.api.test.FakeRequest
-import play.api.mvc.{AnyContent, Request, AnyContentAsEmpty}
+import play.api.mvc.{AnyContent, AnyContentAsEmpty, Request}
 import utils.WireMockHelper
 import uk.gov.hmrc.auth.core.AffinityGroup.Organisation
 import utils.StringUtils.emptyString
@@ -446,6 +446,7 @@ class CustomsDataStoreConnectorSpec
           Some("email"),
           "FR123456789"
         )
+
         val result = connector.getXiEori("FR123456789").futureValue
         result mustBe None
       }

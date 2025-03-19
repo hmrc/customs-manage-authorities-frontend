@@ -41,7 +41,7 @@ class EditAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
         emptyUserAnswers.set(EditAuthorisedUserPage("a", "b"), AuthorisedUser("test", "test2")).toOption
       ).build()
 
-      val appConfig        = app.injector.instanceOf[FrontendAppConfig]
+      val appConfig = app.injector.instanceOf[FrontendAppConfig]
 
       val form: AuthorisedUserFormProvider = app.injector.instanceOf[AuthorisedUserFormProvider]
       val view: EditAuthorisedUserView     = app.injector.instanceOf[EditAuthorisedUserView]
