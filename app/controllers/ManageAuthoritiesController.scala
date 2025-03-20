@@ -125,6 +125,29 @@ class ManageAuthoritiesController @Inject() (
         .flatten
     }
 
+  def fetchAuthoritiesOnMIDVAHomePageLoadV2(): Action[AnyContent] =
+    (identify andThen checkEmailIsVerified).async { implicit request =>
+      val eori                                                  = request.eoriNumber
+      val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
+        xiEori      <- dataStoreConnector.getXiEori
+        accounts    <- getAllAccounts(eori, xiEori)
+        authorities <- getAllAuthorities(eori, xiEori, accounts)
+      } yield authorities
+
+      fetchCompanyDetailsForAuthorisedEORIs(fetchedAuthorities)
+
+      fetchedAuthorities
+        .map {
+          case Some(_) => Future.successful(Ok)
+          case _       => Future.successful(NoContent)
+        }
+        .recover { case _ =>
+          logger.warn(s"Authorities could not be fetched and saved in cache for Eori number : $eori")
+          Future.successful(InternalServerError)
+        }
+        .flatten
+    }
+
   private def fetchAccounts(xiEori: Option[EORI], accountsFromCache: Option[CDSAccounts])(implicit
     request: IdentifierRequest[AnyContent]
   ): Future[CDSAccounts] =
