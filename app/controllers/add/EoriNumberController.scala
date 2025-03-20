@@ -91,7 +91,7 @@ class EoriNumberController @Inject() (
       errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
     } else {
       val result = for {
-        xiEori: Option[String] <- dataStore.getXiEori
+        xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
       } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode, request, hc, msgs)
 
       result.flatten

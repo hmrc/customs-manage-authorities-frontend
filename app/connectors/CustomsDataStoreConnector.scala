@@ -28,6 +28,7 @@ import uk.gov.hmrc.auth.core.retrieve.Email
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 import uk.gov.hmrc.http.client.HttpClientV2
+import utils.Constants.NON_EU_EORI_PREFIXES
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -76,11 +77,11 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       }
   }
 
-  def getXiEori(implicit hc: HeaderCarrier): Future[Option[String]] = {
+  def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
     val endpoint                 = s"$baseDataStoreUrl/eori/xieori-information"
     val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
 
-    if (isXiEoriEnabled) {
+    if (isXiEoriEnabled && NON_EU_EORI_PREFIXES.exists(prefix => eori.startsWith(prefix))) {
       httpClient
         .get(url"$endpoint")
         .execute[XiEoriInformationResponse]

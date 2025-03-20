@@ -89,7 +89,7 @@ class EditCheckYourAnswersController @Inject() (
 
         case Right(AccountAndAuthority(account, authority)) =>
           for {
-            xiEori <- dataStore.getXiEori
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
             result <- doSubmission(
                         request.userAnswers,
                         accountId,

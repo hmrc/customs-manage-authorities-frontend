@@ -69,7 +69,7 @@ class ManageAuthoritiesController @Inject() (
     val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad().url
 
     val response = for {
-      xiEori                 <- dataStoreConnector.getXiEori
+      xiEori                 <- dataStoreConnector.getXiEori(request.eoriNumber)
       accountsFromCache      <- accountsCacheService.retrieveAccountsForId(request.internalId)
       accounts               <- fetchAccounts(xiEori, accountsFromCache)
       authoritiesFromCache   <- service.retrieveAuthoritiesForId(request.internalId)
@@ -106,7 +106,7 @@ class ManageAuthoritiesController @Inject() (
   def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
     (identify andThen checkEmailIsVerified).async { implicit request =>
       val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
-        xiEori      <- dataStoreConnector.getXiEori
+        xiEori      <- dataStoreConnector.getXiEori(request.eoriNumber)
         accounts    <- getAllAccounts(eori, xiEori)
         authorities <- getAllAuthorities(eori, xiEori, accounts)
       } yield authorities

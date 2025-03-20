@@ -347,7 +347,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockDataStoreConnector.getXiEori(any[HeaderCarrier])).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any)(any[HeaderCarrier])).thenReturn(Future.successful(None))
+
         when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
           .thenReturn(Future.successful(None))
 
@@ -466,7 +467,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockDataStoreConnector.getXiEori(any[HeaderCarrier]))
+        when(mockDataStoreConnector.getXiEori(any)(any[HeaderCarrier]))
           .thenReturn(Future.successful(Some("XI123456789012")))
 
         val application: Application =

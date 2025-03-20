@@ -84,7 +84,7 @@ class RemoveCheckYourAnswers @Inject() (
 
         case Right(AccountAndAuthority(account, authority)) =>
           for {
-            xiEori <- dataStore.getXiEori
+            xiEori <- dataStore.getXiEori(request.eoriNumber)
             result <- request.userAnswers
                         .get(RemoveAuthorisedUserPage(accountId, authorityId))
                         .map { authorisedUser =>
