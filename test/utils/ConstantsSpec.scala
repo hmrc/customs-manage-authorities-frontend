@@ -108,7 +108,7 @@ class ConstantsSpec extends SpecBase {
   "NON_EU_EORI_PREFIXES" should {
 
     "contain correct values in" in {
-      NON_EU_EORI_PREFIXES mustBe Set("GB", "GBN", "XI")
+      NON_EU_EORI_PREFIXES mustBe Set("GB", "XI")
     }
   }
 
