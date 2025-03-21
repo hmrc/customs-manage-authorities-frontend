@@ -628,7 +628,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         .thenReturn(Future.successful(authoritiesWithId))
 
       when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getXiEori(any)(any())).thenReturn(Future.successful(Some(XI_EORI)))
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
       when(mockAuthAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
@@ -680,7 +680,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       when(mockAuthAndCompanyRepo.get(any)).thenReturn(Future.successful(None))
 
       when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getXiEori(any)(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -724,7 +724,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
 
       when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getXiEori(any)(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -771,7 +771,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         .thenReturn(Future.successful(authoritiesWithId02))
 
       when(mockDataStoreConnector.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
-      when(mockDataStoreConnector.getXiEori(any())).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.getXiEori(any)(any())).thenReturn(Future.successful(Some(XI_EORI)))
 
       when(mockDataStoreConnector.getCompanyName)
         .thenReturn(Future.failed(new RuntimeException("Failed")))

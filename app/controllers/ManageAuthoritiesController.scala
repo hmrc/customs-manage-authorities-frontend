@@ -129,7 +129,7 @@ class ManageAuthoritiesController @Inject() (
     (identify andThen checkEmailIsVerified).async { implicit request =>
       val eori                                                  = request.eoriNumber
       val fetchedAuthorities: Future[Option[AuthoritiesWithId]] = for {
-        xiEori      <- dataStoreConnector.getXiEori
+        xiEori      <- dataStoreConnector.getXiEori(request.eoriNumber)
         accounts    <- getAllAccounts(eori, xiEori)
         authorities <- getAllAuthorities(eori, xiEori, accounts)
       } yield authorities
