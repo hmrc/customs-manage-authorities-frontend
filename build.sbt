@@ -3,12 +3,13 @@ import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.{itSettings, scalaSettings, defaultSettings}
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+import AppDependencies.bootstrapVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
 
 val silencerVersion = "1.7.16"
-val bootstrapVersion = "9.5.0"
-val scala3_3_4 = "3.3.4"
+val bootstrap = bootstrapVersion
+val scala3_3_5 = "3.3.5"
 
 val testDirectory = "test"
 val scalaStyleConfigFile = "scalastyle-config.xml"
@@ -17,7 +18,7 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 Global / lintUnusedKeysOnLoad := false
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := scala3_3_4
+ThisBuild / scalaVersion := scala3_3_5
 
 lazy val scalastyleSettings = Seq(
   scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
@@ -28,7 +29,7 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
   .settings(itSettings())
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrap % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork        := true,
