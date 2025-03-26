@@ -8,7 +8,6 @@ import AppDependencies.bootstrapVersion
 lazy val appName: String = "customs-manage-authorities-frontend"
 
 val silencerVersion = "1.7.16"
-val bootstrap = bootstrapVersion
 val scala3_3_5 = "3.3.5"
 
 val testDirectory = "test"
@@ -29,7 +28,7 @@ lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test")
   .settings(itSettings())
-  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrap % Test))
+  .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork        := true,
