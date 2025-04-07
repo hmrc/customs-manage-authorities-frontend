@@ -60,8 +60,8 @@
 }
 
 @beforeContent = {
-    @maybeMessageBannerPartial.getOrElse(HtmlFormat.empty)
     @hmrcLanguageSelectHelper()
+    @maybeMessageBannerPartial.getOrElse(HtmlFormat.empty)
 
     @{
         backLink.map(link => govukBackLink(BackLink(href = link))).getOrElse(HtmlFormat.empty)
