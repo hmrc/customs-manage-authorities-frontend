@@ -147,6 +147,7 @@ eoriNumber.title=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod
 eoriNumber.heading=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
 eoriNumber.hint=Mae rhif EORI yn dechrau gyda GB neu GBN. <br>Er enghraifft, GB345834921000 neu GBN10537914000.
 eoriNumber.hint.xi=Mae rhifau EORI yn dechrau gyda GB neu XI, wedi’i ddilyn gan 12 llythyren neu digid. Er enghraifft, GB345834921000 neu XI345834921000.
+eoriNumber.hint.eu= Mae rhifau EORI yn dechrau â 2 lythyren (sef cod y wlad), ac yna 1 i 15 llythyren a rhif. Er enghraifft, GB345834921000 neu XI345834921000 
 eoriNumber.checkYourAnswersLabel=Rhif EORI y defnyddiwr
 eoriNumber.error.required=Nodwch rif EORI
 eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
@@ -154,7 +155,7 @@ eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi eich rhif EORI eich hun
 eoriNumber.details.label = Defnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon
 eoriNumber.details.text = Er mwyn rhoi awdurdod i gwmni neu berson ddefnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon, mae’n rhaid i chi ddefnyddio ei rif EORI sy’n dechrau gydag XI.
-
+eoriNumber.details.text.eu = Gallwch ond rhoi awdurdod i rif EORI sy’n dechrau gydag ‘XI’ neu god gwlad yn y UE i ddefnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon.
 
 # Which accounts to add an authority to view
 

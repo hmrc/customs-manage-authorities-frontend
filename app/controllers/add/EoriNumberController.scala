@@ -62,8 +62,9 @@ class EoriNumberController @Inject() (
     }
 
     val isXiEoriEnabled = appConfig.xiEoriEnabled
+    val isEuEoriEnabled = appConfig.euEoriEnabled
 
-    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
+    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled, isEuEoriEnabled))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
@@ -73,7 +74,7 @@ class EoriNumberController @Inject() (
         formWithErrors =>
           Future.successful(
             BadRequest(
-              view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)
+              view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled, appConfig.euEoriEnabled)
             )
           ),
         eoriNumber => processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
@@ -139,7 +140,8 @@ class EoriNumberController @Inject() (
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
             navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            appConfig.xiEoriEnabled,
+            appConfig.euEoriEnabled
           )(request, msgs, appConfig)
         )
       case _                      => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
@@ -157,7 +159,8 @@ class EoriNumberController @Inject() (
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
             navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            appConfig.xiEoriEnabled,
+            appConfig.euEoriEnabled
           )
         )
     }
@@ -173,7 +176,8 @@ class EoriNumberController @Inject() (
           form.withError("value", errorMsgKey).fill(inputEoriNumber),
           mode,
           navigator.backLinkRouteForEORINUmberPage(mode),
-          appConfig.xiEoriEnabled
+          appConfig.xiEoriEnabled,
+          appConfig.euEoriEnabled
         )(request, msgs, appConfig)
       )
     )
