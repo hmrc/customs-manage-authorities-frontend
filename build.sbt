@@ -1,17 +1,17 @@
 import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.DefaultBuildSettings.{itSettings, scalaSettings, defaultSettings}
+import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, itSettings, scalaSettings}
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 import AppDependencies.bootstrapVersion
 
 lazy val appName: String = "customs-manage-authorities-frontend"
 
 val silencerVersion = "1.7.16"
-val scala3_3_5 = "3.3.5"
+val scala3_3_5      = "3.3.5"
 
-val testDirectory = "test"
-val scalaStyleConfigFile = "scalastyle-config.xml"
+val testDirectory            = "test"
+val scalaStyleConfigFile     = "scalastyle-config.xml"
 val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 
 Global / lintUnusedKeysOnLoad := false
@@ -21,7 +21,7 @@ ThisBuild / scalaVersion := scala3_3_5
 
 lazy val scalastyleSettings = Seq(
   scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
-  (Test / scalastyleConfig) := baseDirectory.value/ testDirectory / testScalaStyleConfigFile
+  (Test / scalastyleConfig) := baseDirectory.value / testDirectory / testScalaStyleConfigFile
 )
 
 lazy val it = project
@@ -31,7 +31,7 @@ lazy val it = project
   .settings(libraryDependencies ++= Seq("uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion % Test))
 
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
-  fork        := true,
+  fork := true,
   javaOptions ++= Seq(
     "-Dconfig.resource=test.application.conf",
     "-Dlogger.resource=logback-test.xml"
@@ -68,36 +68,34 @@ lazy val root = (project in file("."))
     update / evictionWarningOptions :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(true),
     resolvers += Resolver.jcenterRepo,
-    Concat.groups := Seq(
-      "javascripts/application.js" ->
-        group(Seq(
-          "lib/hmrc-frontend/hmrc/all.js",
-          "javascripts/jquery.min.js",
-          "javascripts/app.js"
-        ))
-    ),
     uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
     pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat,uglify),
-    uglify / includeFilter := GlobFilter("application.js")
+    Assets / pipelineStages := Seq(uglify),
+    uglify / includeFilter :=
+      GlobFilter("javascripts/app.js") ||
+        GlobFilter("javascripts/gtm.js") ||
+        GlobFilter("javascripts/jquery.min.js") ||
+        GlobFilter("javascripts/main.js")
   )
   .settings(scalastyleSettings)
   .settings(
     scalacOptions := scalacOptions.value
-    .diff(Seq("-Wunused:all")) ++ Seq(
+      .diff(Seq("-Wunused:all")) ++ Seq(
       "-Wconf:src=routes/.*:s",
       "-Wconf:msg=Flag.*repeatedly:s",
-      "-Wconf:msg=unused import&src=views/.*:s",
+      "-Wconf:msg=unused import&src=views/.*:s"
     ),
-
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
       "-Wunused:params",
       "-Wunused:implicits",
       "-Wunused:explicits",
-      "-Wunused:privates"),
-    libraryDependencies ++= Seq(compilerPlugin(
-      "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.for3Use2_13With("", ".12")),
+      "-Wunused:privates"
+    ),
+    libraryDependencies ++= Seq(
+      compilerPlugin(
+        "com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.for3Use2_13With("", ".12")
+      ),
       "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.for3Use2_13With("", ".12")
     ),
     scalafmtDetailedError := true,
@@ -105,5 +103,7 @@ lazy val root = (project in file("."))
     scalafmtFailOnErrors := true
   )
 
-addCommandAlias("runAllChecks",
-  ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport")
+addCommandAlias(
+  "runAllChecks",
+  ";clean;compile;coverage;test;it/test;scalafmtCheckAll;scalastyle;Test/scalastyle;coverageReport"
+)
