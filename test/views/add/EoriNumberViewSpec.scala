@@ -74,10 +74,16 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       override val euEoriEnabled = true
 
       override def normalModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+        app.injector
+          .instanceOf[EoriNumberView]
+          .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+          .body
       )
-      override def checkModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+      override def checkModeView(): Document  = Jsoup.parse(
+        app.injector
+          .instanceOf[EoriNumberView]
+          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+          .body
       )
 
       normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
@@ -91,10 +97,16 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       override val euEoriEnabled = false
 
       override def normalModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+        app.injector
+          .instanceOf[EoriNumberView]
+          .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+          .body
       )
-      override def checkModeView(): Document = Jsoup.parse(
-        app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+      override def checkModeView(): Document  = Jsoup.parse(
+        app.injector
+          .instanceOf[EoriNumberView]
+          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+          .body
       )
 
       normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
@@ -120,25 +132,30 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest("GET", "/some/resource/path")
-    val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages = Helpers.stubMessages()
+    val app: Application                                          = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+    implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
+    implicit val messages: Messages                               = Helpers.stubMessages()
 
     private val formProvider = new EoriNumberFormProvider(appConfig)
-    val form = formProvider()
+    val form                 = formProvider()
 
     lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
-    lazy val checkModeBackLinkRoute: Call = controllers.add.routes.AuthorisedUserController.onPageLoad()
+    lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     val xiEoriEnabled: Boolean = true
     val euEoriEnabled: Boolean = false
 
     def normalModeView(): Document = Jsoup.parse(
-      app.injector.instanceOf[EoriNumberView].apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+      app.injector
+        .instanceOf[EoriNumberView]
+        .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+        .body
     )
-    def checkModeView(): Document = Jsoup.parse(
-      app.injector.instanceOf[EoriNumberView].apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled).body
+    def checkModeView(): Document  = Jsoup.parse(
+      app.injector
+        .instanceOf[EoriNumberView]
+        .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+        .body
     )
   }
 }
-
