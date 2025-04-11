@@ -83,15 +83,19 @@ class EoriNumberController @Inject() (
               )
             )
           ),
-        eoriNumber => processValidInput(mode, request, eoriNumber)
+        eoriNumber => processValidInput(mode, eoriNumber)
       )
   }
 
   private def processValidInput(
     mode: Mode,
-    request: OptionalDataRequest[AnyContent],
     inputEoriNumber: String
-  )(implicit appConfig: FrontendAppConfig, hc: HeaderCarrier, msgs: Messages): Future[Result] = {
+  )(implicit
+    request: OptionalDataRequest[AnyContent],
+    appConfig: FrontendAppConfig,
+    hc: HeaderCarrier,
+    msgs: Messages
+  ): Future[Result] = {
     val eori = removeSpaceAndConvertToUpperCase(inputEoriNumber)
 
     if (request.eoriNumber.equalsIgnoreCase(eori)) {
@@ -99,7 +103,7 @@ class EoriNumberController @Inject() (
     } else {
       val result = for {
         xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
-      } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode, request)
+      } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode)
 
       result.flatten
     }
@@ -109,21 +113,19 @@ class EoriNumberController @Inject() (
     xiEoriNumber: Option[String],
     inputEoriNumber: String,
     eoriInUpperCase: String,
-    mode: Mode,
-    request: OptionalDataRequest[AnyContent]
-  )(implicit hc: HeaderCarrier, msgs: Messages): Future[Result] =
+    mode: Mode
+  )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, msgs: Messages): Future[Result] =
     (xiEoriNumber, eoriInUpperCase) match {
       case (xiEori, inputEori) if isOwnXiEori(xiEori, inputEori) =>
         errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")
       case _                                                     =>
-        processValidEoriAndSubmit(mode, request, eoriInUpperCase)
+        processValidEoriAndSubmit(mode, eoriInUpperCase)
     }
 
   private def processValidEoriAndSubmit(
     mode: Mode,
-    request: OptionalDataRequest[AnyContent],
     eori: String
-  )(implicit hc: HeaderCarrier, msgs: Messages): Future[Result] =
+  )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, msgs: Messages): Future[Result] =
     (for {
       companyName                         <- dataStore.retrieveCompanyInformationThirdParty(eori)
       companyDetails                       = CompanyDetails(eori, companyName)
