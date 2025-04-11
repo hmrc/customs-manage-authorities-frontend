@@ -435,9 +435,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val xiEoriEnabled = true
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
-            request, 
-            messages(application), 
-            appConfig 
+            request,
+            messages(application),
+            appConfig
           ).toString
       }
     }
@@ -471,8 +471,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
-            request, 
-            messages(application), 
+            request,
+            messages(application),
             appConfig
           ).toString
       }
