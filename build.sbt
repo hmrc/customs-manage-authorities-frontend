@@ -70,28 +70,30 @@ lazy val root = (project in file("."))
     resolvers += Resolver.jcenterRepo,
     Concat.groups := Seq(
       "javascripts/application.js" ->
-        group(Seq(
-          "lib/hmrc-frontend/hmrc/all.js",
-          "javascripts/jquery.min.js",
-          "javascripts/app.js",
-          "javascripts/main.js"
-        ))
+        group(
+          Seq(
+            "lib/hmrc-frontend/hmrc/all.js",
+            "javascripts/jquery.min.js",
+            "javascripts/app.js",
+            "javascripts/main.js"
+          )
+        )
     ),
-    uglifyOps := UglifyOps.singleFile,
     uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
+
+    uglify / includeFilter := GlobFilter("application.js"),
+    uglifyOps := UglifyOps.singleFile,
     pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat,uglify),
-    uglify / includeFilter := GlobFilter("application.js")
+    Assets / pipelineStages := Seq(concat, uglify),
   )
   .settings(scalastyleSettings)
   .settings(
     scalacOptions := scalacOptions.value
-    .diff(Seq("-Wunused:all")) ++ Seq(
+      .diff(Seq("-Wunused:all")) ++ Seq(
       "-Wconf:src=routes/.*:s",
       "-Wconf:msg=Flag.*repeatedly:s",
-      "-Wconf:msg=unused import&src=views/.*:s",
+      "-Wconf:msg=unused import&src=views/.*:s"
     ),
-
     Test / scalacOptions ++= Seq(
       "-Wunused:imports",
       "-Wunused:params",
