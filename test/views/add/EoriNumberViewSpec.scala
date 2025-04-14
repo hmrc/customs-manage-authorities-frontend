@@ -88,6 +88,7 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
 
       normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
       normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text.eu"
+
       val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
       hintLabelElement.html() mustBe "eoriNumber.hint.eu"
     }
@@ -111,8 +112,36 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
 
       normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
       normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
+
       val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
       hintLabelElement.html() mustBe "eoriNumber.hint"
+
+      normalModeView().getElementsByTag("button").get(1).html() mustBe "site.saveAndContinue"
+    }
+
+    "display the correct guidance in Check mode with all EORI flags disabled" in new Setup {
+      override val xiEoriEnabled = false
+      override val euEoriEnabled = false
+
+      override def checkModeView(): Document = Jsoup.parse(
+        app.injector
+          .instanceOf[EoriNumberView]
+          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+          .body
+      )
+
+      val detailsHintElement: Element = checkModeView().getElementById("value-hint-details")
+      val hintLabelElement: Elements  = checkModeView().getElementsByClass("govuk-!-margin-top-6")
+
+      checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
+
+      detailsHintElement.getElementById("value-hint-title").html() mustBe
+        "eoriNumber.details.label"
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
+        "eoriNumber.details.text"
+      hintLabelElement.html() mustBe "eoriNumber.hint"
+
+      checkModeView().getElementsByTag("button").get(1).text() mustBe messages("site.saveAndContinue")
     }
 
     "when back-link is clicked returns to previous page on Normal Mode" in new Setup {

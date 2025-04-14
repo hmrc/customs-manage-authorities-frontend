@@ -49,14 +49,11 @@
     @errorSummary(form.errors)
 
     @{
-      val (labelHintKey, detailsTextKey) =
-        if (xiEoriEnabled) {
-          ("eoriNumber.hint.xi", "eoriNumber.details.text")
-        } else if (euEoriEnabled) {
-          ("eoriNumber.hint.eu", "eoriNumber.details.text.eu")
-        } else {
-          ("eoriNumber.hint", "eoriNumber.details.text")
-        }
+      val (labelHintKey, detailsTextKey) = (xiEoriEnabled, euEoriEnabled) match {
+        case (true, _)       => ("eoriNumber.hint.xi", "eoriNumber.details.text")
+        case (false, true)   => ("eoriNumber.hint.eu", "eoriNumber.details.text.eu")
+        case (false, false)  => ("eoriNumber.hint", "eoriNumber.details.text")
+      }
 
       val inputHint = InputTextHint(
         Some(DetailsHint("eoriNumber.details.label", detailsTextKey)),
@@ -78,4 +75,3 @@
     @button("site.saveAndContinue")
   }
 }
-
