@@ -79,7 +79,7 @@ lazy val root = (project in file("."))
           )
         )
     ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false", "warnings=false"),
+    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
 
     uglify / includeFilter := GlobFilter("application.js"),
     uglifyOps := UglifyOps.singleFile,
