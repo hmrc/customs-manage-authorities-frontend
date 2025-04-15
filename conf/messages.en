@@ -146,6 +146,7 @@ eoriNumber.title = What is the EORI number of the company or person you want to 
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.hint = An EORI number starts GB or GBN. <br> For example, GB345834921000 or GBN10537914000.
 eoriNumber.hint.xi = EORI numbers start with GB or XI followed by 12 letters or digits.<br> For example, GB345834921000 or XI345834921000.
+eoriNumber.hint.eu = EORI numbers start with 2 letters (these are the country code), followed by 1 to 15 letters and numbers. For example, GB345834921000 or XI345834921000
 eoriNumber.checkYourAnswersLabel = User EORI number
 eoriNumber.error.required = Enter an EORI number
 eoriNumber.error.format = Enter an EORI number in the correct format
@@ -153,7 +154,7 @@ eoriNumber.error.invalid = Enter an EORI that has been registered with HMRC
 eoriNumber.error.authorise-own-eori = You cannot authorise your own EORI number
 eoriNumber.details.label = Using your Northern Ireland duty deferment account
 eoriNumber.details.text = To give authority to a company or person to use your duty deferment account for Northern Ireland, you must use their EORI number starting with XI.
-
+eoriNumber.details.text.eu = You can only give authority to an EORI number starting with XI or an EU country code to use your Northern Ireland duty deferment account. 
 
 # Which accounts to add an authority to view
 

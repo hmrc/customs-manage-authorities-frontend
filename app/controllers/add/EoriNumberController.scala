@@ -35,7 +35,7 @@ import views.html.add.EoriNumberView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Success, Try}
+import scala.util.Success
 import scala.xml.dtd.ValidationException
 
 class EoriNumberController @Inject() (
@@ -62,8 +62,9 @@ class EoriNumberController @Inject() (
     }
 
     val isXiEoriEnabled = appConfig.xiEoriEnabled
+    val isEuEoriEnabled = appConfig.euEoriEnabled
 
-    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
+    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled, isEuEoriEnabled))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
@@ -73,14 +74,24 @@ class EoriNumberController @Inject() (
         formWithErrors =>
           Future.successful(
             BadRequest(
-              view(formWithErrors, mode, navigator.backLinkRouteForEORINUmberPage(mode), appConfig.xiEoriEnabled)
+              view(
+                formWithErrors,
+                mode,
+                navigator.backLinkRouteForEORINUmberPage(mode),
+                appConfig.xiEoriEnabled,
+                appConfig.euEoriEnabled
+              )
             )
           ),
-        eoriNumber => processValidInput(mode, request, eoriNumber)(appConfig, hc, request2Messages)
+        eoriNumber => processValidInput(mode, eoriNumber)
       )
   }
 
-  private def processValidInput(mode: Mode, request: OptionalDataRequest[AnyContent], inputEoriNumber: String)(implicit
+  private def processValidInput(
+    mode: Mode,
+    inputEoriNumber: String
+  )(implicit
+    request: OptionalDataRequest[AnyContent],
     appConfig: FrontendAppConfig,
     hc: HeaderCarrier,
     msgs: Messages
@@ -88,11 +99,11 @@ class EoriNumberController @Inject() (
     val eori = removeSpaceAndConvertToUpperCase(inputEoriNumber)
 
     if (request.eoriNumber.equalsIgnoreCase(eori)) {
-      errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
+      errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")
     } else {
       val result = for {
         xiEori: Option[String] <- dataStore.getXiEori(request.eoriNumber)
-      } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode, request, hc, msgs)
+      } yield performXiEoriChecks(xiEori, inputEoriNumber, eori, mode)
 
       result.flatten
     }
@@ -102,36 +113,31 @@ class EoriNumberController @Inject() (
     xiEoriNumber: Option[String],
     inputEoriNumber: String,
     eoriInUpperCase: String,
-    mode: Mode,
-    request: OptionalDataRequest[AnyContent],
-    hc: HeaderCarrier,
-    msgs: Messages
-  ): Future[Result] =
+    mode: Mode
+  )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, msgs: Messages): Future[Result] =
     (xiEoriNumber, eoriInUpperCase) match {
       case (xiEori, inputEori) if isOwnXiEori(xiEori, inputEori) =>
-        errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")(request, msgs, appConfig)
+        errorView(mode, inputEoriNumber, "eoriNumber.error.authorise-own-eori")
       case _                                                     =>
-        processValidEoriAndSubmit(mode, request, hc, msgs, eoriInUpperCase)
+        processValidEoriAndSubmit(mode, eoriInUpperCase)
     }
 
   private def processValidEoriAndSubmit(
     mode: Mode,
-    request: OptionalDataRequest[AnyContent],
-    hc: HeaderCarrier,
-    msgs: Messages,
     eori: String
-  ): Future[Result] =
+  )(implicit request: OptionalDataRequest[AnyContent], hc: HeaderCarrier, msgs: Messages): Future[Result] =
     (for {
-      companyName                         <- dataStore.retrieveCompanyInformationThirdParty(eori)(hc)
+      companyName                         <- dataStore.retrieveCompanyInformationThirdParty(eori)
       companyDetails                       = CompanyDetails(eori, companyName)
-      updatedAnswers                      <-
-        Future.fromTry(
-          request.userAnswers.getOrElse(UserAnswers(request.internalId.value)).set(EoriNumberPage, companyDetails)
-        )
+      updatedAnswers                      <- Future.fromTry(
+                                               request.userAnswers
+                                                 .getOrElse(UserAnswers(request.internalId.value))
+                                                 .set(EoriNumberPage, companyDetails)
+                                             )
       updatedAnswersWithRefreshedAccounts <-
         refreshAccountsInChangeMode(eori, eoriFromUserAnswers(request), updatedAnswers)
       _                                   <- sessionRepository.set(updatedAnswersWithRefreshedAccounts)
-      result                              <- doSubmission(updatedAnswers, eori, mode)(hc, request)
+      result                              <- doSubmission(updatedAnswers, eori, mode)
     } yield result).recover {
       case _: ValidationException =>
         BadRequest(
@@ -139,42 +145,48 @@ class EoriNumberController @Inject() (
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
             navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
-          )(request, msgs, appConfig)
+            appConfig.xiEoriEnabled,
+            appConfig.euEoriEnabled
+          )
         )
-      case _                      => Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
+      case _                      =>
+        Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
     }
 
-  private def doSubmission(updatedAnswers: UserAnswers, eori: String, mode: Mode)(implicit
-    hc: HeaderCarrier,
-    request: Request[_]
-  ): Future[Result] =
-    connector.validateEori(eori) map {
-      case Right(true) => Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
+  private def doSubmission(
+    updatedAnswers: UserAnswers,
+    eori: String,
+    mode: Mode
+  )(implicit hc: HeaderCarrier, request: Request[_]): Future[Result] =
+    connector.validateEori(eori).map {
+      case Right(true) =>
+        Redirect(navigator.nextPage(EoriNumberPage, mode, updatedAnswers))
       case _           =>
         BadRequest(
           view(
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
             navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            appConfig.xiEoriEnabled,
+            appConfig.euEoriEnabled
           )
         )
     }
 
-  private def errorView(mode: Mode, inputEoriNumber: String, errorMsgKey: String)(implicit
-    request: Request[_],
-    msgs: Messages,
-    appConfig: FrontendAppConfig
-  ): Future[Result] =
+  private def errorView(
+    mode: Mode,
+    inputEoriNumber: String,
+    errorMsgKey: String
+  )(implicit request: Request[_], msgs: Messages, appConfig: FrontendAppConfig): Future[Result] =
     Future.successful(
       BadRequest(
         view(
           form.withError("value", errorMsgKey).fill(inputEoriNumber),
           mode,
           navigator.backLinkRouteForEORINUmberPage(mode),
-          appConfig.xiEoriEnabled
-        )(request, msgs, appConfig)
+          appConfig.xiEoriEnabled,
+          appConfig.euEoriEnabled
+        )
       )
     )
 
@@ -190,18 +202,16 @@ class EoriNumberController @Inject() (
     eoriFromUserAnswers: String,
     userAnswers: UserAnswers
   ): Future[UserAnswers] =
-    Future(
+    Future {
       if (!requestEori.equals(eoriFromUserAnswers)) {
         userAnswers.set(AccountsPage, List()) match {
-          case Success(value) =>
-            val finalUpdatedUserAnswers: Try[UserAnswers] = value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No)
-            if (finalUpdatedUserAnswers.isSuccess) finalUpdatedUserAnswers.get else value
+          case Success(value) => value.set(EoriDetailsCorrectPage, EoriDetailsCorrect.No).getOrElse(value)
           case _              => userAnswers
         }
       } else {
         userAnswers
       }
-    )
+    }
 
   private def isOwnXiEori(xiEori: Option[String], inputEori: String): Boolean =
     xiEori.nonEmpty && isXIEori(inputEori) && inputEori.equals(xiEori.getOrElse(emptyString))
