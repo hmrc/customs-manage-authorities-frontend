@@ -125,7 +125,7 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/()/account-authorities"))
+          get(urlEqualTo("/customs-financials-api/account-authorities"))
             .willReturn(ok(response))
         )
 
@@ -157,10 +157,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/grant"))
             .willReturn(noContent())
         )
-        val result = connector.grantAccountAuthorities(request, "someEori").futureValue
+        val result = connector.grantAccountAuthorities(request).futureValue
         result mustBe true
       }
     }
@@ -169,10 +169,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/grant"))
             .willReturn(serverError())
         )
-        val result = connector.grantAccountAuthorities(request, "someEori").futureValue
+        val result = connector.grantAccountAuthorities(request).futureValue
         result mustBe false
       }
     }
@@ -181,10 +181,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/grant"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/grant"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
         )
-        val result = connector.grantAccountAuthorities(request, "someEori").futureValue
+        val result = connector.grantAccountAuthorities(request).futureValue
         result mustBe false
       }
     }
@@ -203,10 +203,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/revoke"))
             .willReturn(noContent())
         )
-        val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
+        val result = connector.revokeAccountAuthorities(request).futureValue
         result mustBe true
       }
     }
@@ -215,10 +215,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/revoke"))
             .willReturn(serverError())
         )
-        val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
+        val result = connector.revokeAccountAuthorities(request).futureValue
         result mustBe false
       }
     }
@@ -227,10 +227,10 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          post(urlEqualTo("/customs-financials-api/someEori/account-authorities/revoke"))
+          post(urlEqualTo("/customs-financials-api/account-authorities/revoke"))
             .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
         )
-        val result = connector.revokeAccountAuthorities(request, "someEori").futureValue
+        val result = connector.revokeAccountAuthorities(request).futureValue
         result mustBe false
       }
     }

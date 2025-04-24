@@ -81,18 +81,19 @@ class AuthorisedUserController @Inject() (
   private def doSubmission(userAnswers: UserAnswers, xiEori: String, eori: String)(implicit
     hc: HeaderCarrier
   ): Future[Result] =
+    val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
+    val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) xiEori else eori
+    
     addAuthorityValidationService
-      .validate(userAnswers)
+      .validate(userAnswers, ownerEori)
       .fold(
         Future.successful(errorPage("UserAnswers did not contain sufficient data to construct add authority request"))
       ) { payload =>
-        val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
-        val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) xiEori else eori
-
         if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) {
           processPayloadForLinkedXiAndGbEori(userAnswers, xiEori, eori, payload)
         } else {
-          connector.grantAccountAuthorities(payload, ownerEori).map {
+          val payloadWithOwnerEori = payload.copy(ownerEori = ownerEori)
+          connector.grantAccountAuthorities(payloadWithOwnerEori).map {
             case true  => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
             case false => errorPage(("Add authority request submission to backend failed", payload))
           }
@@ -109,7 +110,8 @@ class AuthorisedUserController @Inject() (
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map { req =>
-                  connector.grantAccountAuthorities(req.payload, req.ownerEori)
+                  val payloadWithOwnerEori = req.payload.copy(ownerEori = req.ownerEori)
+                  connector.grantAccountAuthorities(payloadWithOwnerEori)
                 })
     } yield
       if (result.contains(false)) {

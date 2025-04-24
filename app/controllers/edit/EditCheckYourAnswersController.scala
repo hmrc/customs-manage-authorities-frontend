@@ -115,12 +115,13 @@ class EditCheckYourAnswersController @Inject() (
 
     val ownerEori = if (authorisedEori.startsWith(nIEORIPrefix)) xiEori else eori
 
-    editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account) match {
+    editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account, ownerEori) match {
       case Right(payload) =>
         if (authorisedEori.startsWith(nIEORIPrefix)) {
           processPayloadForXIEori(userAnswers, xiEori, eori, payload, accountId, authorityId)
         } else {
-          connector.grantAccountAuthorities(payload, ownerEori).map {
+          val payloadWithOwnerEori = payload.copy(ownerEori = ownerEori)
+          connector.grantAccountAuthorities(payloadWithOwnerEori).map {
             case true  =>
               Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
             case false =>
@@ -150,7 +151,8 @@ class EditCheckYourAnswersController @Inject() (
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map { req =>
-                  connector.grantAccountAuthorities(req.payload, req.ownerEori)
+                  val payloadWithOwnerEori = req.payload.copy(ownerEori = req.ownerEori)
+                  connector.grantAccountAuthorities(payloadWithOwnerEori)
                 })
     } yield
       if (result.contains(false)) {

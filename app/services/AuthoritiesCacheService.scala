@@ -33,7 +33,7 @@ class AuthoritiesCacheService @Inject() (repository: AuthoritiesRepository, conn
     hc: HeaderCarrier
   ): Future[AuthoritiesWithId] = {
     val authorities = for {
-      a <- Future.sequence(eoriList.map(eachEori => connector.retrieveAccountAuthorities(eachEori)))
+      a <- Future.sequence(eoriList.map(eachEori => connector.retrieveAccountAuthorities()))
     } yield a.flatten
       .groupBy(_.accountNumber)
       .map { case (accountNumber, accountsWithSameAccountNumber) =>
