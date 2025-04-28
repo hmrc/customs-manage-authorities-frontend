@@ -59,7 +59,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           val request = fakeRequest(GET, manageAuthoritiesRoute)
           await(route(application, request).value)
 
-          verify(mockCustomsFinancialsConnector).deleteNotification(any, any)(any)
+          verify(mockCustomsFinancialsConnector).deleteNotification(any)(any)
         }
       }
     }

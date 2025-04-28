@@ -304,11 +304,11 @@ class CustomsFinancialsConnectorSpec
     running(app) {
 
       server.stubFor(
-        delete(urlEqualTo(s"/customs-financials-api/eori/$eoriNumber/notifications/${FileRole.StandingAuthority}"))
+        delete(urlEqualTo(s"/customs-financials-api/eori/notifications/${FileRole.StandingAuthority}"))
           .willReturn(ok())
       )
 
-      val result = connector.deleteNotification(eoriNumber, FileRole.StandingAuthority)(hc).futureValue
+      val result = connector.deleteNotification(FileRole.StandingAuthority)(hc).futureValue
       result mustBe true
     }
   }

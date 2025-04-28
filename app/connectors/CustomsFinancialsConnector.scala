@@ -119,8 +119,8 @@ class CustomsFinancialsConnector @Inject() (
       .execute[CompanyName]
   }
 
-  def deleteNotification(eori: String, fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
-    val deleteNotificationUrl = s"$baseApiUrl/eori/$eori/notifications/$fileRole"
+  def deleteNotification(fileRole: FileRole)(implicit hc: HeaderCarrier): Future[Boolean] = {
+    val deleteNotificationUrl = s"$baseApiUrl/eori/notifications/$fileRole"
     metricsReporterService.withResponseTimeLogging("customs-financials-api.delete.notification") {
       httpClient
         .delete(url"$deleteNotificationUrl")
