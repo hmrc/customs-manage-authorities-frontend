@@ -53,31 +53,41 @@ class PackageSpec extends SpecBase {
     val authReq: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(Some("12345"), Seq("67890"), Some("12345678")),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      editRequest = false,
+      gbEori
     )
 
     val authReqWithDDAccountsOnly: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(None, Seq("67890"), None),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      editRequest = false,
+      gbEori
     )
 
     val authReqWithNoDDAccounts: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(Some("12345"), Seq(), None),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      editRequest = false,
+      gbEori
     )
 
     val authReqForCashAndGuaranteeAccount: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(Some("12345"), Seq(), Some("12345678")),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      editRequest = false,
+      gbEori
     )
 
     val authReqForDDAccount: AddAuthorityRequest = AddAuthorityRequest(
       Accounts(None, Seq("67890"), None),
       StandingAuthority("GB123456789012", localDate, Option(toLocalDate), viewBalance = true),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      editRequest = false,
+      gbEori
     )
   }
 }

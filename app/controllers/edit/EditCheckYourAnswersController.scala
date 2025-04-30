@@ -120,8 +120,7 @@ class EditCheckYourAnswersController @Inject() (
         if (authorisedEori.startsWith(nIEORIPrefix)) {
           processPayloadForXIEori(userAnswers, xiEori, eori, payload, accountId, authorityId)
         } else {
-          val payloadWithOwnerEori = payload.copy(ownerEori = ownerEori)
-          connector.grantAccountAuthorities(payloadWithOwnerEori).map {
+          connector.grantAccountAuthorities(payload).map {
             case true  =>
               Redirect(navigator.nextPage(EditCheckYourAnswersPage(accountId, authorityId), NormalMode, userAnswers))
             case false =>

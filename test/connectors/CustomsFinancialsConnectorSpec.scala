@@ -30,6 +30,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.WireMockHelper
+import utils.TestData.EORI_NUMBER
 
 import java.time.LocalDate
 
@@ -52,7 +53,7 @@ class CustomsFinancialsConnectorSpec
 
   ".retrieveAccounts" must {
     "return accounts" in new Setup {
-      val response =
+      val response: String =
         """
           |{
           |  "accountsAndBalancesResponse": {
@@ -83,7 +84,7 @@ class CustomsFinancialsConnectorSpec
           |}
           |""".stripMargin
 
-      val expected = CDSAccounts(
+      val expected: CDSAccounts = CDSAccounts(
         "GB123456789012",
         List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
       )
@@ -102,7 +103,7 @@ class CustomsFinancialsConnectorSpec
 
   ".retrieveAccountAuthorities" must {
     "return account authorities" in new Setup {
-      val accountAuthorities = Seq(
+      val accountAuthorities: Seq[AccountWithAuthorities] = Seq(
         AccountWithAuthorities(
           domain.CdsCashAccount,
           "12345",
@@ -111,7 +112,7 @@ class CustomsFinancialsConnectorSpec
         )
       )
 
-      val response =
+      val response: String =
         """
           |[
           |   {
@@ -129,7 +130,7 @@ class CustomsFinancialsConnectorSpec
             .willReturn(ok(response))
         )
 
-        val result = connector.retrieveAccountAuthorities((): Unit).futureValue
+        val result = connector.retrieveAccountAuthorities(eoriNumber).futureValue
 
         result mustBe accountAuthorities
       }
@@ -150,7 +151,9 @@ class CustomsFinancialsConnectorSpec
         Option(LocalDate.now().plusDays(1)),
         viewBalance = true
       ),
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      true,
+      EORI_NUMBER
     )
 
     "return success response" in new Setup {
@@ -196,7 +199,8 @@ class CustomsFinancialsConnectorSpec
       "12345",
       domain.CdsCashAccount,
       "authorisedEori",
-      AuthorisedUser("name", "job")
+      AuthorisedUser("name", "job"),
+      EORI_NUMBER
     )
 
     "return success response" in new Setup {

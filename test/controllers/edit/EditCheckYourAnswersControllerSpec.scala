@@ -29,7 +29,7 @@ import models.domain.{
 }
 import models.requests.{Accounts, AddAuthorityRequest}
 import models.{AuthorityEnd, AuthorityStart, ShowBalance, UnknownAccountType, UserAnswers, domain, withNameToString}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq => eqMatcher}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
@@ -166,7 +166,8 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         val optAccountWithAuthoritiesWithId: Option[AccountWithAuthoritiesWithId] =
           authoritiesWithId.authorities.get("a")
-        val updatedAccountWithAuthoritiesWithId                                   = optAccountWithAuthoritiesWithId.get.copy(authorities = Map())
+        val updatedAccountWithAuthoritiesWithId: AccountWithAuthoritiesWithId     =
+          optAccountWithAuthoritiesWithId.get.copy(authorities = Map())
 
         when(mockAuthoritiesRepo.get(any())).thenReturn(
           Future.successful(Some(authoritiesWithId.copy(authorities = Map("a" -> updatedAccountWithAuthoritiesWithId))))
@@ -220,18 +221,24 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-      val accounts: Accounts = Accounts(
+      override val accounts: Accounts = Accounts(
         Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
         Seq.empty,
         None
       )
-      when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+      when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
         Right(
-          AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+          AddAuthorityRequest(
+            accounts,
+            standingAuthority,
+            AuthorisedUser("someName", "someRole"),
+            editRequest = true,
+            ownerEori
+          )
         )
       )
 
-      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(any)(any)).thenReturn(Future.successful(true))
 
       running(application) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -274,21 +281,27 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq("123456"),
           Some("123456")
         )
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq("XI123456789012"))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(xiAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(application) {
@@ -296,7 +309,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -333,21 +346,27 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq("123456"),
           Some("123456")
         )
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq("XI123456789012"))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(xiAddAuthorityRequest))(any))
           .thenReturn(Future.successful(false))
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(false))
 
         running(application) {
@@ -356,7 +375,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -394,21 +413,27 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockDataStoreConnector.getXiEori(any)(any))
           .thenReturn(Future.successful(Some("XI123456789012")))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq("123456"),
           Some("123456")
         )
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq("XI123456789012"))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(xiAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(false))
 
         running(application) {
@@ -417,7 +442,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.routes.TechnicalDifficulties.onPageLoad.url)
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -452,19 +477,25 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq("123456"),
           Some("123456")
         )
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(application) {
@@ -472,7 +503,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -507,19 +538,25 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq("123456"),
           Some("123456")
         )
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(euAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(application) {
@@ -527,7 +564,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -546,7 +583,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .configure(Map("features.edit-journey" -> true))
           .build()
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq.empty,
           None
@@ -571,13 +608,19 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+        when(mockConnector.grantAccountAuthorities(any)(any)).thenReturn(Future.successful(true))
 
         running(application) {
           val request = fakeRequest(POST, onSubmitRoute)
@@ -617,18 +660,24 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
-        val accounts: Accounts = Accounts(
+        override val accounts: Accounts = Accounts(
           Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
           Seq.empty,
           None
         )
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any)).thenReturn(
           Right(
-            AddAuthorityRequest(accounts, standingAuthority, AuthorisedUser("someName", "someRole"), editRequest = true)
+            AddAuthorityRequest(
+              accounts,
+              standingAuthority,
+              AuthorisedUser("someName", "someRole"),
+              editRequest = true,
+              ownerEori
+            )
           )
         )
 
-        when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
+        when(mockConnector.grantAccountAuthorities(any)(any)).thenReturn(Future.successful(false))
 
         running(application) {
           val request = fakeRequest(POST, onSubmitRoute)
@@ -668,7 +717,8 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
-        when(mockEditAuthorityValidationService.validate(any, any, any, any, any)).thenReturn(Left(UnknownAccountType))
+        when(mockEditAuthorityValidationService.validate(any, any, any, any, any, any))
+          .thenReturn(Left(UnknownAccountType))
 
         running(application) {
           val request = fakeRequest(POST, onSubmitRoute)
@@ -767,8 +817,10 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     private val accountId = "a"
     private val authId    = "b"
 
-    val gbEori = "GB123456789012"
-    val euEori = "DE123456789012"
+    val gbEori    = "GB123456789012"
+    val euEori    = "DE123456789012"
+    val xiEori    = "XI123456789012"
+    val ownerEori = "someEori"
 
     def onwardRoute: Call = Call("GET", "/foo")
 
@@ -848,6 +900,30 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       Seq(standingAuthority1, standingAuthority2)
     )
 
+    val accounts: Accounts             = Accounts(Some("accountsString"), Seq.empty, None)
+    val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
+
+    val xiAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthorityForXI,
+      authorisedUser = authorisedUser,
+      ownerEori = xiEori
+    )
+
+    val gbAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthority,
+      authorisedUser = authorisedUser,
+      ownerEori = gbEori
+    )
+
+    val euAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthority,
+      authorisedUser = authorisedUser,
+      ownerEori = euEori
+    )
+
     def helper(
       userAnswers: UserAnswers,
       application: Application,
@@ -865,6 +941,6 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
     when(mockDateTimeService.localDate()).thenReturn(LocalDate.now())
-    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
   }
 }

@@ -19,8 +19,9 @@ package controllers.remove
 import base.SpecBase
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import models.UserAnswers
-import models.domain._
-import org.mockito.ArgumentMatchers.any
+import models.domain.*
+import models.requests.RevokeAuthorityRequest
+import org.mockito.ArgumentMatchers.{any, eq => eqMatcher}
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
@@ -28,7 +29,7 @@ import pages.remove.RemoveAuthorisedUserPage
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.{Application, inject}
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import utils.StringUtils.emptyString
@@ -154,7 +155,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), any())(any()))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(false))
 
       running(app) {
@@ -173,7 +174,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), any())(any()))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(true))
 
       running(app) {
@@ -198,7 +199,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
-      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), any())(any()))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(true))
 
       running(app) {
@@ -208,7 +209,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustBe
           controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
         verify(mockCustomsFinancialsConnector, Mockito.times(1))
-          .revokeAccountAuthorities(any(), ArgumentMatchers.eq(euEori))(any)
+          .revokeAccountAuthorities(eqMatcher(euRevokeAuthorityRequest))(any)
       }
     }
 
@@ -229,7 +230,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthorityWithXIEori)))
           )
 
-        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
+        when(
+          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerCA))(any())
+        )
           .thenReturn(Future.successful(true))
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
@@ -241,7 +244,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustBe
             controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
 
-          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any)(any)
         }
       }
 
@@ -264,7 +267,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             )
           )
 
-        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(gbEori))(any()))
+        when(
+          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerGG))(any())
+        )
           .thenReturn(Future.successful(true))
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
@@ -276,7 +281,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustBe
             controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
 
-          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any)(any)
         }
       }
 
@@ -300,7 +305,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
             )
           )
 
-        when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any(), ArgumentMatchers.eq(xiEori))(any()))
+        when(
+          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithXiOwner))(any())
+        )
           .thenReturn(Future.successful(true))
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
@@ -312,7 +319,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           redirectLocation(result).value mustBe
             controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url
 
-          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any, any)(any)
+          verify(mockCustomsFinancialsConnector, Mockito.times(1)).revokeAccountAuthorities(any)(any)
         }
       }
   }
@@ -328,11 +335,45 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     val gbEori                   = "GB123456789012"
     val xiEori                   = "XI123456789012"
     val euEori                   = "DE123456789012"
+    val eori                     = "EORI"
     val authUser: AuthorisedUser = AuthorisedUser("test", "test")
+    val accountNumber            = "12345"
 
     val standingAuthority: StandingAuthority           = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val standingAuthorityWithXIEori: StandingAuthority =
       StandingAuthority(xiEori, startDate, Some(endDate), viewBalance = false)
+
+    val euRevokeAuthorityRequest: RevokeAuthorityRequest = RevokeAuthorityRequest(
+      accountNumber = accountNumber,
+      accountType = CdsCashAccount,
+      authorisedEori = eori,
+      authorisedUser = authUser,
+      ownerEori = euEori
+    )
+
+    val xiRevokeAuthorityRequestWithGbOwnerGG: RevokeAuthorityRequest = RevokeAuthorityRequest(
+      accountNumber = accountNumber,
+      accountType = CdsGeneralGuaranteeAccount,
+      authorisedEori = xiEori,
+      authorisedUser = authUser,
+      ownerEori = gbEori
+    )
+
+    val xiRevokeAuthorityRequestWithGbOwnerCA: RevokeAuthorityRequest = RevokeAuthorityRequest(
+      accountNumber = accountNumber,
+      accountType = CdsCashAccount,
+      authorisedEori = xiEori,
+      authorisedUser = authUser,
+      ownerEori = gbEori
+    )
+
+    val xiRevokeAuthorityRequestWithXiOwner: RevokeAuthorityRequest = RevokeAuthorityRequest(
+      accountNumber = accountNumber,
+      accountType = CdsDutyDefermentAccount,
+      authorisedEori = xiEori,
+      authorisedUser = authUser,
+      ownerEori = xiEori
+    )
 
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))

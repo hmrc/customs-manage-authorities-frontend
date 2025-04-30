@@ -21,26 +21,26 @@ import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
 import controllers.actions.{FakeVerifyAccountNumbersAction, VerifyAccountNumbersAction}
 import forms.AuthorisedUserFormProviderWithConsent
-import models.domain._
-import models.requests.Accounts
+import models.domain.*
+import models.requests.{Accounts, AddAuthorityRequest}
 import models.withNameToString
 import models.{AuthorityStart, CompanyDetails, EoriDetailsCorrect, ShowBalance, UserAnswers}
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
 import org.mockito.{ArgumentMatchers, Mockito}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.add._
+import pages.add.*
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.guice.GuiceableModule
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.{Application, inject}
 import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import utils.StringUtils.emptyString
 import views.html.add.AuthorisedUserView
+import org.mockito.ArgumentMatchers.{eq => eqMatcher, any}
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
@@ -127,7 +127,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
-      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(true))
+      when(mockConnector.grantAccountAuthorities(any)(any())).thenReturn(Future.successful(true))
 
       running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -150,9 +150,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(xiAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(app) {
@@ -160,7 +160,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -177,7 +177,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(xiAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(app) {
@@ -185,7 +185,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -202,7 +202,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(euEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(euAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(app) {
@@ -210,7 +210,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(app, request).value
 
           status(result) mustEqual SEE_OTHER
-          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -227,9 +227,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           .thenReturn(Some((accountsWithDDCashAndGuarantee, standingAuthority, authorisedUser)))
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
+        when(mockConnector.grantAccountAuthorities(any)(any))
           .thenReturn(Future.successful(false))
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(any)(any))
           .thenReturn(Future.successful(false))
 
         running(app) {
@@ -239,7 +239,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(technicalDifficultiesPage)
 
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -257,10 +257,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(xiEori))(any))
+        when(mockConnector.grantAccountAuthorities(any)(any))
           .thenReturn(Future.successful(true))
-
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(any)(any))
           .thenReturn(Future.successful(false))
 
         running(app) {
@@ -270,7 +269,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustBe Some(technicalDifficultiesPage)
 
-          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(2)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -289,7 +288,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
 
-        when(mockConnector.grantAccountAuthorities(any, ArgumentMatchers.eq(gbEori))(any))
+        when(mockConnector.grantAccountAuthorities(eqMatcher(gbAddAuthorityRequest))(any))
           .thenReturn(Future.successful(true))
 
         running(app) {
@@ -298,7 +297,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
 
-          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any, any)(any)
+          verify(mockConnector, Mockito.times(1)).grantAccountAuthorities(any)(any)
         }
       }
 
@@ -310,7 +309,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       when(mockValidator.validate(userAnswers)).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(xiEori)))
-      when(mockConnector.grantAccountAuthorities(any, any)(any)).thenReturn(Future.successful(false))
+      when(mockConnector.grantAccountAuthorities(any)(any)).thenReturn(Future.successful(false))
 
       running(app) {
         val request = fakeRequest(POST, onSubmitRoute)
@@ -335,6 +334,7 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val gbEori                 = "GB123456789012"
     val xiEori                 = "XI9876543210000"
     val euEori                 = "DE9876543210000"
+
     val accountsString: String =
       AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty).toString
     val accounts: Accounts     = Accounts(Some(accountsString), Seq.empty, None)
@@ -360,6 +360,27 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       GeneralGuaranteeAccount("54321", "GB000000000000", AccountStatusOpen, Some(GeneralGuaranteeBalance(50.00, 50.00)))
 
     val selectedAccounts: List[CDSAccount] = List(cashAccount, dutyDeferment, generalGuarantee)
+
+    val xiAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthority,
+      authorisedUser = authorisedUser,
+      ownerEori = xiEori
+    )
+
+    val gbAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthority,
+      authorisedUser = authorisedUser,
+      ownerEori = gbEori
+    )
+
+    val euAddAuthorityRequest: AddAuthorityRequest = AddAuthorityRequest(
+      accounts = accounts,
+      authority = standingAuthority,
+      authorisedUser = authorisedUser,
+      ownerEori = euEori
+    )
 
     val userAnswersTodayToIndefinite: UserAnswers =
       UserAnswers("id")
@@ -427,11 +448,11 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
     val sessionExpiredPage: String        = controllers.routes.SessionExpiredController.onPageLoad.url
 
-    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
     when(mockValidator.validate(any())).thenReturn(Some((accounts, standingAuthority, authorisedUser)))
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
 
-    when(mockConnector.grantAccountAuthorities(any(), any())(any())).thenReturn(Future.successful(true))
+    when(mockConnector.grantAccountAuthorities(any())(any())).thenReturn(Future.successful(true))
     when(mockValidator.validate(userAnswersTodayToIndefinite))
       .thenReturn(Some((accounts, standingAuthority, authorisedUser)))
 

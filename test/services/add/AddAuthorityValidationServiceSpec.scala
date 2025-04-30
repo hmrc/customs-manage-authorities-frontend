@@ -53,8 +53,14 @@ class AddAuthorityValidationServiceSpec extends SpecBase {
         val service: AddAuthorityValidationService = application.injector.instanceOf[AddAuthorityValidationService]
 
         running(application) {
-          service.validate(userAnswers) mustBe Option(
-            AddAuthorityRequest(Accounts(Some("12345"), Seq.empty, None), standingAuthority, authUser)
+          service.validate(userAnswers, ownerEori) mustBe Option(
+            AddAuthorityRequest(
+              Accounts(Some("12345"), Seq.empty, None),
+              standingAuthority,
+              authUser,
+              editRequest = false,
+              ownerEori
+            )
           )
         }
 
@@ -75,7 +81,7 @@ class AddAuthorityValidationServiceSpec extends SpecBase {
         val service: AddAuthorityValidationService = application.injector.instanceOf[AddAuthorityValidationService]
 
         running(application) {
-          service.validate(userAnswers) mustBe empty
+          service.validate(userAnswers, ownerEori) mustBe empty
         }
       }
     }
@@ -113,10 +119,11 @@ trait SetUp {
     .success
     .value
 
+  val ownerEori      = "GB12345"
   val year           = 2023
   val monthOfTheYear = 6
   val dayOfTheMonth  = 12
 
-  val startDate         = LocalDate.of(year, monthOfTheYear, dayOfTheMonth)
-  val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
+  val startDate: LocalDate                 = LocalDate.of(year, monthOfTheYear, dayOfTheMonth)
+  val standingAuthority: StandingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 }

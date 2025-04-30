@@ -92,8 +92,7 @@ class AuthorisedUserController @Inject() (
         if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) {
           processPayloadForLinkedXiAndGbEori(userAnswers, xiEori, eori, payload)
         } else {
-          val payloadWithOwnerEori = payload.copy(ownerEori = ownerEori)
-          connector.grantAccountAuthorities(payloadWithOwnerEori).map {
+          connector.grantAccountAuthorities(payload).map {
             case true  => Redirect(navigator.nextPage(AuthorisedUserPage, NormalMode, userAnswers))
             case false => errorPage(("Add authority request submission to backend failed", payload))
           }
