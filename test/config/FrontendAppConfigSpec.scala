@@ -40,7 +40,7 @@ class FrontendAppConfigSpec extends SpecBase {
         appConfig.subscribeCdsUrl mustBe "https://www.tax.service.gov.uk/customs-enrolment-services/cds/subscribe"
         appConfig.govukHome mustBe "https://www.gov.uk"
         appConfig.helpMakeGovUkBetterUrl mustBe
-          "https://signup.take-part-in-research.service.gov.uk?utm_campaign=CDSfinancials&utm_source=Other&utm_medium=other&t=HMRC&id=249"
+          "https://survey.take-part-in-research.service.gov.uk/jfe/form/SV_74GjifgnGv6GsMC?Source=BannerList_HMRC_CDS_MIDVA"
 
         appConfig.xClientIdHeader mustBe "c10ef6c6-8ffe-4a45-a159-d707ef90cf07"
         appConfig.timeout mustBe 900
