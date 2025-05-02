@@ -242,7 +242,7 @@ class CustomsFinancialsConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
+          get(urlEqualTo("/customs-financials-api/eori/validate"))
             .willReturn(ok())
         )
 
@@ -272,7 +272,7 @@ class CustomsFinancialsConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
+          get(urlEqualTo("/customs-financials-api/eori/validate"))
             .willReturn(serverError())
         )
 
