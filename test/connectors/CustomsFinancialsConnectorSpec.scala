@@ -242,12 +242,13 @@ class CustomsFinancialsConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/eori/validate"))
+          post(urlEqualTo("/customs-financials-api/eori/validate"))
+          .withRequestBody(equalToJson("""{"eori": "121312"}"""))
             .willReturn(ok())
         )
 
         val result = connector.validateEori(eoriNumber).futureValue
-
+        
         result mustBe Right(true)
       }
     }
@@ -257,7 +258,8 @@ class CustomsFinancialsConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/eori/121312/validate"))
+          post(urlEqualTo("/customs-financials-api/eori/validate"))
+          .withRequestBody(equalToJson("""{"eori": "121312"}"""))
             .willReturn(notFound())
         )
 
@@ -272,7 +274,8 @@ class CustomsFinancialsConnectorSpec
       running(app) {
 
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/eori/validate"))
+          post(urlEqualTo("/customs-financials-api/eori/validate"))
+          .withRequestBody(equalToJson("""{"eori": "121312"}"""))
             .willReturn(serverError())
         )
 
