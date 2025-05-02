@@ -248,7 +248,7 @@ class CustomsFinancialsConnectorSpec
         )
 
         val result = connector.validateEori(eoriNumber).futureValue
-        
+
         result mustBe Right(true)
       }
     }
