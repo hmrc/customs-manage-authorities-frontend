@@ -297,7 +297,6 @@ class CustomsFinancialsConnectorSpec
             .willReturn(ok(json))
         )
         val result = connector.retrieveEoriCompanyName().futureValue
-
         result.name mustBe Some("ABCD")
       }
     }
