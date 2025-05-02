@@ -64,9 +64,10 @@ class CustomsFinancialsConnector @Inject() (
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
     val retrieveAccountAuthoritiesUrl = s"$baseApiUrl/account-authorities"
-    val request: EoriRequest = EoriRequest(eori)
+    val request: EoriRequest          = EoriRequest(eori)
+
     httpClient
-      .get(url"$retrieveAccountAuthoritiesUrl")
+      .post(url"$retrieveAccountAuthoritiesUrl")
       .withBody(request)
       .execute[Seq[AccountWithAuthorities]]
   }

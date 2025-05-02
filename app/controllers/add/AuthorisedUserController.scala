@@ -80,10 +80,10 @@ class AuthorisedUserController @Inject() (
 
   private def doSubmission(userAnswers: UserAnswers, xiEori: String, eori: String)(implicit
     hc: HeaderCarrier
-  ): Future[Result] =
+  ): Future[Result] = {
     val enteredEori = (userAnswers.data \ "eoriNumber" \ "eori").as[String]
     val ownerEori   = if (enteredEori.startsWith(nIEORIPrefix) && eori.startsWith(gbEORIPrefix)) xiEori else eori
-    
+
     addAuthorityValidationService
       .validate(userAnswers, ownerEori)
       .fold(
@@ -98,6 +98,7 @@ class AuthorisedUserController @Inject() (
           }
         }
       }
+  }
 
   private def processPayloadForLinkedXiAndGbEori(
     userAnswers: UserAnswers,
@@ -109,8 +110,7 @@ class AuthorisedUserController @Inject() (
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map { req =>
-                  val payloadWithOwnerEori = req.payload.copy(ownerEori = req.ownerEori)
-                  connector.grantAccountAuthorities(payloadWithOwnerEori)
+                  connector.grantAccountAuthorities(req.payload.copy(ownerEori = req.ownerEori))
                 })
     } yield
       if (result.contains(false)) {

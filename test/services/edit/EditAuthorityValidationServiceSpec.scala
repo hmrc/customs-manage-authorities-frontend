@@ -56,18 +56,59 @@ class EditAuthorityValidationServiceSpec extends SpecBase {
         running(application) {
           service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority, ownerEori) mustBe
             Right(
-              AddAuthorityRequest(Accounts(Some(accountNumberVal), Seq.empty, None), standingAuthority, authUser, true, "GB12345")
+              AddAuthorityRequest(
+                Accounts(Some(accountNumberVal), Seq.empty, None),
+                standingAuthority,
+                authUser,
+                true,
+                "GB12345"
+              )
             )
 
-          service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority02, ownerEori) mustBe
-            Right(AddAuthorityRequest(Accounts(None, Seq(accountNumberVal), None), standingAuthority, authUser, true, "GB12345"))
-
-          service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority03, ownerEori) mustBe
+          service.validate(
+            userAnswers,
+            accountIdVal,
+            authorityIdVal,
+            authorisedEoriVal,
+            accAuthority02,
+            ownerEori
+          ) mustBe
             Right(
-              AddAuthorityRequest(Accounts(None, Seq.empty, Some(accountNumberVal)), standingAuthority, authUser, true, "GB12345")
+              AddAuthorityRequest(
+                Accounts(None, Seq(accountNumberVal), None),
+                standingAuthority,
+                authUser,
+                true,
+                "GB12345"
+              )
             )
 
-          service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority04, ownerEori) mustBe
+          service.validate(
+            userAnswers,
+            accountIdVal,
+            authorityIdVal,
+            authorisedEoriVal,
+            accAuthority03,
+            ownerEori
+          ) mustBe
+            Right(
+              AddAuthorityRequest(
+                Accounts(None, Seq.empty, Some(accountNumberVal)),
+                standingAuthority,
+                authUser,
+                true,
+                "GB12345"
+              )
+            )
+
+          service.validate(
+            userAnswers,
+            accountIdVal,
+            authorityIdVal,
+            authorisedEoriVal,
+            accAuthority04,
+            ownerEori
+          ) mustBe
             Left(UnknownAccountType)
         }
       }
@@ -88,7 +129,14 @@ class EditAuthorityValidationServiceSpec extends SpecBase {
         val service: EditAuthorityValidationService = application.injector.instanceOf[EditAuthorityValidationService]
 
         running(application) {
-          service.validate(userAnswers, accountIdVal, authorityIdVal, authorisedEoriVal, accAuthority, ownerEori) mustBe Left(
+          service.validate(
+            userAnswers,
+            accountIdVal,
+            authorityIdVal,
+            authorisedEoriVal,
+            accAuthority,
+            ownerEori
+          ) mustBe Left(
             UnknownAccountType
           )
         }

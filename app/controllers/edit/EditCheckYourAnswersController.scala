@@ -115,7 +115,14 @@ class EditCheckYourAnswersController @Inject() (
 
     val ownerEori = if (authorisedEori.startsWith(nIEORIPrefix)) xiEori else eori
 
-    editAuthorityValidationService.validate(userAnswers, accountId, authorityId, authorisedEori, account, ownerEori) match {
+    editAuthorityValidationService.validate(
+      userAnswers,
+      accountId,
+      authorityId,
+      authorisedEori,
+      account,
+      ownerEori
+    ) match {
       case Right(payload) =>
         if (authorisedEori.startsWith(nIEORIPrefix)) {
           processPayloadForXIEori(userAnswers, xiEori, eori, payload, accountId, authorityId)
@@ -150,8 +157,7 @@ class EditCheckYourAnswersController @Inject() (
 
     for {
       result <- Future.sequence(grantAccAuthRequests.map { req =>
-                  val payloadWithOwnerEori = req.payload.copy(ownerEori = req.ownerEori)
-                  connector.grantAccountAuthorities(payloadWithOwnerEori)
+                  connector.grantAccountAuthorities(req.payload.copy(ownerEori = req.ownerEori))
                 })
     } yield
       if (result.contains(false)) {

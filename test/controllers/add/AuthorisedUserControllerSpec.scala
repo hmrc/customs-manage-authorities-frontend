@@ -40,7 +40,7 @@ import services.DateTimeService
 import services.add.CheckYourAnswersValidationService
 import utils.StringUtils.emptyString
 import views.html.add.AuthorisedUserView
-import org.mockito.ArgumentMatchers.{eq => eqMatcher, any}
+import org.mockito.ArgumentMatchers.{any, eq => eqMatcher}
 
 import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.Future
@@ -331,9 +331,9 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val mockConnector: CustomsFinancialsConnector         = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
-    val gbEori                 = "GB123456789012"
-    val xiEori                 = "XI9876543210000"
-    val euEori                 = "DE9876543210000"
+    val gbEori = "GB123456789012"
+    val xiEori = "XI9876543210000"
+    val euEori = "DE9876543210000"
 
     val accountsString: String =
       AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty).toString

@@ -231,7 +231,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           )
 
         when(
-          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerCA))(any())
+          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerCA))(
+            any()
+          )
         )
           .thenReturn(Future.successful(true))
 
@@ -268,7 +270,9 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           )
 
         when(
-          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerGG))(any())
+          mockCustomsFinancialsConnector.revokeAccountAuthorities(eqMatcher(xiRevokeAuthorityRequestWithGbOwnerGG))(
+            any()
+          )
         )
           .thenReturn(Future.successful(true))
 

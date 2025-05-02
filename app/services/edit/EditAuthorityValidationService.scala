@@ -41,7 +41,8 @@ class EditAuthorityValidationService @Inject() (editCyaValidationService: EditCh
 
       accounts = checkAndRetrieveAccounts(account)
     } yield accounts match {
-      case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true, ownerEori))
+      case Right(value) =>
+        Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true, ownerEori))
       case Left(error)  => Left(error)
     }
 

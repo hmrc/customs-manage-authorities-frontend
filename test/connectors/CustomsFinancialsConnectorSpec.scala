@@ -126,7 +126,7 @@ class CustomsFinancialsConnectorSpec
 
       running(app) {
         server.stubFor(
-          get(urlEqualTo("/customs-financials-api/account-authorities"))
+          post(urlEqualTo("/customs-financials-api/account-authorities"))
             .willReturn(ok(response))
         )
 

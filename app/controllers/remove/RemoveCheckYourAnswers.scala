@@ -94,7 +94,7 @@ class RemoveCheckYourAnswers @Inject() (
                             xiEori.getOrElse(emptyString),
                             request.eoriNumber
                           )
-                          
+
                           val revokeRequest = RevokeAuthorityRequest(
                             account.accountNumber,
                             account.accountType,
@@ -123,9 +123,9 @@ class RemoveCheckYourAnswers @Inject() (
     eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
+    val ownerEori            = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
     val payloadWithOwnerEori = revokeRequest.copy(ownerEori = ownerEori)
-    
+
     customsFinancialsConnector.revokeAccountAuthorities(payloadWithOwnerEori).map {
       case true  => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
       case false => errorPage(SubmissionError)
