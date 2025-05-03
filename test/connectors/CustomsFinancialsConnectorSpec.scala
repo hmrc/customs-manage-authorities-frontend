@@ -127,6 +127,7 @@ class CustomsFinancialsConnectorSpec
       running(app) {
         server.stubFor(
           post(urlEqualTo("/customs-financials-api/account-authorities"))
+            .withRequestBody(equalToJson("""{"eori": "121312"}"""))
             .willReturn(ok(response))
         )
 
