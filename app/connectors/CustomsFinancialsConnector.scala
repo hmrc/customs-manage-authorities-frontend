@@ -97,6 +97,7 @@ class CustomsFinancialsConnector @Inject() (
   def validateEori(eori: String)(implicit hc: HeaderCarrier): Future[Either[ErrorResponse, Boolean]] = {
     val validateEoriUrl      = s"$baseApiUrl/eori/validate"
     val request: EoriRequest = EoriRequest(eori)
+
     httpClient
       .post(url"$validateEoriUrl")
       .withBody(request)
