@@ -88,11 +88,19 @@ class RemoveCheckYourAnswers @Inject() (
             result <- request.userAnswers
                         .get(RemoveAuthorisedUserPage(accountId, authorityId))
                         .map { authorisedUser =>
+                          val ownerEori = ownerEoriForAccountType(
+                            account.accountType,
+                            authority.authorisedEori,
+                            xiEori.getOrElse(emptyString),
+                            request.eoriNumber
+                          )
+
                           val revokeRequest = RevokeAuthorityRequest(
                             account.accountNumber,
                             account.accountType,
                             authority.authorisedEori,
-                            authorisedUser
+                            authorisedUser,
+                            ownerEori
                           )
                           doSubmission(
                             revokeRequest,
@@ -115,9 +123,10 @@ class RemoveCheckYourAnswers @Inject() (
     eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
+    val ownerEori            = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
+    val payloadWithOwnerEori = revokeRequest.copy(ownerEori = ownerEori)
 
-    customsFinancialsConnector.revokeAccountAuthorities(revokeRequest, ownerEori).map {
+    customsFinancialsConnector.revokeAccountAuthorities(payloadWithOwnerEori).map {
       case true  => Redirect(routes.RemoveConfirmationController.onPageLoad(accountId, authorityId))
       case false => errorPage(SubmissionError)
     }

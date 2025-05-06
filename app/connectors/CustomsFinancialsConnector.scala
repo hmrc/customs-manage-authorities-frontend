@@ -28,7 +28,6 @@ import play.mvc.Http.Status
 import services.MetricsReporterService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.client.HttpClientV2
-import utils.StringUtils.emptyString
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, NotFoundException, StringContextOps}
 
 import javax.inject.Inject
@@ -64,16 +63,20 @@ class CustomsFinancialsConnector @Inject() (
   }
 
   def retrieveAccountAuthorities(eori: String)(implicit hc: HeaderCarrier): Future[Seq[AccountWithAuthorities]] = {
-    val retrieveAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities"
+    val retrieveAccountAuthoritiesUrl = s"$baseApiUrl/account-authorities"
+    val request: EoriRequest          = EoriRequest(eori)
+
     httpClient
-      .get(url"$retrieveAccountAuthoritiesUrl")
+      .post(url"$retrieveAccountAuthoritiesUrl")
+      .withBody(request)
       .execute[Seq[AccountWithAuthorities]]
   }
 
-  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest, eori: String = emptyString)(implicit
+  def grantAccountAuthorities(addAuthorityRequest: AddAuthorityRequest)(implicit
     hc: HeaderCarrier
   ): Future[Boolean] = {
-    val grantAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/grant"
+    val grantAccountAuthoritiesUrl = s"$baseApiUrl/account-authorities/grant"
+
     httpClient
       .post(url"$grantAccountAuthoritiesUrl")
       .withBody(addAuthorityRequest)
@@ -82,10 +85,11 @@ class CustomsFinancialsConnector @Inject() (
       .recover { case _ => false }
   }
 
-  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest, eori: String = emptyString)(implicit
+  def revokeAccountAuthorities(revokeAuthorityRequest: RevokeAuthorityRequest)(implicit
     hc: HeaderCarrier
   ): Future[Boolean] = {
-    val revokeAccountAuthoritiesUrl = s"$baseApiUrl/$eori/account-authorities/revoke"
+    val revokeAccountAuthoritiesUrl = s"$baseApiUrl/account-authorities/revoke"
+
     httpClient
       .post(url"$revokeAccountAuthoritiesUrl")
       .withBody(revokeAuthorityRequest)

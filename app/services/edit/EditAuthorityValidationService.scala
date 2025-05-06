@@ -31,7 +31,8 @@ class EditAuthorityValidationService @Inject() (editCyaValidationService: EditCh
     accountId: String,
     authorityId: String,
     authorisedEori: String,
-    account: AccountWithAuthoritiesWithId
+    account: AccountWithAuthoritiesWithId,
+    ownerEori: String
   ): Either[ErrorResponse, AddAuthorityRequest] = {
 
     val maybeAccounts = for {
@@ -40,7 +41,8 @@ class EditAuthorityValidationService @Inject() (editCyaValidationService: EditCh
 
       accounts = checkAndRetrieveAccounts(account)
     } yield accounts match {
-      case Right(value) => Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true))
+      case Right(value) =>
+        Right(AddAuthorityRequest(value, standingAuthority, authorisedUser, editRequest = true, ownerEori))
       case Left(error)  => Left(error)
     }
 

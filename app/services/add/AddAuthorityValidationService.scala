@@ -22,13 +22,13 @@ import models.requests.AddAuthorityRequest
 
 class AddAuthorityValidationService @Inject() (cyaValidationService: CheckYourAnswersValidationService) {
 
-  def validate(userAnswers: UserAnswers): Option[AddAuthorityRequest] =
+  def validate(userAnswers: UserAnswers, ownerEori: String): Option[AddAuthorityRequest] =
     for {
       (accounts, standingAuthority, authorisedUser) <- cyaValidationService.validate(userAnswers)
     } yield AddAuthorityRequest(
       accounts,
       standingAuthority,
-      authorisedUser
+      authorisedUser,
+      ownerEori = ownerEori
     )
-
 }

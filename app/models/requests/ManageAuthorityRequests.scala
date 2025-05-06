@@ -35,7 +35,8 @@ case class AddAuthorityRequest(
   accounts: Accounts,
   authority: StandingAuthority,
   authorisedUser: AuthorisedUser,
-  editRequest: Boolean = false
+  editRequest: Boolean = false,
+  ownerEori: String
 )
 
 object AddAuthorityRequest {
@@ -46,7 +47,8 @@ case class RevokeAuthorityRequest(
   accountNumber: String,
   accountType: AccountType,
   authorisedEori: String,
-  authorisedUser: AuthorisedUser
+  authorisedUser: AuthorisedUser,
+  ownerEori: String
 )
 
 object RevokeAuthorityRequest {
