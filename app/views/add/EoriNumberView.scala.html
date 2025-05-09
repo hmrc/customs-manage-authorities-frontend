@@ -49,9 +49,9 @@
     @errorSummary(form.errors)
 
     @{
-      val (labelHintKey, detailsTextKey) = (xiEoriEnabled, euEoriEnabled) match {
-        case (true, _)       => ("eoriNumber.hint.xi", "eoriNumber.details.text")
-        case (false, true)   => ("eoriNumber.hint.eu", "eoriNumber.details.text.eu")
+      val (labelHintKey, detailsTextKey) = (euEoriEnabled, xiEoriEnabled) match {
+        case (true, _)       => ("eoriNumber.hint.eu", "eoriNumber.details.text.eu")
+        case (false, true)   => ("eoriNumber.hint.xi", "eoriNumber.details.text")
         case (false, false)  => ("eoriNumber.hint", "eoriNumber.details.text")
       }
 

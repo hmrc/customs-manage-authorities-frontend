@@ -30,7 +30,7 @@ import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.StringUtils.emptyString
@@ -54,8 +54,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val view      = application.injector.instanceOf[EoriNumberView]
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
-        val xiEoriEnabled = true
-
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
@@ -64,6 +62,99 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
             messages(application),
             appConfig
           ).toString
+      }
+    }
+
+    "return OK and the correct view for a GET with xiEoriEnabled true and euEnabled false" in new SetUp {
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          "features.xi-eori-enabled" -> true,
+          "features.eu-eori-enabled" -> false
+        )
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, eoriNumberRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val expectedContent = contentAsString(result)
+
+        expectedContent must include("EORI numbers start with GB or XI followed by 12 letters or digits.")
+        expectedContent must include("To give authority to a company or person to use your duty deferment account")
+      }
+    }
+
+    "return OK and the correct view for a GET with euEoriEnabled and xiEoriEnabled both true" in new SetUp {
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          "features.xi-eori-enabled" -> true,
+          "features.eu-eori-enabled" -> true
+        )
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, eoriNumberRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val expectedContent = contentAsString(result)
+
+        expectedContent must include("You can only give authority to an EORI number starting with XI or an EU")
+        expectedContent must include("EORI numbers start with 2 letters (these are the country code)")
+
+      }
+    }
+
+    "return OK and the correct view for a GET with xiEoriEnabled false and euEoriEnabled true" in new SetUp {
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          "features.xi-eori-enabled" -> false,
+          "features.eu-eori-enabled" -> true
+        )
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, eoriNumberRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val expectedContent = contentAsString(result)
+
+        expectedContent must include("You can only give authority to an EORI number starting with XI or an EU")
+        expectedContent must include("EORI numbers start with 2 letters (these are the country code)")
+      }
+    }
+
+    "return OK and the correct view for a GET with both euEoriEnabled and xiEoriEnabled false" in new SetUp {
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          "features.xi-eori-enabled" -> false,
+          "features.eu-eori-enabled" -> false
+        )
+        .build()
+
+      running(application) {
+
+        val request = fakeRequest(GET, eoriNumberRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+
+        val expectedContent = contentAsString(result)
+
+        expectedContent must include("To give authority to a company or person to use your duty deferment account")
+        expectedContent must include("An EORI number starts GB or GBN.")
       }
     }
 
@@ -82,8 +173,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
 
         val result = route(application, request).value
-
-        val xiEoriEnabled = true
 
         status(result) mustEqual OK
 
@@ -399,8 +488,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
 
-        val xiEoriEnabled = true
-
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
             request,
@@ -432,7 +519,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
 
-        val xiEoriEnabled = true
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
             request,
@@ -466,8 +552,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-
-        val xiEoriEnabled = true
 
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
@@ -519,6 +603,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
     val frontendAppConfig: FrontendAppConfig              = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
     val euEoriEnabled: Boolean                            = false
+    val xiEoriEnabled: Boolean                            = true
 
     val formProvider       = new EoriNumberFormProvider(frontendAppConfig)
     val form: Form[String] = formProvider()
