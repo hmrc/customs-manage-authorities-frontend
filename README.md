@@ -66,7 +66,7 @@ Secure Document Exchange Service (SDES) bulk data API via the [SDES proxy](https
 
 `sbt runAllChecks` - Will run all checks required for a successful build
 
-Default service port on local - 8322
+Default service port on local - 9000
 
 ### Required dependencies
 
@@ -130,14 +130,6 @@ You can find a list of microservice specific routes here - `/conf/app.routes`
 
 Application entrypoint:  `/customs/payment-records` 
 
-| Path                                                 |
-| ----                                                 |
-| GET /manage-account-authorities                      |
-| GET /manage-account-authorities-unavailable          |
-| GET /manage-account-authorities/account-unavailable  |
-| GET /account-authorities/fetch-authorities/:eori     |
-| GET /account-authorities/fetch-authorities           |
-
 ## Feature Switches
 
 > ### Caution!
@@ -157,19 +149,6 @@ Application entrypoint:  `/customs/payment-records`
 | `eu-eori-enabled` |  Enable the EU EORI feature                         |
 
 Different features can be enabled / disabled per-environment via the `app-config-<env>` project by setting `features.some-feature: true`
-
-In non-production environments,
-you can also toggle features on or off in a running microservice instance
-by performing a HTTP GET against
-
-    /customs-historic-statement-frontend/test-only/feature/<feature>/<enable|disable>
-    
-> **Note:** Microservices must be running with test-only routes explicitly enabled,
-> via this switch in the `app-config-<env>`, the service manager microservice profile,
-> or just via `sbt run` locally:
->
->   "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes"
-
 
 ## Helpful commands
 
