@@ -41,6 +41,11 @@ feedback.before=Gwasanaeth newydd yw hwn – bydd eich
 feedback.link=adborth
 feedback.after=yn ein helpu i’w wella.
 
+# User Research
+user-research.subheader-text=Helpu ni i wella’r gwasanaeth hwn
+user-research.body-text=A oes gennych rif EORI yn yr UE? Rydym yn cynnal ymchwil defnyddwyr i helpu i wella ein gwasanaethau.
+user-research.link=Cofrestrwch i gymryd rhan mewn ymchwil defnyddwyr (yn agor tab newydd)
+
 date.day=Diwrnod
 date.month=Mis
 date.year=Blwyddyn

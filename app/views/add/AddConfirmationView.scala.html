@@ -16,12 +16,16 @@
 
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.HmrcNewTabLinkHelper
+@import uk.gov.hmrc.hmrcfrontend.views.viewmodels.newtablinkhelper.NewTabLinkHelper
 
 @this(
    layout: Layout,
    p: components.p,
    link: components.link,
-   confirmPanel: components.addConfirmationPanel
+   confirmPanel: components.addConfirmationPanel,
+   h2: components.h2,
+   hmrcNewTabLinkHelper: HmrcNewTabLinkHelper
 )
 
 @(
@@ -48,4 +52,15 @@
 
    @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, linkMessage = "addConfirmation.returnLink")
 
+   @h2(
+      msg = messages("user-research.subheader-text"),
+      id=Some("improve-the-service-subheader-text")
+   )
+
+   @p(Html(messages("user-research.help.body-text")))
+   
+   @hmrcNewTabLinkHelper(NewTabLinkHelper(
+      text = messages("user-research.help.link"),
+      href = Some("")
+   ))
 }
