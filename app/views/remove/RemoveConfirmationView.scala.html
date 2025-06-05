@@ -56,7 +56,7 @@
    @p(Html(messages("user-research.help.body-text")))
    
    @hmrcNewTabLinkHelper(NewTabLinkHelper(
-      text = messages("user-research.help.link"),
-      href = Some("")
+    text = messages("user-research.help.link"),
+    href = Some(appConfig.helpMakeGovUkBetterUrl),
    ))
 }

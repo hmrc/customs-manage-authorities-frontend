@@ -46,15 +46,15 @@
 
     @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url,
             linkMessage = "editConfirmation.returnLink")
-   @h2(
-      msg = messages("user-research.subheader-text"),
-      id=Some("improve-the-service-subheader-text")
-   )
+    @h2(
+        msg = messages("user-research.subheader-text"),
+        id=Some("improve-the-service-subheader-text")
+    )
 
-   @p(Html(messages("user-research.help.body-text")))
-   
-   @hmrcNewTabLinkHelper(NewTabLinkHelper(
-      text = messages("user-research.help.link"),
-      href = Some("")
-   ))
+    @p(Html(messages("user-research.help.body-text")))
+    
+    @hmrcNewTabLinkHelper(NewTabLinkHelper(
+        text = messages("user-research.help.link"),
+        href = Some(appConfig.helpMakeGovUkBetterUrl),
+    ))
 }
