@@ -42,6 +42,11 @@ import java.time.LocalDateTime
 
 class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
+  implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
+  val app: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+  implicit val appConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  implicit val messages: Messages = Helpers.stubMessages()
+
   "AuthorisedUserView" should {
     "have back link" in new Setup {
       view()
@@ -534,11 +539,6 @@ class AuthorisedUserViewSpec extends SpecBase with MockitoSugar {
 
     val mockDateTimeService: DateTimeService = mock[DateTimeService]
     when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
-
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
-    val app: Application                                          = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages                               = Helpers.stubMessages()
 
     def userAnswers: UserAnswers = userAnswersTodayToIndefinite.set(AccountsPage, List(cashAccount)).success.value
 

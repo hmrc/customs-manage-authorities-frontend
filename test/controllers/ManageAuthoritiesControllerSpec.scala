@@ -48,10 +48,15 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
       "call deleteNotification on the customsFinancialsConnector" in new Setup {
         private val mockCustomsFinancialsConnector = mock[CustomsFinancialsConnector]
+        private val mockDataStoreConnector         = mock[CustomsDataStoreConnector]
+
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(Right(testEmail)))
 
         private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector)
+            bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -74,6 +79,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val mockAuthCacheService: AuthoritiesCacheService      = mock[AuthoritiesCacheService]
         val mockSecureMessageConnector: SecureMessageConnector = mock[SecureMessageConnector]
         val mockSdesConnector: SdesConnector                   = mock[SdesConnector]
+        private val mockDataStoreConnector                     = mock[CustomsDataStoreConnector]
+
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(Right(testEmail)))
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
@@ -88,7 +97,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
             bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
             bind[SecureMessageConnector].toInstance(mockSecureMessageConnector),
-            bind[SdesConnector].toInstance(mockSdesConnector)
+            bind[SdesConnector].toInstance(mockSdesConnector),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .configure("features.edit-journey" -> true)
           .build()
@@ -198,12 +208,14 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val mockAuthEoriAndCompanyService: AuthorisedEoriAndCompanyInfoService =
           mock[AuthorisedEoriAndCompanyInfoService]
         val mockSdesConnector: SdesConnector                                   = mock[SdesConnector]
+        val mockSecureMessageConnector: SecureMessageConnector                 = mock[SecureMessageConnector]
 
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
         when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(Right(testEmail)))
         when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
         when(mockAccountsRepository.get(any())).thenReturn(Future.successful(Some(accounts)))
         when(mockAuthRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
 
         when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
@@ -215,7 +227,8 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
             bind[AccountsRepository].toInstance(mockAccountsRepository),
             bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector),
             bind[AuthorisedEoriAndCompanyInfoService].toInstance(mockAuthEoriAndCompanyService),
-            bind[SdesConnector].toInstance(mockSdesConnector)
+            bind[SdesConnector].toInstance(mockSdesConnector),
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector)
           )
           .configure("features.edit-journey" -> true)
           .build()
@@ -243,7 +256,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       }
 
       "return OK and the correct view when no authority accounts are found" in new Setup {
-        val accounts = CDSAccounts(
+        val accounts: CDSAccounts = CDSAccounts(
           "GB123456789012",
           List(
             CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))),
@@ -251,12 +264,14 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           )
         )
 
-        val mockRepository                                      = mock[AuthoritiesRepository]
-        val mockAccountsCacheService                            = mock[AccountsCacheService]
+        val mockRepository: AuthoritiesRepository               = mock[AuthoritiesRepository]
+        val mockAccountsCacheService: AccountsCacheService      = mock[AccountsCacheService]
         val emptyMap: Map[String, AccountWithAuthoritiesWithId] = Map()
         val emptyAuthoritiesWithId: AuthoritiesWithId           = AuthoritiesWithId(emptyMap)
-        val mockAuthCacheService                                = mock[AuthoritiesCacheService]
+        val mockAuthCacheService: AuthoritiesCacheService       = mock[AuthoritiesCacheService]
         val mockSdesConnector: SdesConnector                    = mock[SdesConnector]
+        val mockSecureMessageConnector: SecureMessageConnector  = mock[SecureMessageConnector]
+        val mockDataStoreConnector: CustomsDataStoreConnector   = mock[CustomsDataStoreConnector]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
@@ -268,12 +283,19 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
         when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(None))
+
+        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+
         private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[AuthoritiesRepository].toInstance(mockRepository),
             bind[AccountsCacheService].toInstance(mockAccountsCacheService),
             bind[AuthoritiesCacheService].toInstance(mockAuthCacheService),
-            bind[SdesConnector].toInstance(mockSdesConnector)
+            bind[SdesConnector].toInstance(mockSdesConnector),
+            bind[SecureMessageConnector].toInstance(mockSecureMessageConnector),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .configure("features.edit-journey" -> true)
           .build()
@@ -303,15 +325,20 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     "API call fails" must {
 
       "redirect to 'unavailable' page" in new Setup {
-        val mockRepository = mock[AuthoritiesRepository]
+        val mockRepository: AuthoritiesRepository = mock[AuthoritiesRepository]
         when(mockRepository.get(any())).thenReturn(Future.successful(None))
 
-        val failingConnector = mock[CustomsFinancialsConnector]
+        val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(None))
+
+        val failingConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
 
         private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[CustomsFinancialsConnector].toInstance(failingConnector),
-            bind[AuthoritiesRepository].toInstance(mockRepository)
+            bind[AuthoritiesRepository].toInstance(mockRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -356,18 +383,22 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
       "redirect to 'account unavailable' page" in new Setup {
         val statusCode = 500
 
-        val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
-        val mockAuthCacheService: AuthoritiesCacheService  = mock[AuthoritiesCacheService]
+        val mockAccountsCacheService: AccountsCacheService    = mock[AccountsCacheService]
+        val mockAuthCacheService: AuthoritiesCacheService     = mock[AuthoritiesCacheService]
+        val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
         when(mockAuthCacheService.retrieveAuthoritiesForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
+        when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(None))
 
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
           .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", statusCode)))
 
         private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+            bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -581,14 +612,20 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
 
     "return INTERNAL_SERVER_ERROR if there is an error during the processing" in new Setup {
-      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAccountsCacheService: AccountsCacheService    = mock[AccountsCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+      when(mockDataStoreConnector.getXiEori(any)(any))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+      when(mockDataStoreConnector.getEmail(any))
         .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
         )
         .build()
 
@@ -800,14 +837,20 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
     }
 
     "return INTERNAL_SERVER_ERROR if there is an error during the processing" in new Setup {
-      val mockAccountsCacheService: AccountsCacheService = mock[AccountsCacheService]
+      val mockAccountsCacheService: AccountsCacheService    = mock[AccountsCacheService]
+      val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
 
       when(mockAccountsCacheService.retrieveAccounts(any(), any())(any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+      when(mockDataStoreConnector.getXiEori(any)(any))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+      when(mockDataStoreConnector.getEmail(any))
         .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
 
       private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[AccountsCacheService].toInstance(mockAccountsCacheService)
+          bind[AccountsCacheService].toInstance(mockAccountsCacheService),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
         )
         .build()
 

@@ -19,7 +19,7 @@ package models
 import play.api.libs.json.{Json, OFormat}
 import utils.StringUtils.emptyString
 
-case class CompanyInformation(name: String, consent: String, address: AddressInformation) {
+case class CompanyInformation(name: String, consent: Option[String], address: AddressInformation) {
   def formattedAddress: String =
     s"${address.streetAndNumber}, ${address.city}, ${address.postalCode.getOrElse(emptyString)}, ${address.countryCode}"
 }
