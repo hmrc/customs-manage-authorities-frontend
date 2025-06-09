@@ -51,8 +51,8 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
   def defaultApplication(userAnswers: Option[UserAnswers]): Application =
     applicationBuilder(userAnswers = userAnswers)
-    .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
-    .build()
+      .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
+      .build()
 
   "ShowBalance Controller" must {
 

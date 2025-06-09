@@ -38,7 +38,7 @@ class CompanyInformationSpec extends SpecBase {
 }
 
 trait Setup {
-  val name: String    = "TestCompany"
+  val name: String            = "TestCompany"
   val consent: Option[String] = Some("Yes")
 
   val address: AddressInformation = AddressInformation("123 Street", "New City", Some("123 ABC"), "GB")

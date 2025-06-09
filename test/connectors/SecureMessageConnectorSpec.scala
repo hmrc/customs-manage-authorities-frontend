@@ -82,8 +82,6 @@ class SecureMessageConnectorSpec extends SpecBase {
 
       when(mockRequestBuilder.execute[HtmlPartial](any, any))
         .thenReturn(Future.failed(new RuntimeException("exception occurred")))
-      
-      
 
       when(mockHttpClientV2.get(any[URL])(any)).thenReturn(mockRequestBuilder)
 

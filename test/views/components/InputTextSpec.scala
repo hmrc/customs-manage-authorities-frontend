@@ -29,11 +29,11 @@ import views.ViewUtils.{DetailsHint, InputTextHint, LabelHint}
 
 class InputTextSpec extends SpecBase {
 
-  val app: Application = applicationBuilder().build()
+  val app: Application       = applicationBuilder().build()
   implicit val msg: Messages = messages(app)
-  private val appConfig = app.injector.instanceOf[FrontendAppConfig]
+  private val appConfig      = app.injector.instanceOf[FrontendAppConfig]
 
-  val validForm: Form[String] = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "GB123456789012"))
+  val validForm: Form[String]   = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "GB123456789012"))
   val invalidForm: Form[String] = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "3456789012"))
 
   "InputText" should {
@@ -105,7 +105,6 @@ class InputTextSpec extends SpecBase {
   }
 
   trait Setup {
-
 
     val detailsSummaryText = "summaryText"
     val detailsText        = "text"
