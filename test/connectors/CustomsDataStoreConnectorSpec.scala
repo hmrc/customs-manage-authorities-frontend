@@ -103,7 +103,7 @@ class CustomsDataStoreConnectorSpec
         """
           |{
           |   "name":"Tony Stark",
-          |   "consent": null,
+          |   "consent": None,
           |   "address":{
           |      "streetAndNumber":"86 Mysore Road",
           |      "city":"London",
@@ -185,7 +185,7 @@ class CustomsDataStoreConnectorSpec
         """
           |{
           |   "name":"Tony Stark",
-          |   "consent": null,
+          |   "consent": None,
           |   "address":{
           |      "streetAndNumber":"86 Mysore Road",
           |      "city":"London",

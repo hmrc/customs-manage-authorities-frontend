@@ -47,8 +47,8 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       .execute[CompanyInformation]
       .map { response =>
         response.consent match {
-          case Some("1") => Some(response.name)
-          case _         => None
+          case "1" => Some(response.name)
+          case _   => None
         }
       }
       .recover { case e =>
@@ -67,8 +67,8 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
       .execute[CompanyInformation]
       .map { response =>
         response.consent match {
-          case Some("1") => Some(response.name)
-          case _         => None
+          case "1" => Some(response.name)
+          case _   => None
         }
       }
       .recover { case e =>
