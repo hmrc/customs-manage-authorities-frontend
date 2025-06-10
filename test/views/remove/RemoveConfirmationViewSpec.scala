@@ -42,6 +42,8 @@ class RemoveConfirmationViewSpec extends ViewTestHelper {
       shouldContainCorrectConfirmationPanelGuidance(eori, companyName)
 
       shouldContainLinkToGoBackToAuthoritiesPage
+
+      shouldContainCorrectRecruitmentDetails
     }
   }
 
@@ -63,4 +65,9 @@ class RemoveConfirmationViewSpec extends ViewTestHelper {
     anchorTag.contains(messages("removeConfirmation.returnLink")) mustBe true
   }
 
+  private def shouldContainCorrectRecruitmentDetails(implicit view: Document): Assertion = {
+    view.html().contains(messages("user-research.subheader-text")) mustBe true
+    view.html().contains(messages("user-research.help.body-text")) mustBe true
+    view.html().contains(messages("user-research.help.link")) mustBe true
+  }
 }
