@@ -33,9 +33,6 @@ class InputTextSpec extends SpecBase {
   implicit val msg: Messages = messages(app)
   private val appConfig      = app.injector.instanceOf[FrontendAppConfig]
 
-  val validForm: Form[String]   = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "GB123456789012"))
-  val invalidForm: Form[String] = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "3456789012"))
-
   "InputText" should {
     "display the correct view" in new Setup {
       val view: Document = Jsoup.parse(
@@ -105,6 +102,8 @@ class InputTextSpec extends SpecBase {
   }
 
   trait Setup {
+    val validForm: Form[String]   = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "GB123456789012"))
+    val invalidForm: Form[String] = new EoriNumberFormProvider(appConfig).apply().bind(Map("value" -> "3456789012"))
 
     val detailsSummaryText = "summaryText"
     val detailsText        = "text"
