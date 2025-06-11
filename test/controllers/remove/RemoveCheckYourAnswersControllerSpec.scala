@@ -33,6 +33,7 @@ import play.api.test.Helpers.*
 import play.api.{Application, inject}
 import services.{AccountAndAuthority, AuthoritiesCacheService, NoAccount, NoAuthority}
 import utils.StringUtils.emptyString
+import utils.TestData.XI_EORI
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -73,6 +74,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to view authority if authorised user not present" in new Setup {
       val app: Application = applicationWithUserAnswersAndEori()
 
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
@@ -89,16 +92,22 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       private val userAnswers =
         emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
-      val app: Application = applicationWithUserAnswersAndEori(userAnswers)
+      val app: Application = applicationWithUserAnswersAndEori(
+        userAnswers,
+        euEori
+      )
 
-      when(mockDataStoreConnector.getCompanyName(any())).thenReturn(Future.successful(Some("Tony Stark")))
+      when(mockCustomsDataStoreConnector.getCompanyName(any())).thenReturn(Future.successful(Some("Tony Stark")))
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any)(any)).thenReturn(Future.successful(true))
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       running(app) {
-        val result = route(app, getRequest).value
-        status(result) mustBe OK
+        val result = route(app, postRequest).value
+        status(result) mustBe SEE_OTHER
+        redirectLocation(result) mustBe Some(routes.RemoveConfirmationController.onPageLoad("a", "b").url)
       }
     }
   }
@@ -135,6 +144,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     "redirect to error page if no authorised user present" in new Setup {
       val app: Application = applicationWithUserAnswersAndEori()
 
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
@@ -150,13 +161,15 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
       val app: Application =
-        applicationWithUserAnswersAndEori(userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
+        applicationWithUserAnswersAndEori(userAnswers)
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(false))
+
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
 
       running(app) {
         val result = route(app, postRequest).value
@@ -169,13 +182,15 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       private val userAnswers = emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authUser).get
 
       val app: Application =
-        applicationWithUserAnswersAndEori(userAnswers, financialConnector = Some(mockCustomsFinancialsConnector))
+        applicationWithUserAnswersAndEori(userAnswers)
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(true))
+
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
 
       running(app) {
         val result = route(app, postRequest).value
@@ -192,8 +207,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       val app: Application =
         applicationWithUserAnswersAndEori(
           userAnswers,
-          euEori,
-          financialConnector = Some(mockCustomsFinancialsConnector)
+          euEori
         )
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
@@ -201,6 +215,8 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(true))
+
+      when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
 
       running(app) {
         val result = route(app, postRequest).value
@@ -220,9 +236,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         val app: Application = applicationWithUserAnswersAndEori(
           userAnswers,
-          gbEori,
-          Some(mockCustomsFinancialsConnector),
-          Some(mockDataStoreConnector)
+          gbEori
         )
 
         when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
@@ -237,7 +251,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value
@@ -257,9 +271,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
         val app: Application = applicationWithUserAnswersAndEori(
           userAnswers,
-          gbEori,
-          Some(mockCustomsFinancialsConnector),
-          Some(mockDataStoreConnector)
+          gbEori
         )
 
         when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
@@ -276,7 +288,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value
@@ -298,7 +310,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
             inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
-            inject.bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+            inject.bind[CustomsDataStoreConnector].toInstance(mockCustomsDataStoreConnector)
           )
           .build()
 
@@ -314,7 +326,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
           .thenReturn(Future.successful(true))
 
-        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
+        when(mockCustomsDataStoreConnector.getXiEori(any)(any)).thenReturn(Future(Option(xiEori)))
 
         running(app) {
           val result = route(app, postRequest).value
@@ -331,7 +343,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
   trait Setup {
     val mockAuthoritiesCacheService: AuthoritiesCacheService       = mock[AuthoritiesCacheService]
     val mockCustomsFinancialsConnector: CustomsFinancialsConnector = mock[CustomsFinancialsConnector]
-    val mockDataStoreConnector: CustomsDataStoreConnector          = mock[CustomsDataStoreConnector]
+    val mockCustomsDataStoreConnector: CustomsDataStoreConnector   = mock[CustomsDataStoreConnector]
 
     val startDate: LocalDate = LocalDate.parse("2020-03-01")
     val endDate: LocalDate   = LocalDate.parse("2020-04-01")
@@ -400,35 +412,22 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
 
     val technicalDifficultiesPage: String = controllers.routes.TechnicalDifficulties.onPageLoad.url
 
-    val getRequest: FakeRequest[AnyContentAsEmpty.type]  =
+    val getRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(GET, controllers.remove.routes.RemoveCheckYourAnswers.onPageLoad("a", "b").url)
+
     val postRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(POST, controllers.remove.routes.RemoveCheckYourAnswers.onSubmit("a", "b").url)
 
     def applicationWithUserAnswersAndEori(
       userAnswer: UserAnswers = emptyUserAnswers,
-      requestEori: String = emptyString,
-      financialConnector: Option[CustomsFinancialsConnector] = None,
-      dataStoreConnector: Option[CustomsDataStoreConnector] = None
+      requestEori: String = emptyString
     ): Application = {
       val moduleList: Seq[GuiceableModule] =
-        (financialConnector, dataStoreConnector) match {
-          case (None, None) => Seq(inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService))
-
-          case (Some(finConn), _) =>
-            Seq(
-              inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-              inject.bind[CustomsFinancialsConnector].toInstance(finConn)
-            )
-
-          case _ =>
-            Seq(
-              inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
-              inject.bind[CustomsFinancialsConnector].toInstance(financialConnector.get),
-              inject.bind[CustomsDataStoreConnector].toInstance(dataStoreConnector.get)
-            )
-        }
-
+        Seq(
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthoritiesCacheService),
+          inject.bind[CustomsFinancialsConnector].toInstance(mockCustomsFinancialsConnector),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockCustomsDataStoreConnector)
+        )
       applicationBuilder(Some(userAnswer), requestEori).overrides(moduleList: _*).build()
     }
   }

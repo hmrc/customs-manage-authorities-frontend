@@ -34,6 +34,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.StringUtils.emptyString
+import utils.TestData.XI_EORI
 import views.html.add.EoriNumberView
 
 import scala.concurrent.Future
@@ -188,6 +189,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid data is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -197,7 +202,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -217,6 +223,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid eori with lowercase is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -226,7 +236,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -246,6 +257,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when GBN EORI is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -255,7 +270,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -275,6 +291,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid eori with whitespace is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val mockSessionRepository: SessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -284,7 +304,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].to(mockDataStoreConnector)
           )
           .build()
 
@@ -304,6 +325,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to the next page when valid eori with whitespace and lowercase is submitted" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -313,7 +338,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -333,6 +359,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     "redirect to EoriDetailsCorrect page when form data is valid and user in NormalMode" in new SetUp {
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       private val mockSessionRepository = mock[SessionRepository]
 
       when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -344,7 +374,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
               new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
             ),
             bind[CustomsFinancialsConnector].toInstance(mockConnector),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
           )
           .build()
 
@@ -366,6 +397,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       "and user in CheckMode" in new SetUp {
         when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
 
+        when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+        when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+          .thenReturn(Future.successful(Some("Info")))
+
         private val mockSessionRepository = mock[SessionRepository]
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -379,7 +414,8 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
                 new FakeNavigator(controllers.add.routes.EoriDetailsCorrectController.onPageLoad(NormalMode))
               ),
               bind[CustomsFinancialsConnector].toInstance(mockConnector),
-              bind[SessionRepository].toInstance(mockSessionRepository)
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
             )
             .build()
 
@@ -532,9 +568,14 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(false)))
 
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any)(any))
+        .thenReturn(Future.successful(Some("Info")))
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
-          bind[CustomsFinancialsConnector].toInstance(mockConnector)
+          bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
         )
         .build()
 

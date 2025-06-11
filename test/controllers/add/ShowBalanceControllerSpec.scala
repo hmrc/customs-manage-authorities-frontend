@@ -26,9 +26,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.add.{AccountsPage, ShowBalancePage}
+import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.Call
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.add.CheckYourAnswersValidationService
 import views.html.ShowBalanceView
@@ -48,6 +49,11 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
     DutyDefermentAccount("67890", "GB210987654321", AccountStatusOpen, DutyDefermentBalance(None, None, None, None))
   val backLinkRoute: Call   = controllers.add.routes.AuthorityEndController.onPageLoad(NormalMode)
 
+  def defaultApplication(userAnswers: Option[UserAnswers]): Application =
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
+      .build()
+
   "ShowBalance Controller" must {
 
     "return OK and the correct view for a GET" in {
@@ -57,9 +63,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
-        .build()
+      val application = defaultApplication(Some(userAnswers))
 
       running(application) {
 
@@ -87,9 +91,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         .success
         .value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
-        .build()
+      val application = defaultApplication(Some(userAnswers))
 
       running(application) {
 
@@ -143,9 +145,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswers.set(AccountsPage, List(cashAccount, dutyDeferment)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[Navigator].toInstance(new FakeNavigator(backLinkRoute)))
-        .build()
+      val application = defaultApplication(Some(userAnswers))
 
       running(application) {
 
@@ -173,7 +173,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = defaultApplication(None)
 
       running(application) {
 
@@ -188,7 +188,7 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
 
     "redirect to Session Expired for a POST if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
+      val application = defaultApplication(None)
 
       running(application) {
 
