@@ -55,8 +55,11 @@
 
    @p(Html(messages("user-research.help.body-text")))
    
-   @hmrcNewTabLinkHelper(NewTabLinkHelper(
-    text = messages("user-research.help.link"),
-    href = Some(appConfig.helpMakeGovUkBetterUrl),
-   ))
+   @p(
+      id = Some("improve-the-service-link"),
+      content = hmrcNewTabLinkHelper(
+         NewTabLinkHelper(
+               text = messages("user-research.help.link"),
+               href = Some(appConfig.helpMakeGovUkBetterUrl),
+   )))
 }
