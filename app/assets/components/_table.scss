@@ -51,7 +51,9 @@ $color_hmrc-grey-4: #b1b4b6;
     }
   }
 }
-
+.govuk-summary-list__key {
+  font-weight: normal;
+}
 .hmrc-responsive-table__heading {
   display: none;
 }

@@ -16,46 +16,126 @@
 
 @import viewmodels.ManageAuthoritiesTableViewModel
 @import utils.StringUtils.emptyString
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this()
+@this(govukSummaryList : GovukSummaryList)
 
-@(model: ManageAuthoritiesTableViewModel)(implicit messages: Messages)
+@(
+    model: ManageAuthoritiesTableViewModel)(implicit messages: Messages)
 
-<div id="@model.idString" class="account-with-authorities">
-    <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
-        <caption id="@model.idString-heading" class="govuk-table__caption govuk-table__cell">
-            @model.accountHeadingMsg
-        </caption>
-        <tbody class="govuk-table__body">
-            @for(authRowModel <- model.authRows) {
-                <tr class="govuk-table__row">
-                    <td class="@authRowModel.authorisedEori.classValue">
-                        <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
-                            @authRowModel.authorisedEori.hiddenHeadingMsg
-                        </span>
-                        @authRowModel.authorisedEori.displayValue
-                        <br/>
-                        @authRowModel.companyName.map { companyModel =>
-                            <span class="@companyModel.spanClassValue" aria-hidden="true">
-                                @companyModel.hiddenHeadingMsg
-                            </span>
-                            @companyModel.displayValue
-                        }
-                    </td>
-                    <td class="@authRowModel.viewLink.classValue">
-                        @if(authRowModel.viewLink.isAccountStatusNonClosed) {
-                            <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
-                                <span aria-hidden="true">
-                                    @authRowModel.viewLink.hiddenHeadingMsg
-                                </span>
-                                <span class="@authRowModel.viewLink.spanClassValue">
-                                    @authRowModel.viewLink.displayValue
-                                </span>
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
+<h3 id="@model.idString-heading"  class="govuk-heading-s">
+    <caption>
+        @model.accountHeadingMsg
+    </caption>
+</h3>
+
+@govukSummaryList(SummaryList(
+  rows = model.authRows.map { authRowModel =>
+    SummaryListRow(
+      key = Key(
+        content = Text(s"${authRowModel.authorisedEori.displayValue} ${authRowModel.companyName.map(_.displayValue).getOrElse("")}"),
+        classes = "govuk-summary-list__key"
+        
+      ),
+        actions = if (authRowModel.viewLink.isAccountStatusNonClosed) {
+            Some(Actions(
+                items = Seq(
+                ActionItem(
+                    href="@authRowModel.viewLink.href.getOrElse(emptyString)",
+                    content = Text(authRowModel.viewLink.hiddenHeadingMsg),
+                    visuallyHiddenText = Some(authRowModel.viewLink.displayValue)
+                )
+                )
+            ))
+        } else {
+        None
+        }
+    )
+  }
+))
+
+
+@*
+* // NOTE: ignore this, its just some WIP stuff. Not important, just my workings out
+* 
+* // old implamentation
+* <div id="@model.idString" class="account-with-authorities">
+*     <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
+*         <caption id="@model.idString-heading" class="govuk-table__caption govuk-table__cell">
+*             @model.accountHeadingMsg
+*         </caption>
+*         <tbody class="govuk-table__body">
+*             @for(authRowModel <- model.authRows) {
+*                 <tr class="govuk-table__row">
+*                     <td class="@authRowModel.authorisedEori.classValue">
+*                         <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
+*                             @authRowModel.authorisedEori.hiddenHeadingMsg
+*                         </span>
+*                         @authRowModel.authorisedEori.displayValue
+*                         <br/>
+*                         @authRowModel.companyName.map { companyModel =>
+*                             <span class="@companyModel.spanClassValue" aria-hidden="true">
+*                                 @companyModel.hiddenHeadingMsg
+*                             </span>
+*                             @companyModel.displayValue
+*                         }
+*                     </td>
+*                     <td class="@authRowModel.viewLink.classValue">
+*                         @if(authRowModel.viewLink.isAccountStatusNonClosed) {
+*                             <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
+*                                 <span aria-hidden="true">
+*                                     @authRowModel.viewLink.hiddenHeadingMsg
+*                                 </span>
+*                                 <span class="@authRowModel.viewLink.spanClassValue">
+*                                     @authRowModel.viewLink.displayValue
+*                                 </span>
+*                             </a>
+*                         }
+*                     </td>
+*                 </tr>
+*             }
+*         </tbody>
+*     </table>
+* </div>
+* 
+* // the gubbins
+* @for(authRowModel <- model.authRows) {
+* @authRowModel.authorisedEori.hiddenHeadingMsg
+* @authRowModel.authorisedEori.displayValue
+* @authRowModel.companyName.map { companyModel => @companyModel.displayValue }
+* @if(authRowModel.viewLink.isAccountStatusNonClosed) {
+* @authRowModel.viewLink.hiddenHeadingMsg
+* @authRowModel.viewLink.displayValue
+* }
+* }
+* 
+* // working example of a summary list
+* @govukSummaryList(SummaryList(
+*     rows = Seq(
+*       SummaryListRow(
+*         key = Key(
+*           content = Text("Contact details")
+*         ),
+*         value = Value(
+*           content = HtmlContent("""<p class="govuk-body">07700 900457</p><p class="govuk-body">sarah.phillips@example.com</p>""")
+*         ),
+*         actions = Some(Actions(
+*           items = Seq(
+*             ActionItem(
+*               href = "#",
+*               content = Text("Add"),
+*               visuallyHiddenText = Some("contact details")
+*             ), 
+*             ActionItem(
+*               href = "#",
+*               content = Text("Change"),
+*               visuallyHiddenText = Some("contact details")
+*             )
+*           )
+*         ))
+*       )
+*     )
+*   ))
+*@
+
+
