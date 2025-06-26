@@ -67,23 +67,8 @@ lazy val root = (project in file("."))
     retrieveManaged := true,
     update / evictionWarningOptions :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(true),
-    Concat.groups := Seq(
-      "javascripts/application.js" ->
-        group(
-          Seq(
-            "lib/hmrc-frontend/hmrc/all.js",
-            "javascripts/jquery.min.js",
-            "javascripts/app.js",
-            "javascripts/main.js"
-          )
-        )
-    ),
-    uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
-
-    uglify / includeFilter := GlobFilter("application.js"),
-    uglifyOps := UglifyOps.singleFile,
     pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat, uglify),
+    Assets / pipelineStages := Seq(concat)
   )
   .settings(scalastyleSettings)
   .settings(
