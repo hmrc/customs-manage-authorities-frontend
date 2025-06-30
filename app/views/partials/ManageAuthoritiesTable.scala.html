@@ -16,46 +16,43 @@
 
 @import viewmodels.ManageAuthoritiesTableViewModel
 @import utils.StringUtils.emptyString
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-@this()
+@this(govukSummaryList : GovukSummaryList)
 
 @(model: ManageAuthoritiesTableViewModel)(implicit messages: Messages)
 
-<div id="@model.idString" class="account-with-authorities">
-    <table class="govuk-table hmrc-responsive-table govuk-!-margin-bottom-9">
-        <caption id="@model.idString-heading" class="govuk-table__caption govuk-table__cell">
-            @model.accountHeadingMsg
-        </caption>
-        <tbody class="govuk-table__body">
-            @for(authRowModel <- model.authRows) {
-                <tr class="govuk-table__row">
-                    <td class="@authRowModel.authorisedEori.classValue">
-                        <span class="@authRowModel.authorisedEori.spanClassValue" aria-hidden="true">
-                            @authRowModel.authorisedEori.hiddenHeadingMsg
-                        </span>
-                        @authRowModel.authorisedEori.displayValue
-                        <br/>
-                        @authRowModel.companyName.map { companyModel =>
-                            <span class="@companyModel.spanClassValue" aria-hidden="true">
-                                @companyModel.hiddenHeadingMsg
-                            </span>
-                            @companyModel.displayValue
-                        }
-                    </td>
-                    <td class="@authRowModel.viewLink.classValue">
-                        @if(authRowModel.viewLink.isAccountStatusNonClosed) {
-                            <a class="govuk-link" href="@authRowModel.viewLink.href.getOrElse(emptyString)">
-                                <span aria-hidden="true">
-                                    @authRowModel.viewLink.hiddenHeadingMsg
-                                </span>
-                                <span class="@authRowModel.viewLink.spanClassValue">
-                                    @authRowModel.viewLink.displayValue
-                                </span>
-                            </a>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div id="@model.idString" class="account-with-authorities govuk-!-margin-bottom-9">
+
+<h3 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-padding-top-2" id="@model.idString-heading">
+  <caption>
+    @model.accountHeadingMsg
+  </caption>
+</h3>
+
+  @govukSummaryList(SummaryList(
+    rows = model.authRows.map { authRowModel =>
+      SummaryListRow(
+        key = Key(
+          content = HtmlContent(s"${authRowModel.authorisedEori.displayValue} <br /> ${authRowModel.companyName.map(_.displayValue).getOrElse("")}"),
+          classes = "govuk-summary-list__key"
+
+        ),
+          actions = if (authRowModel.viewLink.isAccountStatusNonClosed) {
+              Some(Actions(
+                  items = Seq(
+                  ActionItem(
+                      href=authRowModel.viewLink.href.getOrElse(emptyString),
+                      content = Text(authRowModel.viewLink.hiddenHeadingMsg),
+                      visuallyHiddenText = Some(authRowModel.viewLink.displayValue)
+                  )
+                  )
+              ))
+          } else {
+          None
+          }
+      )
+    }
+  ))
+
 </div>

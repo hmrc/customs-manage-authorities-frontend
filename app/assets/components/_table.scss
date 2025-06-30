@@ -1,84 +1,10 @@
 $mobile: 768px; //change this to suit your content
 $color_hmrc-grey-4: #b1b4b6;
 
-.hmrc-responsive-table {
-  margin-bottom: 0;
-  width: 100%;
-
-  thead {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    white-space: nowrap;
-
-    clip: auto;
-    -webkit-clip-path: none;
-    clip-path: none;
-    display: table-header-group;
-    height: auto;
-    overflow: auto;
-    position: relative;
-    width: auto;
-
-    @media (max-width: $mobile) {
-      font-size: 16px;
-    }
-  }
-
-  tbody {
-    tr {
-      margin-bottom: 1.5em;
-      display: table-row;
-
-      th {
-        min-width: 1px;
-
-        @media (max-width: $mobile) {
-          font-size: 16px;
-        }
-      }
-
-      td {
-        justify-content: space-between;
-        min-width: 1px;
-        display: table-cell;
-        text-align: left;
-
-        @media (max-width: $mobile) {
-          font-size: 16px;
-        }
-      }
-    }
-  }
+.govuk-summary-list__key {
+  font-weight: normal;
 }
 
-.hmrc-responsive-table__heading {
+.govuk-summary-list__value {
   display: none;
-}
-
-.hmrc-responsive-table__data--wrap-mobile {
-  @media (max-width: $mobile) {
-    word-break: break-all;
-  }
-}
-
-.hmrc-responsive-table__data--wrap-desktop {
-  @media (min-width: $mobile) {
-    word-break: break-all;
-  }
-}
-
-.hmrc-reponsive-table__numeric {
-  @media (min-width: $mobile) {
-    text-align: right;
-  }
-}
-
-.table-foot {
-  border-bottom: 1px solid #b1b4b6;
-  display: flex;
-  font-size: 19px;
-  font-weight: 700;
-  justify-content: space-between;
-  padding: 0.75em 0 0.75em;
 }
