@@ -140,7 +140,7 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
     authEoriAndCompanyMap: Map[String, String] = Map.empty
   ): Assertion = {
 
-    val tableRowHtml = view.getElementsByClass("govuk-table__row").html()
+    val tableRowHtml = view.getElementsByClass("govuk-summary-list__row").html()
 
     tableRowHtml.contains(messages("manageAuthorities.table.heading.user")) mustBe true
 
@@ -152,12 +152,12 @@ class ManageAuthoritiesTableSpec extends ViewTestHelper {
       tableRowHtml.contains(messages("manageAuthorities.table.view-or-change")) mustBe true
 
       view
-        .getElementsByClass("govuk-table__cell view-or-change")
+        .getElementsByClass("govuk-summary-list__actions")
         .html()
         .contains(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_B).toString) mustBe true
 
       view
-        .getElementsByClass("govuk-table__cell view-or-change")
+        .getElementsByClass("govuk-summary-list__actions")
         .html()
         .contains(controllers.routes.ViewAuthorityController.onPageLoad(ACCOUNT_ID, AUTH_ID_C).toString) mustBe true
     } else {
