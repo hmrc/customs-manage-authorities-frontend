@@ -46,22 +46,25 @@
       key = Key(
         content = HtmlContent(htmlString),
         classes = "govuk-summary-list__key"
-
       ),
         actions = if (authRowModel.viewLink.isAccountStatusNonClosed) {
-            Some(Actions(
-                items = Seq(
+          Some(
+            Actions(
+              items = Seq(
                 ActionItem(
-                    href=authRowModel.viewLink.href.getOrElse(emptyString),
-                    content = Text(authRowModel.viewLink.hiddenHeadingMsg),
-                    visuallyHiddenText = Some(authRowModel.viewLink.displayValue)
-                ))
-            ))
+                  href=authRowModel.viewLink.href.getOrElse(emptyString),
+                  content = Text(authRowModel.viewLink.hiddenHeadingMsg),
+                  visuallyHiddenText = Some(authRowModel.viewLink.displayValue)
+                )
+              )
+            )
+          )
         } else {
           None
         }
-    )
-  }
-))
+      )
+    }
+  )
+)
 
 </div>
