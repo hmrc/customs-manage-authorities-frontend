@@ -16,8 +16,8 @@
 
 package forms
 
-import forms.mappings.LocalDateMapping.formKey
-import forms.mappings.{LocalDateMapping, Mappings}
+import forms.mappings.AuthorityDateMapping.formKey
+import forms.mappings.{AuthorityDateMapping, Mappings}
 import play.api.data.Form
 import play.api.i18n.Messages
 import services.DateTimeService
@@ -30,8 +30,8 @@ class EditAuthorityStartDateFormProvider @Inject() (dateTimeService: DateTimeSer
 
   def apply(maybeEndDate: Option[LocalDate])(implicit messages: Messages): Form[LocalDate] =
     Form(
-      formKey -> LocalDateMapping
-        .mapping(isStartDateForm = true)
+      formKey -> AuthorityDateMapping
+        .mapping(Some(formKey), isStartDateForm = true)
         .verifying(
           minDate(
             dateTimeService.localTime().toLocalDate,

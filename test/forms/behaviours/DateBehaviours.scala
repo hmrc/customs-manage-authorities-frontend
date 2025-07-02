@@ -19,6 +19,7 @@ package forms.behaviours
 import org.scalacheck.Gen
 import org.scalatest.matchers.should.Matchers.{should, shouldBe, shouldEqual}
 import play.api.data.{Form, FormError}
+import utils.StringUtils.emptyString
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -84,7 +85,13 @@ class DateBehaviours extends FieldBehaviours {
   def mandatoryDateField(form: Form[_], key: String, requiredAllKey: String, errorArgs: Seq[String] = Seq.empty): Unit =
     "fail to bind an empty date" in {
 
-      val result = form.bind(Map.empty[String, String])
+      val result = form.bind(
+        Map(
+          s"$key.day"   -> emptyString,
+          s"$key.month" -> emptyString,
+          s"$key.year"  -> emptyString
+        )
+      )
 
       result.errors should contain only FormError(key, requiredAllKey, errorArgs)
     }
