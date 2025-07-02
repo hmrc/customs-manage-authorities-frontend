@@ -38,13 +38,13 @@
 
     val authorisedEoriHtml: String =
       s"""<span class="${authorisedEori.spanClassValue}" aria-hidden="true">${authorisedEori.hiddenHeadingMsg}</span>${authorisedEori.displayValue}"""
+   
     val companyHtml: String = authRowModel.companyName.map { company =>
-      s"""<span class="${company.spanClassValue}" aria-hidden="true">${company.hiddenHeadingMsg}</span>${company.displayValue}"""
+      s"""<br/> <span class="${company.spanClassValue}" aria-hidden="true">${company.hiddenHeadingMsg}</span>${company.displayValue}"""
     }.getOrElse(emptyString)
 
     val htmlString: String = Seq(
       authorisedEoriHtml,
-      "<br/>",
       companyHtml
     ).mkString("\n")
 
