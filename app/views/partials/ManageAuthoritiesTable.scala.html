@@ -31,16 +31,25 @@
   </caption>
 </h3>
 
+
 @govukSummaryList(SummaryList(
   rows = model.authRows.map { authRowModel =>
-    val displayValue = authRowModel.authorisedEori.displayValue
-    val companyName     = authRowModel.companyName.map(_.displayValue).getOrElse("")
-    val hiddenHeadingMsg   = s"""<span class=\"${authRowModel.authorisedEori.spanClassValue}\" aria-hidden=\"true\">${authRowModel.authorisedEori.hiddenHeadingMsg}</span>"""
+    val authorisedEori = authRowModel.authorisedEori
 
-    val htmlString =
-      s"""$displayValue<br/>
-        |$companyName
-        |$hiddenHeadingMsg""".stripMargin
+    val authorisedEoriHtml: String =
+      s"""<span class="${authorisedEori.spanClassValue}" aria-hidden="true">${authorisedEori.hiddenHeadingMsg}</span>${authorisedEori.displayValue}"""
+    val companyHtml: String = authRowModel.companyName.map { company =>
+      s"""<span class="${company.spanClassValue}" aria-hidden="true">${company.hiddenHeadingMsg}</span>${company.displayValue}"""
+    }.getOrElse(emptyString)
+
+    val htmlString: String = Seq(
+      authorisedEoriHtml,
+      "<br/>",
+      companyHtml
+    ).mkString("\n")
+
+    val content: HtmlContent = HtmlContent(htmlString)
+
 
     SummaryListRow(
       key = Key(
