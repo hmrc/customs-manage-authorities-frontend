@@ -16,7 +16,8 @@
 
 package forms
 
-import forms.mappings.Mappings
+import forms.mappings.LocalDateMapping.formKey
+import forms.mappings.{LocalDateMapping, Mappings}
 import play.api.data.Form
 import play.api.i18n.Messages
 import services.DateTimeService
@@ -29,23 +30,21 @@ class EditAuthorityStartDateFormProvider @Inject() (dateTimeService: DateTimeSer
 
   def apply(maybeEndDate: Option[LocalDate])(implicit messages: Messages): Form[LocalDate] =
     Form(
-      "value" -> localDate(
-        invalidKey = "authorityStartDate.error.invalid",
-        allRequiredKey = "authorityStartDate.error.required.all",
-        twoRequiredKey = "authorityStartDate.error.required.two",
-        requiredKey = "authorityStartDate.error.required"
-      ).verifying(
-        minDate(
-          dateTimeService.localTime().toLocalDate,
-          minimumMsg = "authorityStartDate.error.minimum",
-          yearMsg = "authorityStartDate.error.year.length"
+      formKey -> LocalDateMapping
+        .mapping(isStartDateForm = true)
+        .verifying(
+          minDate(
+            dateTimeService.localTime().toLocalDate,
+            minimumMsg = "authorityStartDate.error.minimum",
+            yearMsg = "authorityStartDate.error.year.length"
+          )
         )
-      ).verifying(
-        maybeMaxDate(
-          maybeEndDate,
-          errorKey = "authorityStartDate.error.maximum",
-          dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))
+        .verifying(
+          maybeMaxDate(
+            maybeEndDate,
+            errorKey = "authorityStartDate.error.maximum",
+            dateAsDayMonthAndYear(maybeEndDate.getOrElse(LocalDate.MAX))
+          )
         )
-      )
     )
 }

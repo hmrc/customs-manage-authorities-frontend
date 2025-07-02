@@ -17,7 +17,8 @@
 package forms
 
 import com.google.inject.Inject
-import forms.mappings.Mappings
+import forms.mappings.LocalDateMapping.formKey
+import forms.mappings.{LocalDateMapping, Mappings}
 import play.api.data.Form
 import play.api.i18n.Messages
 import services.DateTimeService
@@ -29,20 +30,18 @@ class AuthorityEndDateFormProvider @Inject() (dateTimeService: DateTimeService) 
 
   def apply(startDate: LocalDate)(implicit messages: Messages): Form[LocalDate] = {
     val minimumDate = latestOf(startDate, dateTimeService.localTime().toLocalDate)
+
     Form(
-      "value" -> localDate(
-        invalidKey = "authorityEndDate.error.invalid",
-        allRequiredKey = "authorityEndDate.error.required.all",
-        twoRequiredKey = "authorityEndDate.error.required.two",
-        requiredKey = "authorityEndDate.error.required"
-      ).verifying(
-        minDate(
-          minimumDate,
-          minimumMsg = "authorityEndDate.error.minimum",
-          yearMsg = "authorityStartDate.error.year.length",
-          dateAsDayMonthAndYear(minimumDate)
+      formKey -> LocalDateMapping
+        .mapping(isStartDateForm = false)
+        .verifying(
+          minDate(
+            minimumDate,
+            minimumMsg = "authorityEndDate.error.minimum",
+            yearMsg = "authorityStartDate.error.year.length",
+            dateAsDayMonthAndYear(minimumDate)
+          )
         )
-      )
     )
   }
 }
