@@ -210,10 +210,8 @@ authorityStart.error.required=Dewiswch bryd yr hoffech i’r awdurdod ddechrau
 authorityStartDate.title=Ar ba ddyddiad yr hoffech i’r awdurdod ddechrau?
 authorityStartDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddechrau?
 authorityStartDate.checkYourAnswersLabel=AuthorityStartDate
+
 authorityStartDate.error.required.all=Nodwch y dyddiad yr hoffech i’r awdurdod ddechrau
-authorityStartDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
-authorityStartDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
-authorityStartDate.error.invalid=Mae’n rhaid i’r dyddiad dechrau fod yn ddyddiad go iawn
 authorityStartDate.error.minimum=Mae’n rhaid i’r dyddiad dechrau fod yn y dyfodol
 authorityStartDate.error.year.length = Mae’n rhaid i’r flwyddyn gynnwys pedwar rhif
 authorityStartDate.hint = Er enghraifft, 31 3 2020.
@@ -230,10 +228,16 @@ authorityEndDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddod i ben?
 authorityEndDate.hint=Er enghraifft, 31 3 2025.
 authorityEndDate.checkYourAnswersLabel=AuthorityEndDate
 authorityEndDate.error.required.all=Nodwch y dyddiad yr hoffech i’r awdurdod ddod i ben
-authorityEndDate.error.required.two=Mae’n rhaid i’r dyddiad gynnwys {0} a {1}
-authorityEndDate.error.required=Mae’n rhaid i’r dyddiad gynnwys {0}
-authorityEndDate.error.invalid=Mae’n rhaid i’r dyddiad dod i ben fod yn ddyddiad go iawn
 authorityEndDate.error.minimum=Mae’n rhaid i’r dyddiad dod i ben fod naill ai ar neu ar ôl y dyddiad dechrau ({0})
+
+authorityDate.error.invalid.day = Nodwch ddiwrnod rhwng 1 a 31
+authorityDate.error.invalid.month = Nodwch fis rhwng 1 a 12
+authorityDate.error.invalid.year = Nodwch flwyddyn go iawn
+authorityDate.error.invalid = Nodwch ddyddiad go iawn
+
+authorityDate.error.required.day = Mae’n rhaid i’r dyddiad gynnwys diwrnod
+authorityDate.error.required.month = Mae’n rhaid i’r dyddiad gynnwys mis
+authorityDate.error.required.year = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
 
 # Allow this user to see the available balance view
 

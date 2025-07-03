@@ -25,17 +25,23 @@ import play.api.data.{Form, FormError}
 import utils.StringUtils.emptyString
 
 import java.time.LocalDate
+import scala.collection.immutable.ArraySeq
 
-class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Generators with OptionValues with Mappings {
+class AuthorityDateMappingSpec
+    extends SpecBase
+    with ScalaCheckPropertyChecks
+    with Generators
+    with OptionValues
+    with Mappings {
 
   "bind valid data" in new Setup {
 
     forAll(validData -> "valid date") { date =>
 
       val data = Map(
-        "value.day"   -> date.getDayOfMonth.toString,
-        "value.month" -> date.getMonthValue.toString,
-        "value.year"  -> date.getYear.toString
+        "day"   -> date.getDayOfMonth.toString,
+        "month" -> date.getMonthValue.toString,
+        "year"  -> date.getYear.toString
       )
 
       val result = form.bind(data)
@@ -46,9 +52,15 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
 
   "fail to bind an empty date" in new Setup {
 
-    val result: Form[LocalDate] = form.bind(Map.empty[String, String])
+    val result: Form[LocalDate] = form.bind(
+      Map(
+        "day"   -> emptyString,
+        "month" -> emptyString,
+        "year"  -> emptyString
+      )
+    )
 
-    result.errors must contain only FormError("value.day", "error.required.all", List.empty)
+    result.errors must contain only FormError("", "authorityStartDate.error.required.all", List.empty)
   }
 
   "fail to bind a date with a missing day" in new Setup {
@@ -56,17 +68,14 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
     forAll(validData -> "valid date", missingField -> "missing field") { (date, field) =>
 
       val initialData = Map(
-        "value.month" -> date.getMonthValue.toString,
-        "value.year"  -> date.getYear.toString
+        "day"   -> field,
+        "month" -> date.getMonthValue.toString,
+        "year"  -> date.getYear.toString
       )
 
-      val data = field.fold(initialData) { value =>
-        initialData + ("value.day" -> value)
-      }
+      val result = form.bind(initialData)
 
-      val result = form.bind(data)
-
-      result.errors must contain only FormError("value.day", "error.required", List("day"))
+      result.errors must contain only FormError("day", "authorityDate.error.required.day", ArraySeq.empty[String])
     }
   }
 
@@ -75,15 +84,15 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
     forAll(validData -> "valid date", invalidField -> "invalid field") { (date, field) =>
 
       val data = Map(
-        "value.day"   -> field,
-        "value.month" -> date.getMonthValue.toString,
-        "value.year"  -> date.getYear.toString
+        "day"   -> field,
+        "month" -> date.getMonthValue.toString,
+        "year"  -> date.getYear.toString
       )
 
       val result = form.bind(data)
 
       result.errors must contain(
-        FormError("value.day", "error.invalid", List.empty)
+        FormError("day", "authorityDate.error.invalid.day", List.empty)
       )
     }
   }
@@ -93,15 +102,15 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
     forAll(validData -> "valid data", invalidField -> "invalid field") { (date, field) =>
 
       val data = Map(
-        "value.day"   -> date.getDayOfMonth.toString,
-        "value.month" -> field,
-        "value.year"  -> date.getYear.toString
+        "day"   -> date.getDayOfMonth.toString,
+        "month" -> field,
+        "year"  -> date.getYear.toString
       )
 
       val result = form.bind(data)
 
       result.errors must contain(
-        FormError("value.month", "error.invalid", List.empty)
+        FormError("month", "authorityDate.error.invalid.month", List.empty)
       )
     }
   }
@@ -111,15 +120,15 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
     forAll(validData -> "valid data", invalidField -> "invalid field") { (date, field) =>
 
       val data = Map(
-        "value.day"   -> date.getDayOfMonth.toString,
-        "value.month" -> date.getMonthValue.toString,
-        "value.year"  -> field
+        "day"   -> date.getDayOfMonth.toString,
+        "month" -> date.getMonthValue.toString,
+        "year"  -> field
       )
 
       val result = form.bind(data)
 
       result.errors must contain(
-        FormError("value.year", "error.invalid", List.empty)
+        FormError("year", "authorityDate.error.invalid.year", List.empty)
       )
     }
   }
@@ -130,14 +139,17 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       (date, day, month) =>
 
         val data = Map(
-          "value.day"   -> day,
-          "value.month" -> month,
-          "value.year"  -> date.getYear.toString
+          "day"   -> day,
+          "month" -> month,
+          "year"  -> date.getYear.toString
         )
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value.day", "error.invalid", List.empty)
+        result.errors must contain theSameElementsAs Seq(
+          FormError("day", "authorityDate.error.invalid.day", List.empty),
+          FormError("month", "authorityDate.error.invalid.month", List.empty)
+        )
     }
   }
 
@@ -147,14 +159,17 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       (date, day, year) =>
 
         val data = Map(
-          "value.day"   -> day,
-          "value.month" -> date.getMonthValue.toString,
-          "value.year"  -> year
+          "day"   -> day,
+          "month" -> date.getMonthValue.toString,
+          "year"  -> year
         )
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value.day", "error.invalid", List.empty)
+        result.errors must contain theSameElementsAs Seq(
+          FormError("day", "authorityDate.error.invalid.day", List.empty),
+          FormError("year", "authorityDate.error.invalid.year", List.empty)
+        )
     }
   }
 
@@ -164,14 +179,17 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       (date, month, year) =>
 
         val data = Map(
-          "value.day"   -> date.getDayOfMonth.toString,
-          "value.month" -> month,
-          "value.year"  -> year
+          "day"   -> date.getDayOfMonth.toString,
+          "month" -> month,
+          "year"  -> year
         )
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value.month", "error.invalid", List.empty)
+        result.errors must contain theSameElementsAs Seq(
+          FormError("month", "authorityDate.error.invalid.month", List.empty),
+          FormError("year", "authorityDate.error.invalid.year", List.empty)
+        )
     }
   }
 
@@ -181,29 +199,33 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
       (day, month, year) =>
 
         val data = Map(
-          "value.day"   -> day,
-          "value.month" -> month,
-          "value.year"  -> year
+          "day"   -> day,
+          "month" -> month,
+          "year"  -> year
         )
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value.day", "error.invalid", List.empty)
+        result.errors must contain theSameElementsAs Seq(
+          FormError("day", "authorityDate.error.invalid.day", List.empty),
+          FormError("month", "authorityDate.error.invalid.month", List.empty),
+          FormError("year", "authorityDate.error.invalid.year", List.empty)
+        )
     }
   }
 
   "fail to bind an invalid date" in new Setup {
 
     val data = Map(
-      "value.day"   -> "30",
-      "value.month" -> "2",
-      "value.year"  -> "2018"
+      "day"   -> "30",
+      "month" -> "2",
+      "year"  -> "2018"
     )
 
     val result = form.bind(data)
 
     result.errors must contain(
-      FormError("value.day", "error.invalid", List.empty)
+      FormError("", "authorityDate.error.invalid", List.empty)
     )
   }
 
@@ -213,9 +235,9 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
 
       val filledForm = form.fill(date)
 
-      filledForm("value.day").value.value mustEqual date.getDayOfMonth.toString
-      filledForm("value.month").value.value mustEqual date.getMonthValue.toString
-      filledForm("value.year").value.value mustEqual date.getYear.toString
+      filledForm("day").value.value mustEqual date.getDayOfMonth.toString
+      filledForm("month").value.value mustEqual date.getMonthValue.toString
+      filledForm("year").value.value mustEqual date.getYear.toString
     }
   }
 
@@ -225,14 +247,7 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
     val monthOfTheYear = 1
     val dayOfTheMonth  = 1
 
-    val form: Form[LocalDate] = Form(
-      "value" -> localDate(
-        requiredKey = "error.required",
-        allRequiredKey = "error.required.all",
-        twoRequiredKey = "error.required.two",
-        invalidKey = "error.invalid"
-      )
-    )
+    val form: Form[LocalDate] = Form(AuthorityDateMapping.mapping(None, true))
 
     val validData: Gen[LocalDate] = datesBetween(
       min = LocalDate.of(year2000, monthOfTheYear, dayOfTheMonth),
@@ -241,7 +256,7 @@ class DateMappingsSpec extends SpecBase with ScalaCheckPropertyChecks with Gener
 
     val invalidField: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
 
-    val missingField: Gen[Option[String]] = Gen.option(Gen.const(emptyString))
+    val missingField: Gen[String] = Gen.const(emptyString)
   }
 
 }

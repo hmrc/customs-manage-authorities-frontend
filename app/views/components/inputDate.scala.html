@@ -27,21 +27,14 @@
   implicit messages: Messages
 )
 
-@dayError = @{
-    if(form(s"$id.day").value.contains("")){ "govuk-input--error"} else {""}
-}
+@dayField = @{form(s"$id.day")}
+@monthField = @{form(s"$id.month")}
+@yearField = @{form(s"$id.year")}
+@dateField = @{form(s"$id")}
 
-@monthError = @{
-    if(form(s"$id.month").value.contains("")){ "govuk-input--error"} else {""}
-}
-
-@yearError = @{
-    if(form(s"$id.year").value.contains("")){ "govuk-input--error"} else {""}
-}
-
-@allError = @{
-    if(!dayError && !monthError && !yearError && form(s"$id").hasErrors) {"govuk-input--error"} else {""}
-}
+@dayFieldErrors = @{if(dateField.hasErrors || dayField.hasErrors) "govuk-input--error" else ""}
+@monthFieldErrors = @{if(dateField.hasErrors || monthField.hasErrors) "govuk-input--error" else ""}
+@yearFieldErrors = @{if(dateField.hasErrors || yearField.hasErrors) "govuk-input--error" else ""}
 
     @govukDateInput(DateInput(
         fieldset = Some(Fieldset(
@@ -57,21 +50,21 @@
         items = Seq(
             InputItem(
                 id = s"$id.day",
-                classes = s"govuk-input--width-2 $dayError $allError",
+                classes = s"govuk-input--width-2 $dayFieldErrors",
                 name =  s"$id.day",
                 label = Some(messages("date.day")),
                 value = form(s"$id.day").value,
             ),
             InputItem(
                 id = s"$id.month",
-                classes = s"govuk-input--width-2 $monthError $allError",
+                classes = s"govuk-input--width-2 $monthFieldErrors",
                 name = s"$id.month",
                 label = Some(messages("date.month")),
                 value = form(s"$id.month").value
             ),
             InputItem(
                 id = s"$id.year",
-                classes = s"govuk-input--width-4 $yearError $allError",
+                classes = s"govuk-input--width-4 $yearFieldErrors",
                 name = s"$id.year",
                 label = Some(messages("date.year")),
                 value = form(s"$id.year").value

@@ -208,10 +208,8 @@ authorityStart.error.required = Select when you want the authority to start
 authorityStartDate.title = What date do you want the authority to start?
 authorityStartDate.heading = What date do you want the authority to start?
 authorityStartDate.checkYourAnswersLabel = AuthorityStartDate
+
 authorityStartDate.error.required.all = Enter the date you want the authority to start
-authorityStartDate.error.required.two = The date must include {0} and {1}
-authorityStartDate.error.required = The date must include {0}
-authorityStartDate.error.invalid = The start date must be a real date
 authorityStartDate.error.minimum = The start date must be in the future
 authorityStartDate.error.year.length = Year must include 4 numbers
 authorityStartDate.hint = For example, 31 3 2020.
@@ -228,10 +226,16 @@ authorityEndDate.heading = What date do you want the authority to end?
 authorityEndDate.hint = For example, 31 3 2025.
 authorityEndDate.checkYourAnswersLabel = AuthorityEndDate
 authorityEndDate.error.required.all = Enter the date you want the authority to end
-authorityEndDate.error.required.two = The date must include {0} and {1}
-authorityEndDate.error.required = The date must include {0}
-authorityEndDate.error.invalid = The end date must be a real date
 authorityEndDate.error.minimum = End date must be on or after the start date ({0})
+
+authorityDate.error.invalid.day = Enter a day between 1 and 31
+authorityDate.error.invalid.month = Enter a month between 1 and 12
+authorityDate.error.invalid.year = Enter a real year
+authorityDate.error.invalid = Enter a real date
+
+authorityDate.error.required.day = The date must include a day
+authorityDate.error.required.month = The date must include a month
+authorityDate.error.required.year = The date must include a year
 
 # Allow this user to see the available balance view
 
