@@ -28,7 +28,7 @@ case class ConditionalConstraint[T](shouldConstraintBeApplied: Condition, errorK
   * @param baseMappings
   *   the wrapped mapping that should always be applied.
   * @param conditionalAdditionalConstraints
-  *   a Seq of additional constraints to be applied. Only the first constraints in the sequence who's condition is
+  *   a Seq of additional constraints to be applied. Only the first constraints in the sequence whose condition is
   *   satisfied is added (the others are ignored).
   */
 case class AdditionalConstraintsMapping[T](
