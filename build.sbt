@@ -8,7 +8,7 @@ import AppDependencies.bootstrapVersion
 lazy val appName: String = "customs-manage-authorities-frontend"
 
 val silencerVersion = "1.7.16"
-val scala3_3_5      = "3.3.5"
+val scala3_3_6      = "3.3.6"
 
 val testDirectory            = "test"
 val scalaStyleConfigFile     = "scalastyle-config.xml"
@@ -17,7 +17,7 @@ val testScalaStyleConfigFile = "test-scalastyle-config.xml"
 Global / lintUnusedKeysOnLoad := false
 
 ThisBuild / majorVersion := 0
-ThisBuild / scalaVersion := scala3_3_5
+ThisBuild / scalaVersion := scala3_3_6
 
 lazy val scalastyleSettings = Seq(
   scalastyleConfig := baseDirectory.value / scalaStyleConfigFile,
