@@ -26,7 +26,7 @@ class FrontendAppConfigSpec extends SpecBase {
     "load all configuration values correctly" in new Setup {
       running(app) {
         appConfig.appName mustBe "customs-manage-authorities-frontend"
-        appConfig.feedbackUrl mustBe "https://www.development.tax.service.gov.uk/feedback/CDS-FIN"
+        appConfig.feedbackUrl mustBe "http://localhost:9514/feedback/CDS-FIN"
         appConfig.xiEoriEnabled mustBe true
         appConfig.euEoriEnabled mustBe false
 
