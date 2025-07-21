@@ -17,21 +17,22 @@
 package controllers.remove
 
 import cats.data.OptionT
-import cats.implicits._
+import cats.implicits.*
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import connectors.CustomsDataStoreConnector
+import models.requests.OptionalDataRequest
 import org.slf4j.LoggerFactory
 import pages.ConfirmationPage
-import play.api.i18n._
-import play.api.mvc._
+import play.api.i18n.*
+import play.api.mvc.*
 import repositories.AuthoritiesRepository
-import services._
+import services.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.remove.RemoveConfirmationView
 
 import javax.inject.Inject
-import scala.concurrent._
+import scala.concurrent.*
 
 class RemoveConfirmationController @Inject() (
   override val messagesApi: MessagesApi,
@@ -62,18 +63,20 @@ class RemoveConfirmationController @Inject() (
 
       maybeResult flatMap {
         case Some(result) => Future.successful(result)
-        case None         => Future.successful(reportSessionExpired)
-      } recover { case _ =>
-        request.userAnswers match {
-          case Some(userAnswers) =>
-            userAnswers.get(ConfirmationPage) match {
-              case Some(value) => Ok(view(value.eori, value.companyName))
-              case None        => reportSessionExpired
-            }
-          case None              => reportSessionExpired
-        }
-      }
+        case None         => Future.successful(processErrorCondition)
+      } recover { case _ => processErrorCondition }
   }
+
+  private def processErrorCondition(implicit request: OptionalDataRequest[AnyContent]) =
+    request.userAnswers match {
+      case Some(userAnswers) =>
+        userAnswers.get(ConfirmationPage) match {
+          case Some(value) => Ok(view(value.eori, value.companyName))
+          case None        => reportSessionExpired
+        }
+
+      case None => reportSessionExpired
+    }
 
   private def reportSessionExpired: Result = {
     logger.warn("Something went wrong when displaying confirmation page on the remove journey")

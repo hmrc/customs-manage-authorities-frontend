@@ -90,7 +90,41 @@ class RemoveConfirmationControllerSpec extends SpecBase {
           redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }
+      "return Internal Server Error when an exception is thrown during page load" in {
+        val mockAuthoritiesRepository = mock[AuthoritiesRepository]
+        val mockConfirmationService   = mock[ConfirmationService]
 
+        when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
+        when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockConfirmationService.populateConfirmation(any(), any(), any(), any(), any()))
+          .thenReturn(Future.failed(new RuntimeException("boom")))
+
+        val userAnswers = emptyUserAnswers
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount))
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+            inject.bind[ConfirmationService].toInstance(mockConfirmationService)
+          )
+          .configure("features.edit-journey" -> true)
+          .build()
+
+        running(application) {
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+        }
+      }
       "return Ok for a GET" in {
         val mockAuthoritiesRepository = mock[AuthoritiesRepository]
         val mockConfirmationService   = mock[ConfirmationService]
