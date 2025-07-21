@@ -38,6 +38,7 @@ import utils.TestData.XI_EORI
 import views.html.add.EoriNumberView
 
 import scala.concurrent.Future
+import scala.xml.dtd.ValidationException
 
 class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
@@ -635,6 +636,63 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
           contentAsString(result).contains(messages(application)("eoriNumber.error.authorise-own-eori"))
         }
       }
+
+    "return a Bad Request when ValidationException is thrown during EORI submission" in new SetUp {
+
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
+        .thenReturn(Future.failed(new ValidationException("Invalid EORI")))
+
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", "GB123456789011"))
+        val result  = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter an EORI that has been registered with HMRC")
+      }
+    }
+
+    "redirect to Technical Difficulties page when unexpected exception is thrown during EORI submission" in new SetUp {
+
+      when(mockConnector.validateEori(any())(any())).thenReturn(Future.successful(Right(true)))
+      when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some(XI_EORI)))
+      when(mockDataStoreConnector.retrieveCompanyInformationThirdParty(any())(any()))
+        .thenReturn(Future.failed(new RuntimeException("Unexpected")))
+
+      val mockSessionRepository: SessionRepository = mock[SessionRepository]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+          bind[CustomsFinancialsConnector].toInstance(mockConnector),
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[CustomsDataStoreConnector].toInstance(mockDataStoreConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = fakeRequest(POST, eoriNumberRoute).withFormUrlEncodedBody(("value", "GB123456789011"))
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TechnicalDifficulties.onPageLoad.url
+      }
+    }
+
   }
 
   trait SetUp {

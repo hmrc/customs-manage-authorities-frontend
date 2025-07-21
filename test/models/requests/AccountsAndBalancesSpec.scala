@@ -18,10 +18,14 @@ package models.requests
 
 import base.SpecBase
 import models.domain
-import models.domain.{AccountStatusClosed, CDSCashBalance, CashAccount, DutyDefermentBalance, GeneralGuaranteeBalance}
+import models.domain.{
+  AccountStatusClosed, AccountStatusOpen, CDSCashBalance, CashAccount, DutyDefermentBalance, GeneralGuaranteeBalance
+}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.libs.json.Json
+import models.requests.AccountsAndBalancesResponseContainer.accountWithStatusReads
 import utils.WireMockHelper
 
 class AccountsAndBalancesSpec
@@ -147,6 +151,89 @@ class AccountsAndBalancesSpec
         )
 
       dutyDefermentAccount.toDomain mustBe expectedResult
+    }
+  }
+
+  "AccountsAndBalancesRequestContainer" should {
+    "serialize and deserialize correctly" in {
+      val detail = AccountsRequestDetail(
+        EORINo = "GB123456789000",
+        accountType = Some("DutyDeferment"),
+        accountNumber = Some("1234567"),
+        referenceDate = Some("2024-01-01")
+      )
+
+      val common = AccountsRequestCommon(
+        PID = Some("12345"),
+        originatingSystem = Some("CDS"),
+        receiptDate = "2024-01-01T00:00:00Z",
+        acknowledgementReference = "1234567890123456",
+        regime = "CDS"
+      )
+
+      val request   = AccountsAndBalancesRequest(common, detail)
+      val container = AccountsAndBalancesRequestContainer(request)
+
+      val json = Json.toJson(container)
+      json.validate[AccountsAndBalancesRequestContainer].asOpt.value mustBe container
+    }
+  }
+
+  "AccountsAndBalancesResponseContainer" should {
+    "deserialize from valid JSON" in {
+      val json = Json.parse(
+        """
+          {
+            "accountsAndBalancesResponse": {
+              "responseCommon": {
+                "status": "OK",
+                "statusText": "Success",
+                "processingDate": "2024-01-01T00:00:00Z",
+                "returnParameters": [
+                  {"paramName": "testParam", "paramValue": "testValue"}
+                ]
+              },
+              "responseDetail": {
+                "EORINo": "GB123456789000",
+                "referenceDate": "2024-01-01",
+                "dutyDefermentAccount": [],
+                "generalGuaranteeAccount": [],
+                "cdsCashAccount": []
+              }
+            }
+          }
+        """
+      )
+
+      val result = json.validate[AccountsAndBalancesResponseContainer]
+      result.isSuccess mustBe true
+      result.get.accountsAndBalancesResponse.responseCommon.value.status mustBe "OK"
+    }
+  }
+
+  "AccountWithStatus Json Reads" should {
+    "deserialize from Json correctly" in {
+      val json = Json.parse {
+        """
+          | {
+          |   "number":"ACC123",
+          |   "type":"CDSCash",
+          |   "owner":"GB12345",
+          |   "accountStatus":"Open",
+          |   "viewBalanceIsGranted": true
+          | }
+          |""".stripMargin
+      }
+
+      val expected: AccountWithStatus = AccountWithStatus(
+        "ACC123",
+        "CDSCash",
+        "GB12345",
+        AccountStatusOpen,
+        true
+      )
+
+      json.as[AccountWithStatus] mustBe expected
     }
   }
 }

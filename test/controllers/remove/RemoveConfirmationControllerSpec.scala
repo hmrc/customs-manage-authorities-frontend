@@ -17,17 +17,19 @@
 package controllers.remove
 
 import base.SpecBase
-import models.domain._
+import models.domain.*
 import models.CompanyDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
+import pages.{ConfirmationDetails, ConfirmationPage}
 import pages.add.{AccountsPage, EoriNumberPage}
 import play.api.inject
 import play.api.inject.bind
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.AuthoritiesRepository
 import services.ConfirmationService
+
 import java.time.LocalDate
 import scala.concurrent.Future
 
@@ -125,6 +127,82 @@ class RemoveConfirmationControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
           verify(mockAuthoritiesRepository, times(1)).clear("id")
+        }
+      }
+
+      "recover using ConfirmationPage data if an exception is thrown" in {
+        val mockRepository = mock[AuthoritiesRepository]
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockRepository.clear(any())).thenThrow(new RuntimeException("Simulated failure"))
+
+        val userAnswers = emptyUserAnswers
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount))
+          .success
+          .value
+          .set(ConfirmationPage, ConfirmationDetails("GB123456789012", None, Some("Stark Industries"), false))
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository))
+          .build()
+
+        running(application) {
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Stark Industries")
+        }
+      }
+
+      "redirect to SessionExpired if ConfirmationPage is missing in userAnswers during recovery" in {
+        val mockRepository = mock[AuthoritiesRepository]
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockRepository.clear(any())).thenThrow(new RuntimeException("Simulated failure"))
+
+        val userAnswers = emptyUserAnswers
+          .set(EoriNumberPage, CompanyDetails("GB123456789012", Some("Tony Stark")))
+          .success
+          .value
+          .set(AccountsPage, List(cashAccount))
+          .success
+          .value
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository))
+          .build()
+
+        running(application) {
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+        }
+      }
+
+      "redirect to SessionExpired if userAnswers is completely missing during recovery" in {
+        val mockRepository = mock[AuthoritiesRepository]
+        when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+        when(mockRepository.clear(any())).thenThrow(new RuntimeException("Simulated failure"))
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(bind[AuthoritiesRepository].toInstance(mockRepository))
+          .build()
+
+        running(application) {
+          val request =
+            fakeRequest(GET, controllers.remove.routes.RemoveConfirmationController.onPageLoad("a", "b").url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
         }
       }
     }

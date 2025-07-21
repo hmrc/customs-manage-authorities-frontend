@@ -34,6 +34,7 @@ object TestData {
   val EORI_NUMBER    = "EORI"
   val XI_EORI        = "XI12345678"
   val COMPANY_NAME   = "test_company"
+  val TEST_EMAIL     = "test@test.com"
 
   val testEmail: Email = Email("test_address")
 

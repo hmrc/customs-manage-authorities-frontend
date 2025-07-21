@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import play.api.libs.json.{JsValue, Json}
 import utils.StringUtils.emptyString
 
 class CompanyInformationSpec extends SpecBase {
@@ -34,6 +35,21 @@ class CompanyInformationSpec extends SpecBase {
 
       result.formattedAddress mustBe formattedAddress
     }
+
+    "generate correct output for Json Reads" in new Setup {
+      corpJson.as[CompanyInformation] mustBe corp
+    }
+
+    "generate correct output for Json Writes" in new Setup {
+      Json.toJson(corp) mustBe corpJson
+    }
+
+    "read CompanyInformation from JSON when optional postalCode is missing" in new Setup {
+      val expectedCorp: CompanyInformation =
+        CompanyInformation("TestCompany", "Yes", AddressInformation("123 Street", "New City", None, "GB"))
+
+      corpJsonNoPostalCode.as[CompanyInformation] mustBe expectedCorp
+    }
   }
 }
 
@@ -43,8 +59,33 @@ trait Setup {
 
   val address: AddressInformation = AddressInformation("123 Street", "New City", Some("123 ABC"), "GB")
 
-  val corp = CompanyInformation(name, consent, address)
+  val corp: CompanyInformation = CompanyInformation(name, consent, address)
 
   def formattedAddress: String = s"${address.streetAndNumber}, ${address.city}, " +
     s"${address.postalCode.getOrElse(emptyString)}, ${address.countryCode}"
+
+  val corpJson: JsValue = Json.parse(s"""
+       |{
+       |  "name": "$name",
+       |  "consent": "$consent",
+       |  "address": {
+       |    "streetAndNumber": "${address.streetAndNumber}",
+       |    "city": "${address.city}",
+       |    "postalCode": "${address.postalCode.get}",
+       |    "countryCode": "${address.countryCode}"
+       |  }
+       |}
+         """.stripMargin)
+
+  val corpJsonNoPostalCode: JsValue = Json.parse(s"""
+       |{
+       |  "name": "$name",
+       |  "consent": "$consent",
+       |  "address": {
+       |    "streetAndNumber": "${address.streetAndNumber}",
+       |    "city": "${address.city}",
+       |    "countryCode": "${address.countryCode}"
+       |  }
+       |}
+           """.stripMargin)
 }

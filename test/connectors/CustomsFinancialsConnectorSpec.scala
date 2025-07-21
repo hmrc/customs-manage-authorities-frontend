@@ -17,15 +17,16 @@
 package connectors
 
 import base.SpecBase
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.http.Fault
-import models._
-import models.domain._
-import models.requests._
+import models.*
+import models.domain.*
+import models.requests.*
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.{EitherValues, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
+import play.api.http.Status.NOT_FOUND
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.Helpers.running
 import uk.gov.hmrc.http.HeaderCarrier
@@ -289,6 +290,32 @@ class CustomsFinancialsConnectorSpec
         result mustBe Left(EORIValidationError)
       }
     }
+
+    "return false for NotFoundException during validateEori" in new Setup {
+      running(app) {
+        server.stubFor(
+          post(urlEqualTo("/customs-financials-api/eori/validate"))
+            .withRequestBody(equalToJson("""{"eori": "121312"}"""))
+            .willReturn(aResponse().withStatus(NOT_FOUND).withBody("Not Found"))
+        )
+
+        val result = connector.validateEori(eoriNumber).futureValue
+        result mustBe Right(false)
+      }
+    }
+
+    "return validation error for unexpected exception in validateEori" in new Setup {
+      running(app) {
+        server.stubFor(
+          post(urlEqualTo("/customs-financials-api/eori/validate"))
+            .withRequestBody(equalToJson("""{"eori": "121312"}"""))
+            .willReturn(aResponse().withFault(Fault.CONNECTION_RESET_BY_PEER))
+        )
+
+        val result = connector.validateEori(eoriNumber).futureValue
+        result mustBe Left(EORIValidationError)
+      }
+    }
   }
 
   ".retrieve eori company name" must {
@@ -307,17 +334,30 @@ class CustomsFinancialsConnectorSpec
     }
   }
 
-  "delete notifications should return a boolean based on the result" in new Setup {
+  ".deleteNotification" should {
+    "return a boolean based on the result" in new Setup {
+      running(app) {
 
-    running(app) {
+        server.stubFor(
+          delete(urlEqualTo(s"/customs-financials-api/eori/notifications/${FileRole.StandingAuthority}"))
+            .willReturn(ok())
+        )
 
-      server.stubFor(
-        delete(urlEqualTo(s"/customs-financials-api/eori/notifications/${FileRole.StandingAuthority}"))
-          .willReturn(ok())
-      )
+        val result = connector.deleteNotification(FileRole.StandingAuthority)(hc).futureValue
+        result mustBe true
+      }
+    }
 
-      val result = connector.deleteNotification(FileRole.StandingAuthority)(hc).futureValue
-      result mustBe true
+    "return false if deleteNotification fails with exception" in new Setup {
+      running(app) {
+        server.stubFor(
+          delete(urlEqualTo(s"/customs-financials-api/eori/notifications/${FileRole.StandingAuthority}"))
+            .willReturn(aResponse().withFault(Fault.MALFORMED_RESPONSE_CHUNK))
+        )
+
+        val result = connector.deleteNotification(FileRole.StandingAuthority).futureValue
+        result mustBe false
+      }
     }
   }
 

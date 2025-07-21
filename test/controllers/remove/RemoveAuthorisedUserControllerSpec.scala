@@ -68,6 +68,25 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "render the CheckYourAnswers view when data exists" in new Setup {
+      val authorisedUser: AuthorisedUser   = AuthorisedUser("John Doe", "Finance Manager")
+      val userAnswersWithUser: UserAnswers =
+        emptyUserAnswers.set(RemoveAuthorisedUserPage("a", "b"), authorisedUser).get
+
+      when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      val app: Application = application(userAnswersWithUser)
+
+      running(app) {
+        val request = FakeRequest(GET, routes.RemoveCheckYourAnswers.onPageLoad("a", "b").url)
+        val result  = route(app, request).value
+
+        status(result) mustBe OK
+        contentAsString(result) must include("John Doe")
+      }
+    }
+
     "return a pre-populated form if the user-answers already present" in new Setup {
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
         .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))

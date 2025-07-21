@@ -1,6 +1,8 @@
 $govuk-assets-path: "/customs/manage-authorities/assets/lib/govuk-frontend/dist/govuk/assets/";
 $hmrc-assets-path: "/customs/manage-authorities/assets/lib/hmrc-frontend/hmrc/";
 
+$govuk-suppressed-warnings: (libsass);
+
 @import "lib/govuk-frontend/dist/govuk/base";
 
 @import "components/table";

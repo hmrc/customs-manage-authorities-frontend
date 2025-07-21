@@ -69,6 +69,26 @@ class ViewAuthorityControllerSpec extends SpecBase {
       }
     }
 
+    "return Ok when userAnswers is None" in new Setup {
+      override val application: Application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[AuthoritiesCacheService].toInstance(mockAuthCacheService)
+        )
+        .build()
+
+      when(mockAuthCacheService.getAccountAndAuthority(any(), any(), any())(any()))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.routes.ViewAuthorityController.onPageLoad(accountId, authorityId).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+      }
+    }
+
     "return 303 when AuthoritiesCacheErrorResponse is received" in new Setup {
 
       override val application: Application = applicationBuilder(userAnswers = Some(userAnswers))
