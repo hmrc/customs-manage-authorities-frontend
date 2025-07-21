@@ -18,6 +18,7 @@ package models.domain
 
 import base.SpecBase
 import org.scalatest.matchers.should.Matchers.{should, shouldBe}
+import play.api.libs.json.{JsValue, Json}
 
 import java.time.LocalDate
 
@@ -81,6 +82,84 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       authsWithId.accounts                          should have size 2
       authsWithId.uniqueAuthorisedEORIs             should have size 1
       authsWithIdWithEmptyMap.uniqueAuthorisedEORIs should have size 0
+    }
+  }
+
+  "AccountWithAuthorities JSON Reads" must {
+    "deserialize correctly from JSON" in {
+      val jsonStr =
+        s"""
+           |{
+           |  "accountType": "CDSCash",
+           |  "accountNumber": "123",
+           |  "accountStatus": "Open",
+           |  "authorities": [
+           |    {
+           |      "authorisedEori": "GB123456789012",
+           |      "authorisedFromDate": "${LocalDate.now()}",
+           |      "authorisedToDate": "${LocalDate.now().plusDays(1)}",
+           |      "viewBalance": true
+           |    }
+           |  ]
+           |}
+           |""".stripMargin
+
+      val json = Json.parse(jsonStr)
+      val result = json.as[AccountWithAuthorities]
+
+      result.accountType     shouldBe CdsCashAccount
+      result.accountNumber   shouldBe "123"
+      result.accountStatus   shouldBe Some(AccountStatusOpen)
+      result.authorities.head.authorisedEori shouldBe "GB123456789012"
+    }
+  }
+
+
+  "AccountWithAuthoritiesWithId JSON Format" must {
+    "serialize and deserialize correctly" in new SetUp {
+      val accWithId: AccountWithAuthoritiesWithId = AccountWithAuthoritiesWithId(accWithAuthorities1)
+
+      val json: JsValue                              = Json.toJson(accWithId)
+      val deserialized: AccountWithAuthoritiesWithId = json.as[AccountWithAuthoritiesWithId]
+
+      deserialized.accountType        shouldBe accWithId.accountType
+      deserialized.accountNumber      shouldBe accWithId.accountNumber
+      deserialized.accountStatus      shouldBe accWithId.accountStatus
+      deserialized.authorities.keySet shouldBe accWithId.authorities.keySet
+    }
+  }
+
+  "AuthoritiesWithId.uniqueAuthorisedEORIs" must {
+    "return unique EORI values" in new SetUp {
+      val differentEoriAuthority: StandingAuthority = StandingAuthority(
+        "GB999999999999",
+        LocalDate.now(),
+        Some(LocalDate.now().plusDays(5)),
+        viewBalance = true
+      )
+
+      val accWithDifferentEori: AccountWithAuthorities = AccountWithAuthorities(
+        CdsCashAccount,
+        "456",
+        Some(AccountStatusOpen),
+        Seq(differentEoriAuthority)
+      )
+
+      val authsWithId: AuthoritiesWithId = AuthoritiesWithId(Seq(accWithAuthorities1, accWithDifferentEori))
+
+      val result: Set[EORI] = authsWithId.uniqueAuthorisedEORIs
+      result        should contain allOf ("GB123456789012", "GB999999999999")
+      result.size shouldBe 2
+    }
+  }
+
+  "AuthoritiesWithId JSON Format" must {
+    "serialize and deserialize correctly" in new SetUp {
+      val json: JsValue                   = Json.toJson(authWithId)
+      val deserialized: AuthoritiesWithId = json.as[AuthoritiesWithId]
+
+      deserialized.authorities.keySet shouldBe authWithId.authorities.keySet
+      deserialized.accounts.size      shouldBe authWithId.accounts.size
     }
   }
 
