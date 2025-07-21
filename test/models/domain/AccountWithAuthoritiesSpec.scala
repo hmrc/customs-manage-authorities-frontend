@@ -19,6 +19,7 @@ package models.domain
 import base.SpecBase
 import org.scalatest.matchers.should.Matchers.{should, shouldBe}
 import play.api.libs.json.{JsValue, Json}
+import utils.TestData.FIVE
 
 import java.time.LocalDate
 
@@ -133,7 +134,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       val differentEoriAuthority: StandingAuthority = StandingAuthority(
         "GB999999999999",
         LocalDate.now(),
-        Some(LocalDate.now().plusDays(5)),
+        Some(LocalDate.now().plusDays(FIVE)),
         viewBalance = true
       )
 

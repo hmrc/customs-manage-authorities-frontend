@@ -21,7 +21,12 @@ import models.domain.{
   AccountStatusClosed, AccountStatusOpen, AccountStatusPending, AccountStatusSuspended, CDSAccounts, CDSCashBalance,
   CashAccount, DutyDefermentAccount, DutyDefermentBalance, GeneralGuaranteeAccount, GeneralGuaranteeBalance
 }
-import play.api.libs.json._
+import models.domain.CDSAccountStatus.CDSAccountStatusReads
+
+import play.api.libs.json.*
+import utils.TestData.{DAY_1, HOURS_12, MINUTES_20, MONTH_1, YEAR_2023}
+
+import java.time.LocalDateTime
 
 class CustomsAccountsSpec extends SpecBase {
 
@@ -135,6 +140,55 @@ class CustomsAccountsSpec extends SpecBase {
     }
   }
 
+  "CDSAccountStatusReads" should {
+    "default to AccountStatusOpen for unknown values and log a warning" in {
+      val result = Json.fromJson[models.domain.CDSAccountStatus](JsString("UnrecognizedStatus"))(CDSAccountStatusReads)
+      result mustBe JsSuccess(AccountStatusOpen)
+    }
+  }
+
+  "MongoJavatimeFormats.localDateTimeReads" should {
+    "deserialize JSON with $date.$numberLong into LocalDateTime" in {
+      val millis           = 1672575600000L
+      val expectedDateTime = LocalDateTime.of(YEAR_2023, MONTH_1, DAY_1, HOURS_12, MINUTES_20)
+
+      val json = Json.obj(
+        "lastUpdated" -> Json.obj(
+          "$date" -> Json.obj(
+            "$numberLong" -> millis.toString
+          )
+        )
+      )
+
+      val result = (__ \ "lastUpdated").read(MongoJavatimeFormats.localDateTimeReads).reads(json)
+
+      result mustBe a[JsSuccess[_]]
+      result.get mustEqual expectedDateTime
+    }
+  }
+
+  "MongoJavatimeFormats object" should {
+    "be instantiated and usable" in {
+      MongoJavatimeFormats.localDateTimeFormat must not be None
+    }
+  }
+
+  "UserAnswers custom writer" should {
+    "serialize using custom writer" in {
+      val userAnswer =
+        UserAnswers(
+          "id123",
+          Json.obj("foo" -> "bar"),
+          LocalDateTime.of(YEAR_2023, MONTH_1, DAY_1, HOURS_12, MINUTES_20)
+        )
+      val json       = UserAnswers.writes.writes(userAnswer)
+
+      (json \ "_id").as[String] mustBe "id123"
+      (json \ "data" \ "foo").as[String] mustBe "bar"
+      (json \ "lastUpdated" \ "$date" \ "$numberLong").asOpt[String] must not be empty
+    }
+  }
+
   trait Setup {
     private val traderEori = "12345678"
 
@@ -176,5 +230,4 @@ class CustomsAccountsSpec extends SpecBase {
         Some(GeneralGuaranteeBalance(BigDecimal(zeroAmount), BigDecimal(zeroAmount)))
       )
   }
-
 }

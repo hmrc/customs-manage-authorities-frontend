@@ -17,17 +17,22 @@
 package controllers.edit
 
 import base.SpecBase
-import models.domain._
+import connectors.CustomsDataStoreConnector
+import models.domain.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar.mock
 import pages.add.{AccountsPage, EoriNumberPage}
 import play.api.inject
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.{AccountsRepository, AuthoritiesRepository, SessionRepository}
 import services.ConfirmationService
+
 import java.time.LocalDate
 import models.CompanyDetails
+import pages.{ConfirmationDetails, ConfirmationPage}
+import uk.gov.hmrc.http.HeaderCarrier
+
 import scala.concurrent.Future
 
 class EditConfirmationControllerSpec extends SpecBase {
@@ -129,6 +134,56 @@ class EditConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
 
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
+      }
+    }
+
+    "return fallback confirmation page from session if an exception occurs" in {
+      val mockSessionRepository     = mock[SessionRepository]
+      val mockAccountsRepository    = mock[AccountsRepository]
+      val mockAuthoritiesRepository = mock[AuthoritiesRepository]
+      val mockConfirmationService   = mock[ConfirmationService]
+      val mockDataStore             = mock[CustomsDataStoreConnector]
+
+      when(mockSessionRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAccountsRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAuthoritiesRepository.clear("id")).thenReturn(Future.successful(true))
+      when(mockAuthoritiesRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
+      when(
+        mockConfirmationService.populateConfirmation(
+          any[String],
+          any[String],
+          any[Option[String]],
+          any[Option[String]],
+          any[Boolean]
+        )
+      ).thenReturn(Future.successful(true))
+
+      when(
+        mockDataStore.retrieveCompanyInformationThirdParty(any[String])(any[HeaderCarrier])
+      ).thenReturn(Future.failed(new RuntimeException("An error occurred")))
+
+      val confirmationDetails =
+        ConfirmationDetails("GB123456789012", Some("test_date"), Some("Stark Industries"), false)
+      val userAnswers         = emptyUserAnswers.set(ConfirmationPage, confirmationDetails).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[AccountsRepository].toInstance(mockAccountsRepository),
+          inject.bind[AuthoritiesRepository].toInstance(mockAuthoritiesRepository),
+          inject.bind[ConfirmationService].toInstance(mockConfirmationService),
+          inject.bind[CustomsDataStoreConnector].toInstance(mockDataStore)
+        )
+        .configure("features.edit-journey" -> true)
+        .build()
+
+      running(application) {
+        val request = fakeRequest(GET, controllers.edit.routes.EditConfirmationController.onPageLoad("a", "b").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("Stark Industries")
       }
     }
   }

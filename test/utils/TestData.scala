@@ -61,9 +61,13 @@ object TestData {
   val DAY_20 = 20
   val DAY_25 = 25
 
+  val HOURS_12   = 12
+  val MINUTES_20 = 20
+
   val LENGTH_8  = 8
   val LENGTH_11 = 11
   val LENGTH_27 = 27
+  val FIVE      = 5
 
   val FILE_SIZE_DEFAULT = 1234L
   val FILE_SIZE_42      = 42
