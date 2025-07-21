@@ -104,16 +104,15 @@ class AccountWithAuthoritiesSpec extends SpecBase {
            |}
            |""".stripMargin
 
-      val json = Json.parse(jsonStr)
+      val json   = Json.parse(jsonStr)
       val result = json.as[AccountWithAuthorities]
 
-      result.accountType     shouldBe CdsCashAccount
-      result.accountNumber   shouldBe "123"
-      result.accountStatus   shouldBe Some(AccountStatusOpen)
+      result.accountType                     shouldBe CdsCashAccount
+      result.accountNumber                   shouldBe "123"
+      result.accountStatus                   shouldBe Some(AccountStatusOpen)
       result.authorities.head.authorisedEori shouldBe "GB123456789012"
     }
   }
-
 
   "AccountWithAuthoritiesWithId JSON Format" must {
     "serialize and deserialize correctly" in new SetUp {
