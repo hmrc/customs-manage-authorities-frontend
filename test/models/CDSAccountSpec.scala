@@ -17,8 +17,9 @@
 package models
 
 import base.SpecBase
-import models.domain._
+import models.domain.*
 import play.api.i18n.Messages
+import play.api.libs.json.{JsString, JsSuccess, JsValue, Json}
 
 class CDSAccountSpec extends SpecBase {
 
@@ -37,9 +38,44 @@ class CDSAccountSpec extends SpecBase {
       val result = CDSAccount.formattedAccountType(generalGuarantee)
       result mustBe messages("remove.heading.caption.CdsGeneralGuaranteeAccount", generalGuarantee.number)
     }
+
+    "deserialize 'Pending' CDSAccountStatus" in {
+      val json = JsString("Pending")
+      json.validate[CDSAccountStatus] mustBe JsSuccess(AccountStatusPending)
+    }
+
+    "serialize and deserialize DutyDefermentBalance" in new Setup {
+      val dutyDefermentBalance: DutyDefermentBalance = DutyDefermentBalance(Some(ten), Some(ten), Some(ten), Some(ten))
+      val json: JsValue                              = Json.toJson(dutyDefermentBalance)
+      json.validate[DutyDefermentBalance].get mustBe dutyDefermentBalance
+    }
+
+    "serialize and deserialize GeneralGuaranteeBalance" in new Setup {
+      val generalGuaranteeBalance: GeneralGuaranteeBalance = GeneralGuaranteeBalance(ten, ten)
+      val json: JsValue                                    = Json.toJson(generalGuaranteeBalance)
+      json.validate[GeneralGuaranteeBalance].get mustBe generalGuaranteeBalance
+    }
+
+    "serialize and deserialize CDSCashBalance" in new Setup {
+      val cdsCashBalance: CDSCashBalance = CDSCashBalance(Some(ten))
+      val json: JsValue                  = Json.toJson(cdsCashBalance)
+      json.validate[CDSCashBalance].get mustBe cdsCashBalance
+    }
+
+    "serialize and deserialize CDSAccounts" in new Setup {
+      val accountList: List[CDSAccount] = List(
+        CashAccount("1", "owner", AccountStatusOpen, CDSCashBalance(Some(ten))),
+        GeneralGuaranteeAccount("2", "owner", AccountStatusClosed, Some(GeneralGuaranteeBalance(ten, ten)))
+      )
+      val cdsAccounts: CDSAccounts      = CDSAccounts("EORI123", accountList)
+
+      val json: JsValue = Json.toJson(cdsAccounts)
+      json.validate[CDSAccounts].get mustBe cdsAccounts
+    }
   }
 
   trait Setup {
+    val ten                         = 10
     implicit val messages: Messages = messagesApi.preferred(fakeRequest())
 
     val cashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))

@@ -17,6 +17,10 @@
 package models.requests
 
 import base.SpecBase
+import models.domain.{AuthorisedUser, CdsCashAccount, StandingAuthority}
+import play.api.libs.json.Json
+
+import java.time.LocalDate
 
 class ManageAuthorityRequestsSpec extends SpecBase {
 
@@ -48,9 +52,43 @@ class ManageAuthorityRequestsSpec extends SpecBase {
     }
   }
 
+  "Accounts JSON format" should {
+    "serialize and deserialize correctly" in new Setup {
+      Json.toJson(accounts).as[Accounts] mustBe accounts
+    }
+  }
+
+  "AddAuthorityRequest JSON format" should {
+    "serialize and deserialize correctly" in new Setup {
+      Json.toJson(addAuthorityRequest).as[AddAuthorityRequest] mustBe addAuthorityRequest
+    }
+  }
+
+  "RevokeAuthorityRequest" should {
+    "serialize and deserialize correctly" in new Setup {
+      Json.toJson(revokeAuthorityRequest).as[RevokeAuthorityRequest] mustBe revokeAuthorityRequest
+    }
+  }
+
   trait Setup {
     val ddAccountsOnly: Accounts  = Accounts(None, Seq("67890"), None)
     val ddAccountsEmpty: Accounts = Accounts(Some("12345"), Seq(), None)
-    val accounts: Accounts        = Accounts(Some("12345"), Seq("67890"), Some("12345678"))
+
+    val accounts: Accounts = Accounts(Some("12345"), Seq("67890"), Some("12345678"))
+
+    val standingAuthority: StandingAuthority =
+      StandingAuthority("GB123456789000", LocalDate.now, None, viewBalance = true)
+    val authorisedUser: AuthorisedUser       = AuthorisedUser("test_name", "test_role")
+
+    val addAuthorityRequest: AddAuthorityRequest =
+      AddAuthorityRequest(accounts, standingAuthority, authorisedUser, true, "GB12345")
+
+    val revokeAuthorityRequest: RevokeAuthorityRequest = RevokeAuthorityRequest(
+      "ACC123",
+      CdsCashAccount,
+      "GB54321",
+      authorisedUser,
+      "GB12345"
+    )
   }
 }

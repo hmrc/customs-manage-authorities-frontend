@@ -203,5 +203,35 @@ class ShowBalanceControllerSpec extends SpecBase with MockitoSugar {
         redirectLocation(result).value mustEqual controllers.routes.SessionExpiredController.onPageLoad.url
       }
     }
+
+    "return an error page when AccountsPage has no accounts (GET)" in {
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId.value)
+
+      val application: Application = defaultApplication(Some(userAnswers))
+
+      running(application) {
+        val request = fakeRequest(GET, showBalanceRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TechnicalDifficulties.onPageLoad.url
+      }
+    }
+
+    "return an error page when AccountsPage has no accounts (POST)" in {
+      val userAnswers: UserAnswers = UserAnswers(userAnswersId.value)
+
+      val application: Application = defaultApplication(Some(userAnswers))
+
+      running(application) {
+        val request = fakeRequest(POST, showBalanceRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TechnicalDifficulties.onPageLoad.url
+      }
+    }
   }
 }

@@ -59,8 +59,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*filters.*;.*handlers.*;.*components.*;" +
       ".*javascript.*;.*Routes.*;.*GuiceInjector;",
     ScoverageKeys.coverageMinimumStmtTotal := 90,
-    ScoverageKeys.coverageMinimumBranchTotal := 90,
-    ScoverageKeys.coverageFailOnMinimum := false,
+    ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions ++= Seq("-feature"),
     libraryDependencies ++= AppDependencies(),

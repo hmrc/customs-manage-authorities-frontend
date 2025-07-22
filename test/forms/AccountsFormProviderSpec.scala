@@ -17,8 +17,14 @@
 package forms
 
 import forms.behaviours.CheckboxFieldBehaviours
+import models.domain.{AccountStatusPending, DutyDefermentAccount, DutyDefermentBalance}
 import org.scalatest.matchers.should.Matchers.{should, shouldBe, shouldEqual}
-import play.api.data.FormError
+import org.scalatestplus.mockito.MockitoSugar.mock
+import play.api.data.Forms.{list, text}
+import play.api.data.{Form, FormError}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.FakeRequest
+import play.api.test.Helpers.stubMessagesApi
 
 class AccountsFormProviderSpec extends CheckboxFieldBehaviours {
 
@@ -57,5 +63,26 @@ class AccountsFormProviderSpec extends CheckboxFieldBehaviours {
       fieldName,
       requiredKey
     )
+  }
+
+  "options" should {
+    "include pending message for DutyDefermentAccount with AccountStatusPending" in {
+      val messagesApi: MessagesApi = stubMessagesApi()
+      val messages: Messages       = messagesApi.preferred(FakeRequest())
+
+      val account = DutyDefermentAccount(
+        number = "123456",
+        owner = "TestOwner",
+        status = AccountStatusPending,
+        balances = mock[DutyDefermentBalance],
+        isNiAccount = false,
+        isIomAccount = false
+      )
+
+      val form   = Form("value" -> list(text))
+      val result = AccountsFormProvider.options(form, Seq(account))(messages)
+
+      result.head.content.toString should include(messages("accounts.pending"))
+    }
   }
 }
