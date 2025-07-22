@@ -312,7 +312,7 @@ addConfirmation.body.company.name = Company name:
 addConfirmation.body.today.singular = This company now has authority to use your account
 addConfirmation.body.today.plural = This company now has authority to use your accounts
 addConfirmation.body.setDate = Starting on {0}
-addConfirmation.p1.today = Ask the company or person to check that they can see your account in their customs financials dashboard. It may take up to one hour to appear.
+addConfirmation.p1.today = It may take up to one hour to appear.
 addConfirmation.p1.setDate = When the authority has started ask the company or person to check they can see your account in their customs financials dashboard.
 addConfirmation.returnLink = Back to manage your account authorities
 

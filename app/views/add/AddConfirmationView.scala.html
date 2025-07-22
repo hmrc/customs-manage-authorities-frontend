@@ -48,9 +48,7 @@
       startDate = startDate
    )
 
-   @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => messages("addConfirmation.p1.setDate"))))
-
-   @link(location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, linkMessage = "addConfirmation.returnLink")
+   @link(pClass = "govuk-body govuk-!-margin-top-6", location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, linkMessage = "addConfirmation.returnLink")
 
    @h2(
       msg = messages("user-research.subheader-text"),
