@@ -32,6 +32,14 @@ class CompanyNameSpec extends SpecBase {
     }
   }
 
+  "handle missing optional name field" in new Setup {
+    jsonWithoutName.as[CompanyName] mustBe expectedJsonWithoutName
+  }
+
+  "handle null value for optional name field" in new Setup {
+    jsonWithNullName.as[CompanyName] mustBe expectedJsonWithNullName
+  }
+
   trait Setup {
     val companyName: CompanyName = CompanyName(Some(COMPANY_NAME), "Yes")
     val companyNameJson: JsValue = Json.parse(
@@ -42,5 +50,24 @@ class CompanyNameSpec extends SpecBase {
         |}
         |""".stripMargin
     )
+
+    val jsonWithoutName: JsValue             = Json.parse(
+      """
+        |{
+        |  "consent": "Yes"
+        |}
+        |""".stripMargin
+    )
+    val expectedJsonWithoutName: CompanyName = CompanyName(None, "Yes")
+
+    val jsonWithNullName: JsValue             = Json.parse(
+      """
+        |{
+        |  "name": null,
+        |  "consent": "Yes"
+        |}
+        |""".stripMargin
+    )
+    val expectedJsonWithNullName: CompanyName = CompanyName(None, "Yes")
   }
 }

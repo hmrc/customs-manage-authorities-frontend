@@ -18,7 +18,7 @@ package models
 
 import base.SpecBase
 import play.api.libs.json
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsResultException, JsValue, Json}
 
 class XiEoriAddressInformationSpec extends SpecBase {
 
@@ -29,6 +29,16 @@ class XiEoriAddressInformationSpec extends SpecBase {
 
     "generate correct output for Json Writes" in new Setup {
       Json.toJson(xiEoriAddressInformation) mustBe xiEoriAddressInformationJson
+    }
+
+    "handle missing optional fields correctly when reading JSON" in new Setup {
+      jsonWithoutOptionals.as[XiEoriAddressInformation] mustBe expectedNoOptionsJson
+    }
+
+    "fail to parse when required field is missing" in new Setup {
+      intercept[JsResultException] {
+        invalidJson.as[XiEoriAddressInformation]
+      }
     }
   }
 
@@ -51,6 +61,30 @@ class XiEoriAddressInformationSpec extends SpecBase {
         |   "pbePostCode":"Sw17 test"
         |}
         |""".stripMargin
+    )
+
+    val invalidJson: JsValue = Json.parse(
+      """
+        |{
+        |   "pbeAddressLine2": "test_street"
+        |}
+        |""".stripMargin
+    )
+
+    val jsonWithoutOptionals: JsValue = Json.parse(
+      """
+        |{
+        |   "pbeAddressLine1": "test_house"
+        |}
+        |""".stripMargin
+    )
+
+    val expectedNoOptionsJson: XiEoriAddressInformation = XiEoriAddressInformation(
+      pbeAddressLine1 = "test_house",
+      pbeAddressLine2 = None,
+      pbeAddressLine3 = None,
+      pbeAddressLine4 = None,
+      pbePostCode = None
     )
   }
 }

@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsResultException, JsValue, Json}
 
 class XiEoriInformationResponseSpec extends SpecBase {
 
@@ -27,6 +27,16 @@ class XiEoriInformationResponseSpec extends SpecBase {
 
   "generate correct output for Json Writes" in new Setup {
     Json.toJson(xiEoriInformationResponse) mustBe xiEoriInformationResponseJson
+  }
+
+  "handle missing optional address fields correctly when reading JSON" in new Setup {
+    minimalJson.as[XiEoriInformationResponse] mustBe expectedMinimalJson
+  }
+
+  "fail to parse when required field is missing" in new Setup {
+    intercept[JsResultException] {
+      invalidJson.as[XiEoriInformationResponse]
+    }
   }
 
   trait Setup {
@@ -53,6 +63,41 @@ class XiEoriInformationResponseSpec extends SpecBase {
         |    "pbeAddressLine3":"test_street",
         |    "pbeAddressLine4":"test_town",
         |    "pbePostCode":"Sw17 test"
+        |  }
+        |}
+        |""".stripMargin
+    )
+
+    val minimalJson: JsValue = Json.parse(
+      """
+        |{
+        |  "xiEori":"XI12345",
+        |  "consent":"Yes",
+        |  "address": {
+        |    "pbeAddressLine1": "test_house"
+        |  }
+        |}
+        |""".stripMargin
+    )
+
+    val expectedMinimalJson: XiEoriInformationResponse = XiEoriInformationResponse(
+      xiEori = "XI12345",
+      consent = "Yes",
+      address = XiEoriAddressInformation(
+        pbeAddressLine1 = "test_house",
+        pbeAddressLine2 = None,
+        pbeAddressLine3 = None,
+        pbeAddressLine4 = None,
+        pbePostCode = None
+      )
+    )
+
+    val invalidJson: JsValue = Json.parse(
+      """
+        |{
+        |  "consent": "Yes",
+        |  "address": {
+        |    "pbeAddressLine1": "test_house"
         |  }
         |}
         |""".stripMargin

@@ -236,4 +236,117 @@ class AccountsAndBalancesSpec
       json.as[AccountWithStatus] mustBe expected
     }
   }
+
+  "deserialize request when optional fields are missing" in {
+    val json = Json.parse(
+      """
+        |{
+        |  "accountsAndBalancesRequest": {
+        |    "requestCommon": {
+        |      "receiptDate": "2024-01-01T00:00:00Z",
+        |      "acknowledgementReference": "1234567890123456",
+        |      "regime": "CDS"
+        |    },
+        |    "requestDetail": {
+        |      "EORINo": "GB123456789000"
+        |    }
+        |  }
+        |}
+        |""".stripMargin
+    )
+
+    val result = json.validate[AccountsAndBalancesRequestContainer]
+    result.isSuccess mustBe true
+  }
+
+  "fail to deserialize when required fields are missing" in {
+    val json = Json.parse(
+      """
+        |{
+        |  "accountsAndBalancesRequest": {
+        |    "requestCommon": {
+        |      "acknowledgementReference": "1234567890123456",
+        |      "regime": "CDS"
+        |    },
+        |    "requestDetail": {}
+        |  }
+        |}
+        |""".stripMargin
+    )
+
+    val result = json.validate[AccountsAndBalancesRequestContainer]
+    result.isError mustBe true
+  }
+
+  "perform round-trip serialization/deserialization" in {
+    val detail = AccountsRequestDetail(
+      EORINo = "GB123456789000",
+      accountType = Some("DutyDeferment"),
+      accountNumber = Some("1234567"),
+      referenceDate = Some("2024-01-01")
+    )
+
+    val common = AccountsRequestCommon(
+      PID = Some("12345"),
+      originatingSystem = Some("CDS"),
+      receiptDate = "2024-01-01T00:00:00Z",
+      acknowledgementReference = "1234567890123456",
+      regime = "CDS"
+    )
+
+    val original = AccountsAndBalancesRequestContainer(
+      AccountsAndBalancesRequest(common, detail)
+    )
+
+    val json   = Json.toJson(original)
+    val parsed = json.as[AccountsAndBalancesRequestContainer]
+
+    parsed mustBe original
+  }
+
+  "warn and default to Open when account status is unknown" in {
+    val json = Json.parse(
+      """
+        |{
+        |  "number":"ACC123",
+        |  "type":"CDSCash",
+        |  "owner":"GB12345",
+        |  "accountStatus":"INVALID",
+        |  "viewBalanceIsGranted": true
+        |}
+        |""".stripMargin
+    )
+
+    val result = json.validate[AccountWithStatus]
+    result.isSuccess mustBe true
+    result.get.accountStatus mustBe AccountStatusOpen
+  }
+
+  "handle empty account arrays in response detail" in {
+    val json = Json.parse(
+      """
+        |{
+        |  "accountsAndBalancesResponse": {
+        |    "responseCommon": {
+        |      "status": "OK",
+        |      "statusText": "Success",
+        |      "processingDate": "2024-01-01T00:00:00Z",
+        |      "returnParameters": []
+        |    },
+        |    "responseDetail": {
+        |      "EORINo": "GB123456789000",
+        |      "referenceDate": "2024-01-01",
+        |      "dutyDefermentAccount": [],
+        |      "generalGuaranteeAccount": [],
+        |      "cdsCashAccount": []
+        |    }
+        |  }
+        |}
+        |""".stripMargin
+    )
+
+    val result = json.validate[AccountsAndBalancesResponseContainer]
+    result.isSuccess mustBe true
+  }
+
 }
