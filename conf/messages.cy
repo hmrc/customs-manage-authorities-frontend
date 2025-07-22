@@ -297,7 +297,7 @@ addConfirmation.body.company.name = Enw’r cwmni
 addConfirmation.body.today.singular=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrif
 addConfirmation.body.today.plural=Mae’r cwmni hwn bellach ag awdurdod i ddefnyddio’ch cyfrifon
 addConfirmation.body.setDate=Yn dechrau ar {0}
-addConfirmation.p1.today=Gofynnwch i’r cwmni neu’r person wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau. Gall gymryd hyd at awr iddo ymddangos.
+addConfirmation.p1.today=Gall gymryd hyd at awr iddo ymddangos.
 addConfirmation.p1.setDate=Pan fo’r awdurdodiad wedi dechrau, gofynnwch i’r cwmni neu’r person wirio ei fod yn gallu gweld eich cyfrif yn ei ddangosfwrdd ariannol ar gyfer y tollau.
 addConfirmation.returnLink=Yn ôl i ‘rheoli awdurdodau eich cyfrif’
 
