@@ -48,6 +48,8 @@
       startDate = startDate
    )
 
+   @p(Html(startDate.fold(messages("addConfirmation.p1.today"))(_ => "")))
+
    @link(pClass = "govuk-body govuk-!-margin-top-6", location = controllers.routes.ManageAuthoritiesController.onPageLoad().url, linkMessage = "addConfirmation.returnLink")
 
    @h2(
