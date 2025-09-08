@@ -44,7 +44,7 @@ feedback.after=yn ein helpu i’w wella.
 # User Research
 user-research.subheader-text=Helpu ni i wella’r gwasanaeth hwn
 user-research.help.body-text=Mae eich adborth yn werthfawr i ni. 
-user-research.help.link=Cofrestrwch i gymryd rhan mewn ymchwil defnyddwyr (yn agor tab newydd)
+user-research.help.link=Cofrestrwch i gymryd rhan mewn ymchwil defnyddwyr
 
 date.day=Diwrnod
 date.month=Mis
