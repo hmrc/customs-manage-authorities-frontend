@@ -20,18 +20,19 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector, SdesConnector, SecureMessageConnector}
 import models.domain.FileFormat.Csv
-import models.domain._
+import models.domain.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{times, verify, when}
+import org.scalatest.concurrent.Eventually.eventually
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.{AccountsRepository, AuthorisedEoriAndCompanyInfoRepository, AuthoritiesRepository}
 import services.{AccountsCacheService, AuthorisedEoriAndCompanyInfoService, AuthoritiesCacheService}
 import uk.gov.hmrc.http.UpstreamErrorResponse
 import utils.DateUtils
-import utils.TestData._
+import utils.TestData.*
 import viewmodels.{AuthoritiesFilesNotificationViewModel, ManageAuthoritiesViewModel}
 import views.html.{ManageAuthoritiesApiFailureView, ManageAuthoritiesView, NoAccountsView}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -463,7 +464,9 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+        eventually{
+          verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+        }
       }
     }
 
@@ -607,7 +610,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(2)).retrieveCompanyInformationThirdParty(any())(any())
+
+        eventually{
+          verify(mockDataStoreConnector, times(2)).retrieveCompanyInformationThirdParty(any())(any())
+        }
       }
     }
 
@@ -736,7 +742,10 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+        eventually{
+          verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
+        }
+
       }
     }
 

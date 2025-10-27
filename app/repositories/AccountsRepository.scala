@@ -24,7 +24,7 @@ import play.api.Configuration
 import play.api.libs.json.{Format, Json, OFormat, Reads, Writes, __}
 import uk.gov.hmrc.mongo.play.PlayMongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-import org.mongodb.scala.{SingleObservableFuture, ToSingleObservablePublisher}
+import org.mongodb.scala.ToSingleObservablePublisher
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
