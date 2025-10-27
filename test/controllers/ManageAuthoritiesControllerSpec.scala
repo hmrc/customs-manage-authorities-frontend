@@ -464,7 +464,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        eventually{
+        eventually {
           verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
         }
       }
@@ -611,7 +611,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         status(result) mustEqual OK
 
-        eventually{
+        eventually {
           verify(mockDataStoreConnector, times(2)).retrieveCompanyInformationThirdParty(any())(any())
         }
       }
@@ -742,7 +742,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         val result  = route(application, request).value
 
         status(result) mustEqual OK
-        eventually{
+        eventually {
           verify(mockDataStoreConnector, times(1)).retrieveCompanyInformationThirdParty(any())(any())
         }
 
