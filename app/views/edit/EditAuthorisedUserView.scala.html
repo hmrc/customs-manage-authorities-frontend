@@ -23,8 +23,8 @@
         errorSummary: components.errorSummary,
         govukButton: GovukButton,
         inputText: components.inputText,
-        h1: components.h1,
-        p:  components.p
+        p:  components.p,
+        fieldset: components.fieldset
 )
 
 @(
@@ -44,29 +44,32 @@
 
         @errorSummary(form.errors)
 
-        @h1(msg = "authorised-user.heading", classes="govuk-heading-xl")
+        @fieldset(
+        legend = messages("authorised-user.heading"),
+        describedBy = if (form.hasErrors || form.hasGlobalErrors) Some("value-error") else Some("")
+        ) {
+            @p(Html(messages("authorised-user.p")))
 
-        @p(Html(messages("authorised-user.p")))
+            @inputText(
+                form,
+                id = "fullName",
+                name = "fullName",
+                label = "remove.fullName",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-two-thirds"),
+                autocomplete= Some("name")
+            )
 
-        @inputText(
-            form,
-            id = "fullName",
-            name = "fullName",
-            label = "remove.fullName",
-            isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds"),
-            autocomplete= Some("name")
-        )
-
-        @inputText(
-            form,
-            id = "jobRole",
-            name = "jobRole",
-            label = "remove.jobRole",
-            isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds"),
-            autocomplete= Some("on")
-        )
+            @inputText(
+                form,
+                id = "jobRole",
+                name = "jobRole",
+                label = "remove.jobRole",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-two-thirds"),
+                autocomplete= Some("on")
+            )
+        }
 
         @govukButton(uk.gov.hmrc.govukfrontend.views.viewmodels.button.Button(content = Text(messages("site.continue"))))
     }
