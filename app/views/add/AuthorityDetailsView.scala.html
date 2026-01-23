@@ -23,8 +23,8 @@
         errorSummary: components.errorSummary,
         button: components.button,
         inputText: components.inputText,
-        h1: components.h1,
-        p: components.p
+        p: components.p,
+        fieldset: components.fieldset
 )
 
 @(
@@ -43,29 +43,32 @@
 
         @errorSummary(form.errors)
 
-        @h1("authorityDetails.h1")
+        @fieldset(
+        legend = messages("authorityDetails.h1"),
+        describedBy = if (form.hasErrors || form.hasGlobalErrors) Some("value-error") else Some("")
+        ) {
+            @p(Html(messages("authorityDetails.p")))
 
-        @p(Html(messages("authorityDetails.p")))
+            @inputText(
+                form,
+                id = "fullName",
+                name = "fullName",
+                label = "authorityDetails.fullName",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-two-thirds"),
+                autocomplete = Some("name")
+            )
 
-        @inputText(
-            form,
-            id = "fullName",
-            name = "fullName",
-            label = "authorityDetails.fullName",
-            isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds"),
-            autocomplete = Some("name")
-        )
-
-        @inputText(
-            form,
-            id = "jobRole",
-            name = "jobRole",
-            label = "authorityDetails.role",
-            isPageHeading = false,
-            classes = Some("govuk-!-width-two-thirds"),
-            autocomplete = Some("on")
-        )
+            @inputText(
+                form,
+                id = "jobRole",
+                name = "jobRole",
+                label = "authorityDetails.role",
+                isPageHeading = false,
+                classes = Some("govuk-!-width-two-thirds"),
+                autocomplete = Some("on")
+            )
+        }
 
         @button("site.confirm")
     }
