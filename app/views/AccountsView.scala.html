@@ -58,26 +58,54 @@
                 accounts.alreadyAuthorisedAccounts.nonEmpty || 
                 accounts.closedAccounts.nonEmpty || 
                 accounts.pendingAccounts.nonEmpty) {
-        
-                <div class="govuk-inset-text">
-                    @accounts.alreadyAuthorisedAccounts.map { account =>
-                        <p>@{
-                            messages("accounts.authorised", accounts.enteredEori)
-                        } @{
-                            s"${formattedAccountType(account)}."
-                        }</p>
-                    }
-                    @accounts.closedAccounts.map { account =>
-                        <p>@{
-                            messages("accounts.closed", formattedAccountType(account))
-                        }</p>
-                    }
-                    @accounts.pendingAccounts.map { account =>
-                    <p>@{
-                        s"${messages("accounts.type." + account.accountType)}: ${account.number} ${messages("accounts.pending")}"
-                    }</p>
-                    }
-                </div>
+                    <div class="govuk-inset-text">
+                        <dl class="govuk-summary-list govuk-summary-list--no-border">
+                            @accounts.alreadyAuthorisedAccounts.map { account =>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @{
+                                    messages("accounts.authorised", accounts.enteredEori)
+                                    }
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @{
+                                    s"${formattedAccountType(account)}."
+                                    }
+                                </dd>
+                            </div>
+                            }
+
+                            @accounts.closedAccounts.map { account =>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @{
+                                    s"${formattedAccountType(account)}."
+                                    }
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @{
+                                    messages("accounts.closed.dl")
+                                    }
+                                </dd>
+                            </div>
+                            }
+                            @accounts.pendingAccounts.map { account =>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @{
+                                    s"${messages("accounts.type." + account.accountType)}: "
+                                    }
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @{
+                                    s"${account.number} ${messages("accounts.pending")}"
+                                    }
+                                </dd>
+                            </div>
+                            }
+                        </dl>
+                    </div>
+
                 @checkboxes(
                     form = form,
                     legend = messages(AccountsFormProvider.accountsHeadingKey(accounts)),
