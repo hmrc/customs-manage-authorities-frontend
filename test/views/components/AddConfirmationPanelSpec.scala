@@ -53,7 +53,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         firstElement
           .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
 
         firstElement.getElementsByTag("dt").get(1).html() must include(
           messages(app)("addConfirmation.body.company.name")
@@ -61,7 +61,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         firstElement
           .getElementsByTag("dd")
           .get(1)
-          .html() mustBe "TestCompany"
+          .text() mustBe "TestCompany"
 
         firstElement.getElementsByTag("dt").get(2).html() must include(
           messages(app)("addConfirmation.body.setDate.dl")
@@ -69,7 +69,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         firstElement
           .getElementsByTag("dd")
           .get(2)
-          .html() mustBe "01-01-2021"
+          .text() mustBe "01-01-2021"
       }
     }
 
@@ -98,7 +98,7 @@ class AddConfirmationPanelSpec extends SpecBase {
         firstElement
           .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
       }
     }
   }
