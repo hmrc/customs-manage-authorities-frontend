@@ -180,7 +180,7 @@ accounts.pending = (pending opening on CDS)
 accounts.hint = Select all that apply.
 
 accounts.closed.dl= is closed.
-addConfirmation.body.setDate.dl=Starting on
+addConfirmation.body.setDate.dl=Starting on:
 
 # Are these details correct view
 

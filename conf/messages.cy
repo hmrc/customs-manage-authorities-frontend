@@ -181,7 +181,7 @@ accounts.pending = (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
 accounts.hint = Dewiswch bob un sy’n berthnasol.
 
 accounts.closed.dl= Mae ar gau.
-addConfirmation.body.setDate.dl=Yn dechrau ar
+addConfirmation.body.setDate.dl=Yn dechrau ar:
 # Are these details correct view
 
 eoriDetails.title = A yw’r manylion hyn yn gywir?
