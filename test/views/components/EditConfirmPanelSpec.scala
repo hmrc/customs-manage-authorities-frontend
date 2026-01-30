@@ -41,23 +41,23 @@ class EditConfirmPanelSpec extends SpecBase {
         view.getElementsByTag("h1").html() mustBe
           messages(app)("editConfirmation.heading")
 
-        firstElement.getElementsByTag("p").get(0).html() must include(
+        firstElement.getElementsByTag("dt").get(0).html() must include(
           messages(app)("editConfirmation.body.eori.number")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
 
-        firstElement.getElementsByTag("p").get(1).html() must include(
+        firstElement.getElementsByTag("dt").get(1).html() must include(
           messages(app)("editConfirmation.body.company.name")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(1)
-          .html() mustBe "TestCompany"
+          .text() mustBe "TestCompany"
 
-        firstElement.getElementsByTag("p").last().html() must include(
+        firstElement.getElementsByTag("strong").last().html() must include(
           messages(app)("editConfirmation.body.changes")
         )
       }
@@ -76,15 +76,15 @@ class EditConfirmPanelSpec extends SpecBase {
         view.getElementsByTag("h1").html() mustBe
           messages(app)("editConfirmation.heading")
 
-        firstElement.getElementsByTag("p").get(0).html() must include(
+        firstElement.getElementsByTag("dt").get(0).html() must include(
           messages(app)("editConfirmation.body.eori.number")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
 
-        firstElement.getElementsByTag("p").last().html() must include(
+        firstElement.getElementsByTag("strong").last().html() must include(
           messages(app)("editConfirmation.body.changes")
         )
       }

@@ -47,25 +47,29 @@ class AddConfirmationPanelSpec extends SpecBase {
       running(app) {
         view.getElementsByTag("h1").html() mustBe "Success"
 
-        firstElement.getElementsByTag("p").get(0).html() must include(
+        firstElement.getElementsByTag("dt").get(0).html() must include(
           messages(app)("addConfirmation.body.eori.number")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
 
-        firstElement.getElementsByTag("p").get(1).html() must include(
+        firstElement.getElementsByTag("dt").get(1).html() must include(
           messages(app)("addConfirmation.body.company.name")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(1)
-          .html() mustBe "TestCompany"
+          .text() mustBe "TestCompany"
 
-        firstElement.getElementsByTag("p").get(2).html() must include(
-          messages(app)("addConfirmation.body.setDate", "01-01-2021")
+        firstElement.getElementsByTag("dt").get(2).html() must include(
+          messages(app)("addConfirmation.body.setDate.dl")
         )
+        firstElement
+          .getElementsByTag("dd")
+          .get(2)
+          .text() mustBe "01-01-2021"
       }
     }
 
@@ -88,13 +92,13 @@ class AddConfirmationPanelSpec extends SpecBase {
       running(app) {
         view.getElementsByTag("h1").html() mustBe "Success"
 
-        firstElement.getElementsByTag("p").get(0).html() must include(
+        firstElement.getElementsByTag("dt").get(0).html() must include(
           messages(app)("addConfirmation.body.eori.number")
         )
         firstElement
-          .getElementsByTag("strong")
+          .getElementsByTag("dd")
           .get(0)
-          .html() mustBe "GB123456789000"
+          .text() mustBe "GB123456789000"
       }
     }
   }

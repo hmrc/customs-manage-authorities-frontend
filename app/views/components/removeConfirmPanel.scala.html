@@ -30,20 +30,28 @@
         </h1>
         
         <div class="govuk-panel__body-s">
-            <p class="govuk-!-font-size-27">
-                @messages("removeConfirmation.eoriNumber")<br>
-                <strong>@eori</strong>
-            </p>
-
-            @companyName.map { name =>
-                <p class="govuk-!-font-size-27">
-                    @messages("removeConfirmation.companyName")<br>
-                    <strong>@name</strong>
-                </p>
-            }
-
+            <dl class="govuk-summary-list govuk-summary-list--no-border" style="color: #fff">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @messages("removeConfirmation.eoriNumber")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <strong> @eori </strong>
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    @companyName.map { name =>
+                    <dt class="govuk-summary-list__key">
+                        @messages("removeConfirmation.companyName")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <strong> @name </strong>
+                    </dd>
+                    }
+                </div>
+            </dl>
             <p class="govuk-!-font-size-19">
-                <strong>@messages("removeConfirmation.removalAuthority")</strong>
+                <strong> @messages("removeConfirmation.removalAuthority")</strong>
             </p>
-        </div>
+         </div>
     </div>
