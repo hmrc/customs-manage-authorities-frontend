@@ -79,12 +79,12 @@
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     @{
-                                    s"${formattedAccountType(account)}"
+                                    s"${messages("accounts.type." + account.accountType)}: "
                                     }
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     @{
-                                    messages("accounts.closed.dl")
+                                    s"${account.number} ${messages("accounts.closed.dl")}"
                                     }
                                 </dd>
                             </div>
