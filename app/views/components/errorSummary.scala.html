@@ -20,8 +20,10 @@
 
 @if(errors.nonEmpty) {
     @defining(errors.map { error =>
-        ErrorLink(
-            href = Some(s"#${errorFieldName.getOrElse(error.key)}"),
+            ErrorLink(href = Some(s"#${errorFieldName.getOrElse(
+                if(error.key == "value")
+                    s"${error.key}.day"
+                else s"${error.key}")}"),
             content = Text(messages(error.message, error.args:_*))
         )
     }) { errorLinks =>
