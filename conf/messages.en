@@ -15,6 +15,7 @@ site.change = Change
 site.error = Error
 
 # Page Not Found Error
+# ----------------------------------------------------------
 cf.error.not-found.title=Page not found
 cf.error.not-found.heading=Page not found
 cf.error.not-found.message.address-typed-wrong=If you typed the web address, check it is correct.
@@ -31,7 +32,6 @@ footer.privacy         = Privacy policy
 footer.termsConditions = Terms and conditions
 footer.govukHelp       = Help using GOV.UK
 
-
 # Timeout Messages
 # ----------------------------------------------------------
 timeout.title = You’re about to be signed out
@@ -43,6 +43,7 @@ feedback.link = feedback
 feedback.after = will help us to improve it.
 
 # User Research
+# ----------------------------------------------------------
 user-research.subheader-text=Help us improve the service
 user-research.help.body-text=Your feedback is valuable to us.
 user-research.help.link=Sign up to take part in user research
@@ -102,6 +103,7 @@ manageAuthorities.error=Sorry, we can''t display these right now. Please try aga
 manageAuthorities.error.display=There is a problem displaying the accounts you have already authorised. Please try again later.
 
 # Authorized To View
+# ----------------------------------------------------------
 cf.account.authorized-to-view.title = Find accounts you have authority to use
 
 manageAuthorities.table.heading.account.CdsCashAccount = Cash account: {0}
@@ -109,44 +111,41 @@ manageAuthorities.table.heading.account.CdsDutyDefermentAccount = Duty deferment
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Duty deferment (Northern Ireland): {0}
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount = General guarantee account: {0}
 manageAuthorities.table.heading.account.Northern-Ireland = (Northern Ireland)
-
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cash account: {0} (closed)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed = Duty deferment: {0} (closed)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = General guarantee account: {0} (closed)
-
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cash account: {0} (suspended)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Duty deferment: {0} (suspended)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = General guarantee account: {0} (suspended)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Duty deferment: {0} (pending opening on CDS)
-
-manageAuthorities.table.view-or-change = View or change
 manageAuthorities.table.heading.user = Authorised company
 manageAuthorities.table.heading.startDate = Start date
 manageAuthorities.table.heading.endDate = End date
 manageAuthorities.table.heading.balance = View balance
 manageAuthorities.table.heading.actions = Actions
+accounts.noAvailableAccounts.heading = {0} already has access to all your accounts
+
+manageAuthorities.table.view-or-change = View or change
 manageAuthorities.table.endDate.empty = Until further notice	
 manageAuthorities.table.endDate.unavailable = Until further notice
 manageAuthorities.table.viewBalance.yes = Yes
 manageAuthorities.table.viewBalance.no = No
+
 manageAuthorities.table.row.remove = Remove
 manageAuthorities.table.row.remove.CdsCashAccount = Remove user {0} from Cash account
 manageAuthorities.table.row.remove.CdsDutyDefermentAccount = Remove user {0} from Duty Deferment account {1}
 manageAuthorities.table.row.remove.CdsGeneralGuaranteeAccount = Remove user {0} from Guarantee account
-
 manageAuthorities.table.row.edit = Edit
 manageAuthorities.table.row.edit.CdsCashAccount = Edit user {0} from Cash account
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Edit user {0} from Duty Deferment account {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Edit user {0} from Guarantee account
 manageAuthorities.table.row.viewLink = View or change authority for {0} for
 
-accounts.noAvailableAccounts.heading = {0} already has access to all your accounts
 accounts.noAvailableAccounts.p = To review or edit this user's access, go back to
 accounts.noAvailableAccounts.link = manage your account authorities
 
-
 # What is the EORI number view
-
+# ----------------------------------------------------------
 eoriNumber.title = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.heading = What is the EORI number of the company or person you want to give authority to?
 eoriNumber.hint = An EORI number starts GB or GBN. <br> For example, GB345834921000 or GBN10537914000.
@@ -162,7 +161,7 @@ eoriNumber.details.text = To give authority to a company or person to use your d
 eoriNumber.details.text.eu = You can only give authority to an EORI number starting with XI or an EU country code to use your Northern Ireland duty deferment account. 
 
 # Which accounts to add an authority to view
-
+# ----------------------------------------------------------
 accounts.title = Which accounts do you want to add authority to?
 accounts.title.singleAccount = Which account do you want to add authority to?
 accounts.heading = Which accounts do you want to add authority to?
@@ -183,7 +182,7 @@ accounts.closed.dl= is closed.
 addConfirmation.body.setDate.dl=Starting on:
 
 # Are these details correct view
-
+# ----------------------------------------------------------
 eoriDetails.title = Are these details correct?
 eoriDetails.heading = Are these details correct?
 eoriDetail.eoriNumber.label = EORI
@@ -194,9 +193,8 @@ eoriDetails.radioYes = Yes, these details are correct
 eoriDetails.radioNo = No, change EORI
 eoriDetails.error.required = Select whether company information is correct
 
-
 # When do you want the authority to start view
-
+# ----------------------------------------------------------
 authorityStart.title = When do you want the authority to start?
 authorityStart.heading = When do you want the authority to start?
 authorityStart.today = Today
@@ -206,7 +204,7 @@ authorityStart.checkYourAnswersLabel.today = Today,
 authorityStart.error.required = Select when you want the authority to start
 
 # What date do you want the authority to start view (on a set date)
-
+# ----------------------------------------------------------
 authorityStartDate.title = What date do you want the authority to start?
 authorityStartDate.heading = What date do you want the authority to start?
 authorityStartDate.checkYourAnswersLabel = AuthorityStartDate
@@ -240,7 +238,7 @@ authorityDate.error.required.month = The date must include a month
 authorityDate.error.required.year = The date must include a year
 
 # Allow this user to see the available balance view
-
+# ----------------------------------------------------------
 showBalance.title = Allow this user to see the available balance?
 showBalance.heading = Allow this user to see the available balance?
 showBalance.yes = Yes, allow them to see the available balance
@@ -251,9 +249,8 @@ showBalance.checkYourAnswers.no = No
 showBalance.checkYourAnswersLabel = See balance
 showBalance.error.required = Select if you want this user to see the available balance
 
-
 # Your details view
-
+# ----------------------------------------------------------
 authorityDetails.title = Your details
 authorityDetails.fullName = Full name
 authorityDetails.h1 = Your details
@@ -261,7 +258,7 @@ authorityDetails.p = We will only use these details if we have questions regardi
 authorityDetails.role = Role
 
 # Check your answers view
-
+# ----------------------------------------------------------
 checkYourAnswers.title = Check your answers
 checkYourAnswers.heading = Check your answers
 checkYourAnswers.accounts.hidden = accounts
@@ -285,24 +282,6 @@ checkYourAnswers.confirm.button = Confirm this authorisation and submit
 checkYourAnswers.authorityEnd.indefinite = Until further notice
 checkYourAnswers.cancel = Cancel
 checkYourAnswers.cancelScreenReader = Cancel submission and return to authorities list
-
-
-
-authorisedUser.title = Check your answers
-authorisedUser.heading = Check your answers
-authorisedUser.yourDetails = Your details
-authorisedUser.checkYourAnswersLabel = authorisedUser
-authorisedUser.fullName = Full name
-authorisedUser.error.fullName.required = Enter your full name
-authorisedUser.error.fullName.length = Your full name must be 255 characters or fewer
-authorisedUser.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
-authorisedUser.jobRole = Job role
-authorisedUser.error.jobRole.required = Enter your job role
-authorisedUser.error.jobRole.length = Your job role must be 255 characters or fewer
-authorisedUser.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
-authorisedUser.declaration.singular = I authorise this user to use this account when clearing customs declarations on behalf of my business.
-authorisedUser.declaration.plural = I authorise this user to use these accounts when clearing customs declarations on behalf of my business.
-authorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
 
 edit.changed = Changed
 edit.notChanged = Not Changed
@@ -360,15 +339,14 @@ manageAuthorities.noAccountsAvailable.indent=You don''t have a cash, duty deferm
 manageAuthorities.noAccountsAvailable.p=Once you have one or more of these, you''ll be able to add an authority for someone to use them on a CDS import declaration.
 
 # Authorised User
-
+# ----------------------------------------------------------
 authorised-user.heading = Your details
 authorised-user.p = We will only use these details if we have questions regarding this authority.
 authorised-user-remove.heading = Remove authority
 authorised-user-remove.p = We will only use these details if we have questions regarding the removal of this authority.
 
-
 # Remove Check Your Answers
-
+# ----------------------------------------------------------
 remove-cya-heading = Check your answers
 remove-cya-h2.1 = Remove authority for company
 remove-cya-h2.2 = Account you have authorised
@@ -385,7 +363,7 @@ remove-cya-visually-hidden-name = your name
 remove-cya-visually-hidden-role = your role
 
 # Edit Check Your Answers
-
+# ----------------------------------------------------------
 edit-cya-heading = Check your answers
 edit-cya-h2.1 = Authorised company
 edit-cya-h2.2 = Account you have authorised
@@ -400,9 +378,8 @@ edit-cya-visually-hidden-role = your role
 edit-cya-name = Your name
 edit-cya-role = Your role
 
-
 # Edit or remove view
-
+# ----------------------------------------------------------
 view-authority-heading = Account authority
 view-authority-h2.1 = Authorised company
 view-authority-h2.2 = Account you have authorised
@@ -414,7 +391,7 @@ view-authority-p = You will be asked to confirm whether you wish to remove this 
 view-authority-link = Remove authority
 
 # Verify Your Email Address
-
+# ----------------------------------------------------------
 cf.verify.your.email.title=Verify your email address for the Customs Declaration Service
 cf.verify.your.email.heading=Verify your email address for the Customs Declaration Service
 cf.verify.your.email.p1=You need to verify the email address you use for the Customs Declaration Service.
@@ -423,12 +400,11 @@ cf.verify.your.email.p3=If this is not the email address you want to use, you ca
 cf.verify.your.email.change.button=Verify or change email address
 
 # Undeliverable Email Address
-
+# ----------------------------------------------------------
 cf.undeliverable.email.title=There''s a problem with your email address for the Customs Declaration Service
 cf.undeliverable.email.heading=There''s a problem with your email address for the Customs Declaration Service
 cf.undeliverable.email.p1=We tried to send you an email but it could not be delivered.
 cf.undeliverable.email.p2=Your registered email address is <strong class="bold">{0}</strong>.
-
 cf.undeliverable.email.verify.heading=Verify your email address
 cf.undeliverable.email.verify.text.p1=If this email address is correct, you will need to verify it to continue using the Customs Declaration Service.
 cf.undeliverable.email.change.heading=Change your email address
@@ -436,10 +412,8 @@ cf.undeliverable.email.change.text.p1=If this email address is not correct, you 
 cf.undeliverable.email.change.text.p2=The Customs Declaration Service uses one email address for various customs-related services. If you change it, take care that other people in your company will still have access to the messages they need.
 cf.undeliverable.email.link-text=Verify or change email address
 
-
 # Date Format
 # ----------------------------------------------------------
-
 month.abbr.1 = Jan
 month.abbr.2 = Feb
 month.abbr.3 = Mar
@@ -466,6 +440,12 @@ month.10 = October
 month.11 = November
 month.12 = December
 
-
-
-
+# Authorised User Errors
+# ----------------------------------------------------------
+authorisedUser.error.fullName.required = Enter your full name
+authorisedUser.error.fullName.length = Your full name must be 255 characters or fewer
+authorisedUser.error.fullName.malicious = Full name must not contain brackets, dollar signs or slashes
+authorisedUser.error.jobRole.required = Enter your job role
+authorisedUser.error.jobRole.length = Your job role must be 255 characters or fewer
+authorisedUser.error.jobRole.malicious = Job role must not contain brackets, dollar signs or slashes
+authorisedUser.error.confirmation.required = Select to confirm you authorise this user to use your account
