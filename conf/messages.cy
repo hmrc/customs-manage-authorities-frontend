@@ -442,10 +442,10 @@ month.12=Rhagfyr
 
 # Authorised User Errors
 # ----------------------------------------------------------
-authorisedUser.error.fullName.required =
-authorisedUser.error.fullName.length =
-authorisedUser.error.fullName.malicious =
-authorisedUser.error.jobRole.required =
-authorisedUser.error.jobRole.length =
-authorisedUser.error.jobRole.malicious =
-authorisedUser.error.confirmation.required =
+authorisedUser.error.fullName.required = Nodwch eich enw llawn
+authorisedUser.error.fullName.length = Mae’n rhaid i’ch enw llawn fod yn 255 o gymeriadau neu lai
+authorisedUser.error.fullName.malicious = Mae’n rhaid i’r enw llawn beidio â chynnwys cromfachau, arwyddion doler na slaesau
+authorisedUser.error.jobRole.required = Nodwch eich swydd
+authorisedUser.error.jobRole.length = Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
+authorisedUser.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
+authorisedUser.error.confirmation.required = Dewiswch i gadarnhau eich bod yn awdurdodi’r defnyddiwr hwn i ddefnyddio’ch cyfrif
