@@ -15,6 +15,7 @@ site.change=Newid
 site.error = Gwall
 
 # Page Not Found Error
+# ----------------------------------------------------------
 cf.error.not-found.title=Heb ddod o hyd i’r dudalen
 cf.error.not-found.heading=Heb ddod o hyd i’r dudalen
 cf.error.not-found.message.address-typed-wrong=Os gwnaethoch deipio’r cyfeiriad gwe, gwiriwch ei fod yn gywir.
@@ -42,6 +43,7 @@ feedback.link=adborth
 feedback.after=yn ein helpu i’w wella.
 
 # User Research
+# ----------------------------------------------------------
 user-research.subheader-text=Helpu ni i wella’r gwasanaeth hwn
 user-research.help.body-text=Mae eich adborth yn werthfawr i ni. 
 user-research.help.link=Cofrestrwch i gymryd rhan mewn ymchwil defnyddwyr
@@ -79,7 +81,6 @@ unauthorised.already-subscribed-to-cds-guidance-text=Gwiriwch eich bod wedi mewn
 unauthorised.subscribe-cds.title=Tanysgrifio i’r CDS
 unauthorised.subscribe-cds.link=Tanysgrifio i’r Gwasanaeth Datganiadau Tollau.
 
-# Needs Welsh translation
 service-unavailable.title=Mae’n ddrwg gennym – ni allwn ychwanegu awdurdod ar hyn o bryd
 service-unavailable.heading=Mae’n ddrwg gennym – nid yw’r gwasanaeth ar gael
 service-unavailable.p=Rhowch gynnig arall arni yn nes ymlaen.
@@ -102,52 +103,49 @@ manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn 
 manageAuthorities.error.display = Mae problem gyda dangos y cyfrifon rydych eisoes wedi’u hawdurdodi.
 
 # Authorized To View
+# ----------------------------------------------------------
 cf.account.authorized-to-view.title = Dod o hyd i gyfrifon y mae gennych awdurdod i’w defnyddio
 
 manageAuthorities.table.heading.account.CdsCashAccount=Cyfrif arian parod: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount=Gohirio tollau: {0}
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.Ni = Gohirio tollau (Gogledd Iwerddon): {0}
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount=Cyfrif gwarant cyffredinol: {0}
-
 manageAuthorities.table.heading.account.CdsCashAccount.closed = Cyfrif arian parod: {0} (ar gau)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.closed =Gohirio tollau: {0} (ar gau)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.closed = Cyfrif gwarant cyffredinol: {0} (ar gau)
 manageAuthorities.table.heading.account.Northern-Ireland = (Gogledd Iwerddon)
-
 manageAuthorities.table.heading.account.CdsCashAccount.suspended = Cyfrif arian parod: {0} (wedi’i ohirio)
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.suspended = Gohirio tollau: {0} (wedi’i ohirio)
 manageAuthorities.table.heading.account.CdsGeneralGuaranteeAccount.suspended = Cyfrif gwarant cyffredinol: {0} (wedi’i ohirio)
-
 manageAuthorities.table.heading.account.CdsDutyDefermentAccount.pending = Gohirio tollau: {0} (yn aros i gael ei agor ar y Gwasanaeth Datgan Tollau)
-
-manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
 manageAuthorities.table.heading.user= Cwmni awdurdodedig
 manageAuthorities.table.heading.startDate=Dyddiad dechrau
 manageAuthorities.table.heading.endDate=Dyddiad dod i ben
 manageAuthorities.table.heading.balance=Bwrw golwg dros y balans
 manageAuthorities.table.heading.actions=Camau gweithredu
+accounts.noAvailableAccounts.heading = Mae gan {0} fynediad i’ch holl gyfrifon yn barod
+
+manageAuthorities.table.view-or-change = Bwrw golwg dros neu newid
 manageAuthorities.table.endDate.empty=Hyd nes y clywir yn wahanol
 manageAuthorities.table.endDate.unavailable= Hyd nes y clywir yn wahanol
 manageAuthorities.table.viewBalance.yes=Iawn
 manageAuthorities.table.viewBalance.no=Na
+
 manageAuthorities.table.row.remove=Tynnu
 manageAuthorities.table.row.remove.CdsCashAccount=Tynnu defnyddiwr {0} o’r cyfrif arian parod
 manageAuthorities.table.row.remove.CdsDutyDefermentAccount=Tynnu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.remove.CdsGeneralGuaranteeAccount=Tynnu defnyddiwr {0} o’r cyfrif gwarant
-
 manageAuthorities.table.row.edit=Golygu
 manageAuthorities.table.row.edit.CdsCashAccount = Golygu defnyddiwr {0} o’r cyfrif arian parod
 manageAuthorities.table.row.edit.CdsDutyDefermentAccount = Golygu defnyddiwr {0} o’r cyfrif gohirio tollau {1}
 manageAuthorities.table.row.edit.CdsGeneralGuaranteeAccount = Golygu defnyddiwr {0} o’r cyfrif gwarant
 manageAuthorities.table.row.viewLink = Bwrw golwg dros awdurdod {0} ar gyfer gohirio Tollau, neu ei newid
 
-accounts.noAvailableAccounts.heading = Mae gan {0} fynediad i’ch holl gyfrifon yn barod
 accounts.noAvailableAccounts.p = I adolygu neu olygu mynediad y defnyddiwr hwn, ewch yn ôl i
 accounts.noAvailableAccounts.link = ‘Rheoli awdurdodau eich cyfrif’
 
-
 # What is the EORI number view
-
+# ----------------------------------------------------------
 eoriNumber.title=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
 eoriNumber.heading=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
 eoriNumber.hint=Mae rhif EORI yn dechrau gyda GB neu GBN. <br>Er enghraifft, GB345834921000 neu GBN10537914000.
@@ -163,7 +161,7 @@ eoriNumber.details.text = Er mwyn rhoi awdurdod i gwmni neu berson ddefnyddio’
 eoriNumber.details.text.eu = Gallwch ond rhoi awdurdod i rif EORI sy’n dechrau gydag ‘XI’ neu god gwlad yn y UE i ddefnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon.
 
 # Which accounts to add an authority to view
-
+# ----------------------------------------------------------
 accounts.title=At ba gyfrifon yr hoffech ychwanegu awdurdod?
 accounts.title.singleAccount=At ba gyfrif yr hoffech ychwanegu awdurdod?
 accounts.heading=At ba gyfrifon yr hoffech ychwanegu awdurdod?
@@ -182,8 +180,9 @@ accounts.hint = Dewiswch bob un sy’n berthnasol.
 
 accounts.closed.dl= Mae ar gau.
 addConfirmation.body.setDate.dl=Yn dechrau ar:
-# Are these details correct view
 
+# Are these details correct view
+# ----------------------------------------------------------
 eoriDetails.title = A yw’r manylion hyn yn gywir?
 eoriDetails.heading = A yw’r manylion hyn yn gywir?
 eoriDetail.eoriNumber.label = EORI
@@ -194,9 +193,8 @@ eoriDetails.radioYes = Iawn, mae’r manylion hyn yn gywir
 eoriDetails.radioNo = Na, newid y rhif EORI
 eoriDetails.error.required = Dewiswch a yw’r wybodaeth am y cwmni yn gywir
 
-
 # When do you want the authority to start view
-
+# ----------------------------------------------------------
 authorityStart.title=Pryd yr hoffech i’r awdurdod ddechrau?
 authorityStart.heading=Pryd yr hoffech i’r awdurdod ddechrau?
 authorityStart.today=Heddiw
@@ -205,9 +203,8 @@ authorityStart.checkYourAnswersLabel=Dechrau
 authorityStart.checkYourAnswersLabel.today=Heddiw
 authorityStart.error.required=Dewiswch bryd yr hoffech i’r awdurdod ddechrau
 
-
 # What date do you want the authority to start view (on a set date)
-
+# ----------------------------------------------------------
 authorityStartDate.title=Ar ba ddyddiad yr hoffech i’r awdurdod ddechrau?
 authorityStartDate.heading=Ar ba ddyddiad yr hoffech i’r awdurdod ddechrau?
 authorityStartDate.checkYourAnswersLabel=AuthorityStartDate
@@ -241,7 +238,7 @@ authorityDate.error.required.month = Mae’n rhaid i’r dyddiad gynnwys mis
 authorityDate.error.required.year = Mae’n rhaid i’r dyddiad gynnwys blwyddyn
 
 # Allow this user to see the available balance view
-
+# ----------------------------------------------------------
 showBalance.title=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
 showBalance.heading=A hoffech ganiatáu i’r defnyddiwr hwn weld y balans sydd ar gael?
 showBalance.yes=Iawn, caniatáu iddynt weld y balans sydd ar gael
@@ -252,18 +249,16 @@ showBalance.checkYourAnswers.no=Na
 showBalance.checkYourAnswersLabel=Bwrw golwg dros y balans
 showBalance.error.required=Dewiswch os ydych am i’r defnyddiwr hwn weld y balans sydd ar gael
 
-
 # Your details view
-
+# ----------------------------------------------------------
 authorityDetails.title=Gwiriwch eich atebion
 authorityDetails.h1=Eich manylion
 authorityDetails.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 authorityDetails.fullName=Enw llawn
 authorityDetails.role=Swydd
 
-
 # Check your answers view
-
+# ----------------------------------------------------------
 checkYourAnswers.title=Gwiriwch eich atebion
 checkYourAnswers.heading=Gwiriwch eich atebion
 checkYourAnswers.accounts.hidden=cyfrifon
@@ -344,15 +339,14 @@ manageAuthorities.noAccountsAvailable.indent=Nid oes gennych gyfrif arian parod,
 manageAuthorities.noAccountsAvailable.p=Unwaith y bydd gennych un neu fwy o’r rhain, byddwch yn gallu ychwanegu awdurdod i rywun eu defnyddio ar ddatganiad mewnforio’r Gwasanaeth Datganiadau Tollau (CDS).
 
 # Authorised User
-
+# ----------------------------------------------------------
 authorised-user.heading = Eich manylion
 authorised-user.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 authorised-user-remove.heading = Dileu’r awdurdod
 authorised-user-remove.p = Byddwn ond yn defnyddio’r manylion hyn os oes gennym gwestiynau am yr awdurdod hwn.
 
-
 # Remove Check Your Answers
-
+# ----------------------------------------------------------
 remove-cya-heading = Gwiriwch eich atebion
 remove-cya-h2.1 = Tynnu’r awdurdod ar gyfer y cwmni
 remove-cya-h2.2 = Y cyfrif rydych wedi’i awdurdodi
@@ -368,9 +362,8 @@ remove-cya-role = Eich swydd
 remove-cya-visually-hidden-name = eich enw
 remove-cya-visually-hidden-role = eich swydd
 
-
 # Edit Check Your Answers
-
+# ----------------------------------------------------------
 edit-cya-heading = Gwiriwch eich atebion
 edit-cya-h2.1 = Cwmni awdurdodedig
 edit-cya-h2.2 = Y cyfrif rydych wedi’i awdurdodi
@@ -385,9 +378,8 @@ edit-cya-visually-hidden-role = eich swydd
 edit-cya-name = Eich enw
 edit-cya-role = Eich swydd
 
-
 # Edit or remove view
-
+# ----------------------------------------------------------
 view-authority-heading = Awdurdod y cyfrif
 view-authority-h2.1 = Cwmni awdurdodedig
 view-authority-h2.2 = Y cyfrif rydych wedi’i awdurdodi
@@ -399,6 +391,7 @@ view-authority-p = Gofynnir i chi gadarnhau a ydych am ddileu’r awdurdod hwn.
 view-authority-link = Dileu’r awdurdod
 
 # Verify Your Email Address
+# ----------------------------------------------------------
 cf.verify.your.email.title=Cadarnhau’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
 cf.verify.your.email.heading=Cadarnhau’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
 cf.verify.your.email.p1=Mae angen i chi gadarnhau’r cyfeiriad e-bost rydych yn ei ddefnyddio ar gyfer y Gwasanaeth Datganiadau Tollau.
@@ -407,12 +400,11 @@ cf.verify.your.email.p3=Os nad dyma’r cyfeiriad e-bost rydych chi am ei ddefny
 cf.verify.your.email.change.button=Dilysu neu newid y cyfeiriad e-bost
 
 # Undeliverable Email Address
-
+# ----------------------------------------------------------
 cf.undeliverable.email.title=Mae problem gyda’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
 cf.undeliverable.email.heading=Mae problem gyda’ch cyfeiriad e-bost ar gyfer y Gwasanaeth Datganiadau Tollau
 cf.undeliverable.email.p1=Gwnaethom geisio anfon e-bost atoch ond nid oedd modd ei ddosbarthu.
 cf.undeliverable.email.p2=Eich e-bost cofrestredig yw <strong class="bold">{0}</strong>.
-
 cf.undeliverable.email.verify.heading=Cadarnhau’ch cyfeiriad e-bost
 cf.undeliverable.email.verify.text.p1=Os mae’r cyfeiriad e-bost hwn yn gywir, bydd angen i chi ei gadarnhau er mwyn parhau i ddefnyddio Gwasanaeth Datganiadau Tollau.
 cf.undeliverable.email.change.heading=Newidiwch eich cyfeiriad e-bost
@@ -422,7 +414,6 @@ cf.undeliverable.email.link-text=Dilysu neu newid y cyfeiriad e-bost
 
 # Date Format
 # ----------------------------------------------------------
-
 month.abbr.1=Ion
 month.abbr.2=Chwef
 month.abbr.3=Maw
@@ -448,3 +439,13 @@ month.9=Medi
 month.10=Hydref
 month.11=Tachwedd
 month.12=Rhagfyr
+
+# Authorised User Errors
+# ----------------------------------------------------------
+authorisedUser.error.fullName.required = Nodwch eich enw llawn
+authorisedUser.error.fullName.length = Mae’n rhaid i’ch enw llawn fod yn 255 o gymeriadau neu lai
+authorisedUser.error.fullName.malicious = Mae’n rhaid i’r enw llawn beidio â chynnwys cromfachau, arwyddion doler na slaesau
+authorisedUser.error.jobRole.required = Nodwch eich swydd
+authorisedUser.error.jobRole.length = Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
+authorisedUser.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
+authorisedUser.error.confirmation.required = Dewiswch i gadarnhau eich bod yn awdurdodi’r defnyddiwr hwn i ddefnyddio’ch cyfrif
