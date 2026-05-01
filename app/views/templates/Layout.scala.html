@@ -14,13 +14,15 @@
  * limitations under the License.
  *@
 
-@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardPage, HmrcReportTechnicalIssueHelper, HmrcLanguageSelectHelper}
+@import uk.gov.hmrc.hmrcfrontend.views.html.helpers.{HmrcStandardPage, HmrcReportTechnicalIssueHelper}
 @import uk.gov.hmrc.hmrcfrontend.views.html.components.HmrcTimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.timeoutdialog.TimeoutDialog
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.hmrcstandardpage._
 @import uk.gov.hmrc.hmrcfrontend.views.viewmodels.userresearchbanner.UserResearchBanner
 @import uk.gov.hmrc.govukfrontend.views.viewmodels.backlink.BackLink
 @import uk.gov.hmrc.govukfrontend.views.html.components.GovukBackLink
+@import uk.gov.hmrc.govukfrontend.views.html.components.implicits._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.{ServiceNavigation, ServiceNavigationItem}
 @import config.FrontendAppConfig
 @import views.html.components.fullWidthMainContent
 @import views.html.helper.CSPNonce
@@ -30,7 +32,6 @@
     hmrcStandardPage: HmrcStandardPage,
     hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
     hmrcTimeoutDialog: HmrcTimeoutDialog,
-    hmrcLanguageSelectHelper: HmrcLanguageSelectHelper,
     twoThirdsMainContent: TwoThirdsMainContent,
     fullWidthMainContent: fullWidthMainContent,
     govukBackLink: GovukBackLink
@@ -40,16 +41,22 @@
   backLink: Option[String] = None,
   helpAndSupport: Boolean = true,
   deskpro: Boolean = true,
-  welshToggle: Boolean = true,
   userResearchBanner: Boolean = true,
-  maybeMessageBannerPartial: Option[HtmlFormat.Appendable] = None,
-  isFullWidth: Boolean = false
+  maybeMessageBannerPartial: Option[Seq[ServiceNavigationItem]] = None,
+  isFullWidth: Boolean = false,
+  showNavBar: Boolean = false
 )(contentBlock: Html)(implicit request: RequestHeader, messages: Messages)
 
+@phaseBannerLink = {
+    <a class="govuk-link"
+       href="/contact/beta-feedback-unauthenticated?service=CDS-FIN"
+       target="_blank">
+        @messages("feedback.link")
+    </a>
+}
+
 @phaseBannerContent = {
-    @messages("feedback.before")
-        <a class='govuk-link' href='/contact/beta-feedback-unauthenticated?service=CDS-FIN'>@messages("feedback.link")</a>
-    @messages("feedback.after")
+    @Html(messages("feedback.text", phaseBannerLink))
 }
 
 @fullPageTitle = @{
@@ -60,9 +67,6 @@
 }
 
 @beforeContent = {
-    @hmrcLanguageSelectHelper()
-    @maybeMessageBannerPartial.getOrElse(HtmlFormat.empty)
-
     @{
         backLink.map(link => govukBackLink(BackLink(href = link))).getOrElse(HtmlFormat.empty)
     }
@@ -93,10 +97,19 @@
 @hmrcStandardPage(
     HmrcStandardPageParams(
         pageTitle = fullPageTitle,
+        serviceName = Some(""),
         serviceURLs = ServiceURLs(
-            serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
             signOutUrl = Some(controllers.routes.LogoutController.logout.url),
             accessibilityStatementUrl = Some("/accessibility-statement/customs-financials")
+        ),
+        serviceNavigation = Some(
+            ServiceNavigation(
+                serviceName = Some(messages("service.name")),
+                serviceUrl = Some(appConfig.customsFinancialsFrontendHomepageUrl),
+                navigation =
+                    if (showNavBar) maybeMessageBannerPartial.getOrElse(Seq.empty)
+                    else Seq.empty
+            ).withLanguageToggle()
         ),
         backLink = backLink.map(BackLink(_)),
         templateOverrides = TemplateOverrides(
@@ -105,9 +118,8 @@
             mainContentLayout = Some(if(isFullWidth) fullWidthMainContent(_) else twoThirdsMainContent(_))
         ),
         banners = Banners(
-            phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("BETA"))), content = HtmlContent(phaseBannerContent))),
+            phaseBanner = Some(PhaseBanner(tag = Some(Tag(content = Text("Beta"))), content = HtmlContent(phaseBannerContent))),
             userResearchBanner = Some(UserResearchBanner(url = appConfig.helpMakeGovUkBetterUrl))
-        ),
-        isWelshTranslationAvailable = welshToggle,
+        )
     )
 )(mainContent)

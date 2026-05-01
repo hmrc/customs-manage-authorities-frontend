@@ -87,7 +87,7 @@ class ManageAuthoritiesController @Inject() (
           Ok(
             view(
               ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo, filesNotification),
-              messageBanner.map(_.successfulContentOrEmpty)
+              messageBanner
             )
           )
         case (None, _, _, _, filesNotification)                                                      =>
