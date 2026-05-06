@@ -18,6 +18,7 @@
 @import views.html.partials._
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigationItem
 
 
 @this(
@@ -31,7 +32,7 @@
 
 @(
     viewModel: ManageAuthoritiesViewModel,
-    maybeMessageBannerPartial: Option[HtmlFormat.Appendable]
+    maybeMessageBannerPartial: Option[Seq[ServiceNavigationItem]]
 )(
     implicit request: Request[_],
     messages: Messages,
@@ -41,7 +42,8 @@
 @layout(pageTitle = Some(titleNoForm("manageAuthorities.title", None, Seq())),
         backLink = Some(appConfig.customsFinancialsFrontendHomepageUrl),
         isFullWidth = viewModel.hasAccounts,
-        maybeMessageBannerPartial = maybeMessageBannerPartial) {
+        maybeMessageBannerPartial = maybeMessageBannerPartial,
+showNavBar = true) {
 
     @h1(id=Some("manageAuthorities.heading"),
         msg = "manageAuthorities.title",

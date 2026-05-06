@@ -27,8 +27,8 @@ import play.api.test.Helpers.*
 import play.api.{Application, inject}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
-import uk.gov.hmrc.play.partials.HtmlPartial
-import utils.StringUtils.emptyString
+import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigationItem
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 
 import java.net.URL
 import scala.concurrent.Future
@@ -37,66 +37,62 @@ class SecureMessageConnectorSpec extends SpecBase {
 
   "getMessageCountBanner" should {
 
-    "return a valid message banner when the upstream call returns OK" in new Setup {
-      val url = new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
+    "return nav items when the upstream call returns OK" in new Setup {
 
-      when(mockRequestBuilder.execute[HtmlPartial](any, any))
-        .thenReturn(Future.successful(HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(emptyString))))
+      val url =
+        new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
 
-      when(mockHttpClientV2.get(any[URL])(any)).thenReturn(mockRequestBuilder)
+      val mockNavItems = Seq(
+        ServiceNavigationItem(
+          content = Text("Messages"),
+          href = "/messages",
+          active = true,
+          current = false,
+          classes = "",
+          attributes = Map.empty
+        )
+      )
+
+      when(mockHttpClientV2.get(any[URL])(any))
+        .thenReturn(mockRequestBuilder)
+
+      when(mockRequestBuilder.transform(any()))
+        .thenReturn(mockRequestBuilder)
+
+      when(mockRequestBuilder.execute[Seq[ServiceNavigationItem]](any, any))
+        .thenReturn(Future.successful(mockNavItems))
 
       running(app) {
         val result = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
-        result.get mustEqual HtmlPartial.Success(Some("Hello"), play.twirl.api.Html(emptyString))
+
+        result mustBe defined
+        result.value mustEqual mockNavItems
       }
 
       val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
       verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
 
-      verify(mockRequestBuilder).execute[HtmlPartial](any, any)
+      urlCaptor.getValue.toString mustBe mockFrontendAppConfig.customsSecureMessagingBannerEndpoint
+
+      verify(mockRequestBuilder).execute[Seq[ServiceNavigationItem]](any, any)
     }
 
-    "return None when the upstream call returns HtmlPartial.Failure" in new Setup {
-      val url = new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
+    "return None when the upstream call throws an exception" in new Setup {
 
-      when(mockRequestBuilder.execute[HtmlPartial](any, any))
-        .thenReturn(Future.successful(HtmlPartial.Failure()))
+      when(mockHttpClientV2.get(any[URL])(any))
+        .thenReturn(mockRequestBuilder)
 
-      when(mockHttpClientV2.get(any[URL])(any)).thenReturn(mockRequestBuilder)
+      when(mockRequestBuilder.transform(any()))
+        .thenReturn(mockRequestBuilder)
 
-      running(app) {
-        val result = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
-        result mustBe empty
-      }
-
-      val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
-      verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
-
-      verify(mockRequestBuilder).execute[HtmlPartial](any, any)
-    }
-
-    "return None when the upstream call throws an Exception" in new Setup {
-      val url = new URL(s"${mockFrontendAppConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnTo")
-
-      when(mockRequestBuilder.execute[HtmlPartial](any, any))
+      when(mockRequestBuilder.execute[Seq[ServiceNavigationItem]](any, any))
         .thenReturn(Future.failed(new RuntimeException("exception occurred")))
 
-      when(mockHttpClientV2.get(any[URL])(any)).thenReturn(mockRequestBuilder)
-
       running(app) {
         val result = await(connector.getMessageCountBanner(returnTo)(fakeRequest()))
         result mustBe empty
       }
-
-      val urlCaptor = ArgumentCaptor.forClass(classOf[URL])
-      verify(mockHttpClientV2).get(urlCaptor.capture())(any)
-      assert(urlCaptor.getValue.toString == url.toString)
-
-      verify(mockRequestBuilder).execute[HtmlPartial](any, any)
     }
-
   }
 
   trait Setup {
@@ -108,7 +104,8 @@ class SecureMessageConnectorSpec extends SpecBase {
 
     val returnTo = "gov.uk"
 
-    when(mockFrontendAppConfig.customsSecureMessagingBannerEndpoint).thenReturn("http://localhost:12345/banner")
+    when(mockFrontendAppConfig.customsSecureMessagingBannerEndpoint)
+      .thenReturn("http://localhost:12345/banner")
 
     val app: Application = applicationBuilder()
       .overrides(
@@ -117,6 +114,7 @@ class SecureMessageConnectorSpec extends SpecBase {
       )
       .build()
 
-    val connector: SecureMessageConnector = app.injector.instanceOf[SecureMessageConnector]
+    val connector: SecureMessageConnector =
+      app.injector.instanceOf[SecureMessageConnector]
   }
 }

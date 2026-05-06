@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,16 @@
 package connectors
 
 import config.FrontendAppConfig
+
 import javax.inject.Inject
 import play.api.http.Status
 import play.api.mvc.RequestHeader
 import play.api.{Logger, Logging}
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.play.partials.{HeaderCarrierForPartialsConverter, HtmlPartial}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.play.partials.HeaderCarrierForPartialsConverter
+import uk.gov.hmrc.govukfrontend.views.viewmodels.servicenavigation.ServiceNavigationItem
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,19 +40,21 @@ class SecureMessageConnector @Inject() (
 
   private val log = Logger(this.getClass)
 
-  def getMessageCountBanner(returnToUrl: String)(implicit request: RequestHeader): Future[Option[HtmlPartial]] = {
+  def getMessageCountBanner(
+    returnToUrl: String
+  )(implicit request: RequestHeader): Future[Option[Seq[ServiceNavigationItem]]] = {
     implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
 
-    val url = s"${appConfig.customsSecureMessagingBannerEndpoint}?return_to=$returnToUrl"
+    val returnToQueryParameter = "return_to"
 
     httpClient
-      .get(url"$url")
-      .execute[HtmlPartial]
-      .map {
-        case success @ HtmlPartial.Success(_, _) => Some(success)
-        case HtmlPartial.Failure(_, _)           => None
+      .get(url"${appConfig.customsSecureMessagingBannerEndpoint}")
+      .transform(_.withQueryStringParameters(returnToQueryParameter -> returnToUrl))
+      .execute[Seq[ServiceNavigationItem]]
+      .flatMap { response =>
+        Future.successful(Some(response))
       }
-      .recover { case exc =>
+      .recover { exc =>
         log.error(s"Problem loading message banner partial: ${exc.getMessage}")
         None
       }
