@@ -120,7 +120,8 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
       val doc: Document      = Jsoup.parse(result.toString())
       val elements: Elements = doc.getElementsByTag("h2")
       elements.size() must be > 0
-      elements.text() mustBe "Help make GOV.UK better Authorised company Account you have authorised Authority details Remove authority Support links"
+      elements.text() mustBe "You may receive a voucher for feedback Authorised company Account you have authorised" +
+        " Authority details Remove authority Support links"
     }
 
     "Header displays Account authority" in new Setup {
