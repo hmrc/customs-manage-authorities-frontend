@@ -129,7 +129,7 @@ class EditCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
 
       elements.size() must be > 0
       elements.text() mustBe
-        "Help make GOV.UK better Authorised company Account you have authorised Authority" +
+        "You may receive a voucher for feedback Authorised company Account you have authorised Authority" +
         " details Your details Support links"
     }
 

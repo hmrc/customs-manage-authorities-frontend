@@ -133,7 +133,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
       val elements: Elements = doc.getElementsByTag("h2")
 
       elements.size() must be > 0
-      elements.text() mustBe "Help make GOV.UK better Remove authority for company Account you have" +
+      elements.text() mustBe "You may receive a voucher for feedback Remove authority for company Account you have" +
         " authorised Your details Support links"
     }
 

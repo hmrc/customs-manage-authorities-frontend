@@ -66,8 +66,7 @@ lazy val root = (project in file("."))
     retrieveManaged := true,
     update / evictionWarningOptions :=
       EvictionWarningOptions.default.withWarnScalaVersionEviction(true),
-    pipelineStages := Seq(digest),
-    Assets / pipelineStages := Seq(concat)
+    Assets / pipelineStages := Seq(gzip)
   )
   .settings(scalastyleSettings)
   .settings(
