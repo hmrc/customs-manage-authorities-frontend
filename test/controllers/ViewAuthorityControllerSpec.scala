@@ -143,7 +143,13 @@ class ViewAuthorityControllerSpec extends SpecBase {
     val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
 
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthority)
+      )
 
     val mockAuthCacheService: AuthoritiesCacheService = mock[AuthoritiesCacheService]
 

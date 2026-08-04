@@ -904,6 +904,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           CdsCashAccount,
           "12345",
           Some(AccountStatusOpen),
+          Some("GB12345678"),
           Map("b" -> standingAuthority01)
         )
       )
@@ -915,12 +916,14 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           CdsCashAccount,
           "12345",
           Some(AccountStatusOpen),
+          Some("GB12345678"),
           Map("b" -> standingAuthority01)
         ),
         "c" -> AccountWithAuthoritiesWithId(
           CdsCashAccount,
           "123456",
           Some(AccountStatusClosed),
+          Some("GB12345678"),
           Map("d" -> standingAuthority02)
         )
       )

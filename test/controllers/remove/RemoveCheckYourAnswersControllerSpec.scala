@@ -211,7 +211,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         )
 
       when(mockAuthoritiesCacheService.getAccountAndAuthority(any(), any(), any())(any()))
-        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithAuthoritiesWithId, standingAuthority))))
+        .thenReturn(Future.successful(Right(AccountAndAuthority(accountsWithEuAuthoritiesWithId, standingAuthority))))
 
       when(mockCustomsFinancialsConnector.revokeAccountAuthorities(any())(any()))
         .thenReturn(Future.successful(true))
@@ -392,13 +392,29 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
     )
 
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthority)
+      )
+
+    val accountsWithEuAuthoritiesWithId: AccountWithAuthoritiesWithId =
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Some("DE123456789012"),
+        Map("b" -> standingAuthority)
+      )
 
     val cdsGuaranteeAccWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
       AccountWithAuthoritiesWithId(
         CdsGeneralGuaranteeAccount,
         "12345",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map("b" -> standingAuthority)
       )
 
@@ -407,6 +423,7 @@ class RemoveCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         CdsDutyDefermentAccount,
         "12345",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map("b" -> standingAuthority)
       )
 

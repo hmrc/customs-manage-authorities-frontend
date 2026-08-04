@@ -95,6 +95,7 @@ object TestData {
     CdsCashAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusOpen),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -102,6 +103,7 @@ object TestData {
     CdsCashAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusClosed),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -109,6 +111,7 @@ object TestData {
     CdsCashAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusPending),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -116,6 +119,7 @@ object TestData {
     CdsCashAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusSuspended),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -123,6 +127,7 @@ object TestData {
     CdsDutyDefermentAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusOpen),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -130,6 +135,7 @@ object TestData {
     CdsDutyDefermentAccount,
     ACCOUNT_NUMBER,
     None,
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -137,6 +143,7 @@ object TestData {
     CdsGeneralGuaranteeAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusOpen),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
   )
 
@@ -144,6 +151,7 @@ object TestData {
     CdsGeneralGuaranteeAccount,
     ACCOUNT_NUMBER,
     Some(AccountStatusClosed),
+    Some("GB12345678"),
     Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_3)
   )
 
@@ -154,6 +162,7 @@ object TestData {
           CdsCashAccount,
           ACCOUNT_NUMBER,
           Some(AccountStatusOpen),
+          Some("GB12345678"),
           Map(AUTH_ID_B -> STANDING_AUTHORITY_1, AUTH_ID_C -> STANDING_AUTHORITY_2)
         )
     )

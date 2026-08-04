@@ -336,11 +336,11 @@ class AuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val euEori = "DE9876543210000"
 
     val accountsString: String =
-      AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty).toString
+      AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty).toString
     val accounts: Accounts     = Accounts(Some(accountsString), Seq.empty, None)
 
     val accountsWithDDCashAndGuarantee: Accounts = Accounts(
-      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)),
+      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)),
       Seq("123456"),
       Some("123456")
     )

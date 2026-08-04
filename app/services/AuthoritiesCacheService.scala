@@ -40,8 +40,9 @@ class AuthoritiesCacheService @Inject() (repository: AuthoritiesRepository, conn
         val accountType   = accountsWithSameAccountNumber.head.accountType
         val accountStatus = accountsWithSameAccountNumber.head.accountStatus
         val authorities   = accountsWithSameAccountNumber.flatMap(_.authorities)
+        val ownerEori     = accountsWithSameAccountNumber.head.ownerEori
 
-        AccountWithAuthorities(accountType, accountNumber, accountStatus, authorities)
+        AccountWithAuthorities(accountType, accountNumber, accountStatus, ownerEori, authorities)
       }
       .toSeq
 

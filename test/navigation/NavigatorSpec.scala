@@ -38,7 +38,11 @@ class NavigatorSpec extends SpecBase with MockitoSugar {
   val navigator                      = new Navigator()
   val authorisedUser: AuthorisedUser = AuthorisedUser("name", "role")
   val accounts: Accounts             =
-    Accounts(Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq.empty)), Seq.empty, None)
+    Accounts(
+      Some(AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)),
+      Seq.empty,
+      None
+    )
 
   val standingAuthority: StandingAuthority             =
     StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)

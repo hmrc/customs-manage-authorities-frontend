@@ -87,6 +87,7 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
             CdsCashAccount,
             "12345",
             Some(AccountStatusOpen),
+            Some("GB12345678"),
             Map(authorityIdB -> standingAuthority)
           ),
           standingAuthority
@@ -149,7 +150,13 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
     )
 
     val accountWithAuthorities: AccountWithAuthorities =
-      AccountWithAuthorities(CdsCashAccount, "54321", Some(AccountStatusOpen), Seq(standingAuthority))
+      AccountWithAuthorities(
+        CdsCashAccount,
+        "54321",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Seq(standingAuthority)
+      )
 
     val cachedAuthorities: AuthoritiesWithId = AuthoritiesWithId(
       Map(
@@ -158,6 +165,7 @@ class AuthoritiesCacheServiceSpec extends SpecBase {
             CdsCashAccount,
             "12345",
             Some(AccountStatusOpen),
+            Some("GB12345678"),
             Map(authorityIdB -> standingAuthority)
           )
       )

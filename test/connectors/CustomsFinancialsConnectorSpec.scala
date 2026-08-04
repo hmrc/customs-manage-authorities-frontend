@@ -109,6 +109,7 @@ class CustomsFinancialsConnectorSpec
           domain.CdsCashAccount,
           "12345",
           Some(AccountStatusOpen),
+          Some("GB12345678"),
           Seq.empty
         )
       )
@@ -120,6 +121,7 @@ class CustomsFinancialsConnectorSpec
           |       "accountType":"CDSCash",
           |       "accountNumber":"12345",
           |       "accountStatus":"Open",
+          |       "ownerEori":"GB12345678",
           |       "authorities":[]
           |   }
           |]

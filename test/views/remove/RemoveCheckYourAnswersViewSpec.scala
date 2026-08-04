@@ -205,6 +205,7 @@ class RemoveCheckYourAnswersViewSpec extends SpecBase with MockitoSugar {
         CdsCashAccount,
         accNumber,
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(authorityId -> standingAuthority)
       )
 

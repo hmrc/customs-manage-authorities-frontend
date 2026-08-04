@@ -91,6 +91,7 @@ class RemoveCheckYourAnswers @Inject() (
                           val ownerEori = ownerEoriForAccountType(
                             account.accountType,
                             authority.authorisedEori,
+                            account.ownerEori.getOrElse(request.eoriNumber),
                             xiEori.getOrElse(emptyString),
                             request.eoriNumber
                           )
@@ -123,7 +124,13 @@ class RemoveCheckYourAnswers @Inject() (
     eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori            = ownerEoriForAccountType(revokeRequest.accountType, revokeRequest.authorisedEori, xiEori, eori)
+    val ownerEori            = ownerEoriForAccountType(
+      revokeRequest.accountType,
+      revokeRequest.authorisedEori,
+      revokeRequest.ownerEori,
+      xiEori,
+      eori
+    )
     val payloadWithOwnerEori = revokeRequest.copy(ownerEori = ownerEori)
 
     customsFinancialsConnector.revokeAccountAuthorities(payloadWithOwnerEori).map {
@@ -135,6 +142,7 @@ class RemoveCheckYourAnswers @Inject() (
   private def ownerEoriForAccountType(
     account: AccountType,
     authorisedEori: String,
+    ownerEori: String,
     xiEori: String,
     eori: String
   ): String =
@@ -144,7 +152,7 @@ class RemoveCheckYourAnswers @Inject() (
         case _                                                                    => xiEori
       }
     } else {
-      eori
+      ownerEori
     }
 
   private def errorPage(error: ErrorResponse): Result = {

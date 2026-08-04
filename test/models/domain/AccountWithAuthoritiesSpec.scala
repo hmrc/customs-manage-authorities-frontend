@@ -30,6 +30,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       accWithAuthWithIdOb.accountType    shouldBe CdsCashAccount
       accWithAuthWithIdOb.accountNumber  shouldBe "123"
       accWithAuthWithIdOb.accountStatus  shouldBe Option(AccountStatusOpen)
+      accWithAuthWithIdOb.ownerEori      shouldBe Option("GB12345678")
       accWithAuthWithIdOb.authorities.size should be > 0
     }
   }
@@ -94,6 +95,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
            |  "accountType": "CDSCash",
            |  "accountNumber": "123",
            |  "accountStatus": "Open",
+           |  "ownerEori": "GB12345678",
            |  "authorities": [
            |    {
            |      "authorisedEori": "GB123456789012",
@@ -111,6 +113,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       result.accountType                     shouldBe CdsCashAccount
       result.accountNumber                   shouldBe "123"
       result.accountStatus                   shouldBe Some(AccountStatusOpen)
+      result.ownerEori                       shouldBe Some("GB12345678")
       result.authorities.head.authorisedEori shouldBe "GB123456789012"
     }
   }
@@ -125,6 +128,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       deserialized.accountType        shouldBe accWithId.accountType
       deserialized.accountNumber      shouldBe accWithId.accountNumber
       deserialized.accountStatus      shouldBe accWithId.accountStatus
+      deserialized.ownerEori          shouldBe accWithId.ownerEori
       deserialized.authorities.keySet shouldBe accWithId.authorities.keySet
     }
   }
@@ -142,6 +146,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
         CdsCashAccount,
         "456",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Seq(differentEoriAuthority)
       )
 
@@ -178,6 +183,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       CdsCashAccount,
       "123",
       Option(AccountStatusOpen),
+      Option("GB12345678"),
       Seq(standingAuthority1, standingAuthority2)
     )
 
@@ -185,6 +191,7 @@ class AccountWithAuthoritiesSpec extends SpecBase {
       CdsCashAccount,
       "123",
       Option(AccountStatusOpen),
+      Option("GB12345678"),
       Seq(standingAuthority1, standingAuthority2)
     )
 

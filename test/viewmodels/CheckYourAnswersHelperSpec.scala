@@ -115,6 +115,7 @@ class CheckYourAnswersHelperSpec extends SpecBase with SummaryListRowHelper {
             CdsDutyDefermentAccount,
             "12345",
             Some(AccountStatusOpen),
+            Some("GB12345678"),
             Map(
               "b" -> StandingAuthority(
                 "EORI",

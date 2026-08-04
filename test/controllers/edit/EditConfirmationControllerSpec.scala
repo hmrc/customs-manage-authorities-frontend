@@ -43,7 +43,13 @@ class EditConfirmationControllerSpec extends SpecBase {
   val standingAuthority = StandingAuthority("GB123456789012", LocalDate.now(), None, viewBalance = true)
 
   val accountsWithAuthoritiesWithId        =
-    AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+    AccountWithAuthoritiesWithId(
+      CdsCashAccount,
+      "12345",
+      Some(AccountStatusOpen),
+      Some("GB12345678"),
+      Map("b" -> standingAuthority)
+    )
   val authoritiesWithId: AuthoritiesWithId = AuthoritiesWithId(
     Map(
       "a" -> accountsWithAuthoritiesWithId

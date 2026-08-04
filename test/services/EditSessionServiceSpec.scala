@@ -43,6 +43,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
         CdsCashAccount,
         "12345",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(authorityId -> standingAuthority)
       )
 
@@ -79,6 +80,7 @@ class EditSessionServiceSpec extends SpecBase with MockitoSugar {
         CdsCashAccount,
         "12345",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(authorityId -> standingAuthority)
       )
 
