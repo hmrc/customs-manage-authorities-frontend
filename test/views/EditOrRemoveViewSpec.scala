@@ -171,7 +171,13 @@ class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
 
     val standingAuthority: StandingAuthority                        = StandingAuthority(eori, startDate, Some(endDate), viewBalance = false)
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsCashAccount, accNumber, Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        accNumber,
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthority)
+      )
 
     implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] = fakeRequest("GET", "/some/resource/path")
 

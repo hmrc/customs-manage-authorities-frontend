@@ -192,7 +192,13 @@ class RemoveAuthorisedUserControllerSpec extends SpecBase with MockitoSugar {
     val endDate: LocalDate                                          = LocalDate.parse("2020-04-01")
     val standingAuthority: StandingAuthority                        = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
     val accountsWithAuthoritiesWithId: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthority)
+      )
 
     val getRequest: FakeRequest[AnyContentAsEmpty.type] =
       fakeRequest(GET, controllers.remove.routes.RemoveAuthorisedUserController.onPageLoad("a", "b").url)

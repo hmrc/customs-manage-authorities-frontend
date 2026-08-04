@@ -178,6 +178,7 @@ trait SetUp {
       CdsCashAccount,
       accountNumberVal,
       Some(AccountStatusOpen),
+      Some("GB12345678"),
       Map("b" -> standingAuthority)
     )
 
@@ -186,6 +187,7 @@ trait SetUp {
       CdsDutyDefermentAccount,
       accountNumberVal,
       Some(AccountStatusOpen),
+      Some("GB12345678"),
       Map("b" -> standingAuthority)
     )
 
@@ -194,6 +196,7 @@ trait SetUp {
       CdsGeneralGuaranteeAccount,
       accountNumberVal,
       Some(AccountStatusOpen),
+      Some("GB12345678"),
       Map("b" -> standingAuthority)
     )
 
@@ -202,6 +205,7 @@ trait SetUp {
       UnknownAccount,
       accountNumberVal,
       Some(AccountStatusOpen),
+      Some("GB12345678"),
       Map("b" -> standingAuthority)
     )
 

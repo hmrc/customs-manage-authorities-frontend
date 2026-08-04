@@ -156,7 +156,13 @@ class EditCheckYourAnswersValidationServiceSpec extends SpecBase {
     val standingAuthority                  = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
     val accAuthority             =
-      AccountWithAuthoritiesWithId(CdsCashAccount, "12345", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "12345",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthority)
+      )
     val authUser: AuthorisedUser = AuthorisedUser("test", "test2")
 
     val userAnswers: UserAnswers = UserAnswers("id")

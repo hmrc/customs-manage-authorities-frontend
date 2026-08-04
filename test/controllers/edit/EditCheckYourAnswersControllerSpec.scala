@@ -226,7 +226,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
       override val accounts: Accounts = Accounts(
-        Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Seq.empty)),
+        Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)),
         Seq.empty,
         None
       )
@@ -651,7 +651,9 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         override val accounts: Accounts = Accounts(
-          Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Seq.empty)),
+          Some(
+            AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)
+          ),
           Seq.empty,
           None
         )
@@ -730,7 +732,9 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(Some("XI123456789012")))
 
         override val accounts: Accounts = Accounts(
-          Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Seq.empty)),
+          Some(
+            AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)
+          ),
           Seq.empty,
           None
         )
@@ -947,6 +951,7 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
         CdsCashAccount,
         "123456",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map("b" -> standingAuthorityForGB)
       )
     val authoritiesWithId: AuthoritiesWithId                        = AuthoritiesWithId(
@@ -959,7 +964,13 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       StandingAuthority(gbEori, LocalDate.now().minusDays(twoDays), None, viewBalance = true)
 
     val accountsWithAuthoritiesWithIdPast: AccountWithAuthoritiesWithId =
-      AccountWithAuthoritiesWithId(CdsCashAccount, "123456", Some(AccountStatusOpen), Map("b" -> standingAuthorityPast))
+      AccountWithAuthoritiesWithId(
+        CdsCashAccount,
+        "123456",
+        Some(AccountStatusOpen),
+        Some("GB12345678"),
+        Map("b" -> standingAuthorityPast)
+      )
     val authoritiesWithIdPast: AuthoritiesWithId                        = AuthoritiesWithId(
       Map(
         "a" -> accountsWithAuthoritiesWithIdPast
@@ -976,11 +987,12 @@ class EditCheckYourAnswersControllerSpec extends SpecBase with MockitoSugar {
       CdsCashAccount,
       "123",
       Option(AccountStatusOpen),
+      Some("GB12345678"),
       Seq(standingAuthority1, standingAuthority2)
     )
 
     val accounts: Accounts = Accounts(
-      Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Seq.empty)),
+      Some(AccountWithAuthorities(CdsCashAccount, "123456", Some(AccountStatusOpen), Some("GB12345678"), Seq.empty)),
       Seq("123456"),
       Some("123456")
     )

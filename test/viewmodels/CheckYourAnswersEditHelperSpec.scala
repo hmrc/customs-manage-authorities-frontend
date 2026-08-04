@@ -53,6 +53,7 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
           CdsDutyDefermentAccount,
           "67890",
           Some(AccountStatusOpen),
+          Some("GB12345678"),
           Map("b" -> standingAuthority)
         )
 
@@ -120,7 +121,13 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
         val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
         val accountsWithAuthoritiesWithId =
-          AccountWithAuthoritiesWithId(CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+          AccountWithAuthoritiesWithId(
+            CdsCashAccount,
+            "67890",
+            Some(AccountStatusOpen),
+            Some("GB12345678"),
+            Map("b" -> standingAuthority)
+          )
 
         val standAuthority = StandingAuthority(
           "XI123456789012",
@@ -181,7 +188,13 @@ class CheckYourAnswersEditHelperSpec extends SpecBase with SummaryListRowHelper 
         val standingAuthority = StandingAuthority("someEori", startDate, None, viewBalance = false)
 
         val accountsWithAuthoritiesWithId =
-          AccountWithAuthoritiesWithId(CdsCashAccount, "67890", Some(AccountStatusOpen), Map("b" -> standingAuthority))
+          AccountWithAuthoritiesWithId(
+            CdsCashAccount,
+            "67890",
+            Some(AccountStatusOpen),
+            Some("GB12345678"),
+            Map("b" -> standingAuthority)
+          )
 
         val standAuthority = StandingAuthority(
           "GB123456789012",

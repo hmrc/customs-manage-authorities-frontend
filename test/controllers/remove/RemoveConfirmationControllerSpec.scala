@@ -41,7 +41,7 @@ class RemoveConfirmationControllerSpec extends SpecBase {
   val standingAuthority: StandingAuthority = StandingAuthority("EORI", startDate, Some(endDate), viewBalance = false)
 
   val accounts: Seq[AccountWithAuthorities] = Seq(
-    AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Seq(standingAuthority))
+    AccountWithAuthorities(CdsCashAccount, "12345", Some(AccountStatusOpen), Some("GB12345678"), Seq(standingAuthority))
   )
 
   val cashAccount: CashAccount = CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00)))
@@ -52,6 +52,7 @@ class RemoveConfirmationControllerSpec extends SpecBase {
         CdsCashAccount,
         "12345",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map("b" -> standingAuthority)
       )
     )

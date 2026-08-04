@@ -76,6 +76,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         CdsDutyDefermentAccount,
         "1",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(
           "1" -> standingAuthorityWithView,
           "2" -> standingAuthorityWithoutView
@@ -85,6 +86,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         CdsGeneralGuaranteeAccount,
         "2",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(
           "2" -> standingAuthorityWithView,
           "1" -> standingAuthorityWithoutView
@@ -94,6 +96,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         CdsCashAccount,
         "4",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(
           "1" -> standingAuthorityWithoutView
         )
@@ -102,6 +105,7 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
         CdsCashAccount,
         "3",
         Some(AccountStatusOpen),
+        Some("GB12345678"),
         Map(
           "1" -> standingAuthorityWithoutView
         )

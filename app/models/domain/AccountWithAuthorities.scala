@@ -24,6 +24,7 @@ case class AccountWithAuthorities(
   accountType: AccountType,
   accountNumber: AccountNumber,
   accountStatus: Option[CDSAccountStatus],
+  ownerEori: Option[EORI],
   authorities: Seq[StandingAuthority]
 )
 
@@ -35,6 +36,7 @@ case class AccountWithAuthoritiesWithId(
   accountType: AccountType,
   accountNumber: AccountNumber,
   accountStatus: Option[CDSAccountStatus],
+  ownerEori: Option[EORI],
   authorities: Map[String, StandingAuthority]
 )
 
@@ -53,6 +55,7 @@ object AccountWithAuthoritiesWithId {
       accountWithAuthorities.accountType,
       accountWithAuthorities.accountNumber,
       accountWithAuthorities.accountStatus,
+      accountWithAuthorities.ownerEori,
       authoritiesWithId
     )
   }
