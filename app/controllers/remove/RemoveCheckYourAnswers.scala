@@ -124,9 +124,10 @@ class RemoveCheckYourAnswers @Inject() (
     eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori            = ownerEoriForAccountTypeTest(
+    val ownerEori            = ownerEoriForAccountType(
       revokeRequest.accountType,
       revokeRequest.authorisedEori,
+      revokeRequest.ownerEori,
       xiEori,
       eori
     )
