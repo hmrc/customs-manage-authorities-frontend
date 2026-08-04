@@ -51,17 +51,11 @@ class RemoveCheckYourAnswers @Inject() (
     with I18nSupport {
 
   def onPageLoad(accountId: String, authorityId: String): Action[AnyContent] =
-    println("got here 1000000000")
     (identify andThen getData andThen requireData).async { implicit request =>
       authoritiesCacheService.getAccountAndAuthority(request.internalId, authorityId, accountId).map {
-        case Left(NoAccount)                                =>
-          println("got here 2")
-          errorPage(MissingAccountError)
-        case Left(NoAuthority)                              =>
-          println("got here 3")
-          errorPage(MissingAuthorityError)
+        case Left(NoAccount)                                => errorPage(MissingAccountError)
+        case Left(NoAuthority)                              => errorPage(MissingAuthorityError)
         case Right(AccountAndAuthority(account, authority)) =>
-          println("got here 4")
           request.userAnswers.get(RemoveAuthorisedUserPage(accountId, authorityId)) match {
             case Some(authorisedUser) =>
               Ok(
@@ -130,10 +124,9 @@ class RemoveCheckYourAnswers @Inject() (
     eori: String
   )(implicit hc: HeaderCarrier): Future[Result] = {
 
-    val ownerEori            = ownerEoriForAccountType(
+    val ownerEori            = ownerEoriForAccountTypeTest(
       revokeRequest.accountType,
       revokeRequest.authorisedEori,
-      revokeRequest.ownerEori,
       xiEori,
       eori
     )
@@ -162,7 +155,6 @@ class RemoveCheckYourAnswers @Inject() (
     }
 
   private def errorPage(error: ErrorResponse): Result = {
-    println("got here 1")
     logger.error(error.msg)
     Redirect(controllers.routes.TechnicalDifficulties.onPageLoad)
   }
