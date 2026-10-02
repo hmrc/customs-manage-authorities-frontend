@@ -77,7 +77,10 @@ class ManageAuthoritiesController @Inject() (
       authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
                                   authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs)
                                 )
-      messageBanner          <- secureMessageConnector.getMessageCountBanner(returnToUrl)
+      messageBanner          <- secureMessageConnector.getMessageCountBanner(
+                                  returnToUrl,
+                                  activeItem = Some("authorities")
+                                )
       filesNotification      <- authoritiesFilesNotification
     } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner, filesNotification)
 

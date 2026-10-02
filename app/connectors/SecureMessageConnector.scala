@@ -41,15 +41,19 @@ class SecureMessageConnector @Inject() (
   private val log = Logger(this.getClass)
 
   def getMessageCountBanner(
-    returnToUrl: String
+    returnToUrl: String,
+    activeItem: Option[String] = None
   )(implicit request: RequestHeader): Future[Option[Seq[ServiceNavigationItem]]] = {
-    implicit val hc: HeaderCarrier = headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
 
-    val returnToQueryParameter = "return_to"
+    implicit val hc: HeaderCarrier =
+      headerCarrierForPartialsConverter.fromRequestWithEncryptedCookie(request)
+
+    val queryParameters =
+      Seq(Some("return_to" -> returnToUrl), activeItem.map("active_item" -> _)).flatten
 
     httpClient
       .get(url"${appConfig.customsSecureMessagingBannerEndpoint}")
-      .transform(_.withQueryStringParameters(returnToQueryParameter -> returnToUrl))
+      .transform(_.withQueryStringParameters(queryParameters*))
       .execute[Seq[ServiceNavigationItem]]
       .flatMap { response =>
         Future.successful(Some(response))
