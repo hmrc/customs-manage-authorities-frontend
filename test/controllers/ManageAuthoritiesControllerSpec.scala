@@ -89,7 +89,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         when(mockRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
         when(mockAccountsCacheService.retrieveAccountsForId(any)).thenReturn(Future.successful(None))
         when(mockAccountsCacheService.retrieveAccounts(any(), any())(any())).thenReturn(Future.successful(accounts))
-        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSecureMessageConnector.getMessageCountBanner(any, any)(any)).thenReturn(Future.successful(None))
         when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
         private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -116,7 +116,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
           contentAsString(result) mustEqual
             view(filesNotificationViewModel(application))(request, messages(application), appConfig).toString
 
-          verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
+          verify(mockSecureMessageConnector).getMessageCountBanner(any, any)(any)
         }
       }
 
@@ -152,7 +152,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
 
         when(mockAuthEoriAndCompanyInfoService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
-        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSecureMessageConnector.getMessageCountBanner(any, any)(any)).thenReturn(Future.successful(None))
         when(mockSdesConnector.getAuthoritiesCsvFiles(any())(any())).thenReturn(Future.successful(authCsvFiles))
 
         private val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -188,7 +188,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
               maybeMessageBannerPartial = None
             )(request, messages(application), appConfig).toString
 
-          verify(mockSecureMessageConnector).getMessageCountBanner(any)(any)
+          verify(mockSecureMessageConnector).getMessageCountBanner(any, any)(any)
         }
       }
 
@@ -216,7 +216,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         when(mockDataStoreConnector.getCompanyName(any)).thenReturn(Future.successful(Some(COMPANY_NAME)))
         when(mockAccountsRepository.get(any())).thenReturn(Future.successful(Some(accounts)))
         when(mockAuthRepository.get(any())).thenReturn(Future.successful(Some(authoritiesWithId)))
-        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSecureMessageConnector.getMessageCountBanner(any, any)(any)).thenReturn(Future.successful(None))
 
         when(mockAuthEoriAndCompanyService.retrieveAuthorisedEoriAndCompanyInfo(any, any)(any))
           .thenReturn(Future.successful(Some(eoriAndCompanyInfoMap)))
@@ -287,7 +287,7 @@ class ManageAuthoritiesControllerSpec extends SpecBase with MockitoSugar with Da
         when(mockDataStoreConnector.getXiEori(any)(any)).thenReturn(Future.successful(None))
         when(mockDataStoreConnector.getEmail(any)).thenReturn(Future.successful(None))
 
-        when(mockSecureMessageConnector.getMessageCountBanner(any)(any)).thenReturn(Future.successful(None))
+        when(mockSecureMessageConnector.getMessageCountBanner(any, any)(any)).thenReturn(Future.successful(None))
 
         private val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
