@@ -701,7 +701,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     val mockConnector: CustomsFinancialsConnector         = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
     val frontendAppConfig: FrontendAppConfig              = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
-    val euEoriEnabled: Boolean                            = false
+    val euEoriEnabled: Boolean                            = true
     val xiEoriEnabled: Boolean                            = true
 
     val formProvider       = new EoriNumberFormProvider(frontendAppConfig)
