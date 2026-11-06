@@ -31,8 +31,7 @@
   form: Form[_],
   mode: Mode,
   call: Call,
-  xiEoriEnabled: Boolean,
-  euEoriEnabled: Boolean
+  xiEoriEnabled: Boolean
 )(
   implicit request: Request[_],
   messages: Messages,
@@ -49,15 +48,9 @@
     @errorSummary(form.errors)
 
     @{
-      val (labelHintKey, detailsTextKey) = (euEoriEnabled, xiEoriEnabled) match {
-        case (true, _)       => ("eoriNumber.hint.eu", "eoriNumber.details.text.eu")
-        case (false, true)   => ("eoriNumber.hint.xi", "eoriNumber.details.text")
-        case (false, false)  => ("eoriNumber.hint", "eoriNumber.details.text")
-      }
-
       val inputHint = InputTextHint(
-        Some(DetailsHint("eoriNumber.details.label", detailsTextKey)),
-        Some(LabelHint(labelHintKey, "govuk-hint govuk-!-margin-top-6"))
+        Some(DetailsHint("eoriNumber.details.label", "eoriNumber.details.text.eu")),
+        Some(LabelHint("eoriNumber.hint.eu", "govuk-hint govuk-!-margin-top-6"))
       )
 
       inputText(

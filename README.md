@@ -102,7 +102,6 @@ Application entrypoint:  `/customs/payment-records`
 | -------- | ------- |
 | `fixed-system-time` | Fixes the system time for development and testing |
 | `xi-eori-enabled` |  Enable the XI EORI related api calls               |
-| `eu-eori-enabled` |  Enable the EU EORI feature                         |
 
 Different features can be enabled / disabled per-environment via the `app-config-<env>` project by setting `features.some-feature: true`
 
