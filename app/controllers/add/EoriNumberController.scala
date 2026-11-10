@@ -18,7 +18,7 @@ package controllers.add
 
 import config.FrontendAppConfig
 import connectors.{CustomsDataStoreConnector, CustomsFinancialsConnector}
-import controllers.actions._
+import controllers.actions.*
 import forms.EoriNumberFormProvider
 import models.requests.OptionalDataRequest
 import models.{CompanyDetails, EoriDetailsCorrect, Mode, UserAnswers}
@@ -26,7 +26,7 @@ import navigation.Navigator
 import pages.add.{AccountsPage, EoriDetailsCorrectPage, EoriNumberPage}
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc._
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -61,9 +61,7 @@ class EoriNumberController @Inject() (
       case Some(value) => form.fill(value.eori)
     }
 
-    val isXiEoriEnabled = appConfig.xiEoriEnabled
-
-    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
+    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
@@ -76,8 +74,7 @@ class EoriNumberController @Inject() (
               view(
                 formWithErrors,
                 mode,
-                navigator.backLinkRouteForEORINUmberPage(mode),
-                appConfig.xiEoriEnabled
+                navigator.backLinkRouteForEORINUmberPage(mode)
               )
             )
           ),
@@ -142,8 +139,7 @@ class EoriNumberController @Inject() (
           view(
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
-            navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            navigator.backLinkRouteForEORINUmberPage(mode)
           )
         )
       case _                      =>
@@ -163,8 +159,7 @@ class EoriNumberController @Inject() (
           view(
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
-            navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            navigator.backLinkRouteForEORINUmberPage(mode)
           )
         )
     }
@@ -179,8 +174,7 @@ class EoriNumberController @Inject() (
         view(
           form.withError("value", errorMsgKey).fill(inputEoriNumber),
           mode,
-          navigator.backLinkRouteForEORINUmberPage(mode),
-          appConfig.xiEoriEnabled
+          navigator.backLinkRouteForEORINUmberPage(mode)
         )
       )
     )

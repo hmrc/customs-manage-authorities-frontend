@@ -17,17 +17,17 @@
 package connectors
 
 import config.FrontendAppConfig
+import models.requests.EoriRequest
 import models.{
   CompanyInformation, EmailResponse, EmailResponses, EmailUnverifiedResponse, EmailVerifiedResponse, UndeliverableEmail,
   UnverifiedEmail, XiEoriInformationResponse
 }
-import models.requests.EoriRequest
 import play.api.Logger
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.auth.core.retrieve.Email
-import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpErrorFunctions, StringContextOps, UpstreamErrorResponse}
 import utils.Constants.NON_EU_EORI_PREFIXES
 
 import javax.inject.Inject
@@ -78,10 +78,9 @@ class CustomsDataStoreConnector @Inject() (appConfig: FrontendAppConfig, httpCli
   }
 
   def getXiEori(eori: String)(implicit hc: HeaderCarrier): Future[Option[String]] = {
-    val endpoint                 = s"$baseDataStoreUrl/eori/xieori-information"
-    val isXiEoriEnabled: Boolean = appConfig.xiEoriEnabled
+    val endpoint = s"$baseDataStoreUrl/eori/xieori-information"
 
-    if (isXiEoriEnabled && NON_EU_EORI_PREFIXES.exists(prefix => eori.startsWith(prefix))) {
+    if (NON_EU_EORI_PREFIXES.exists(prefix => eori.startsWith(prefix))) {
       httpClient
         .get(url"$endpoint")
         .execute[XiEoriInformationResponse]
