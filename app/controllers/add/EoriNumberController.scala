@@ -61,9 +61,8 @@ class EoriNumberController @Inject() (
       case Some(value) => form.fill(value.eori)
     }
 
-    val isXiEoriEnabled = appConfig.xiEoriEnabled
 
-    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode), isXiEoriEnabled))
+    Ok(view(preparedForm, mode, navigator.backLinkRouteForEORINUmberPage(mode)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async { implicit request =>
@@ -76,8 +75,7 @@ class EoriNumberController @Inject() (
               view(
                 formWithErrors,
                 mode,
-                navigator.backLinkRouteForEORINUmberPage(mode),
-                appConfig.xiEoriEnabled
+                navigator.backLinkRouteForEORINUmberPage(mode)
               )
             )
           ),
@@ -142,8 +140,7 @@ class EoriNumberController @Inject() (
           view(
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
-            navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            navigator.backLinkRouteForEORINUmberPage(mode)
           )
         )
       case _                      =>
@@ -163,8 +160,7 @@ class EoriNumberController @Inject() (
           view(
             form.withError("value", "eoriNumber.error.invalid").fill(eori),
             mode,
-            navigator.backLinkRouteForEORINUmberPage(mode),
-            appConfig.xiEoriEnabled
+            navigator.backLinkRouteForEORINUmberPage(mode)
           )
         )
     }
@@ -179,8 +175,7 @@ class EoriNumberController @Inject() (
         view(
           form.withError("value", errorMsgKey).fill(inputEoriNumber),
           mode,
-          navigator.backLinkRouteForEORINUmberPage(mode),
-          appConfig.xiEoriEnabled
+          navigator.backLinkRouteForEORINUmberPage(mode)
         )
       )
     )

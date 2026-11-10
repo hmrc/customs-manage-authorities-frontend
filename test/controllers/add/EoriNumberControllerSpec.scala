@@ -59,7 +59,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute, xiEoriEnabled)(
+          view(form, NormalMode, backLinkRoute)(
             request,
             messages(application),
             appConfig
@@ -105,7 +105,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill("answer"), NormalMode, backLinkRoute, xiEoriEnabled)(
+          view(form.fill("answer"), NormalMode, backLinkRoute)(
             request,
             messages(application),
             appConfig
@@ -452,7 +452,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute)(
             request,
             messages(application),
             appConfig
@@ -483,7 +483,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute)(
             request,
             messages(application),
             appConfig
@@ -522,7 +522,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute)(
             request,
             messages(application),
             appConfig
@@ -627,9 +627,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     val mockConnector: CustomsFinancialsConnector         = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
     val frontendAppConfig: FrontendAppConfig              = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
-
-    val xiEoriEnabled: Boolean = true
-
     val formProvider       = new EoriNumberFormProvider()
     val form: Form[String] = formProvider()
 

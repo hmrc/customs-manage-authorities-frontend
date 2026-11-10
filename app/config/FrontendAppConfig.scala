@@ -33,7 +33,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val xClientIdHeader: String = configuration.get[String]("microservice.services.sdes.x-client-id")
   lazy val fixedDateTime: Boolean  = configuration.get[Boolean]("features.fixed-system-time")
-  lazy val xiEoriEnabled: Boolean  = configuration.get[Boolean]("features.xi-eori-enabled")
   lazy val timeout: Int            = configuration.get[Int]("timeout.timeout")
 
   lazy val countdown: Int = configuration.get[Int]("timeout.countdown")

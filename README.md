@@ -86,7 +86,7 @@ You can find a list of microservice specific routes here - `/conf/app.routes`
 
 Application entrypoint:  `/customs/payment-records` 
 
-EU EORI support is permanent functionality in every environment. There is no feature switch or
+EU/XI EORI support is permanent functionality in every environment. There is no feature switch or
 GB-only fallback.
 
 ## Feature Switches
@@ -104,7 +104,6 @@ GB-only fallback.
 | Flag     | Description |
 | -------- | ------- |
 | `fixed-system-time` | Fixes the system time for development and testing |
-| `xi-eori-enabled` |  Enable the XI EORI related api calls               |
 
 Different features can be enabled / disabled per-environment via the `app-config-<env>` project by setting `features.some-feature: true`
 

@@ -95,18 +95,17 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
     lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
     lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
-    val xiEoriEnabled: Boolean = true
 
     def normalModeView(): Document = Jsoup.parse(
       app.injector
         .instanceOf[EoriNumberView]
-        .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled)
+        .apply(form, NormalMode, normalModeBackLinkRoute)
         .body
     )
     def checkModeView(): Document  = Jsoup.parse(
       app.injector
         .instanceOf[EoriNumberView]
-        .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled)
+        .apply(form, CheckMode, checkModeBackLinkRoute)
         .body
     )
   }
