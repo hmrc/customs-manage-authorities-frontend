@@ -86,6 +86,9 @@ You can find a list of microservice specific routes here - `/conf/app.routes`
 
 Application entrypoint:  `/customs/payment-records` 
 
+EU EORI support is permanent functionality in every environment. There is no feature switch or
+GB-only fallback.
+
 ## Feature Switches
 
 > ### Caution!
