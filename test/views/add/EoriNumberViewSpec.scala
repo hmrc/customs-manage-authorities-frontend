@@ -37,99 +37,23 @@ import java.time.LocalDateTime
 class EoriNumberViewSpec extends SpecBase with MockitoSugar {
 
   "EoriNumberView" should {
-    "display the correct guidance in Normal mode with XI Eori Enabled" in new Setup {
+    "display the correct guidance in Normal mode" in new Setup {
       normalModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
-
-      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
-
-      detailsHintElement.getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
-
-      hintLabelElement.html() mustBe "eoriNumber.hint.xi"
-
-      normalModeView().getElementsByTag("button").get(1).html() mustBe "site.saveAndContinue"
-    }
-
-    "display the correct guidance in Check mode with XI Eori Enabled" in new Setup {
-      checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      checkModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      checkModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
-
-      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
-
-      detailsHintElement.getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
-
-      hintLabelElement.html() mustBe "eoriNumber.hint.xi"
-
-      normalModeView().getElementsByTag("button").get(1).html() mustBe "site.saveAndContinue"
-    }
-
-    "display the correct guidance in Normal mode with EU Eori Enabled" in new Setup {
-      override val xiEoriEnabled = false
-      override val euEoriEnabled = true
-
-      override def normalModeView(): Document = Jsoup.parse(
-        app.injector
-          .instanceOf[EoriNumberView]
-          .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
-          .body
-      )
-      override def checkModeView(): Document  = Jsoup.parse(
-        app.injector
-          .instanceOf[EoriNumberView]
-          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
-          .body
-      )
-
       normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
       normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text.eu"
 
-      val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
+      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
+      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
+
+      detailsHintElement.getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
+      detailsHintElement.getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text.eu"
+
       hintLabelElement.html() mustBe "eoriNumber.hint.eu"
-    }
-
-    "display the correct guidance in Normal mode with all Eori Flags Disabled" in new Setup {
-      override val xiEoriEnabled = false
-      override val euEoriEnabled = false
-
-      override def normalModeView(): Document = Jsoup.parse(
-        app.injector
-          .instanceOf[EoriNumberView]
-          .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
-          .body
-      )
-      override def checkModeView(): Document  = Jsoup.parse(
-        app.injector
-          .instanceOf[EoriNumberView]
-          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
-          .body
-      )
-
-      normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text"
-
-      val hintLabelElement: Elements = normalModeView().getElementsByClass("govuk-!-margin-top-6")
-      hintLabelElement.html() mustBe "eoriNumber.hint"
 
       normalModeView().getElementsByTag("button").get(1).html() mustBe "site.saveAndContinue"
     }
 
-    "display the correct guidance in Check mode with all EORI flags disabled" in new Setup {
-      override val xiEoriEnabled = false
-      override val euEoriEnabled = false
-
-      override def checkModeView(): Document = Jsoup.parse(
-        app.injector
-          .instanceOf[EoriNumberView]
-          .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
-          .body
-      )
-
+    "display the correct guidance in Check mode" in new Setup {
       val detailsHintElement: Element = checkModeView().getElementById("value-hint-details")
       val hintLabelElement: Elements  = checkModeView().getElementsByClass("govuk-!-margin-top-6")
 
@@ -138,8 +62,8 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
       detailsHintElement.getElementById("value-hint-title").html() mustBe
         "eoriNumber.details.label"
       detailsHintElement.getElementsByClass("govuk-body").html() mustBe
-        "eoriNumber.details.text"
-      hintLabelElement.html() mustBe "eoriNumber.hint"
+        "eoriNumber.details.text.eu"
+      hintLabelElement.html() mustBe "eoriNumber.hint.eu"
 
       checkModeView().getElementsByTag("button").get(1).text() mustBe messages("site.saveAndContinue")
     }
@@ -165,25 +89,24 @@ class EoriNumberViewSpec extends SpecBase with MockitoSugar {
     implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
     implicit val messages: Messages                               = Helpers.stubMessages()
 
-    private val formProvider = new EoriNumberFormProvider(appConfig)
+    private val formProvider = new EoriNumberFormProvider()
     val form                 = formProvider()
 
     lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
     lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
 
     val xiEoriEnabled: Boolean = true
-    val euEoriEnabled: Boolean = false
 
     def normalModeView(): Document = Jsoup.parse(
       app.injector
         .instanceOf[EoriNumberView]
-        .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+        .apply(form, NormalMode, normalModeBackLinkRoute, xiEoriEnabled)
         .body
     )
     def checkModeView(): Document  = Jsoup.parse(
       app.injector
         .instanceOf[EoriNumberView]
-        .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled, euEoriEnabled)
+        .apply(form, CheckMode, checkModeBackLinkRoute, xiEoriEnabled)
         .body
     )
   }

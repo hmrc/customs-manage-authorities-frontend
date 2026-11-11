@@ -16,7 +16,6 @@
 
 package forms
 
-import config.FrontendAppConfig
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.Constraints
 import org.scalacheck.Gen
@@ -34,8 +33,7 @@ class EoriNumberFormProviderSpec extends StringFieldBehaviours with Constraints 
     } yield s"GB$digits"
   }
 
-  private val frontendAppConfig = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
-  val form                      = new EoriNumberFormProvider(frontendAppConfig)()
+  val form = new EoriNumberFormProvider()()
 
   ".value" must {
     val requiredKey = "eoriNumber.error.required"

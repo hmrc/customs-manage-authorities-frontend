@@ -23,11 +23,8 @@ import utils.StringUtils.emptyString
 import java.time.LocalDate
 
 trait Constraints {
-  lazy val textFieldRegex: String       = """^[^(){}$<>\[\]\\\/]*$"""
-  private lazy val eoriRegex            = """^[A-Z]{2}[0-9A-Z]{1,15}$"""
-  private lazy val gbnEoriRegex: String = "GBN\\d{11}"
-  private lazy val gbEoriRegex: String  = "GB\\d{12}"
-  private lazy val xiEoriRegex: String  = "XI\\d{12}"
+  lazy val textFieldRegex: String = """^[^(){}$<>\[\]\\\/]*$"""
+  private lazy val eoriRegex      = """^[A-Z]{2}[0-9A-Z]{1,15}$"""
 
   protected def firstError[A](constraints: Constraint[A]*): Constraint[A] =
     Constraint { input =>
@@ -139,19 +136,10 @@ trait Constraints {
         Invalid(errorKey)
     }
 
-  protected def checkEORI(invalidFormatErrorKey: String, euEoriEnabled: Boolean): Constraint[String] =
-    if (euEoriEnabled) {
-      Constraint {
-        case str if formatEORINumber(str).matches(eoriRegex) => Valid
-        case _                                               => Invalid(invalidFormatErrorKey, eoriRegex)
-      }
-    } else {
-      Constraint {
-        case str if formatEORINumber(str).matches(gbnEoriRegex) => Valid
-        case str if formatEORINumber(str).matches(gbEoriRegex)  => Valid
-        case str if formatEORINumber(str).matches(xiEoriRegex)  => Valid
-        case _                                                  => Invalid(invalidFormatErrorKey, gbEoriRegex)
-      }
+  protected def checkEORI(invalidFormatErrorKey: String): Constraint[String] =
+    Constraint {
+      case str if formatEORINumber(str).matches(eoriRegex) => Valid
+      case _                                               => Invalid(invalidFormatErrorKey, eoriRegex)
     }
 
   protected def formatEORINumber(str: String): String =

@@ -59,7 +59,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
+          view(form, NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
             messages(application),
             appConfig
@@ -67,37 +67,9 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "return OK and the correct view for a GET with xiEoriEnabled true and euEnabled false" in new SetUp {
+    "return OK and display the EU EORI guidance for a GET" in new SetUp {
 
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(
-          "features.xi-eori-enabled" -> true,
-          "features.eu-eori-enabled" -> false
-        )
-        .build()
-
-      running(application) {
-
-        val request = fakeRequest(GET, eoriNumberRoute)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val expectedContent = contentAsString(result)
-
-        expectedContent must include("EORI numbers start with GB or XI followed by 12 letters or digits.")
-        expectedContent must include("To give authority to a company or person to use your duty deferment account")
-      }
-    }
-
-    "return OK and the correct view for a GET with euEoriEnabled and xiEoriEnabled both true" in new SetUp {
-
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(
-          "features.xi-eori-enabled" -> true,
-          "features.eu-eori-enabled" -> true
-        )
-        .build()
+      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
 
@@ -111,52 +83,6 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         expectedContent must include("You can only give authority to an EORI number starting with XI or an EU")
         expectedContent must include("EORI numbers start with 2 letters (these are the country code)")
 
-      }
-    }
-
-    "return OK and the correct view for a GET with xiEoriEnabled false and euEoriEnabled true" in new SetUp {
-
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(
-          "features.xi-eori-enabled" -> false,
-          "features.eu-eori-enabled" -> true
-        )
-        .build()
-
-      running(application) {
-
-        val request = fakeRequest(GET, eoriNumberRoute)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val expectedContent = contentAsString(result)
-
-        expectedContent must include("You can only give authority to an EORI number starting with XI or an EU")
-        expectedContent must include("EORI numbers start with 2 letters (these are the country code)")
-      }
-    }
-
-    "return OK and the correct view for a GET with both euEoriEnabled and xiEoriEnabled false" in new SetUp {
-
-      val application: Application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure(
-          "features.xi-eori-enabled" -> false,
-          "features.eu-eori-enabled" -> false
-        )
-        .build()
-
-      running(application) {
-
-        val request = fakeRequest(GET, eoriNumberRoute)
-        val result  = route(application, request).value
-
-        status(result) mustEqual OK
-
-        val expectedContent = contentAsString(result)
-
-        expectedContent must include("To give authority to a company or person to use your duty deferment account")
-        expectedContent must include("An EORI number starts GB or GBN.")
       }
     }
 
@@ -179,7 +105,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
 
         contentAsString(result) mustEqual
-          view(form.fill("answer"), NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
+          view(form.fill("answer"), NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
             messages(application),
             appConfig
@@ -526,7 +452,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
             messages(application),
             appConfig
@@ -557,7 +483,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
             messages(application),
             appConfig
@@ -596,7 +522,7 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
 
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled, euEoriEnabled)(
+          view(boundForm, NormalMode, backLinkRoute, xiEoriEnabled)(
             request,
             messages(application),
             appConfig
@@ -701,10 +627,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
     val mockConnector: CustomsFinancialsConnector         = mock[CustomsFinancialsConnector]
     val mockDataStoreConnector: CustomsDataStoreConnector = mock[CustomsDataStoreConnector]
     val frontendAppConfig: FrontendAppConfig              = applicationBuilder().build().injector.instanceOf[FrontendAppConfig]
-    val euEoriEnabled: Boolean                            = true
-    val xiEoriEnabled: Boolean                            = true
 
-    val formProvider       = new EoriNumberFormProvider(frontendAppConfig)
+    val xiEoriEnabled: Boolean = true
+
+    val formProvider       = new EoriNumberFormProvider()
     val form: Form[String] = formProvider()
 
     implicit lazy val hc: HeaderCarrier = HeaderCarrier()
