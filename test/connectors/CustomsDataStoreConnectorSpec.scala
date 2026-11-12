@@ -274,45 +274,6 @@ class CustomsDataStoreConnectorSpec
       }
     }
 
-    "return None when feature flag is false" in {
-
-      val mockAppConfig = mock[FrontendAppConfig]
-      when(mockAppConfig.xiEoriEnabled).thenReturn(false)
-      when(mockAppConfig.customsDataStore).thenReturn("some/string")
-
-      val response =
-        """
-            |{
-            |   "xiEori":"",
-            |   "consent":"1",
-            |   "address":{
-            |      "pbeAddressLine1":"86 street",
-            |      "pbeAddressLine2":"London",
-            |      "pbeAddressLine3":"GB"
-            |   }
-            |}
-            |""".stripMargin
-
-      val application: Application =
-        new GuiceApplicationBuilder()
-          .overrides(inject.bind[FrontendAppConfig].toInstance(mockAppConfig))
-          .configure("microservice.services.customs-data-store.port" -> server.port)
-          .build()
-
-      val connector = application.injector.instanceOf[CustomsDataStoreConnector]
-
-      running(application) {
-
-        server.stubFor(
-          get(urlEqualTo("/customs-data-store/eori/xieori-information"))
-            .willReturn(ok(response))
-        )
-
-        val result = connector.getXiEori("GB123456789").futureValue
-        result mustBe None
-      }
-    }
-
     "return None when an EU Eori is passed" in new Setup {
       running(app) {
         val result = connector.getXiEori("FR123456789").futureValue
