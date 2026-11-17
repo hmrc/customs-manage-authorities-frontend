@@ -12,6 +12,7 @@ GET        /this-service-has-been-reset                           controllers.Se
 GET        /technical-difficulties                                controllers.TechnicalDifficulties.onPageLoad
 GET        /not-subscribed-for-cds                                controllers.UnauthorisedController.onPageLoad
 GET        /manage-account-authorities                            controllers.ManageAuthoritiesController.onPageLoad()
+GET        /accounts-you-have-already-authorised                   controllers.ManageAuthoritiesController.onAuthorisedAccountsPageLoad()
 GET        /manage-account-authorities-unavailable                controllers.ManageAuthoritiesController.unavailable()
 GET        /manage-account-authorities/account-unavailable        controllers.ManageAuthoritiesController.validationFailure()
 

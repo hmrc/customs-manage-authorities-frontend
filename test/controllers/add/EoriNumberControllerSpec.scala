@@ -80,7 +80,10 @@ class EoriNumberControllerSpec extends SpecBase with MockitoSugar {
 
         val expectedContent = contentAsString(result)
 
-        expectedContent must include("You can only give authority to an EORI number starting with XI or an EU")
+        expectedContent must include(
+          "To give authority for duty deferment accounts for Northern Ireland, " +
+            "you must use an EORI number starting with XI or an EU country code."
+        )
         expectedContent must include("EORI numbers start with 2 letters (these are the country code)")
 
       }

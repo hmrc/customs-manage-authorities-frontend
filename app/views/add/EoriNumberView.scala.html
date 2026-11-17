@@ -17,53 +17,41 @@
 @import models.Mode
 @import views.html.templates.Layout
 @import config.FrontendAppConfig
-@import views.ViewUtils.{InputTextHint, DetailsHint, LabelHint}
+@import views.ViewUtils.{InputTextHint, LabelHint}
 
 @this(
-  layout: Layout,
-  formHelper: FormWithCSRF,
-  errorSummary: components.errorSummary,
-  button: components.button,
-  inputText: components.inputText
+    layout: Layout,
+    formHelper: FormWithCSRF,
+    errorSummary: components.errorSummary,
+    h1: components.h1,
+    p: components.p,
+    inset: components.inset,
+    button: components.button,
+    inputText: components.inputText
 )
 
-@(
-  form: Form[_],
-  mode: Mode,
-  call: Call,
-)(
-  implicit request: Request[_],
-  messages: Messages,
-  appConfig: FrontendAppConfig
+@(form: Form[_], mode: Mode, call: Call)(
+    implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig
 )
 
-@layout(
-  pageTitle = Some(title(form, "eoriNumber.title", None, Seq())),
-  backLink = Some(call)
-) {
+@layout(pageTitle = Some(title(form, "eoriNumber.title", None, Seq())), backLink = Some(call)) {
+    @formHelper(action = controllers.add.routes.EoriNumberController.onSubmit(mode)) {
+        @errorSummary(form.errors, errorFieldName = Some("value"))
+        @h1("eoriNumber.heading", classes = "govuk-heading-xl govuk-!-margin-bottom-6")
+        @p(Html(messages("eoriNumber.introduction")), id = Some("add-authority-description"))
+        @inset(messages("eoriNumber.details.text.eu"), id = Some("northern-ireland-guidance"))
 
-  @formHelper(action = controllers.add.routes.EoriNumberController.onSubmit(mode)) {
+        @inputText(
+            form,
+            id = "value",
+            name = "value",
+            label = "eoriNumber.label",
+            hint = Some(InputTextHint(None, Some(LabelHint("eoriNumber.hint.eu", "govuk-hint")))),
+            isPageHeading = false,
+            classes = Some("govuk-!-width-two-thirds"),
+            labelClasses = Some("govuk-label--s")
+        )
 
-    @errorSummary(form.errors)
-
-    @{
-      val inputHint = InputTextHint(
-        Some(DetailsHint("eoriNumber.details.label", "eoriNumber.details.text.eu")),
-        Some(LabelHint("eoriNumber.hint.eu", "govuk-hint govuk-!-margin-top-6"))
-      )
-
-      inputText(
-        form,
-        id = "value",
-        name = "value",
-        label = "eoriNumber.heading",
-        hint = Some(inputHint),
-        isPageHeading = true,
-        classes = Some("govuk-!-width-two-thirds"),
-        labelClasses = Some("govuk-!-margin-bottom-7")
-      )
+        @button("site.saveAndContinue")
     }
-
-    @button("site.saveAndContinue")
-  }
 }
