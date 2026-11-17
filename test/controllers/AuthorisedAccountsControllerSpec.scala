@@ -47,7 +47,8 @@ class AuthorisedAccountsControllerSpec extends SpecBase with MockitoSugar {
         verifyNoInteractions(sdes, financials)
         verify(messagesConnector).getMessageCountBanner(
           eqTo(app.injector.instanceOf[FrontendAppConfig].manageAuthoritiesServiceUrl + pageRoute),
-          eqTo(Some("authorities")))(any())
+          eqTo(Some("authorities"))
+        )(any())
       }
     }
 
@@ -73,69 +74,92 @@ class AuthorisedAccountsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "return traders without authorities to the landing page" in new Setup {
-      when(authoritiesService.retrieveAuthoritiesForId(any())).thenReturn(Future.successful(Some(AuthoritiesWithId(Map.empty))))
+      when(authoritiesService.retrieveAuthoritiesForId(any()))
+        .thenReturn(Future.successful(Some(AuthoritiesWithId(Map.empty))))
       running(app) {
-        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(routes.ManageAuthoritiesController.onPageLoad().url)
+        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(
+          routes.ManageAuthoritiesController.onPageLoad().url
+        )
         verifyNoInteractions(companyService)
       }
     }
 
     "return traders without accounts to the landing page" in new Setup {
-      when(accountsService.retrieveAccountsForId(any())).thenReturn(Future.successful(Some(CDSAccounts("GB123456789012", Nil))))
+      when(accountsService.retrieveAccountsForId(any()))
+        .thenReturn(Future.successful(Some(CDSAccounts("GB123456789012", Nil))))
       when(authoritiesService.retrieveAuthoritiesForId(any())).thenReturn(Future.successful(None))
       running(app) {
-        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(routes.ManageAuthoritiesController.onPageLoad().url)
+        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(
+          routes.ManageAuthoritiesController.onPageLoad().url
+        )
         verify(authoritiesService, never()).retrieveAuthorities(any(), any())(any())
       }
     }
 
     "retain the existing unavailable page when authorities cannot be retrieved" in new Setup {
-      when(authoritiesService.retrieveAuthoritiesForId(any())).thenReturn(Future.failed(new RuntimeException("unavailable")))
+      when(authoritiesService.retrieveAuthoritiesForId(any()))
+        .thenReturn(Future.failed(new RuntimeException("unavailable")))
       running(app) {
-        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(routes.ManageAuthoritiesController.unavailable().url)
+        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(
+          routes.ManageAuthoritiesController.unavailable().url
+        )
       }
     }
 
     "retain the existing validation failure page for invalid upstream data" in new Setup {
-      when(authoritiesService.retrieveAuthoritiesForId(any())).thenReturn(
-        Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
+      when(authoritiesService.retrieveAuthoritiesForId(any()))
+        .thenReturn(Future.failed(UpstreamErrorResponse("JSON Validation Error", INTERNAL_SERVER_ERROR)))
       running(app) {
-        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(routes.ManageAuthoritiesController.validationFailure().url)
+        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(
+          routes.ManageAuthoritiesController.validationFailure().url
+        )
       }
     }
 
     "require a verified email before displaying authorities" in new Setup {
       when(dataStore.getEmail(any())).thenReturn(Future.successful(Left(UnverifiedEmail)))
       running(app) {
-        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(routes.EmailController.showUnverified().url)
+        redirectLocation(route(app, fakeRequest(GET, pageRoute)).value) mustBe Some(
+          routes.EmailController.showUnverified().url
+        )
         verifyNoInteractions(accountsService, authoritiesService)
       }
     }
   }
 
   private trait Setup {
-    val accountsService = mock[AccountsCacheService]
+    val accountsService    = mock[AccountsCacheService]
     val authoritiesService = mock[AuthoritiesCacheService]
-    val companyService = mock[AuthorisedEoriAndCompanyInfoService]
-    val dataStore = mock[CustomsDataStoreConnector]
-    val sdes = mock[SdesConnector]
-    val financials = mock[CustomsFinancialsConnector]
-    val messagesConnector = mock[SecureMessageConnector]
-    val accounts = CDSAccounts("GB123456789012", List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100)))))
-    val authorities = AuthoritiesWithId(Map("cash" -> OPEN_CASH_ACC_WITH_AUTH_WITH_ID))
-    val companies = authorities.uniqueAuthorisedEORIs.map(_ -> "Tony Stark").toMap
+    val companyService     = mock[AuthorisedEoriAndCompanyInfoService]
+    val dataStore          = mock[CustomsDataStoreConnector]
+    val sdes               = mock[SdesConnector]
+    val financials         = mock[CustomsFinancialsConnector]
+    val messagesConnector  = mock[SecureMessageConnector]
+    val accounts           = CDSAccounts(
+      "GB123456789012",
+      List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100))))
+    )
+    val authorities        = AuthoritiesWithId(Map("cash" -> OPEN_CASH_ACC_WITH_AUTH_WITH_ID))
+    val companies          = authorities.uniqueAuthorisedEORIs.map(_ -> "Tony Stark").toMap
 
     when(dataStore.getEmail(any())).thenReturn(Future.successful(Right(testEmail)))
     when(dataStore.getXiEori(any())(any())).thenReturn(Future.successful(Some("XI123456789012")))
     when(accountsService.retrieveAccountsForId(any())).thenReturn(Future.successful(Some(accounts)))
     when(authoritiesService.retrieveAuthoritiesForId(any())).thenReturn(Future.successful(Some(authorities)))
-    when(companyService.retrieveAuthorisedEoriAndCompanyInfo(any(), any())(any())).thenReturn(Future.successful(Some(companies)))
+    when(companyService.retrieveAuthorisedEoriAndCompanyInfo(any(), any())(any()))
+      .thenReturn(Future.successful(Some(companies)))
     when(messagesConnector.getMessageCountBanner(any(), any())(any())).thenReturn(Future.successful(None))
 
-    lazy val app = applicationBuilder().overrides(
-      bind[AccountsCacheService].toInstance(accountsService), bind[AuthoritiesCacheService].toInstance(authoritiesService),
-      bind[AuthorisedEoriAndCompanyInfoService].toInstance(companyService), bind[CustomsDataStoreConnector].toInstance(dataStore),
-      bind[SdesConnector].toInstance(sdes), bind[CustomsFinancialsConnector].toInstance(financials),
-      bind[SecureMessageConnector].toInstance(messagesConnector)).build()
+    lazy val app = applicationBuilder()
+      .overrides(
+        bind[AccountsCacheService].toInstance(accountsService),
+        bind[AuthoritiesCacheService].toInstance(authoritiesService),
+        bind[AuthorisedEoriAndCompanyInfoService].toInstance(companyService),
+        bind[CustomsDataStoreConnector].toInstance(dataStore),
+        bind[SdesConnector].toInstance(sdes),
+        bind[CustomsFinancialsConnector].toInstance(financials),
+        bind[SecureMessageConnector].toInstance(messagesConnector)
+      )
+      .build()
   }
 }
