@@ -35,6 +35,11 @@ import java.time.LocalDate
 
 class EditOrRemoveViewSpec extends SpecBase with MockitoSugar {
   "view" should {
+    "return to the authorised accounts list" in new Setup {
+      Jsoup.parse(result.toString()).select(".govuk-back-link").attr("href") mustBe
+        controllers.routes.ManageAuthoritiesController.onAuthorisedAccountsPageLoad().url
+    }
+
     "show correct elements with right order" in new Setup {
 
       val doc: Document             = Jsoup.parse(result.toString())

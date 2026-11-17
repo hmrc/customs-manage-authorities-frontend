@@ -54,6 +54,7 @@ class ManageAuthoritiesController @Inject() (
   noAccountsView: NoAccountsView,
   val controllerComponents: MessagesControllerComponents,
   view: ManageAuthoritiesView,
+  authorisedAccountsView: AuthorisedAccountsView,
   failureView: ManageAuthoritiesApiFailureView,
   invalidAuthorityView: ManageAuthoritiesGBNAuthorityView
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
@@ -62,49 +63,65 @@ class ManageAuthoritiesController @Inject() (
     with Logging
     with DateUtils {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkEmailIsVerified).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = loadPage(showAuthorisedAccounts = false)
 
-    customsFinancialsConnector.deleteNotification(StandingAuthority)
+  def onAuthorisedAccountsPageLoad(): Action[AnyContent] = loadPage(showAuthorisedAccounts = true)
 
-    val returnToUrl = appConfig.manageAuthoritiesServiceUrl + routes.ManageAuthoritiesController.onPageLoad().url
+  private def loadPage(showAuthorisedAccounts: Boolean): Action[AnyContent] =
+    (identify andThen checkEmailIsVerified).async { implicit request =>
 
-    val response = for {
-      xiEori                 <- dataStoreConnector.getXiEori(request.eoriNumber)
-      accountsFromCache      <- accountsCacheService.retrieveAccountsForId(request.internalId)
-      accounts               <- fetchAccounts(xiEori, accountsFromCache)
-      authoritiesFromCache   <- service.retrieveAuthoritiesForId(request.internalId)
-      authorities            <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
-      authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
-                                  authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs)
-                                )
-      messageBanner          <- secureMessageConnector.getMessageCountBanner(
-                                  returnToUrl,
-                                  activeItem = Some("authorities")
-                                )
-      filesNotification      <- authoritiesFilesNotification
-    } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner, filesNotification)
-
-    response
-      .map {
-        case (Some(authorities), accounts, authEoriAndCompanyInfo, messageBanner, filesNotification) =>
-          Ok(
-            view(
-              ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo, filesNotification),
-              messageBanner
-            )
-          )
-        case (None, _, _, _, filesNotification)                                                      =>
-          Ok(noAccountsView(filesNotification))
+      if (!showAuthorisedAccounts) {
+        customsFinancialsConnector.deleteNotification(StandingAuthority)
       }
-      .recover {
-        case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
-          logger.warn(s"[FetchAccountAuthorities API] Failed with JSON Validation error")
-          Redirect(routes.ManageAuthoritiesController.validationFailure())
-        case NonFatal(e)                                                                                  =>
-          logger.warn(s"[FetchAccountAuthorities API] Failed with error: ${e.getMessage}")
-          Redirect(routes.ManageAuthoritiesController.unavailable())
-      }
-  }
+
+      val pageRoute   =
+        if (showAuthorisedAccounts) routes.ManageAuthoritiesController.onAuthorisedAccountsPageLoad()
+        else routes.ManageAuthoritiesController.onPageLoad()
+      val returnToUrl = appConfig.manageAuthoritiesServiceUrl + pageRoute.url
+
+      val response = for {
+        xiEori                 <- dataStoreConnector.getXiEori(request.eoriNumber)
+        accountsFromCache      <- accountsCacheService.retrieveAccountsForId(request.internalId)
+        accounts               <- fetchAccounts(xiEori, accountsFromCache)
+        authoritiesFromCache   <- service.retrieveAuthoritiesForId(request.internalId)
+        authorities            <- fetchAuthorities(xiEori, accounts, authoritiesFromCache)
+        authEoriAndCompanyInfo <- fetchAuthEoriAndCompanyInfoForTheView(
+                                    authorities.fold[Set[EORI]](Set())(authId => authId.uniqueAuthorisedEORIs)
+                                  )
+        messageBanner          <- secureMessageConnector.getMessageCountBanner(
+                                    returnToUrl,
+                                    activeItem = Some("authorities")
+                                  )
+        filesNotification      <- if (showAuthorisedAccounts) {
+                                    Future.successful(AuthoritiesFilesNotificationViewModel(None, None, emptyString))
+                                  } else authoritiesFilesNotification
+      } yield (authorities, accounts, authEoriAndCompanyInfo.getOrElse(Map.empty), messageBanner, filesNotification)
+
+      response
+        .map {
+          case (Some(authorities), accounts, authEoriAndCompanyInfo, messageBanner, filesNotification) =>
+            val viewModel = ManageAuthoritiesViewModel(authorities, accounts, authEoriAndCompanyInfo, filesNotification)
+            if (showAuthorisedAccounts && viewModel.hasNoAccounts) {
+              Redirect(routes.ManageAuthoritiesController.onPageLoad())
+            } else if (showAuthorisedAccounts) {
+              Ok(authorisedAccountsView(viewModel, messageBanner))
+            } else {
+              Ok(view(viewModel, messageBanner))
+            }
+          case (None, _, _, _, _) if showAuthorisedAccounts                                            =>
+            Redirect(routes.ManageAuthoritiesController.onPageLoad())
+          case (None, _, _, _, filesNotification)                                                      =>
+            Ok(noAccountsView(filesNotification))
+        }
+        .recover {
+          case UpstreamErrorResponse(e, INTERNAL_SERVER_ERROR, _, _) if e.contains("JSON Validation Error") =>
+            logger.warn(s"[FetchAccountAuthorities API] Failed with JSON Validation error")
+            Redirect(routes.ManageAuthoritiesController.validationFailure())
+          case NonFatal(e)                                                                                  =>
+            logger.warn(s"[FetchAccountAuthorities API] Failed with error: ${e.getMessage}")
+            Redirect(routes.ManageAuthoritiesController.unavailable())
+        }
+    }
 
   def fetchAuthoritiesOnMIDVAHomePageLoad(eori: EORI): Action[AnyContent] =
     (identify andThen checkEmailIsVerified).async { implicit request =>

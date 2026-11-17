@@ -19,93 +19,65 @@ package views.add
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.EoriNumberFormProvider
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, Mode, NormalMode}
+import navigation.Navigator
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
-import org.jsoup.select.Elements
-import org.mockito.Mockito.when
-import org.scalatestplus.mockito.MockitoSugar
+import org.jsoup.nodes.Document
+import org.scalatest.BeforeAndAfterAll
 import play.api.Application
-import play.api.i18n.Messages
-import play.api.mvc.{AnyContentAsEmpty, Call}
-import play.api.test.{FakeRequest, Helpers}
-import services.DateTimeService
+import play.api.data.Form
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import views.html.add.EoriNumberView
 
-import java.time.LocalDateTime
+class EoriNumberViewSpec extends SpecBase with BeforeAndAfterAll {
+  private lazy val app: Application = applicationBuilder().build()
+  private lazy val appConfig        = app.injector.instanceOf[FrontendAppConfig]
+  private val form                  = new EoriNumberFormProvider()()
 
-class EoriNumberViewSpec extends SpecBase with MockitoSugar {
-
-  "EoriNumberView" should {
-    "display the correct guidance in Normal mode" in new Setup {
-      normalModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-      normalModeView().getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      normalModeView().getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text.eu"
-
-      val detailsHintElement: Element = normalModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements  = normalModeView().getElementsByClass("govuk-!-margin-top-6")
-
-      detailsHintElement.getElementById("value-hint-title").html() mustBe "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-body").html() mustBe "eoriNumber.details.text.eu"
-
-      hintLabelElement.html() mustBe "eoriNumber.hint.eu"
-
-      normalModeView().getElementsByTag("button").get(1).html() mustBe "site.saveAndContinue"
-    }
-
-    "display the correct guidance in Check mode" in new Setup {
-      val detailsHintElement: Element = checkModeView().getElementById("value-hint-details")
-      val hintLabelElement: Elements  = checkModeView().getElementsByClass("govuk-!-margin-top-6")
-
-      checkModeView().title() mustBe "eoriNumber.title - service.name - site.govuk"
-
-      detailsHintElement.getElementById("value-hint-title").html() mustBe
-        "eoriNumber.details.label"
-      detailsHintElement.getElementsByClass("govuk-body").html() mustBe
-        "eoriNumber.details.text.eu"
-      hintLabelElement.html() mustBe "eoriNumber.hint.eu"
-
-      checkModeView().getElementsByTag("button").get(1).text() mustBe messages("site.saveAndContinue")
-    }
-
-    "when back-link is clicked returns to previous page on Normal Mode" in new Setup {
-      normalModeView().getElementsByClass("govuk-back-link").attr("href") mustBe
-        s"/customs/manage-authorities/manage-account-authorities"
-    }
-
-    "when back-link is clicked returns to previous page on Check Mode" in new Setup {
-      checkModeView().getElementsByClass("govuk-back-link").attr("href") mustBe
-        s"/customs/manage-authorities/add-authority/check-answers"
-    }
+  override def afterAll(): Unit = {
+    app.stop().futureValue
+    super.afterAll()
   }
 
-  trait Setup {
-    val mockDateTimeService: DateTimeService = mock[DateTimeService]
-    when(mockDateTimeService.localTime()).thenReturn(LocalDateTime.now())
+  private def render(mode: Mode, language: String, input: Form[String] = form): Document = {
+    implicit val msgs: Messages = MessagesImpl(Lang(language), app.injector.instanceOf[MessagesApi])
+    val back                    = app.injector.instanceOf[Navigator].backLinkRouteForEORINUmberPage(mode)
+    Jsoup.parse(app.injector.instanceOf[EoriNumberView].apply(input, mode, back)(fakeRequest(), msgs, appConfig).body)
+  }
 
-    implicit val csrfRequest: FakeRequest[AnyContentAsEmpty.type] =
-      fakeRequest("GET", "/some/resource/path")
-    val app: Application                                          = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
-    implicit val appConfig: FrontendAppConfig                     = app.injector.instanceOf[FrontendAppConfig]
-    implicit val messages: Messages                               = Helpers.stubMessages()
+  "Add authority page" should {
+    for {
+      language <- Seq("en", "cy")
+      mode     <- Seq(NormalMode, CheckMode)
+    } {
+      s"display the agreed guidance and accessible input in $language and $mode" in {
+        val msgs: Messages = MessagesImpl(Lang(language), app.injector.instanceOf[MessagesApi])
+        val doc            = render(mode, language, form.fill("GB345834921000"))
+        doc.title                                     must include(msgs("eoriNumber.title"))
+        doc.select("main h1").size mustBe 1
+        doc.select("main h1").text mustBe msgs("eoriNumber.heading")
+        doc.select("#add-authority-description").text mustBe msgs("eoriNumber.introduction")
+        doc.select(".govuk-inset-text").text mustBe msgs("eoriNumber.details.text.eu")
+        doc.select("label[for=value]").text mustBe msgs("eoriNumber.label")
+        doc.select("#value-hint-text").text mustBe msgs("eoriNumber.hint.eu")
+        doc.select("#value").attr("aria-describedby") must include("value-hint")
+        doc.select("#value").attr("value") mustBe "GB345834921000"
+        doc.select("form").attr("action") mustBe controllers.add.routes.EoriNumberController.onSubmit(mode).url
+        doc.select("form").attr("method").toLowerCase mustBe "post"
+        doc.select("input[name=csrfToken]").size mustBe 1
+        doc.select("form button").text mustBe msgs("site.saveAndContinue")
+        doc.select(".govuk-back-link").attr("href") mustBe
+          app.injector.instanceOf[Navigator].backLinkRouteForEORINUmberPage(mode).url
+      }
 
-    private val formProvider = new EoriNumberFormProvider()
-    val form                 = formProvider()
-
-    lazy val normalModeBackLinkRoute: Call = controllers.routes.ManageAuthoritiesController.onPageLoad()
-    lazy val checkModeBackLinkRoute: Call  = controllers.add.routes.AuthorisedUserController.onPageLoad()
-
-    def normalModeView(): Document = Jsoup.parse(
-      app.injector
-        .instanceOf[EoriNumberView]
-        .apply(form, NormalMode, normalModeBackLinkRoute)
-        .body
-    )
-    def checkModeView(): Document  = Jsoup.parse(
-      app.injector
-        .instanceOf[EoriNumberView]
-        .apply(form, CheckMode, checkModeBackLinkRoute)
-        .body
-    )
+      s"associate validation errors with the EORI input in $language and $mode" in {
+        val msgs: Messages = MessagesImpl(Lang(language), app.injector.instanceOf[MessagesApi])
+        val doc            = render(mode, language, form.withError("value", "eoriNumber.error.required"))
+        doc.select(".govuk-error-summary a").attr("href") mustBe "#value"
+        doc.select("#value-error").text               must include(msgs("eoriNumber.error.required"))
+        doc.select("#value").attr("aria-describedby") must include("value-error")
+        doc.title                                     must startWith(msgs("error.browser.title.prefix"))
+      }
+    }
   }
 }

@@ -91,13 +91,13 @@ service.technical-difficulties.p = Rhowch gynnig arall arni mewn ychydig o funud
 manageAuthorities.title=Rheoli awdurdodau eich cyfrif
 manageAuthorities.heading=Rheoli awdurdodau eich cyfrif
 manageAuthorities.accounts.authorised = Cyfrifon rydych eisoes wedi’u hawdurdodi
-manageAuthorities.notification.noAuthorities=Nid ydych wedi rhoi caniatâd i unrhyw un ddefnyddio unrhyw un o’ch cyfrifon eto. Gallwch ychwanegu awdurdod er mwyn i rywun allu defnyddio’ch cyfrif gohirio tollau, cyfrif gwarant cyffredinol neu gyfrif arian parod.
+manageAuthorities.notification.noAuthorities = Nid ydych wedi rhoi caniatâd i unrhyw un ddefnyddio unrhyw un o’ch cyfrifon eto.
 manageAuthorities.notification.cdsAuthorities=Bydd awdurdodau rydych yn eu hychwanegu yma dim ond yn ddilys i’w defnyddio ar y Gwasanaeth Datgan Tollau.
 manageAuthorities.addAuthority=Ychwanegu awdurdod
-manageAuthorities.notificationPanel.p1=Mae’r rhestr o awdurdodau y gwnaethoch gais amdanynt ar gael i’w lawrlwytho:
+manageAuthorities.notificationPanel.p1 = Mae’r rhestr o awdurdodau y gwnaethoch gais amdani ar gael i’w lawrlwytho.
 manageAuthorities.notificationPanel.a.gb-authority=Awdurdodau ym Mhrydain Fawr (CSV)
-manageAuthorities.notificationPanel.a.xi-authority=Awdurdodau yng Ngogledd Iwerddon (CSV)
-manageAuthorities.notificationPanel.p2=Crëwyd eich rhestr ar {0}. Bydd ar gael i’w gweld am 10 diwrnod.
+manageAuthorities.notificationPanel.a.xi-authority = Awdurdodau yn yr UE (CSV)
+manageAuthorities.notificationPanel.p2 = Cafodd y rhestr hon ei chreu ar {0}. Bydd ar gael i’w gweld am 10 diwrnod.
 manageAuthorities.error=Mae’n ddrwg gennym, ni allwn arddangos y rhain ar hyn o bryd. Rhowch gynnig arall arni yn nes ymlaen.
 manageAuthorities.error.display = Mae problem gyda dangos y cyfrifon rydych eisoes wedi’u hawdurdodi.
 
@@ -145,8 +145,8 @@ accounts.noAvailableAccounts.link = ‘Rheoli awdurdodau eich cyfrif’
 
 # What is the EORI number view
 # ----------------------------------------------------------
-eoriNumber.title=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
-eoriNumber.heading=Beth yw rhif EORI y cwmni neu’r person rydych am roi awdurdod iddo?
+eoriNumber.title = Ychwanegu awdurdod
+eoriNumber.heading = Ychwanegu awdurdod
 eoriNumber.hint.eu= Mae rhifau EORI yn dechrau â 2 lythyren (sef cod y wlad), ac yna 1 i 15 llythyren a rhif. Er enghraifft, GB345834921000 neu XI345834921000 
 eoriNumber.checkYourAnswersLabel=Rhif EORI y defnyddiwr
 eoriNumber.error.required=Nodwch rif EORI
@@ -154,7 +154,7 @@ eoriNumber.error.format=Nodwch rif EORI yn y fformat cywir
 eoriNumber.error.invalid = Nodwch EORI sydd wedi’i gofrestru gyda CThEM
 eoriNumber.error.authorise-own-eori = Ni allwch awdurdodi eich rhif EORI eich hun
 eoriNumber.details.label = Defnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon
-eoriNumber.details.text.eu = Gallwch ond rhoi awdurdod i rif EORI sy’n dechrau gydag ‘XI’ neu god gwlad yn y UE i ddefnyddio’ch cyfrif gohirio tollau ar gyfer Gogledd Iwerddon.
+eoriNumber.details.text.eu = Er mwyn rhoi awdurdod i gwmni neu unigolyn ddefnyddio cyfrifon gohirio tollau ar gyfer Gogledd Iwerddon, mae’n rhaid i chi ddefnyddio rhif EORI sy’n dechrau gydag XI neu god gwlad yn yr UE.
 
 # Which accounts to add an authority to view
 # ----------------------------------------------------------
@@ -445,3 +445,10 @@ authorisedUser.error.jobRole.required = Nodwch eich swydd
 authorisedUser.error.jobRole.length = Mae’n rhaid i’ch swydd fod yn 255 o gymeriadau neu lai
 authorisedUser.error.jobRole.malicious = Mae’n rhaid i enw’r swydd beidio â chynnwys cromfachau, arwyddion doler na slaesau
 authorisedUser.error.confirmation.required = Dewiswch i gadarnhau eich bod yn awdurdodi’r defnyddiwr hwn i ddefnyddio’ch cyfrif
+
+manageAuthorities.addAuthority.description = Gallwch roi awdurdod i gwmni neu unigolyn ddefnyddio’ch cyfrif gohirio tollau, eich cyfrif gwarant cyffredinol neu’ch cyfrif arian parod.
+manageAuthorities.accounts.authorised.description = Gallwch weld y cyfrifon rydych wedi rhoi awdurdod i gwmni neu unigolyn eu defnyddio.
+manageAuthorities.findAccounts.description = Gallwch chwilio am gyfrifon y mae gennych awdurdod i’w defnyddio ar y Gwasanaeth Datganiadau Tollau.
+authorisedAccounts.description = Dyma’r cyfrifon rydych wedi rhoi awdurdod i gwmni neu unigolyn eu defnyddio.
+eoriNumber.introduction = Er mwyn rhoi awdurdod i gwmni neu unigolyn ddefnyddio’ch cyfrif gohirio tollau, cyfrif gwarant cyffredinol neu’ch cyfrif arian parod, bydd angen ei rif EORI arnoch.
+eoriNumber.label = Nodwch rif EORI y cwmni neu’r unigolyn rydych am roi awdurdod iddo.

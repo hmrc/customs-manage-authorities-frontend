@@ -18,13 +18,9 @@ package viewmodels
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.NormalMode
 import models.domain._
-import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
 import play.api.Application
 import play.api.i18n.{DefaultMessagesApi, Messages}
-import play.twirl.api.HtmlFormat
 import utils.DateUtils
 import utils.TestData.START_DATE_1
 
@@ -185,31 +181,5 @@ class ManageAuthoritiesViewModelSpec extends SpecBase with DateUtils {
       viewModel.auhorisedEoriAndCompanyMap mustBe authEoriAndCompanyDetails
     }
 
-    "return correct links with appropriate messages and IDs" in {
-      val cdsAccounts: CDSAccounts = CDSAccounts(
-        "GB123456789012",
-        List(CashAccount("12345", "GB123456789012", AccountStatusOpen, CDSCashBalance(Some(100.00))))
-      )
-
-      val viewModel: ManageAuthoritiesViewModel = ManageAuthoritiesViewModel(
-        authorities = authorities,
-        accounts = cdsAccounts,
-        filesNotificationViewModel = authoritiesFilesNotificationViewModel
-      )
-      val result: HtmlFormat.Appendable         = viewModel.generateLinks()(msg, appConfig)
-      val resultString: String                  = result.toString()
-
-      val doc: Document = Jsoup.parse(resultString)
-
-      val authorityLink: Element = doc.getElementById("start-link")
-      authorityLink        must not be None
-      authorityLink.attr("href") mustBe controllers.add.routes.EoriNumberController.onPageLoad(NormalMode).url
-      authorityLink.text() must include(msg("manageAuthorities.addAuthority"))
-
-      val authorisedLink: Element = doc.getElementById("authorised-to-view-link")
-      authorisedLink        must not be None
-      authorisedLink.attr("href") mustBe appConfig.authorityToUseUrl
-      authorisedLink.text() must include(msg("cf.account.authorized-to-view.title"))
-    }
   }
 }
