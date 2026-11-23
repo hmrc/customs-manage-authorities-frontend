@@ -451,4 +451,4 @@ manageAuthorities.accounts.authorised.description = You can view the accounts th
 manageAuthorities.findAccounts.description = You can search for accounts you have authority to use on the Customs Declaration Service.
 authorisedAccounts.description = These are the accounts that you have given a company or person authority to use.
 eoriNumber.introduction = To give a company or person authority to use your duty deferment, general guarantee or cash account, you’ll need their EORI number.
-eoriNumber.label = What is the EORI number of the company or person you want to give authority to?.
+eoriNumber.label = What is the EORI number of the company or person you want to give authority to?
